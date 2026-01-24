@@ -22,6 +22,11 @@ coverage/
 **/prisma/*.db
 **/prisma/migrations/
 
+# Database backups
+**/db.pg17.bak.*
+**/*.bak
+**/db.pg17.bak.*/
+
 # IDE
 .vscode/
 .DS_Store

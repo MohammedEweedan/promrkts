@@ -2,3 +2,5 @@
 .env.local
 .env
 db/
+db.pg17.bak.*
+*.bak
