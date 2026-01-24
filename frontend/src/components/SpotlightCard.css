@@ -1,0 +1,51 @@
+.card-spotlight {
+    position: relative;
+    border-radius: 1.5rem;
+    border: 1px solid rgba(199, 199, 199, 0.35);
+    padding: 2rem;
+    overflow: hidden;
+
+    --mouse-x: 50%;
+    --mouse-y: 50%;
+    --spotlight-color: rgba(101, 168, 191, 0.25);
+}
+
+/* DARK MODE (almost black green) */
+html[data-theme="dark"] .card-spotlight {
+    background:
+        radial-gradient(circle at 10% 0%, rgba(101, 168, 191, 0.15), transparent 55%),
+        radial-gradient(circle at 90% 100%, rgba(101, 168, 191, 0.25), transparent 55%),
+        rgb(6, 10, 8);
+
+    border-color: rgba(101, 168, 191, 0.35);
+    --spotlight-color: rgba(101, 168, 191, 0.15);
+}
+
+/* LIGHT MODE (soft white / near grey) */
+html[data-theme="light"] .card-spotlight {
+    background:
+        radial-gradient(circle at 10% 0%, rgba(255, 255, 255, 0.632), transparent 60%),
+        radial-gradient(circle at 90% 100%, rgba(255, 255, 255, 0.8), transparent 60%),
+        rgb(231, 232, 233);
+
+    border-color: rgba(0, 0, 0, 0.08);
+    --spotlight-color: rgba(150, 150, 150, 0.25);
+}
+
+/* SPOTLIGHT */
+.card-spotlight::before {
+    content: '';
+    position: absolute;
+    inset: 0;
+    background: radial-gradient(circle at var(--mouse-x) var(--mouse-y),
+            var(--spotlight-color),
+            rgba(0, 0, 0, 0) 80%);
+    opacity: 0;
+    transition: opacity 0.5s ease;
+    pointer-events: none;
+}
+
+.card-spotlight:hover::before,
+.card-spotlight:focus-within::before {
+    opacity: 0.6;
+}

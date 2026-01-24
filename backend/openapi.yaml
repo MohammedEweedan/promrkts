@@ -1,0 +1,48 @@
+openapi: 3.0.3
+info:
+  title: Travmate API
+  version: 0.1.0
+servers:
+  - url: http://localhost:5000/api
+paths:
+  /auth/register:
+    post:
+      summary: Register user
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                name: { type: string }
+                email: { type: string }
+                password: { type: string }
+                role: { type: string, enum: [user, business] }
+      responses:
+        '201': { description: Created }
+  /auth/login:
+    post:
+      summary: Login user
+      responses:
+        '200': { description: OK }
+  /auth/refresh-token:
+    post:
+      summary: Refresh access token (rotates refresh token)
+      responses:
+        '200': { description: OK }
+  /auth/revoke:
+    post:
+      summary: Revoke current refresh token
+      responses:
+        '200': { description: OK }
+  /bookings/search:
+    get:
+      summary: Search for trips using external providers
+      responses:
+        '200': { description: OK }
+  /payments/intent:
+    post:
+      summary: Create a Stripe Payment Intent
+      responses:
+        '201': { description: Created }

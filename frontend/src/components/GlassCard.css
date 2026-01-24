@@ -1,0 +1,77 @@
+/* Reusable glassy card with blur and theme-aware subtle tint */
+.glass-card {
+  position: relative;
+  border-radius: 16px;
+  padding: 0; /* inner wrapper handles padding */
+  border: 1px solid var(--chakra-colors-border-default, rgba(0,0,0,0.12));
+  /* Light mode (default): subtle navy tint, barely visible */
+  background: var(--chakra-colors-bg-surface, #ffffff);
+  color: var(--chakra-colors-text-primary, #111827);
+  box-shadow: 0 12px 36px rgba(0,0,0,0.18);
+  backdrop-filter: saturate(240%) blur(140px);
+  -webkit-backdrop-filter: saturate(240%) blur(140px);
+  width: 66vw;
+  max-width: 100%;
+  margin-inline: auto; /* center */
+}
+
+.glass-card__inner {
+  padding: clamp(16px, 4vw, 24px);
+  border-radius: inherit;
+}
+
+/* Dark mode: very light sand tint (#65a8bf), barely visible */
+html[data-theme="dark"] .glass-card,
+body[data-theme="dark"] .glass-card,
+.chakra-ui-dark .glass-card {
+  /* Match bg.surface in dark */
+  background: #0a0a0a;
+  border-color: rgba(255,255,255,0.24);
+  color: #ffffff;
+}
+
+/* Light mode explicit: ensure navy tint */
+html[data-theme="light"] .glass-card,
+body[data-theme="light"] .glass-card,
+.chakra-ui-light .glass-card {
+  /* Match bg.surface in light */
+  background: #ffffff;
+  border-color: rgba(0,0,0,0.24);
+  color: #111827;
+}
+
+@media (max-width: 768px) {
+  .glass-card {
+    width: 100%;
+  }
+}
+
+/* Variants */
+/* Less see-through cart variant (used for cart modal) */
+.glass-card.cart-opaque {
+  background: rgba(255, 255, 255, 1.5);
+  backdrop-filter: saturate(260%) blur(140px);
+  -webkit-backdrop-filter: saturate(260%) blur(140px);
+}
+html[data-theme="dark"] .glass-card.cart-opaque,
+body[data-theme="dark"] .glass-card.cart-opaque,
+.chakra-ui-dark .glass-card.cart-opaque {
+  background: rgba(20, 20, 20, 1.5);
+  border-color: rgba(255,255,255,0.18);
+  color: #ffffff;
+}
+
+/* Mobile menu variant: match header’s lighter glass */
+.glass-card.menu-glass {
+  /* A tiny alpha is required for most browsers to actually show the blur.
+     This is visually transparent but enables backdrop-filter rendering. */
+  background: rgba(255, 255, 255, 0.04) !important;
+  backdrop-filter: saturate(220%) blur(100px);
+  -webkit-backdrop-filter: saturate(220%) blur(100px);
+  will-change: backdrop-filter;
+}
+html[data-theme="dark"] .glass-card.menu-glass,
+body[data-theme="dark"] .glass-card.menu-glass,
+.chakra-ui-dark .glass-card.menu-glass {
+  background: rgba(0, 0, 0, 0.06) !important; /* effectively colorless, just to activate blur */
+}

@@ -1,0 +1,1186 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider  = "postgresql"
+  url       = env("DATABASE_URL")
+  directUrl = env("DIRECT_URL")
+}
+
+model Affiliate {
+  id        String   @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  userId    String   @unique @db.Uuid
+  code      String   @unique
+  active    Boolean  @default(true)
+  createdAt DateTime @default(now()) @db.Timestamp(6)
+  user      users    @relation(fields: [userId], references: [id], onDelete: Cascade)
+}
+
+model ReferralAttribution {
+  id          String   @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  affiliateId String?  @db.Uuid
+  code        String
+  medium      String?
+  campaign    String?
+  landingUrl  String?
+  ip          String?
+  ua          String?
+  createdAt   DateTime @default(now()) @db.Timestamp(6)
+
+  @@index([affiliateId], map: "idx_ref_attr_affiliate")
+}
+
+model ReferralReward {
+  id          String   @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  affiliateId String   @db.Uuid
+  purchaseId  String   @db.Uuid
+  tierId      String   @db.Uuid
+  userId      String   @db.Uuid
+  status      String   @default("QUALIFIED")
+  createdAt   DateTime @default(now()) @db.Timestamp(6)
+
+  @@index([affiliateId], map: "idx_ref_reward_affiliate")
+  @@index([purchaseId], map: "idx_ref_reward_purchase")
+}
+
+model PromoCode {
+  id                   String       @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  code                 String       @unique
+  discountType         DiscountType
+  value                Float
+  startsAt             DateTime?
+  endsAt               DateTime?
+  maxGlobalRedemptions Int?
+  maxPerUser           Int?
+  minSpendUsd          Float?
+  applicableTierIds    Json?
+  active               Boolean      @default(true)
+  createdAt            DateTime     @default(now()) @db.Timestamp(6)
+}
+
+model Session {
+  id          String     @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  createdAt   DateTime   @default(now()) @map("created_at") @db.Timestamp(6)
+  userAgent   String?    @map("user_agent")
+  ip          String?
+  firstSeen   DateTime?  @map("first_seen") @ignore
+  lastSeen    DateTime?  @map("last_seen") @ignore
+  source      String?    @ignore
+  userId      String?    @map("user_id") @ignore
+  utmCampaign String?    @map("utm_campaign") @ignore
+  utmMedium   String?    @map("utm_medium") @ignore
+  utmSource   String?    @map("utm_source") @ignore
+  pageviews   Pageview[]
+
+  @@map("sessions")
+}
+
+model Pageview {
+  id        String   @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  createdAt DateTime @default(now()) @map("created_at") @db.Timestamp(6)
+  path      String
+  referrer  String?
+  sessionId String   @map("session_id") @db.Uuid
+  userAgent String?  @map("user_agent") @ignore
+  session   Session  @relation(fields: [sessionId], references: [id], onDelete: Cascade)
+
+  @@index([sessionId], map: "idx_pageviews_session")
+  @@map("pageviews")
+}
+
+/// =====================
+/// Promotions (existing table)
+/// =====================
+model PromoRedemption {
+  promoId    String   @db.Uuid
+  userId     String   @db.Uuid
+  purchaseId String   @db.Uuid
+  createdAt  DateTime @default(now()) @db.Timestamp(6)
+
+  @@id([promoId, userId, purchaseId])
+  @@index([promoId], map: "idx_promo_redemption_promo")
+  @@index([userId], map: "idx_promo_redemption_user")
+  @@index([purchaseId], map: "idx_promo_redemption_purchase")
+  @@map("PromoRedemption")
+}
+
+model users {
+  id                     String                  @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  name                   String
+  email                  String                  @unique
+  password               String
+  phone                  String?
+  role                   String                  @default("user")
+  status                 String                  @default("active")
+  email_confirmed        Boolean                 @default(false)
+  avatar_url             String?
+  push_token             String?
+  push_notifications_enabled Boolean              @default(true)
+  last_login             DateTime?               @db.Timestamp(6)
+  created_at             DateTime                @default(now()) @db.Timestamp(6)
+  updated_at             DateTime                @default(now()) @db.Timestamp(6)
+  cart                   Json                    @default("[]")
+  affiliate              Affiliate?
+  botFeedbacks           BotFeedback[]
+  brokerSignups          BrokerSignup[]
+  challengeAccounts      ChallengeAccount[]      @relation("UserChallengeAccounts")
+  ChallengePayout        ChallengePayout[]
+  communityAccess        CommunityAccess?
+  conversations          Conversation[]
+  CourseReview           CourseReview[]
+  dailyActivities        DailyActivity[]         @relation("UserDailyActivity")
+  DashboardWorkspace     DashboardWorkspace[]
+  events                 Event[]
+  prizeWins              PrizeWinner[]           @relation("PrizeWinnerUser")
+  purchases              Purchase[]
+  quizAttempts           QuizAttempt[]
+  studentProgress        StudentProgress[]       @relation("StudentProgressUser")
+  userBadges             UserBadge[]             @relation("UserBadges")
+  userEntitlement        UserEntitlement?
+  userJourney            UserJourney?
+  accountConfirmCodes    AccountConfirmCode[]
+  assignedCommunications Communication[]         @relation("CommunicationAssignedToUser")
+  password_reset_tokens  password_reset_tokens[]
+  profileSnapshots       ProfileSnapshot[]
+  profitSharePayouts     ProfitSharePayout[]     @relation("ProfitSharePayoutUser")
+  refresh_tokens         refresh_tokens[]
+  tokenPurchases         TokenPurchase[]
+  tokenTrades            TokenTrade[]
+  tradeJournalEntries    TradeJournalEntry[]
+  tokenHolding           UserTokenHolding?
+  UserWallet             UserWallet?
+  WalletAddress          WalletAddress[]
+  WalletDeposit          WalletDeposit[]
+  heroDashboardLayout     UserHeroDashboardLayout?
+  posts                   Post[]                    @relation("UserPosts")
+
+  @@index([email], map: "idx_users_email")
+  @@index([role], map: "idx_users_role")
+}
+
+model UserHeroDashboardLayout {
+  userId      String   @id @db.Uuid
+  layouts     Json
+  activeName  String?
+  updatedAt   DateTime @updatedAt @db.Timestamp(6)
+  user        users    @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@map("user_hero_dashboard_layout")
+}
+
+model password_reset_tokens {
+  id         String   @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  user_id    String   @db.Uuid
+  token      String   @unique
+  expires_at DateTime @db.Timestamp(6)
+  used       Boolean  @default(false)
+  created_at DateTime @default(now()) @db.Timestamp(6)
+  users      users    @relation(fields: [user_id], references: [id], onDelete: Cascade, onUpdate: NoAction)
+
+  @@index([user_id], map: "idx_password_reset_tokens_user")
+}
+
+model refresh_tokens {
+  id         String   @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  user_id    String   @db.Uuid
+  token      String   @unique
+  expires_at DateTime @db.Timestamp(6)
+  created_at DateTime @default(now()) @db.Timestamp(6)
+  users      users    @relation(fields: [user_id], references: [id], onDelete: Cascade, onUpdate: NoAction)
+
+  @@index([token], map: "idx_refresh_tokens_token")
+  @@index([user_id], map: "idx_refresh_tokens_user")
+}
+
+model CourseTier {
+  id                  String             @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  name                String
+  description         String
+  price_usdt          Float
+  price_stripe        Int
+  level               Level
+  productType         CourseProductType  @default(COURSE)
+  challengePlatform   String?
+  challengeMeta       Json?
+  trailerUrl          String?
+  previewUrl          String?
+  instructorName      String?
+  instructorBio       String?
+  instructorAvatarUrl String?
+  telegramEmbedUrl    String?
+  telegramUrl         String?
+  discordWidgetId     String?
+  discordInviteUrl    String?
+  twitterTimelineUrl  String?
+  isVipProduct        Boolean            @default(false)
+  vipType             String?
+  isBundle            Boolean            @default(false)
+  bundleTierIds       Json?
+  createdAt           DateTime           @default(now()) @db.Timestamp(6)
+  updatedAt           DateTime           @default(now()) @db.Timestamp(6)
+  challengeAccounts   ChallengeAccount[] @relation("TierChallengeAccounts")
+  reviews             CourseReview[]
+  purchases           Purchase[]
+  resources           Resource[]
+  studentProgress     StudentProgress[]  @relation("StudentProgressTier")
+
+  @@index([productType], map: "idx_course_tier_product_type")
+}
+
+model Purchase {
+  id               String            @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  userId           String            @db.Uuid
+  tierId           String            @db.Uuid
+  status           PurchaseStatus    @default(PENDING)
+  txnHash          String?
+  stripeId         String?
+  createdAt        DateTime          @default(now()) @db.Timestamp(6)
+  refAffiliateId   String?           @db.Uuid
+  refCode          String?
+  promoId          String?           @db.Uuid
+  promoCode        String?
+  discountUsd      Float?
+  finalPriceUsd    Float?
+  pricingPath      String?
+  challengeAccount ChallengeAccount? @relation("PurchaseChallengeAccount")
+  tier             CourseTier        @relation(fields: [tierId], references: [id], onDelete: Cascade)
+  user             users             @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@index([userId], map: "idx_purchase_user")
+  @@index([tierId], map: "idx_purchase_tier")
+  @@index([refAffiliateId], map: "idx_purchase_ref_affiliate")
+  @@index([promoId], map: "idx_purchase_promo")
+  @@index([status, createdAt], map: "idx_purchase_status_created")
+}
+
+model ChallengeAccount {
+  id              String                 @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  userId          String                 @db.Uuid
+  tierId          String                 @db.Uuid
+  purchaseId      String                 @unique @db.Uuid
+  status          ChallengeAccountStatus @default(PENDING)
+  platform        String?
+  mt5Login        String?
+  mt5Server       String?
+  createdAt       DateTime               @default(now()) @db.Timestamp(6)
+  updatedAt       DateTime               @default(now()) @db.Timestamp(6)
+  purchase        Purchase               @relation("PurchaseChallengeAccount", fields: [purchaseId], references: [id], onDelete: Cascade)
+  tier            CourseTier             @relation("TierChallengeAccounts", fields: [tierId], references: [id], onDelete: Cascade)
+  user            users                  @relation("UserChallengeAccounts", fields: [userId], references: [id], onDelete: Cascade)
+  daily           ChallengeDailyStat[]
+  ChallengePayout ChallengePayout[]
+
+  @@index([userId], map: "idx_challenge_account_user")
+  @@index([tierId], map: "idx_challenge_account_tier")
+}
+
+model ChallengeDailyStat {
+  id                 String           @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  challengeAccountId String           @db.Uuid
+  date               DateTime         @db.Timestamp(6)
+  balance            Float?
+  equity             Float?
+  pnl                Float?
+  maxDailyDrawdown   Float?
+  maxDailyProfit     Float?
+  meta               Json?
+  createdAt          DateTime         @default(now()) @db.Timestamp(6)
+  account            ChallengeAccount @relation(fields: [challengeAccountId], references: [id], onDelete: Cascade)
+
+  @@unique([challengeAccountId, date], map: "uniq_challenge_daily_account_date")
+  @@index([challengeAccountId], map: "idx_challenge_daily_account")
+  @@index([date], map: "idx_challenge_daily_date")
+}
+
+model Resource {
+  id               String             @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  tierId           String             @db.Uuid
+  type             ResourceType
+  url              String
+  tier             CourseTier         @relation(fields: [tierId], references: [id], onDelete: Cascade)
+  resourceProgress ResourceProgress[]
+}
+
+model CourseReview {
+  id         String     @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  tierId     String     @db.Uuid
+  userId     String?    @db.Uuid
+  rating     Int
+  comment    String?
+  created_at DateTime   @default(now()) @db.Timestamp(6)
+  tier       CourseTier @relation(fields: [tierId], references: [id], onDelete: Cascade)
+  user       users?     @relation(fields: [userId], references: [id])
+
+  @@index([tierId], map: "idx_review_tier")
+  @@index([userId], map: "idx_review_user")
+}
+
+model CommunityAccess {
+  id                      String    @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  userId                  String    @unique @db.Uuid
+  telegram                Boolean   @default(false)
+  discord                 Boolean   @default(false)
+  twitter                 Boolean   @default(false)
+  vip                     Boolean   @default(false)
+  vipStart                DateTime?
+  vipEnd                  DateTime?
+  vipStripeSubscriptionId String?
+  user                    users     @relation(fields: [userId], references: [id], onDelete: Cascade)
+}
+
+model BrokerSignup {
+  id           String   @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  userId       String?  @db.Uuid
+  referralCode String
+  createdAt    DateTime @default(now()) @db.Timestamp(6)
+  user         users?   @relation(fields: [userId], references: [id])
+}
+
+model Banner {
+  id        String   @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  imageUrl  String?  @map("image_url")
+  title     String?
+  subtitle  String?
+  badge     String?
+  href      String?
+  createdAt DateTime @default(now()) @map("created_at") @db.Timestamp(6)
+
+  @@map("banners")
+}
+
+/// =====================
+/// Careers / Jobs
+/// =====================
+model Job {
+  id           String           @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  title        String
+  description  String
+  requirements Json?
+  expectedPay  String?
+  closingDate  DateTime         @db.Timestamp(6)
+  isActive     Boolean          @default(true)
+  createdAt    DateTime         @default(now()) @db.Timestamp(6)
+  updatedAt    DateTime         @default(now()) @db.Timestamp(6)
+  applications JobApplication[]
+
+  @@index([isActive], map: "idx_job_active")
+  @@index([closingDate], map: "idx_job_closing_date")
+}
+
+model JobApplication {
+  id          String   @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  jobId       String   @db.Uuid
+  name        String
+  email       String
+  phone       String?
+  coverLetter String?
+  cvUrl       String
+  status      String   @default("received")
+  createdAt   DateTime @default(now()) @db.Timestamp(6)
+  job         Job      @relation(fields: [jobId], references: [id], onDelete: Cascade)
+
+  @@index([jobId], map: "idx_job_application_job")
+}
+
+model Communication {
+  id               String                @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  ticketId         String                @unique
+  name             String
+  email            String
+  message          String
+  courseId         String?               @map("course_id")
+  courseName       String?               @map("course_name")
+  locale           String?
+  url              String?
+  utm              Json?
+  read             Boolean               @default(false)
+  createdAt        DateTime              @default(now()) @map("created_at") @db.Timestamp(6)
+  phone            String?
+  status           CommunicationStatus   @default(OPEN)
+  priority         CommunicationPriority @default(MEDIUM)
+  assignedAdminId  String?               @db.Uuid
+  completedAt      DateTime?
+  scheduledAt      DateTime?
+  scheduleStatus   ScheduleStatus?
+  scheduleChannel  String?               @default("whatsapp_call")
+  scheduleTz       String?
+  scheduleDuration Int?                  @default(30)
+  assignedAdmin    users?                @relation("CommunicationAssignedToUser", fields: [assignedAdminId], references: [id])
+
+  @@index([read], map: "idx_communications_read")
+  @@index([createdAt], map: "idx_communications_created_at")
+  @@index([status], map: "idx_communications_status")
+  @@index([assignedAdminId], map: "idx_communications_assignee")
+  @@index([scheduledAt, scheduleStatus], map: "idx_communications_schedule")
+  @@map("communications")
+}
+
+model StudentProgress {
+  id                String             @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  userId            String             @db.Uuid
+  tierId            String             @db.Uuid
+  lessonsCompleted  Int                @default(0)
+  videosWatched     Int                @default(0)
+  pdfsViewed        Int                @default(0)
+  quizzesScore      Float              @default(0)
+  tradingScore      Int                @default(0)
+  level             Int                @default(1)
+  xp                Int                @default(0)
+  streak            Int                @default(0)
+  lastActiveDate    DateTime?
+  completedAt       DateTime?
+  certificateIssued Boolean            @default(false)
+  createdAt         DateTime           @default(now()) @db.Timestamp(6)
+  updatedAt         DateTime           @default(now()) @db.Timestamp(6)
+  resourceProgress  ResourceProgress[]
+  tier              CourseTier         @relation("StudentProgressTier", fields: [tierId], references: [id], onDelete: Cascade)
+  user              users              @relation("StudentProgressUser", fields: [userId], references: [id], onDelete: Cascade)
+
+  @@unique([userId, tierId], map: "unique_user_tier_progress")
+  @@index([userId], map: "idx_progress_user")
+  @@index([tierId], map: "idx_progress_tier")
+  @@index([level], map: "idx_progress_level")
+}
+
+model ResourceProgress {
+  id           String          @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  progressId   String          @db.Uuid
+  resourceId   String          @db.Uuid
+  completed    Boolean         @default(false)
+  timeSpent    Int             @default(0)
+  lastPosition Int?
+  completedAt  DateTime?
+  createdAt    DateTime        @default(now()) @db.Timestamp(6)
+  updatedAt    DateTime        @default(now()) @db.Timestamp(6)
+  progress     StudentProgress @relation(fields: [progressId], references: [id], onDelete: Cascade)
+  resource     Resource        @relation(fields: [resourceId], references: [id], onDelete: Cascade)
+
+  @@unique([progressId, resourceId], map: "unique_progress_resource")
+  @@index([progressId], map: "idx_resource_progress_progress")
+  @@index([resourceId], map: "idx_resource_progress_resource")
+}
+
+model Badge {
+  id             String        @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  name           String
+  description    String
+  imageUrl       String?
+  category       BadgeCategory @default(MILESTONE)
+  unlockCriteria Json
+  rarity         String        @default("common")
+  displayOrder   Int           @default(0)
+  isActive       Boolean       @default(true)
+  createdAt      DateTime      @default(now()) @db.Timestamp(6)
+  userBadges     UserBadge[]
+
+  @@index([category], map: "idx_badge_category")
+  @@index([isActive], map: "idx_badge_active")
+}
+
+model UserBadge {
+  id         String   @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  userId     String   @db.Uuid
+  badgeId    String   @db.Uuid
+  unlockedAt DateTime @default(now()) @db.Timestamp(6)
+  badge      Badge    @relation(fields: [badgeId], references: [id], onDelete: Cascade)
+  user       users    @relation("UserBadges", fields: [userId], references: [id], onDelete: Cascade)
+
+  @@unique([userId, badgeId], map: "unique_user_badge")
+  @@index([userId], map: "idx_user_badge_user")
+  @@index([badgeId], map: "idx_user_badge_badge")
+}
+
+model DailyActivity {
+  id               String   @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  userId           String   @db.Uuid
+  activityDate     DateTime @db.Date
+  lessonsCompleted Int      @default(0)
+  videosWatched    Int      @default(0)
+  pdfsViewed       Int      @default(0)
+  timeSpent        Int      @default(0)
+  xpEarned         Int      @default(0)
+  createdAt        DateTime @default(now()) @db.Timestamp(6)
+  user             users    @relation("UserDailyActivity", fields: [userId], references: [id], onDelete: Cascade)
+
+  @@unique([userId, activityDate], map: "unique_user_date_activity")
+  @@index([userId], map: "idx_daily_activity_user")
+  @@index([activityDate], map: "idx_daily_activity_date")
+}
+
+model Prize {
+  id        String      @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  name      String
+  photoUrl  String?
+  createdAt DateTime    @default(now()) @db.Timestamp(6)
+  draws     PrizeDraw[]
+}
+
+model PrizeDraw {
+  id         String        @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  prizeId    String        @db.Uuid
+  audience   Audience
+  executedAt DateTime      @default(now()) @db.Timestamp(6)
+  prize      Prize         @relation(fields: [prizeId], references: [id], onDelete: Cascade)
+  winners    PrizeWinner[]
+
+  @@index([prizeId], map: "idx_prizedraw_prize")
+  @@index([audience, executedAt], map: "idx_prizedraw_audience_time")
+}
+
+model PrizeWinner {
+  id        String    @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  drawId    String    @db.Uuid
+  userId    String?   @db.Uuid
+  position  Int
+  name      String
+  createdAt DateTime  @default(now()) @db.Timestamp(6)
+  draw      PrizeDraw @relation(fields: [drawId], references: [id], onDelete: Cascade)
+  user      users?    @relation("PrizeWinnerUser", fields: [userId], references: [id])
+
+  @@index([drawId], map: "idx_prizewinner_draw")
+  @@index([userId], map: "idx_prizewinner_user")
+}
+
+model Conversation {
+  id        String    @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  userId    String    @db.Uuid
+  title     String?
+  startedAt DateTime  @default(now()) @db.Timestamp(6)
+  updatedAt DateTime  @default(now()) @db.Timestamp(6)
+  user      users     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  messages  Message[]
+
+  @@index([userId], map: "idx_conversation_user")
+}
+
+model Message {
+  id             String       @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  conversationId String       @db.Uuid
+  role           MessageRole
+  text           String
+  meta           Json?
+  tone           Json?
+  createdAt      DateTime     @default(now()) @db.Timestamp(6)
+  conversation   Conversation @relation(fields: [conversationId], references: [id], onDelete: Cascade)
+
+  @@index([conversationId], map: "idx_message_conversation")
+  @@index([role], map: "idx_message_role")
+}
+
+model Quiz {
+  id        String        @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  slug      String        @unique
+  title     String
+  questions Json
+  metadata  Json?
+  createdAt DateTime      @default(now()) @db.Timestamp(6)
+  attempts  QuizAttempt[]
+}
+
+model QuizAttempt {
+  id          String   @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  userId      String   @db.Uuid
+  quizId      String   @db.Uuid
+  answers     Json
+  score       Float    @default(0)
+  passed      Boolean  @default(false)
+  startedAt   DateTime @default(now()) @db.Timestamp(6)
+  submittedAt DateTime @default(now()) @db.Timestamp(6)
+  quiz        Quiz     @relation(fields: [quizId], references: [id], onDelete: Cascade)
+  user        users    @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@index([userId], map: "idx_quizattempt_user")
+  @@index([quizId], map: "idx_quizattempt_quiz")
+}
+
+model BotFeedback {
+  id        String   @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  userId    String?  @db.Uuid
+  messageId String?
+  feedback  String
+  context   Json?
+  createdAt DateTime @default(now()) @db.Timestamp(6)
+  user      users?   @relation(fields: [userId], references: [id])
+
+  @@index([userId], map: "idx_botfeedback_user")
+  @@index([feedback], map: "idx_botfeedback_type")
+}
+
+model Event {
+  id        String   @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  userId    String?  @db.Uuid
+  sessionId String?
+  type      String
+  payload   Json?
+  ts        DateTime @default(now()) @db.Timestamp(6)
+  user      users?   @relation(fields: [userId], references: [id])
+
+  @@index([userId], map: "idx_event_user")
+  @@index([type], map: "idx_event_type")
+  @@index([ts], map: "idx_event_ts")
+}
+
+model AccountConfirmCode {
+  id        Int      @id @default(autoincrement())
+  userId    String   @map("user_id") @db.Uuid
+  code      String   @db.VarChar(6)
+  expiresAt DateTime @map("expires_at")
+  used      Boolean  @default(false)
+  createdAt DateTime @default(now()) @map("created_at")
+  user      users    @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@index([userId], map: "idx_account_confirm_codes_user_id")
+  @@index([code], map: "idx_account_confirm_codes_code")
+  @@map("account_confirm_codes")
+}
+
+model UserTokenHolding {
+  userId              String    @id @db.Uuid
+  balance             BigInt    @default(0)
+  lockedUntil         DateTime?
+  earnedUsdt          Float     @default(0)
+  updatedAt           DateTime  @default(now()) @db.Timestamp(6)
+  dividendsDisabled   Boolean   @default(false)
+  dividendsDisabledAt DateTime?
+  user                users     @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@index([userId], map: "idx_user_token_holding_user")
+  @@map("user_token_holdings")
+}
+
+model ProfileSnapshot {
+  id                String   @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  userId            String   @db.Uuid
+  userTokens        BigInt
+  totalSupply       BigInt
+  soldSupply        BigInt
+  remainingSupply   BigInt
+  /// store as float 0..1
+  pctOfTokenPool    Float
+  /// store as float 0..0.10 (since token pool represents 10% of company)
+  pctOfCompanyValue Float
+  createdAt         DateTime @default(now()) @db.Timestamp(6)
+  user              users    @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@index([userId], map: "idx_profile_snapshot_user")
+  @@map("profile_snapshots")
+}
+
+model TokenSale {
+  id                 Int              @id
+  symbol             String
+  totalSupply        BigInt
+  soldSupply         BigInt           @default(0)
+  active             Boolean          @default(true)
+  targetTokensPerMin Float            @default(100000)
+  priceUsdtPerTok    Float            @default(0.1)
+  basePriceUsdt      Float            @default(0.1)
+  curveK             Float            @default(2.0)
+  demandK            Float            @default(0.5)
+  targetBuysPerMin   Float            @default(1.0)
+  profitSharePct     Float            @default(0.1)
+  updatedAt          DateTime         @updatedAt
+  createdAt          DateTime         @default(now())
+  ticks              TokenPriceTick[]
+  purchases          TokenPurchase[]
+  tokenTrades        TokenTrade[]
+
+  @@map("token_sales")
+}
+
+model TokenPurchase {
+  id          String              @id @default(cuid())
+  userId      String              @db.Uuid
+  saleId      Int
+  tokens      BigInt
+  usdtDue     Float
+  method      String
+  address     String?
+  txnHash     String?
+  status      TokenPurchaseStatus @default(PENDING)
+  createdAt   DateTime            @default(now()) @db.Timestamp(6)
+  confirmedAt DateTime?           @db.Timestamp(6)
+  priceAtBuy  Float               @default(0.1)
+  sale        TokenSale           @relation(fields: [saleId], references: [id], onDelete: Cascade)
+  user        users               @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@index([userId])
+  @@index([saleId])
+  @@index([status])
+  @@map("token_purchases")
+}
+
+model TokenPriceTick {
+  id           String    @id @default(cuid())
+  saleId       Int
+  t            DateTime  @default(now())
+  price        Float
+  soldSupply   BigInt
+  volumeTokens BigInt    @default(0)
+  volumeUsdt   Float     @default(0)
+  meta         Json?
+  sale         TokenSale @relation(fields: [saleId], references: [id], onDelete: Cascade)
+
+  @@index([saleId, t])
+  @@map("token_price_ticks")
+}
+
+model TokenTrade {
+  id        String         @id @default(cuid())
+  userId    String         @db.Uuid
+  saleId    Int
+  side      TokenTradeSide
+  price     Float
+  tokens    BigInt
+  usdt      Float
+  meta      Json?
+  createdAt DateTime       @default(now()) @db.Timestamp(6)
+  sale      TokenSale      @relation(fields: [saleId], references: [id], onDelete: Cascade)
+  user      users          @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@index([userId, createdAt], map: "idx_token_trade_user_time")
+  @@index([saleId, createdAt], map: "idx_token_trade_sale_time")
+  @@index([saleId, side, createdAt], map: "idx_token_trade_sale_side_time")
+  @@map("token_trades")
+}
+
+model UserWallet {
+  userId           String   @id @db.Uuid
+  usdtAddress      String?
+  usdtNetwork      String?
+  pmkxErc20Address String?
+  usdtBalance      Float    @default(0)
+  pmkxBalance      BigInt   @default(0)
+  createdAt        DateTime @default(now()) @db.Timestamp(6)
+  updatedAt        DateTime @updatedAt @db.Timestamp(6)
+  user             users    @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@map("user_wallets")
+}
+
+model WalletAddress {
+  id        String        @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  userId    String        @db.Uuid
+  network   WalletNetwork
+  asset     WalletAsset
+  address   String        @unique
+  createdAt DateTime      @default(now()) @db.Timestamp(6)
+  user      users         @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@index([userId])
+  @@index([network, asset])
+  @@map("wallet_addresses")
+}
+
+model WalletDeposit {
+  id          String              @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  userId      String              @db.Uuid
+  network     WalletNetwork
+  asset       WalletAsset
+  address     String
+  txHash      String
+  amount      Float
+  status      WalletDepositStatus @default(DETECTED)
+  createdAt   DateTime            @default(now()) @db.Timestamp(6)
+  confirmedAt DateTime?           @db.Timestamp(6)
+  user        users               @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@unique([network, asset, txHash], map: "uniq_wallet_deposit_tx")
+  @@index([userId])
+  @@index([status])
+  @@map("wallet_deposits")
+}
+
+model TokenCandle {
+  id           String   @id @default(cuid())
+  saleId       Int
+  bucketStart  DateTime
+  intervalSec  Int
+  open         Float
+  high         Float
+  low          Float
+  close        Float
+  volumeTokens BigInt   @default(0)
+  volumeUsdt   Float    @default(0)
+  createdAt    DateTime @default(now())
+  updatedAt    DateTime @updatedAt
+
+  @@unique([saleId, bucketStart, intervalSec])
+  @@index([saleId, bucketStart])
+}
+
+model UserJourney {
+  userId        String       @id @db.Uuid
+  track         JourneyTrack @default(LEARN)
+  stage         JourneyStage @default(SIGNED_UP)
+  evalReady     Boolean      @default(false)
+  firstPayoutAt DateTime?
+  lastNudgeAt   DateTime?
+  createdAt     DateTime     @default(now()) @db.Timestamp(6)
+  updatedAt     DateTime     @updatedAt @db.Timestamp(6)
+  user          users        @relation(fields: [userId], references: [id], onDelete: Cascade)
+}
+
+model DashboardWorkspace {
+  id        String            @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  userId    String            @db.Uuid
+  name      String
+  isDefault Boolean           @default(false)
+  createdAt DateTime          @default(now()) @db.Timestamp(6)
+  updatedAt DateTime          @updatedAt @db.Timestamp(6)
+  layouts   DashboardLayout[]
+  user      users             @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@index([userId])
+}
+
+model DashboardLayout {
+  id          String             @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  workspaceId String             @db.Uuid
+  layout      Json
+  presetKey   String?
+  createdAt   DateTime           @default(now()) @db.Timestamp(6)
+  updatedAt   DateTime           @updatedAt @db.Timestamp(6)
+  workspace   DashboardWorkspace @relation(fields: [workspaceId], references: [id], onDelete: Cascade)
+
+  @@index([workspaceId])
+}
+
+model UserEntitlement {
+  userId          String   @id @db.Uuid
+  canUseDashboard Boolean  @default(false)
+  maxWorkspaces   Int      @default(1)
+  maxWidgets      Int      @default(6)
+  canUseNews      Boolean  @default(false)
+  canUseMultiGrid Boolean  @default(false)
+  canBuyEval      Boolean  @default(false)
+  canJoinDiscord  Boolean  @default(false)
+  canJoinTelegram Boolean  @default(false)
+  updatedAt       DateTime @updatedAt @db.Timestamp(6)
+  user            users    @relation(fields: [userId], references: [id], onDelete: Cascade)
+}
+
+model ChallengePayout {
+  id                 String           @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  userId             String           @db.Uuid
+  challengeAccountId String           @db.Uuid
+  amountUsd          Float
+  createdAt          DateTime         @default(now()) @db.Timestamp(6)
+  account            ChallengeAccount @relation(fields: [challengeAccountId], references: [id], onDelete: Cascade)
+  user               users            @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@index([userId, createdAt])
+}
+
+model ProfitSharePayout {
+  id        String   @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  userId    String   @db.Uuid
+  month     String
+  amount    Float
+  currency  String   @default("USDT")
+  meta      Json?
+  createdAt DateTime @default(now()) @db.Timestamp(6)
+  user      users    @relation("ProfitSharePayoutUser", fields: [userId], references: [id], onDelete: Cascade)
+
+  @@index([userId, month])
+  @@map("profit_share_payouts")
+}
+
+model TradeJournalEntry {
+  id             String      @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  userId         String      @db.Uuid
+  pair           String
+  side           TradeSide
+  entryPrice     Float?
+  exitPrice      Float?
+  slPrice        Float?
+  tpPrice        Float?
+  size           Float?
+  accountBalance Float?
+  leverage       Int?
+  openedAt       DateTime?
+  closedAt       DateTime?
+  pnl            Float?
+  result         TradeResult @default(OPEN)
+  notes          String?
+  createdAt      DateTime    @default(now()) @db.Timestamp(6)
+  updatedAt      DateTime    @updatedAt @db.Timestamp(6)
+  user           users       @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@index([userId, createdAt], map: "idx_trade_journal_user_created")
+  @@index([pair], map: "idx_trade_journal_pair")
+  @@index([userId, openedAt], map: "idx_trade_journal_user_opened")
+  @@map("trade_journal_entries")
+}
+
+enum DiscountType {
+  PERCENT
+  AMOUNT
+}
+
+enum Level {
+  BEGINNER
+  INTERMEDIATE
+  ADVANCED
+}
+
+enum PurchaseStatus {
+  PENDING
+  CONFIRMED
+  FAILED
+}
+
+enum ResourceType {
+  pdf
+  video
+}
+
+enum CourseProductType {
+  COURSE
+  SUBSCRIPTION_VIP
+  SUBSCRIPTION_AI
+  CHALLENGE
+}
+
+enum ChallengeAccountStatus {
+  PENDING
+  ACTIVE
+  FAILED
+  PASSED
+}
+
+enum ScheduleStatus {
+  REQUESTED
+  CONFIRMED
+  CANCELLED
+}
+
+enum CommunicationStatus {
+  OPEN
+  READ
+  ESCALATED
+  RESOLVED
+}
+
+enum CommunicationPriority {
+  LOW
+  MEDIUM
+  HIGH
+  CRITICAL
+}
+
+enum BadgeCategory {
+  MILESTONE
+  ACHIEVEMENT
+  STREAK
+  SPECIAL
+}
+
+enum Audience {
+  ENROLLED
+  VISITOR
+}
+
+enum MessageRole {
+  user
+  bot
+}
+
+enum TokenPurchaseStatus {
+  PENDING
+  CONFIRMED
+  FAILED
+}
+
+enum TokenTradeSide {
+  BUY
+  SELL
+}
+
+enum WalletNetwork {
+  ERC20
+  TRC20
+}
+
+enum WalletAsset {
+  USDT
+  PMKX
+}
+
+enum WalletDepositStatus {
+  DETECTED
+  CONFIRMED
+  REJECTED
+}
+
+enum JourneyTrack {
+  LEARN
+  FUNDED
+  EXECUTE
+}
+
+enum JourneyStage {
+  SIGNED_UP
+  LEARNING
+  COMMUNITY
+  DASHBOARD
+  EVAL_READY
+  EVALUATING
+  FUNDED
+  EXECUTING
+}
+
+enum TradeSide {
+  BUY
+  SELL
+}
+
+enum TradeResult {
+  OPEN
+  WIN
+  LOSS
+  BREAKEVEN
+}
+
+// =====================
+// Social Media Features
+// =====================
+
+model Post {
+  id        String      @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  userId    String      @db.Uuid
+  content   String
+  imageUrl  String?
+  createdAt DateTime    @default(now()) @db.Timestamp(6)
+  updatedAt DateTime    @default(now()) @db.Timestamp(6)
+  user      users       @relation("UserPosts", fields: [userId], references: [id], onDelete: Cascade)
+  likes     PostLike[]
+  comments  PostComment[]
+
+  @@index([userId], map: "idx_post_user")
+  @@index([createdAt], map: "idx_post_created")
+}
+
+model PostLike {
+  id        String   @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  postId    String   @db.Uuid
+  userId    String   @db.Uuid
+  createdAt DateTime @default(now()) @db.Timestamp(6)
+  post      Post     @relation(fields: [postId], references: [id], onDelete: Cascade)
+
+  @@unique([postId, userId])
+  @@index([postId], map: "idx_post_like_post")
+  @@index([userId], map: "idx_post_like_user")
+}
+
+model PostComment {
+  id        String   @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  postId    String   @db.Uuid
+  userId    String   @db.Uuid
+  content   String
+  createdAt DateTime @default(now()) @db.Timestamp(6)
+  post      Post     @relation(fields: [postId], references: [id], onDelete: Cascade)
+
+  @@index([postId], map: "idx_post_comment_post")
+  @@index([userId], map: "idx_post_comment_user")
+}
+
+model TradingPairVote {
+  id        String    @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  userId    String    @db.Uuid
+  symbol    String
+  vote      VoteType
+  createdAt DateTime  @default(now()) @db.Timestamp(6)
+  updatedAt DateTime  @default(now()) @db.Timestamp(6)
+
+  @@unique([userId, symbol])
+  @@index([symbol], map: "idx_vote_symbol")
+  @@index([userId], map: "idx_vote_user")
+}
+
+model UserFollow {
+  id          String   @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  followerId  String   @db.Uuid
+  followingId String   @db.Uuid
+  createdAt   DateTime @default(now()) @db.Timestamp(6)
+
+  @@unique([followerId, followingId])
+  @@index([followerId], map: "idx_follow_follower")
+  @@index([followingId], map: "idx_follow_following")
+}
+
+model UserProfile {
+  userId      String   @id @db.Uuid
+  bio         String?
+  avatarUrl   String?
+  bannerUrl   String?
+  location    String?
+  website     String?
+  twitterHandle String?
+  telegramHandle String?
+  updatedAt   DateTime @default(now()) @db.Timestamp(6)
+
+  @@map("user_profiles")
+}
+
+enum VoteType {
+  STRONG_SELL
+  SELL
+  NEUTRAL
+  BUY
+  STRONG_BUY
+}
+
+// =====================
+// Trading Pair Groups
+// =====================
+
+model TradingGroup {
+  id          String              @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  name        String
+  symbol      String
+  description String?
+  imageUrl    String?
+  creatorId   String              @db.Uuid
+  isPublic    Boolean             @default(true)
+  createdAt   DateTime            @default(now()) @db.Timestamp(6)
+  updatedAt   DateTime            @default(now()) @db.Timestamp(6)
+  members     TradingGroupMember[]
+  messages    TradingGroupMessage[]
+
+  @@index([symbol], map: "idx_trading_group_symbol")
+  @@index([creatorId], map: "idx_trading_group_creator")
+}
+
+model TradingGroupMember {
+  id        String       @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  groupId   String       @db.Uuid
+  userId    String       @db.Uuid
+  role      GroupRole    @default(MEMBER)
+  joinedAt  DateTime     @default(now()) @db.Timestamp(6)
+  group     TradingGroup @relation(fields: [groupId], references: [id], onDelete: Cascade)
+
+  @@unique([groupId, userId])
+  @@index([groupId], map: "idx_group_member_group")
+  @@index([userId], map: "idx_group_member_user")
+}
+
+model TradingGroupMessage {
+  id        String       @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  groupId   String       @db.Uuid
+  userId    String       @db.Uuid
+  content   String
+  imageUrl  String?
+  createdAt DateTime     @default(now()) @db.Timestamp(6)
+  group     TradingGroup @relation(fields: [groupId], references: [id], onDelete: Cascade)
+
+  @@index([groupId], map: "idx_group_message_group")
+  @@index([userId], map: "idx_group_message_user")
+}
+
+enum GroupRole {
+  ADMIN
+  MODERATOR
+  MEMBER
+}

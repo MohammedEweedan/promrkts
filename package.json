@@ -1,0 +1,8 @@
+{
+  "name": "edu-monorepo",
+  "version": "0.1.0",
+  "private": true,
+  "scripts": {
+    "_note": "Run frontend and backend individually: cd backend && npm run dev | cd frontend && npm start"
+  }
+}

@@ -1,0 +1,34 @@
+/* Custom fonts and section heading styles */
+
+/* Note: @font-face declarations are injected in public/index.html */
+
+/* Global defaults: use Futura in LTR, Hacen in RTL */
+html[dir='ltr'] body {
+  font-family: 'FuturaCustom', ui-sans-serif, system-ui, -apple-system, Segoe UI, Roboto, Helvetica, Arial, 'Apple Color Emoji', 'Segoe UI Emoji' !important;
+}
+html[dir='rtl'] body {
+  font-family: 'Hacen-Liner-Print-Out', ui-sans-serif, system-ui, -apple-system, Segoe UI, Roboto, Helvetica, Arial, 'Apple Color Emoji', 'Segoe UI Emoji' !important;
+  font-weight: 400; /* only 400 face provided */
+}
+
+/* Reusable section heading style */
+.section-heading {
+  font-family: 'FuturaCustom', ui-sans-serif, system-ui, -apple-system, Segoe UI, Roboto, Helvetica, Arial, 'Apple Color Emoji', 'Segoe UI Emoji' !important;
+  font-weight: 500;
+  letter-spacing: 0.02em;
+  line-height: 1.02;
+  position: relative;
+  display: inline-block;
+}
+
+/* Accent underline */
+.section-heading::after {
+  content: '';
+  background: #65a8bf; /* accent */
+}
+
+/* RTL: switch to Damascus and center underline remains */
+html[dir='rtl'] .section-heading,
+body[dir='rtl'] .section-heading {
+  font-family: 'Hacen-Liner-Print-Out' !important;
+}

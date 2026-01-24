@@ -1,0 +1,34 @@
+body {
+  margin: 0;
+  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', 'Oxygen',
+    'Ubuntu', 'Cantarell', 'Fira Sans', 'Droid Sans', 'Helvetica Neue',
+    sans-serif;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+code {
+  font-family: source-code-pro, Menlo, Monaco, Consolas, 'Courier New',
+    monospace;
+}
+
+/* Optional CSS variables if needed by plain CSS elements (do not override Chakra) */
+:root[data-theme='light'] {
+  --accent: #65a8bf;
+}
+
+:root[data-theme='dark'] {
+  --accent: #cdae6f;
+}
+
+html, body, #root {
+  height: 100%;
+}
+
+.tradingview-widget-copyright {
+  display: none !important;
+  visibility: hidden !important;
+  height: 0 !important;
+  margin: 0 !important;
+  padding: 0 !important;
+}

@@ -1,0 +1,28 @@
+config:
+  target: "http://localhost:3003"
+  phases:
+    - duration: 60
+      arrivalRate: 200     # users per second
+      name: warmup
+    - duration: 180
+      arrivalRate: 500
+      rampTo: 1200         # ramp to high load
+      name: ramp
+    - duration: 120
+      arrivalRate: 1200
+      name: sustain
+  processor: ./artillery.processor.js
+  http:
+    timeout: 60000
+    pool: 1000
+  plugins:
+    metrics-by-endpoint: {}
+scenarios:
+  - name: anonymous-user-browse
+    flow:
+      - get:
+          url: "/health"
+      - get:
+          url: "/courses"
+      - get:
+          url: "/content/banners"

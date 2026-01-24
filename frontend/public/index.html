@@ -1,0 +1,95 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <link rel="icon" id="app-favicon" href="%PUBLIC_URL%/favicon.ico" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <meta name="theme-color" content="#b8b8b8" />
+    <meta
+      name="description"
+      content="promrkts - where traders learn, earn and grow together."
+    />
+    <link rel="apple-touch-icon" id="app-apple-icon" href="%PUBLIC_URL%/favicon.ico" />
+    <!-- Inline webfonts loaded from public/fonts to avoid css-loader path resolution -->
+    <!-- Preload fonts to reduce layout shift and ensure early availability -->
+    <link rel="preload" href="fonts/Futura-Medium-01.ttf" as="font" type="font/ttf" crossorigin>
+    <link rel="preload" href="fonts/Futura-MediumItalic-02.ttf" as="font" type="font/ttf" crossorigin>
+    <link rel="preload" href="fonts/Hacen-Liner-Print-out.ttf" as="font" type="font/ttf" crossorigin>
+    <style>
+      /* Futura for Latin */
+      @font-face {
+        font-family: 'FuturaCustom';
+        src: url('fonts/Futura-Medium-01.ttf') format('truetype');
+        font-weight: 500;
+        font-style: normal;
+        font-display: swap;
+        unicode-range: U+0000-00FF, U+0100-024F;
+      }
+      @font-face {
+        font-family: 'FuturaCustom';
+        src: url('fonts/Futura-MediumItalic-02.ttf') format('truetype');
+        font-weight: 500;
+        font-style: italic;
+        font-display: swap;
+        unicode-range: U+0000-00FF, U+0100-024F;
+      }
+      /* Arabic (Hacen Liner) */
+      @font-face {
+        font-family: 'Hacen-Liner-Print-Out';
+        src: url('fonts/Hacen-Liner-Print-out.ttf') format('truetype');
+        font-weight: 400;
+        font-style: normal;
+        font-display: swap;
+        unicode-range: U+0600-06FF, U+0750-077F, U+FB50-FDFF, U+FE70-FEFF;
+      }
+      @font-face {
+        font-family: 'Hacen-Liner-Print-Out';
+        src: url('fonts/Hacen-Liner-Print-out.ttf') format('truetype');
+        font-weight: 500;
+        font-style: normal;
+        font-display: swap;
+        unicode-range: U+0600-06FF, U+0750-077F, U+FB50-FDFF, U+FE70-FEFF;
+      }
+    </style>
+    <link rel="manifest" id="app-manifest" href="%PUBLIC_URL%/manifest.json" />
+    <title>promrkts</title>
+  </head>
+  <body>
+    <noscript>You need to enable JavaScript to run this app.</noscript>
+    <div id="root"></div>
+    <script>
+      (function() {
+        try {
+          var lng = localStorage.getItem('i18nextLng') || 'en';
+          var base = (document.querySelector('base') && document.querySelector('base').href) || '';
+          var isArabic = (lng || '').toLowerCase().startsWith('ar');
+          var favicon = document.getElementById('app-favicon');
+          var apple = document.getElementById('app-apple-icon') || document.createElement('link');
+          apple.rel = 'apple-touch-icon';
+          apple.id = 'app-apple-icon';
+          document.head.appendChild(apple);
+          var manifest = document.getElementById('app-manifest');
+          if (isArabic) {
+            if (favicon) favicon.href = base + '%PUBLIC_URL%/favicon.ico'.replace('%PUBLIC_URL%','');
+            if (apple) apple.href = base + '%PUBLIC_URL%/favicon.ico'.replace('%PUBLIC_URL%','');
+            if (manifest) manifest.href = base + '%PUBLIC_URL%/manifest-ar.json'.replace('%PUBLIC_URL%','');
+          } else {
+            if (favicon) favicon.href = base + '%PUBLIC_URL%/favicon.ico'.replace('%PUBLIC_URL%','');
+            if (apple) apple.href = base + '%PUBLIC_URL%/favicon.ico'.replace('%PUBLIC_URL%','');
+            if (manifest) manifest.href = base + '%PUBLIC_URL%/manifest.json'.replace('%PUBLIC_URL%','');
+          }
+        } catch(e) {}
+      })();
+    </script>
+    <!--
+      This HTML file is a template.
+      If you open it directly in the browser, you will see an empty page.
+
+      You can add webfonts, meta tags, or analytics to this file.
+      The build step will place the bundled scripts into the <body> tag.
+
+      To begin the development, run `npm start` or `yarn start`.
+      To create a production bundle, use `npm run build` or `yarn build`.
+    -->
+  </body>
+</html>
