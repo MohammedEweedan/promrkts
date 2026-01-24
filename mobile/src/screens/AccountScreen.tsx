@@ -21,7 +21,6 @@ import * as SecureStore from 'expo-secure-store';
 import { useTheme } from '../context/ThemeContext';
 import { useAuth } from '../context/AuthContext';
 import { Header } from '../components';
-import InfoCard from '../components/InfoCard';
 import { getMyPurchases } from '../services/purchasePolling';
 import api, { uploadAPI } from '../api/client';
 
@@ -259,9 +258,6 @@ export default function AccountScreen() {
           </TouchableOpacity>
           <Text style={[styles.avatarHint, { color: colors.textMuted }]}>{t('account.edit_profile')}</Text>
         </View>
-
-        {/* Membership Card */}
-        <InfoCard membershipType="premium" />
 
         {/* Progress & Achievements */}
         <TouchableOpacity 

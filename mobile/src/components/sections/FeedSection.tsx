@@ -56,6 +56,7 @@ export default function FeedSection({ refreshing, onRefresh }: Props) {
   const [loading, setLoading] = useState(true);
   const [posting, setPosting] = useState(false);
   const [showCreateModal, setShowCreateModal] = useState(false);
+  const [followingIds, setFollowingIds] = useState<Set<string>>(new Set());
 
   const loadPosts = useCallback(async () => {
     try {
@@ -145,6 +146,28 @@ export default function FeedSection({ refreshing, onRefresh }: Props) {
     }
   };
 
+  const toggleFollow = async (userId: string, event?: any) => {
+    if (event) event.stopPropagation();
+    if (!isAuthenticated) {
+      Alert.alert('Login Required', 'Please login to follow users');
+      return;
+    }
+    try {
+      const resp = await socialAPI.followUser(userId);
+      setFollowingIds(prev => {
+        const newSet = new Set(prev);
+        if (resp.data?.following) {
+          newSet.add(userId);
+        } else {
+          newSet.delete(userId);
+        }
+        return newSet;
+      });
+    } catch (error) {
+      console.error('Failed to toggle follow:', error);
+    }
+  };
+
   const formatTime = (dateStr: string) => {
     const date = new Date(dateStr);
     const now = new Date();
@@ -166,33 +189,58 @@ export default function FeedSection({ refreshing, onRefresh }: Props) {
       onPress={() => navigateToPostDetail(item)}
       activeOpacity={0.8}
     >
-      <TouchableOpacity 
-        style={styles.postHeader}
-        onPress={() => item.user?.id && navigateToUserProfile(item.user.id)}
-      >
-        <View style={styles.avatarContainer}>
-          {item.user?.avatarUrl ? (
-            <Image source={{ uri: item.user.avatarUrl }} style={styles.avatarImage} />
-          ) : (
-            <View style={[styles.avatar, { backgroundColor: colors.primary + '30' }]}>
-              <Text style={[styles.avatarText, { color: colors.primary }]}>
-                {(item.user?.name || 'U')[0].toUpperCase()}
-              </Text>
-            </View>
-          )}
-          {item.user?.level && (
-            <View style={[styles.levelBadge, { backgroundColor: colors.primary }]}>
-              <Text style={styles.levelText}>{item.user.level}</Text>
-            </View>
-          )}
-        </View>
-        <View style={styles.authorInfo}>
-          <Text style={[styles.authorName, { color: colors.text }]}>{item.user?.name || t('common.loading')}</Text>
-          <Text style={[styles.authorUsername, { color: colors.textMuted }]}>
-            @{item.user?.email?.split('@')[0] || 'user'} · {formatTime(item.createdAt)}
-          </Text>
-        </View>
-      </TouchableOpacity>
+      <View style={styles.postHeader}>
+        <TouchableOpacity 
+          style={styles.authorSection}
+          onPress={() => item.user?.id && navigateToUserProfile(item.user.id)}
+        >
+          <View style={styles.avatarContainer}>
+            {item.user?.avatarUrl ? (
+              <Image source={{ uri: item.user.avatarUrl }} style={styles.avatarImage} />
+            ) : (
+              <View style={[styles.avatar, { backgroundColor: colors.primary + '30' }]}>
+                <Text style={[styles.avatarText, { color: colors.primary }]}>
+                  {(item.user?.name || 'U')[0].toUpperCase()}
+                </Text>
+              </View>
+            )}
+            {item.user?.level && (
+              <View style={[styles.levelBadge, { backgroundColor: colors.primary }]}>
+                <Text style={styles.levelText}>{item.user.level}</Text>
+              </View>
+            )}
+          </View>
+          <View style={styles.authorInfo}>
+            <Text style={[styles.authorName, { color: colors.text }]}>{item.user?.name || t('common.loading')}</Text>
+            <Text style={[styles.authorUsername, { color: colors.textMuted }]}>
+              @{item.user?.email?.split('@')[0] || 'user'} · {formatTime(item.createdAt)}
+            </Text>
+          </View>
+        </TouchableOpacity>
+        {item.user?.id && item.user.id !== user?.id && (
+          <TouchableOpacity
+            style={[
+              styles.followButtonSmall,
+              followingIds.has(item.user.id)
+                ? { backgroundColor: colors.surface, borderColor: colors.border }
+                : { backgroundColor: colors.primary },
+            ]}
+            onPress={(e) => {
+              e.stopPropagation();
+              if (item.user?.id) toggleFollow(item.user.id, e);
+            }}
+          >
+            <Text
+              style={[
+                styles.followButtonSmallText,
+                followingIds.has(item.user.id) ? { color: colors.text } : { color: '#fff' },
+              ]}
+            >
+              {followingIds.has(item.user.id) ? t('common.following') : t('common.follow')}
+            </Text>
+          </TouchableOpacity>
+        )}
+      </View>
 
       <Text style={[styles.postContent, { color: colors.text }]}>{item.content}</Text>
 
@@ -435,7 +483,13 @@ const styles = StyleSheet.create({
   },
   postHeader: {
     flexDirection: 'row',
+    alignItems: 'center',
+    justifyContent: 'space-between',
     marginBottom: 12,
+  },
+  authorSection: {
+    flexDirection: 'row',
+    flex: 1,
   },
   avatarContainer: {
     position: 'relative',
@@ -519,5 +573,15 @@ const styles = StyleSheet.create({
   emptyText: {
     fontSize: 16,
     marginTop: 16,
+  },
+  followButtonSmall: {
+    paddingHorizontal: 12,
+    paddingVertical: 6,
+    borderRadius: 6,
+    borderWidth: 1,
+  },
+  followButtonSmallText: {
+    fontSize: 13,
+    fontWeight: '600',
   },
 });
