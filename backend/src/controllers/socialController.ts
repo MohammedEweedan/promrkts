@@ -26,8 +26,8 @@ export const getPosts = async (req: AuthRequest, res: Response) => {
             avatar_url: true,
             userJourney: {
               select: {
-                level: true,
-                totalXP: true,
+                track: true,
+                stage: true,
               },
             },
           },
@@ -54,8 +54,8 @@ export const getPosts = async (req: AuthRequest, res: Response) => {
         user: {
           ...post.user,
           avatarUrl: post.user.avatar_url,
-          level: post.user.userJourney?.level || 1,
-          totalXP: post.user.userJourney?.totalXP || 0,
+          level: 1,
+          totalXP: 0,
         },
         likesCount: post._count.likes,
         commentsCount: post._count.comments,
@@ -106,8 +106,8 @@ export const createPost = async (req: AuthRequest, res: Response) => {
             avatar_url: true,
             userJourney: {
               select: {
-                level: true,
-                totalXP: true,
+                track: true,
+                stage: true,
               },
             },
           },
@@ -121,8 +121,8 @@ export const createPost = async (req: AuthRequest, res: Response) => {
         user: {
           ...post.user,
           avatarUrl: post.user.avatar_url,
-          level: post.user.userJourney?.level || 1,
-          totalXP: post.user.userJourney?.totalXP || 0,
+          level: 1,
+          totalXP: 0,
         },
         likesCount: 0,
         commentsCount: 0,
@@ -655,8 +655,8 @@ export const searchUsers = async (req: AuthRequest, res: Response) => {
         avatar_url: true,
         userJourney: {
           select: {
-            level: true,
-            totalXP: true,
+            track: true,
+            stage: true,
           },
         },
       },
@@ -667,8 +667,8 @@ export const searchUsers = async (req: AuthRequest, res: Response) => {
       data: users.map((user: any) => ({
         ...user,
         avatarUrl: user.avatar_url,
-        level: user.userJourney?.level || 1,
-        totalXP: user.userJourney?.totalXP || 0,
+        level: 1,
+        totalXP: 0,
       })),
     });
   } catch (error) {
