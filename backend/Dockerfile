@@ -1,8 +1,10 @@
 # Use Node.js 18 LTS
-FROM node:18-alpine AS builder
+FROM node:18-bullseye-slim AS builder
 
 # Install OpenSSL for Prisma
-RUN apk add --no-cache openssl
+RUN apt-get update \
+  && apt-get install -y --no-install-recommends openssl ca-certificates \
+  && rm -rf /var/lib/apt/lists/*
 
 WORKDIR /app
 
@@ -21,10 +23,34 @@ RUN npx prisma generate
 RUN npm run build
 
 # Production stage
-FROM node:18-alpine
+FROM node:18-bullseye-slim
 
-# Install OpenSSL for Prisma
-RUN apk add --no-cache openssl
+# Install OpenSSL for Prisma + runtime deps for Puppeteer/Chromium
+RUN apt-get update \
+  && apt-get install -y --no-install-recommends \
+    openssl ca-certificates \
+    fonts-liberation \
+    libasound2 \
+    libatk-bridge2.0-0 \
+    libatk1.0-0 \
+    libcups2 \
+    libdrm2 \
+    libgbm1 \
+    libgtk-3-0 \
+    libnss3 \
+    libnspr4 \
+    libpango-1.0-0 \
+    libpangocairo-1.0-0 \
+    libx11-6 \
+    libx11-xcb1 \
+    libxcomposite1 \
+    libxdamage1 \
+    libxfixes3 \
+    libxrandr2 \
+    libxshmfence1 \
+    libxkbcommon0 \
+    libxcb1 \
+  && rm -rf /var/lib/apt/lists/*
 
 WORKDIR /app
 
