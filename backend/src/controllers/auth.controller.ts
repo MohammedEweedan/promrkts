@@ -253,19 +253,27 @@ export const login = async (req: Request, res: Response) => {
     const accessToken = generateToken(user.rows[0].id, user.rows[0].role);
     const refreshToken = generateRefreshToken();
 
-    // Save refresh token to database
-    await db.query(
-      'INSERT INTO refresh_tokens (user_id, token, expires_at) VALUES ($1, $2, $3)',
-      [user.rows[0].id, refreshToken.token, refreshToken.expiresAt]
-    );
+    // Save refresh token to database (optional: don't crash login if table isn't migrated yet)
+    let refreshSaved = false;
+    try {
+      await db.query(
+        'INSERT INTO refresh_tokens (user_id, token, expires_at) VALUES ($1, $2, $3)',
+        [user.rows[0].id, refreshToken.token, refreshToken.expiresAt]
+      );
+      refreshSaved = true;
+    } catch (e) {
+      logger.error('Failed to persist refresh token (refresh_tokens table missing or DB error):', e);
+    }
 
-    // Set refresh token as HTTP-only cookie
-    res.cookie('refreshToken', refreshToken.token, {
-      httpOnly: true,
-      secure: process.env.NODE_ENV === 'production',
-      sameSite: 'strict',
-      maxAge: 90 * 24 * 60 * 60 * 1000, // 90 days
-    });
+    if (refreshSaved) {
+      // Set refresh token as HTTP-only cookie
+      res.cookie('refreshToken', refreshToken.token, {
+        httpOnly: true,
+        secure: process.env.NODE_ENV === 'production',
+        sameSite: 'strict',
+        maxAge: 90 * 24 * 60 * 60 * 1000, // 90 days
+      });
+    }
 
     // Return user and access token
     const { password: _, ...userWithoutPassword } = user.rows[0];

@@ -18,18 +18,8 @@ const app = express();
 const PORT = process.env.PORT || 5000;
 
 const STATIC_ALLOWED_ORIGINS = [
-  process.env.FRONTEND_URL,
-  process.env.DASHBOARD_URL,
-  process.env.ADMIN_URL,
-  process.env.APP_URL,
   "https://promrkts.com",
   "https://www.promrkts.com",
-  "https://chat.promrkts",
-  "http://localhost:3003",
-  "http://127.0.0.1:3003",
-  "http://localhost:5173",
-  "http://127.0.0.1:5173",
-  "https://chat.localhost:3003",
 ];
 
 const normalizeOrigin = (origin?: string) => (origin || "").replace(/\/$/, "");
@@ -46,7 +36,6 @@ const isAllowedOrigin = (origin?: string) => {
   const normalized = normalizeOrigin(origin);
   if (!normalized) return false;
   if (ALLOWED_ORIGINS.has(normalized)) return true;
-  if (isChatSubdomain(normalized)) return true;
   return false;
 };
 

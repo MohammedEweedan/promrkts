@@ -76,5 +76,5 @@ EXPOSE 10000
 ENV NODE_ENV=production
 # PORT will be set by the platform (8080 for Fly.io, 10000 for Render)
 
-# Run migrations and start server
-CMD ["sh", "-c", "npx prisma migrate deploy && node dist/index.js"]
+# Ensure DB schema exists then start server
+CMD ["sh", "-c", "npx prisma db push && npx prisma generate && node dist/index.js"]
