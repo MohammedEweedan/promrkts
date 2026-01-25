@@ -20,6 +20,10 @@ const PORT = process.env.PORT || 5000;
 const STATIC_ALLOWED_ORIGINS = [
   "https://promrkts.com",
   "https://www.promrkts.com",
+  "http://localhost:3000",
+  "http://localhost:5173",
+  "http://127.0.0.1:3000",
+  "http://127.0.0.1:5173",
 ];
 
 const normalizeOrigin = (origin?: string) => (origin || "").replace(/\/$/, "");
@@ -85,6 +89,7 @@ const corsOptions: cors.CorsOptions = {
     if (isAllowedOrigin(origin)) {
       return callback(null, true);
     }
+    console.error(`[CORS] Rejected origin: "${origin}". Allowed origins:`, Array.from(ALLOWED_ORIGINS));
     return callback(new Error("Not allowed by CORS"));
   },
   credentials: true,
