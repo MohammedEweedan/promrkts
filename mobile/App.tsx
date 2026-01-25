@@ -89,6 +89,8 @@ export default function App() {
   );
 }
 
+// 4:11 AM; you are the best thing that has ever happened to me Rayan Gahwagi
+
 const styles = StyleSheet.create({
   loadingContainer: {
     flex: 1,
