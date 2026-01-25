@@ -1,0 +1,67 @@
+services:
+  # PostgreSQL Database
+  - type: pgsql
+    name: promrkts-db
+    plan: starter
+    databaseName: promrkts
+    user: promrkts
+    ipAllowList: []
+
+  # Backend Web Service
+  - type: web
+    name: promrkts-backend
+    runtime: node
+    plan: starter
+    region: oregon
+    buildCommand: npm install && npx prisma generate && npm run build
+    startCommand: npx prisma migrate deploy && npm start
+    healthCheckPath: /health
+    envVars:
+      - key: NODE_ENV
+        value: production
+      - key: PORT
+        value: 10000
+      - key: DATABASE_URL
+        fromDatabase:
+          name: promrkts-db
+          property: connectionString
+      - key: DIRECT_URL
+        fromDatabase:
+          name: promrkts-db
+          property: connectionString
+      - key: JWT_SECRET
+        generateValue: true
+      - key: JWT_EXPIRES_IN
+        value: 30d
+      - key: FRONTEND_URL
+        sync: false
+      - key: BACKEND_URL
+        sync: false
+      - key: SENTRY_DSN
+        sync: false
+      - key: SMTP_HOST
+        sync: false
+      - key: SMTP_PORT
+        sync: false
+      - key: SMTP_USER
+        sync: false
+      - key: SMTP_PASS
+        sync: false
+      - key: EMAIL_FROM
+        sync: false
+      - key: AWS_ACCESS_KEY_ID
+        sync: false
+      - key: AWS_SECRET_ACCESS_KEY
+        sync: false
+      - key: AWS_REGION
+        sync: false
+      - key: S3_BUCKET_NAME
+        sync: false
+      - key: USDT_WALLET_ADDRESS
+        sync: false
+      - key: GOOGLE_MAPS_API_KEY
+        sync: false
+    disk:
+      name: promrkts-uploads
+      mountPath: /app/uploads
+      sizeGB: 1

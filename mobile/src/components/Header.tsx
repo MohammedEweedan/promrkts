@@ -55,7 +55,7 @@ export default function Header({
       
       <View style={styles.logoContainer}>
         <Image
-          source={require('../../assets/text-logo.png')}
+          source={require('../../assets/app-logo.gif')}
           style={styles.textLogo}
           resizeMode="contain"
         />
@@ -101,8 +101,8 @@ const styles = StyleSheet.create({
     height: 36,
   },
   textLogo: {
-    width: 100,
-    height: 28,
+    width: 150,
+    height: 45,
   },
   iconButton: {
     width: 40,
