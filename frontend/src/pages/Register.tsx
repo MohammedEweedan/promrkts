@@ -407,13 +407,6 @@ const Register: React.FC = () => {
     <Box color="text.primary" py={{ base: 8, md: 12 }}>
       <Container px={{ base: 4, md: 8 }}>
         <VStack align="center" gap={{ base: 6, md: 10 }}>
-          <Box textAlign="center">
-            <Heading as="h1" size="lg" mb={2}>
-              {t("auth.create_account") || "Create account"}
-            </Heading>
-            <Text color="#65a8bf">{t("auth.create_account_sub") || "Join in a few quick steps."}</Text>
-          </Box>
-
           <SpotlightCard>
             {error && (
               <Text mb={4} color="red.500">

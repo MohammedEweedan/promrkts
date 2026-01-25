@@ -409,15 +409,6 @@ const Contact: React.FC = () => {
     <Box color="text.primary" py={{ base: 8, md: 12 }}>
       <Container maxW="6xl">
         <VStack align="stretch" gap={{ base: 6, md: 10 }}>
-          {/* Page title */}
-          <Box textAlign="center">
-            <Heading as="h1" size="lg" mb={2}>
-              {t("contact.title", { defaultValue: "Contact us" })}
-            </Heading>
-            <Text color="text.muted">
-              {t("contact.subtitle", { defaultValue: "Tell us how we can help." })}
-            </Text>
-          </Box>
 
           {/* ===== Contact form ===== */}
           <SpotlightCard>

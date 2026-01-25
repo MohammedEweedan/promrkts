@@ -2,8 +2,7 @@ import axios from 'axios';
 
 const resolveFallbackBase = () => {
   if (typeof window !== 'undefined') {
-    const { origin, hostname } = window.location;
-    const normalizedOrigin = origin.replace(/\/$/, '');
+    const { hostname } = window.location;
     const isLocalhost = /(?:^|\.)localhost$/i.test(hostname) || /^\d{1,3}(?:\.\d{1,3}){3}$/.test(hostname);
 
     // Local dev: frontend on 3003/5173, backend on 5000 (unless overridden).

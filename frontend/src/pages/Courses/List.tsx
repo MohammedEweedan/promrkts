@@ -173,11 +173,6 @@ const CoursesList: React.FC = () => {
     <Box py={{ base: 4, md: 10 }}>
       <Container maxW="7xl">
         <VStack align="stretch" gap={6}>
-          <HStack align="center">
-            <Heading mb={2} fontSize="2xl" fontWeight="bold" textAlign="center" w="full">
-              {t("title", { defaultValue: "Courses" })}
-            </Heading>
-          </HStack>
 
           <Alert status="info" variant="subtle" borderRadius="md">
             <AlertIcon />
