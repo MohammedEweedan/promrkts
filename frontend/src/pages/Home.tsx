@@ -45,7 +45,6 @@ import { useAuth } from "../auth/AuthContext";
 import TimelineNewsTabs from "../components/TimelineNewsTabs";
 import LeaderboardOnboarding from "../components/LeaderboardOnboarding";
 import SpotlightCard from "../components/SpotlightCard";
-import { S } from "@web3icons/react/dist/index-DF-_dRIt";
 import Leaderboard from "../components/Leaderboard";
 import GuestLanding from "../components/GuestLanding";
 import SpinningWheel from "../components/SpinningWheel";

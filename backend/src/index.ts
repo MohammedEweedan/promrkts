@@ -186,8 +186,12 @@ app.use(
 /* ---------------- Routes ---------------- */
 app.use("/api", apiRoutes);
 
-const botApp = (require as any)("../bot");
-app.use("/bot", botApp);
+try {
+  const botApp = (require as any)("../bot");
+  app.use("/bot", botApp);
+} catch {
+  // Bot not available in production builds; ignore
+}
 
 app.get("/health", (_req, res) => {
   res.status(200).json({ status: "ok" });
