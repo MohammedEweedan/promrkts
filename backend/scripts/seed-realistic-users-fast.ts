@@ -7,7 +7,7 @@
    - monthly payouts: PASSED traders get 80% of profits for that month (credited to userWallet.usdtBalance)
 */
 
-import { PrismaClient, PurchaseStatus } from "@prisma/client";
+import { PrismaClient } from "@prisma/client";
 import bcrypt from "bcryptjs";
 import crypto from "crypto";
 
@@ -528,14 +528,14 @@ async function main() {
 
     // ---------- Course purchases ----------
     const allPurchases: any[] = [];
-    const purchasePlansByUserId = new Map<string, Array<{ tier: any; status: PurchaseStatus; purchaseDate: Date; finalPriceUsd: number | null }>>();
+    const purchasePlansByUserId = new Map<string, Array<{ tier: any; status: string; purchaseDate: Date; finalPriceUsd: number | null }>>();
 
     for (const user of createdUsers) {
       const pathIndex = weightedRandom([35,45,12,6,2]);
-      const plan: Array<{ tier: any; status: PurchaseStatus; purchaseDate: Date; finalPriceUsd: number | null }> = [];
+      const plan: Array<{ tier: any; status: string; purchaseDate: Date; finalPriceUsd: number | null }> = [];
 
       const freeDate = randomDate(new Date(user.created_at), addDaysUTC(new Date(user.created_at), 7));
-      if (tierFree) plan.push({ tier: tierFree, status: PurchaseStatus.CONFIRMED, purchaseDate: freeDate, finalPriceUsd: 0 });
+      if (tierFree) plan.push({ tier: tierFree, status: "CONFIRMED", purchaseDate: freeDate, finalPriceUsd: 0 });
 
       const firstPaidDelay = randomInt(3, 90);
       const upgradeDelay = randomInt(20, 180);
@@ -545,7 +545,7 @@ async function main() {
 
       const addPaid = (tier: any, purchaseDate: Date) => {
         if (!tier) return;
-        const status = Math.random() < 0.965 ? PurchaseStatus.CONFIRMED : PurchaseStatus.PENDING;
+        const status = Math.random() < 0.965 ? "CONFIRMED" : "PENDING";
         const discount = Math.random() < 0.22 ? randomFloat(0.8, 0.95) : randomFloat(0.95, 1.0);
         const finalPriceUsd = tier.price_usdt ? Number((tier.price_usdt * discount).toFixed(2)) : 0;
         plan.push({ tier, status, purchaseDate: purchaseDate < now ? purchaseDate : now, finalPriceUsd });
@@ -564,7 +564,7 @@ async function main() {
           userId: user.id,
           tierId: entry.tier.id,
           status: entry.status,
-          txnHash: entry.status === PurchaseStatus.CONFIRMED ? `0x${makeHex(64)}` : null,
+          txnHash: entry.status === "CONFIRMED" ? `0x${makeHex(64)}` : null,
           createdAt: entry.purchaseDate,
           finalPriceUsd: entry.finalPriceUsd,
         });
@@ -589,7 +589,7 @@ async function main() {
       const personaIndex = weightedRandom([12,28,34,18,8]); // 0..4
 
       for (const entry of plan) {
-        if (entry.status !== PurchaseStatus.CONFIRMED) continue;
+        if (entry.status !== "CONFIRMED") continue;
 
         const purchaseDate = entry.purchaseDate;
         const daysSincePurchase = clampInt((now.getTime() - purchaseDate.getTime()) / (1000 * 60 * 60 * 24), 0, 730);
