@@ -377,7 +377,6 @@ async function main() {
           price_usdt: tier.price_usdt,
           level: tier.level as any,
           productType: tier.productType as any,
-          active: true,
         },
       });
     }
