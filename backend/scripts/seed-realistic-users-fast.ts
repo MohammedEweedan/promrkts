@@ -356,10 +356,32 @@ async function main() {
   const now = new Date();
 
   // ---------- Preload tiers ----------
-  const tiersAll = await prisma.courseTier.findMany();
+  let tiersAll = await prisma.courseTier.findMany();
+  
+  // Create basic course tiers if none exist
   if (!tiersAll.length) {
-    console.error("❌ No course tiers found.");
-    process.exit(1);
+    console.log("📚 No course tiers found, creating basic tiers...");
+    const basicTiers = [
+      { name: "Free", description: "Free tier", price_stripe: 0, productType: "COURSE" },
+      { name: "Pro", description: "Pro tier", price_stripe: 4999, productType: "COURSE" },
+      { name: "Master", description: "Master tier", price_stripe: 9999, productType: "COURSE" },
+      { name: "Elite", description: "Elite tier", price_stripe: 19999, productType: "COURSE" },
+    ];
+    
+    for (const tier of basicTiers) {
+      await prisma.courseTier.create({
+        data: {
+          name: tier.name,
+          description: tier.description,
+          price_stripe: tier.price_stripe,
+          productType: tier.productType as any,
+          active: true,
+        },
+      });
+    }
+    
+    tiersAll = await prisma.courseTier.findMany();
+    console.log(`✅ Created ${tiersAll.length} basic course tiers`);
   }
 
   const tierByName = new Map<string, any>();
