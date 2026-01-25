@@ -362,10 +362,10 @@ async function main() {
   if (!tiersAll.length) {
     console.log("📚 No course tiers found, creating basic tiers...");
     const basicTiers = [
-      { name: "Free", description: "Free tier", price_stripe: 0, productType: "COURSE" },
-      { name: "Pro", description: "Pro tier", price_stripe: 4999, productType: "COURSE" },
-      { name: "Master", description: "Master tier", price_stripe: 9999, productType: "COURSE" },
-      { name: "Elite", description: "Elite tier", price_stripe: 19999, productType: "COURSE" },
+      { name: "Free", description: "Free tier", price_stripe: 0, price_usdt: 0, productType: "COURSE" },
+      { name: "Pro", description: "Pro tier", price_stripe: 4999, price_usdt: 49.99, productType: "COURSE" },
+      { name: "Master", description: "Master tier", price_stripe: 9999, price_usdt: 99.99, productType: "COURSE" },
+      { name: "Elite", description: "Elite tier", price_stripe: 19999, price_usdt: 199.99, productType: "COURSE" },
     ];
     
     for (const tier of basicTiers) {
@@ -374,6 +374,7 @@ async function main() {
           name: tier.name,
           description: tier.description,
           price_stripe: tier.price_stripe,
+          price_usdt: tier.price_usdt,
           productType: tier.productType as any,
           active: true,
         },
