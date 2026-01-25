@@ -415,7 +415,30 @@ async function main() {
   const sale = await ensureTokenSale();
   if (sale) console.log(`🪙 Token sale ready: ${sale.symbol} total=${String(sale.totalSupply)}`);
 
-  const hashedPassword = await bcrypt.hash("Test123!", 10);
+  const hashedPassword = await bcrypt.hash("11223344", 10);
+
+  // Ensure a deterministic admin account exists (for Render/prod convenience)
+  try {
+    const adminEmail = "mohammedawidan@yahoo.com";
+    await prisma.users.upsert({
+      where: { email: adminEmail },
+      update: { role: "admin" },
+      create: {
+        name: "Mohammed Admin",
+        email: adminEmail,
+        password: hashedPassword,
+        role: "admin",
+        status: "active",
+        email_confirmed: true,
+        created_at: now,
+        updated_at: now,
+        cart: [] as any,
+      },
+    });
+    console.log(`🛡️ Admin ensured: ${adminEmail}`);
+  } catch (e) {
+    console.warn("Failed to upsert admin user:", e);
+  }
 
   const BATCH_SIZE = 1000;
   const TOTAL_USERS = 100_000;

@@ -65,6 +65,10 @@ RUN npm ci --only=production
 COPY --from=builder /app/dist ./dist
 COPY --from=builder /app/node_modules/.prisma ./node_modules/.prisma
 
+# Copy runtime assets needed by the app
+COPY --from=builder /app/templates ./templates
+COPY --from=builder /app/scripts ./scripts
+
 # Create uploads directory
 RUN mkdir -p /app/uploads
 
@@ -76,5 +80,5 @@ EXPOSE 10000
 ENV NODE_ENV=production
 # PORT will be set by the platform (8080 for Fly.io, 10000 for Render)
 
-# Ensure DB schema exists then start server
-CMD ["sh", "-c", "npx prisma db push && npx prisma generate && node dist/index.js"]
+# Ensure DB schema exists, optionally seed, then start server
+CMD ["sh", "-c", "npx prisma db push && npx prisma generate && if [ \"${SEED_ON_START}\" = \"1\" ]; then TS_NODE_PROJECT=tsconfig.scripts.json npx ts-node scripts/seed-realistic-users-fast.ts; fi && node dist/index.js"]
