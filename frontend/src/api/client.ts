@@ -11,10 +11,10 @@ const resolveFallbackBase = () => {
       return `${process.env.REACT_APP_BACKEND_URL || 'https://promrkts.onrender.com'}/api`;
     }
 
-    // Prod/staging: if env not provided, assume backend is served under same origin (/api).
-    return `${process.env.REACT_APP_BACKEND_URL || normalizedOrigin}/api`;
+    // Prod/staging: default to Render backend unless env overrides it
+    return `${process.env.REACT_APP_BACKEND_URL || 'https://www.promrkts.onrender.com'}/api`;
   }
-  return `${process.env.REACT_APP_BACKEND_URL || 'https://promrkts.onrender.com'}/api`;
+  return `${process.env.REACT_APP_BACKEND_URL || 'https://www.promrkts.onrender.com'}/api`;
 };
 
 const rawBase =
