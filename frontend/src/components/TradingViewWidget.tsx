@@ -902,13 +902,22 @@ const TradingViewWidget: React.FC<TradingViewWidgetProps> = (props) => {
 
     const mergedAttrs: Record<string, any> = { ...defaultAttrs, ...(attrs || {}) };
 
+    console.log(`[TradingView ${widget}] Loading web component:`, {
+      moduleSrc,
+      tagName: def.tagName,
+      normalizedSymbols,
+      mergedAttrs,
+    });
+
     let cancelled = false;
 
     (async () => {
       try {
+        console.log(`[TradingView ${widget}] Loading module: ${moduleSrc}`);
         await loadModuleOnce(moduleSrc);
         if (cancelled) return;
 
+        console.log(`[TradingView ${widget}] Module loaded, creating element`);
         host.innerHTML = "";
         const el = document.createElement(def.tagName);
 
@@ -916,6 +925,8 @@ const TradingViewWidget: React.FC<TradingViewWidgetProps> = (props) => {
           if (v === undefined || v === null) continue;
           el.setAttribute(k, toAttrString(v));
         }
+
+        console.log(`[TradingView ${widget}] Element created with attributes:`, mergedAttrs);
 
         // Optional fallback content while loading (or if JS blocked)
         if (!el.childNodes.length) {
@@ -928,7 +939,9 @@ const TradingViewWidget: React.FC<TradingViewWidgetProps> = (props) => {
         }
 
         host.appendChild(el);
+        console.log(`[TradingView ${widget}] Element appended to host`);
       } catch (e: any) {
+        console.error(`[TradingView ${widget}] Error loading web component:`, e);
         onError?.(e instanceof Error ? e : new Error(String(e)));
       }
     })();
