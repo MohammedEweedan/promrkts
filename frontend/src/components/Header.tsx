@@ -269,7 +269,7 @@ const Header: React.FC = () => {
                 <Image
                   src={mode === "dark" ? "/text-logo.png" : "/text-logo.png"}
                   alt="Logo"
-                  w="160px"
+                  w="110px"
                 />
               </Box>
             </Box>
