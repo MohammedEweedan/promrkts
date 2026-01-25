@@ -254,14 +254,13 @@ const Header: React.FC = () => {
           {!dockExpanded && (
             <Box
               pos="fixed"
-              top={user && pathname === "/" ? "16px" : "14px"}
+              top={user && pathname === "/" ? "6px" : "6px"}
               left="14px"
               zIndex={1200}
             >
               <Box
                 as={RouterLink}
                 to="/"
-                p="-6px"
                 display="flex"
                 alignItems="center"
                 justifyContent="center"
@@ -269,7 +268,7 @@ const Header: React.FC = () => {
                 <Image
                   src={mode === "dark" ? "/app-logo.gif" : "/app-logo.gif"}
                   alt="Logo"
-                  w="160px"
+                  w="120px"
                 />
               </Box>
             </Box>
