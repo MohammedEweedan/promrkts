@@ -963,7 +963,6 @@ const Contact: React.FC = () => {
               onClick={() => window.open(waLink, "_blank", "noreferrer")}
               variant="solid"
               bg="#25D366"
-              color="#65a8bf"
             >
               <Icon as={PhoneCall} style={{ marginRight: 8 }} />
               {t("contact.whatsapp", { defaultValue: "WhatsApp" })}
@@ -972,7 +971,6 @@ const Contact: React.FC = () => {
               onClick={() => window.open(tgLink, "_blank", "noreferrer")}
               variant="solid"
               bg="#229ED9"
-              color="#65a8bf"
             >
               <Icon as={MessageSquare} style={{ marginRight: 8 }} />
               {t("contact.telegram", { defaultValue: "Telegram" })}
