@@ -408,7 +408,7 @@ const Contact: React.FC = () => {
   return (
     <Box color="text.primary" py={{ base: 8, md: 12 }}>
       <Container maxW="6xl">
-        <VStack align="stretch" gap={{ base: 6, md: 10 }}>
+        <VStack align="stretch" gap={{ base: 6, md: 10 }} marginTop={"2rem"}>
 
           {/* ===== Contact form ===== */}
           <SpotlightCard>

@@ -22,7 +22,7 @@ export const resolveBackendOrigin = (): string => {
     }
   }
 
-  return "https://promrkts.onrender.com";
+  return "https://promrkts.onrender.com/api";
 };
 
 export const resolveBackendAsset = (path: string): string => {

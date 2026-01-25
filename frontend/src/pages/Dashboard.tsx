@@ -813,7 +813,7 @@ const Dashboard: React.FC = () => {
     if (!u) return "";
     const url = String(u);
     if (/^https?:\/\//i.test(url)) return url;
-    const apiBase = process.env.REACT_APP_BACKEND_URL || "https://promrkts.onrender.com";
+    const apiBase = process.env.REACT_APP_BACKEND_URL || "https://promrkts.onrender.com/api";
     const origin = apiBase.replace(/\/?api\/?$/, "");
     if (url.startsWith("/api/")) return `${origin}${url}`;
     if (url.startsWith("/uploads/")) return `${origin}${url.replace(/^\/uploads\//, "/api/uploads/")}`;
@@ -872,7 +872,7 @@ const Dashboard: React.FC = () => {
   const kpiBg = "rgba(182, 233, 255, 0.1)";
 
   return (
-    <Box bg="transparent" py={10}>
+    <Box bg="transparent" py={10} marginTop={"2rem"}>
       <Container maxW="7xl">
         <VStack align="stretch" gap={6}>
           {/* Header */}
