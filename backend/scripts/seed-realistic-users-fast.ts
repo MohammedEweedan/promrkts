@@ -441,7 +441,7 @@ async function main() {
   }
 
   const BATCH_SIZE = 1000;
-  const TOTAL_USERS = 100_000;
+  const TOTAL_USERS = Number(process.env.SEED_TOTAL_USERS || "100000");
   const batches = Math.ceil(TOTAL_USERS / BATCH_SIZE);
 
   // stats

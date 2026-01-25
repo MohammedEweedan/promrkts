@@ -68,6 +68,7 @@ COPY --from=builder /app/node_modules/.prisma ./node_modules/.prisma
 # Copy runtime assets needed by the app
 COPY --from=builder /app/templates ./templates
 COPY --from=builder /app/scripts ./scripts
+COPY --from=builder /app/tsconfig.scripts.json ./tsconfig.scripts.json
 
 # Create uploads directory
 RUN mkdir -p /app/uploads
