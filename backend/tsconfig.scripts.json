@@ -8,8 +8,11 @@
     "skipLibCheck": true,
     "forceConsistentCasingInFileNames": true,
     "types": ["node"],
-    "rootDir": "."
+    "rootDir": "./scripts"
   },
-  "include": ["scripts/**/*.ts", "prisma/**/*.ts"],
+  "include": [
+    "scripts/promote-admin.ts",
+    "scripts/seed-realistic-users-fast.ts"
+  ],
   "exclude": ["node_modules", "dist"]
 }
