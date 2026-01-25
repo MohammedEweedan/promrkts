@@ -138,7 +138,7 @@ export default function FeedSection({ refreshing, onRefresh }: Props) {
   const handleShare = async (post: Post) => {
     try {
       await Share.share({
-        message: `${post.content}\n\nShared from ProMrkts`,
+        message: `${post.content}\n\nShared from promrkts`,
         title: 'Share Post',
       });
     } catch (error) {

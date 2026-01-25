@@ -237,7 +237,7 @@ export default function SettingsScreen() {
 
         <View style={styles.footer}>
           <Text style={[styles.footerText, { color: colors.textMuted }]}>
-            © 2024 ProMrkts. All rights reserved.
+            © 2024 promrkts. All rights reserved.
           </Text>
         </View>
       </ScrollView>

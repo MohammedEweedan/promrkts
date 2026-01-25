@@ -1,6 +1,6 @@
-# ProMrkts Mobile App
+# promrkts Mobile App
 
-A React Native Expo app for the ProMrkts trading education platform. This mobile app serves as a social media platform for learners to connect, featuring integrated community widgets, an AI chatbot, trading journal, store, and comprehensive account management.
+A React Native Expo app for the promrkts trading education platform. This mobile app serves as a social media platform for learners to connect, featuring integrated community widgets, an AI chatbot, trading journal, store, and comprehensive account management.
 
 ## Features
 
@@ -230,7 +230,7 @@ Before building, ensure you have the following assets in the `assets/` folder:
 
 ## License
 
-This project is proprietary to ProMrkts.
+This project is proprietary to promrkts.
 
 ## Support
 

@@ -123,7 +123,7 @@ export default function PostDetailScreen() {
     if (!post) return;
     try {
       await Share.share({
-        message: `${post.content}\n\nShared from ProMrkts`,
+        message: `${post.content}\n\nShared from promrkts`,
         title: 'Share Post',
       });
     } catch (error) {

@@ -11,7 +11,36 @@ import { PrismaClient } from "@prisma/client";
 import bcrypt from "bcryptjs";
 import crypto from "crypto";
 
-const prisma = new PrismaClient() as any;
+const prisma = new PrismaClient({
+  datasources: {
+    db: {
+      url: process.env.DATABASE_URL,
+    },
+  },
+}) as any;
+
+// -------------------- HELPERS --------------------
+// Retry helper for database operations
+async function retryDbOperation<T>(
+  operation: () => Promise<T>,
+  maxRetries: number = 3,
+  baseDelay: number = 1000
+): Promise<T> {
+  for (let attempt = 1; attempt <= maxRetries; attempt++) {
+    try {
+      return await operation();
+    } catch (error: any) {
+      const isConnectionError = error.code === 'P1017' || error.message.includes('Server has closed the connection') || error.message.includes('Can\'t reach database server');
+      if (!isConnectionError || attempt === maxRetries) {
+        throw error;
+      }
+      const delay = baseDelay * Math.pow(2, attempt - 1);
+      console.warn(`⚠️ DB connection error (attempt ${attempt}/${maxRetries}), retrying in ${delay}ms...`);
+      await new Promise(resolve => setTimeout(resolve, delay));
+    }
+  }
+  throw new Error('Max retries exceeded');
+}
 
 // -------------------- NAME POOLS --------------------
 const AR_FIRST = [
@@ -141,12 +170,12 @@ async function createUsersAndReturn(data: any[]) {
     });
   }
 
-  await prisma.users.createMany({ data, skipDuplicates: true });
+  await retryDbOperation(() => prisma.users.createMany({ data, skipDuplicates: true }));
   const emails = data.map((u) => u.email);
-  return prisma.users.findMany({
+  return retryDbOperation(() => prisma.users.findMany({
     where: { email: { in: emails } },
     select: { id: true, name: true, email: true, created_at: true, last_login: true },
-  });
+  }));
 }
 
 // -------------------- TOKEN SIM CONFIG --------------------
@@ -743,20 +772,8 @@ async function main() {
       }
     }
 
-    if (allProgress.length && canStudentProgress) {
-      await prisma.studentProgress.createMany({ data: allProgress, skipDuplicates: true });
-      totalProgress += allProgress.length;
-    }
-    if (allActivities.length && canDailyActivity) {
-      await prisma.dailyActivity.createMany({ data: allActivities, skipDuplicates: true });
-      totalActivities += allActivities.length;
-    }
-    if (allReviews.length && canCourseReview) {
-      await prisma.courseReview.createMany({ data: allReviews, skipDuplicates: true });
-      totalReviews += allReviews.length;
-    }
     if (allBadgesRows.length && canUserBadge) {
-      await prisma.userBadge.createMany({ data: allBadgesRows, skipDuplicates: true });
+      await retryDbOperation(() => prisma.userBadge.createMany({ data: allBadgesRows, skipDuplicates: true }));
       totalBadges += allBadgesRows.length;
     }
 
