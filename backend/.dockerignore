@@ -18,12 +18,9 @@ db.pg17.bak.*
 db.backup.*
 reports
 storage
-templates
-scripts
 bot
 artillery.yml
 artillery.processor.js
 jest.config.ts
-tsconfig.scripts.json
 *.test.ts
 *.spec.ts
