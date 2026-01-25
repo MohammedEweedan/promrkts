@@ -267,9 +267,9 @@ const Header: React.FC = () => {
                 justifyContent="center"
               >
                 <Image
-                  src={mode === "dark" ? "/text-logo.png" : "/text-logo.png"}
+                  src={mode === "dark" ? "/app-logo.gif" : "/app-logo.gif"}
                   alt="Logo"
-                  w="110px"
+                  w="160px"
                 />
               </Box>
             </Box>
