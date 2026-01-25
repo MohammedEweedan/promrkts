@@ -8,13 +8,13 @@ const resolveFallbackBase = () => {
 
     // Local dev: frontend on 3003/5173, backend on 5000 (unless overridden).
     if (isLocalhost) {
-      return `${process.env.REACT_APP_BACKEND_URL || 'http://localhost:4000'}/api`;
+      return `${process.env.REACT_APP_BACKEND_URL || 'https://promrkts.onrender.com'}/api`;
     }
 
     // Prod/staging: if env not provided, assume backend is served under same origin (/api).
     return `${process.env.REACT_APP_BACKEND_URL || normalizedOrigin}/api`;
   }
-  return `${process.env.REACT_APP_BACKEND_URL || 'http://localhost:4000'}/api`;
+  return `${process.env.REACT_APP_BACKEND_URL || 'https://promrkts.onrender.com'}/api`;
 };
 
 const rawBase =

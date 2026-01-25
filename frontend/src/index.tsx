@@ -12,7 +12,9 @@ import { AuthProvider } from './auth/AuthContext';
 import * as Sentry from '@sentry/react';
 const sentryTunnel =
   process.env.REACT_APP_SENTRY_TUNNEL ||
-  (process.env.NODE_ENV === 'development' ? `${process.env.REACT_APP_BACKEND_URL || 'http://localhost:4000'}/monitoring` : '');
+  (process.env.NODE_ENV === "development"
+    ? `${process.env.REACT_APP_BACKEND_URL || "https://promrkts.onrender.com"}/monitoring`
+    : "");
 
 Sentry.init({
   dsn: process.env.REACT_APP_SENTRY_DSN,

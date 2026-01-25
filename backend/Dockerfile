@@ -42,12 +42,13 @@ COPY --from=builder /app/node_modules/.prisma ./node_modules/.prisma
 # Create uploads directory
 RUN mkdir -p /app/uploads
 
-# Expose port
+# Expose port (configurable for different platforms)
 EXPOSE 8080
+EXPOSE 10000
 
 # Set environment to production
 ENV NODE_ENV=production
-ENV PORT=8080
+# PORT will be set by the platform (8080 for Fly.io, 10000 for Render)
 
 # Run migrations and start server
 CMD ["sh", "-c", "npx prisma migrate deploy && node dist/index.js"]

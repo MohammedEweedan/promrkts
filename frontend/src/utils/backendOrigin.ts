@@ -22,7 +22,7 @@ export const resolveBackendOrigin = (): string => {
     }
   }
 
-  return "http://localhost:4000";
+  return "https://promrkts.onrender.com";
 };
 
 export const resolveBackendAsset = (path: string): string => {
