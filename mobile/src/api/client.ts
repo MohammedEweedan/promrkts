@@ -25,7 +25,7 @@ const API_BASE_URL = __DEV__
     ? 'http://10.0.2.2:4000/api' // Android emulator
     : DEV_HOST
       ? `http://${DEV_HOST}:4000/api` // Physical device on LAN
-      : 'https://promrkts.onrender.com/api/api' // iOS simulator
+      : 'https://promrkts.onrender.com/api' // iOS simulator
   : 'https://api.promrkts.com/api';
 
 const api = axios.create({
