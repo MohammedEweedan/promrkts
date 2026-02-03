@@ -32,7 +32,7 @@ const BannerCarousel: React.FC<BannerCarouselProps> = ({ banners: bannersProp, a
   const isRTL = i18n.dir() === 'rtl';
 
   // Resolve image URLs similar to Home.tsx
-  const apiBase = (process.env.REACT_APP_API_BASE_URL as string) || `${process.env.REACT_APP_BACKEND_URL || 'http://api.promrkts.com/api'}/api`;
+  const apiBase = (process.env.REACT_APP_API_BASE_URL as string) || `${process.env.REACT_APP_BACKEND_URL || 'https://api.promrkts.com/api'}/api`;
   const apiOrigin = React.useMemo(() => apiBase.replace(/\/?api\/?$/, ''), [apiBase]);
   const resolveUrl = React.useCallback((u?: string) => {
     if (!u) return '';

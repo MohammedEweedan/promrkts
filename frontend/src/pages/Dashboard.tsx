@@ -813,7 +813,7 @@ const Dashboard: React.FC = () => {
     if (!u) return "";
     const url = String(u);
     if (/^https?:\/\//i.test(url)) return url;
-    const apiBase = process.env.REACT_APP_BACKEND_URL || "http://api.promrkts.com/api";
+    const apiBase = process.env.REACT_APP_BACKEND_URL || "https://api.promrkts.com/api";
     const origin = apiBase.replace(/\/?api\/?$/, "");
     if (url.startsWith("/api/")) return `${origin}${url}`;
     if (url.startsWith("/uploads/")) return `${origin}${url.replace(/^\/uploads\//, "/api/uploads/")}`;

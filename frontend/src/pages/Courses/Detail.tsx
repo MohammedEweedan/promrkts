@@ -232,7 +232,7 @@ const CourseDetail: React.FC = () => {
   // Resolve media/asset URLs
   const apiBase =
     (process.env.REACT_APP_API_BASE_URL as string) ||
-    `${process.env.REACT_APP_BACKEND_URL || "http://api.promrkts.com/api"}`;
+    `${process.env.REACT_APP_BACKEND_URL || "https://api.promrkts.com/api"}`;
   const apiOrigin = React.useMemo(() => apiBase.replace(/\/?api\/?$/, ""), [apiBase]);
 
   const resolveUrl = React.useCallback(
