@@ -12,13 +12,13 @@ const resolveFallbackBase = () => {
 
     // Local dev: frontend on 3003/5173, backend on 5000 (unless overridden).
     if (isLocalhost) {
-      return process.env.REACT_APP_BACKEND_URL || 'https://promrkts.onrender.com';
+      return process.env.REACT_APP_BACKEND_URL || 'http://api.promrkts.com';
     }
 
     // Prod/staging: default to Render backend unless env overrides it
-    return process.env.REACT_APP_BACKEND_URL || 'https://promrkts.onrender.com';
+    return process.env.REACT_APP_BACKEND_URL || 'http://api.promrkts.com';
   }
-  return process.env.REACT_APP_BACKEND_URL || 'https://promrkts.onrender.com';
+  return process.env.REACT_APP_BACKEND_URL || 'http://api.promrkts.com';
 };
 
 const rawBase =

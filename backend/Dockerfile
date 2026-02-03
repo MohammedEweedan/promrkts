@@ -84,4 +84,4 @@ ENV NODE_ENV=production
 # PORT will be set by the platform (8080 for Fly.io, 10000 for Render)
 
 # Ensure DB schema exists, promote admin, start server; optionally seed in background
-CMD ["sh", "-c", "set -e; npx prisma db push; npx prisma generate; node dist/scripts/promote-admin.js; if [ \"${SEED_ON_START}\" = \"1\" ]; then node dist/scripts/seed-realistic-users-fast.js & fi; exec node dist/index.js"]
+CMD ["sh", "-c", "set -e; npx prisma generate; npx prisma migrate deploy; node dist/scripts/promote-admin.js; if [ \"${SEED_ON_START}\" = \"1\" ]; then node dist/scripts/seed-realistic-users-fast.js & fi; exec node dist/index.js"]
