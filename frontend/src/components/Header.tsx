@@ -475,7 +475,7 @@ const Header: React.FC = () => {
         {menuOpen && !isDesktop && (
           <MotionBox
             pos="fixed"
-            top={user && pathname === "/" ? "0.5rem" : 0}
+            top={user && pathname === "/" ? "0.25rem" : 0}
             left={0}
             right={0}
             bottom={0}
@@ -498,7 +498,7 @@ const Header: React.FC = () => {
             >
               {user ? (
                 <>
-                  <Box px={6} py={3} fontSize="lg" fontWeight="600" mt={40} color={BRAND}>
+                  <Box px={6} py={3} fontSize="lg" fontWeight="600" mt={30} color={BRAND}>
                     {t("header.hi", { name: user?.name || user?.email })}
                   </Box>
                   <Button
@@ -654,33 +654,48 @@ const Header: React.FC = () => {
               </Box>
 
               {/* Language Switcher in Mobile */}
-              <Box px={6} py={4} mt={10}>
-                <HStack spacing={3} justify="center">
-                  <LanguageIcon
-                    code="EN"
-                    isActive={currentLang === "EN"}
-                    onClick={() => {
-                      i18n.changeLanguage("en");
+              <Box px={6} py={4} mt={10} w="100%">
+                <VStack spacing={3} align="center">
+                  <HStack spacing={2} align="center">
+                    <Languages size={20} color="#65a8bf" />
+                    <Box fontSize="sm" fontWeight="600" color="#65a8bf">
+                      {t("nav.language") || "Language"}
+                    </Box>
+                  </HStack>
+                  <Box
+                    as="select"
+                    value={currentLang.toLowerCase()}
+                    onChange={(e: React.ChangeEvent<HTMLSelectElement>) => {
+                      i18n.changeLanguage(e.target.value);
+                      setCurrentLang(e.target.value.toUpperCase());
                       setMenuOpen(false);
                     }}
-                  />
-                  <LanguageIcon
-                    code="AR"
-                    isActive={currentLang === "AR"}
-                    onClick={() => {
-                      i18n.changeLanguage("ar");
-                      setMenuOpen(false);
-                    }}
-                  />
-                  <LanguageIcon
-                    code="FR"
-                    isActive={currentLang === "FR"}
-                    onClick={() => {
-                      i18n.changeLanguage("fr");
-                      setMenuOpen(false);
-                    }}
-                  />
-                </HStack>
+                    px={4}
+                    py={3}
+                    borderRadius="12px"
+                    border="2px solid"
+                    borderColor="#65a8bf"
+                    bg={mode === "dark" ? "rgba(30,30,30,0.8)" : "white"}
+                    color={mode === "dark" ? "white" : "#111"}
+                    fontSize="md"
+                    fontWeight="500"
+                    minW="200px"
+                    cursor="pointer"
+                    _focus={{ outline: "none", borderColor: "#65a8bf" }}
+                  >
+                    <option value="en">🇺🇸 English</option>
+                    <option value="ar">🇸🇦 العربية</option>
+                    <option value="fr">🇫🇷 Français</option>
+                    <option value="ru">🇷🇺 Русский</option>
+                    <option value="zh">🇨🇳 中文</option>
+                    <option value="pt">🇧🇷 Português</option>
+                    <option value="es">🇪🇸 Español</option>
+                    <option value="hi">🇮🇳 हिंदी</option>
+                    <option value="ur">🇵🇰 اردو</option>
+                    <option value="de">🇩🇪 Deutsch</option>
+                    <option value="nl">🇳🇱 Nederlands</option>
+                  </Box>
+                </VStack>
               </Box>
             </VStack>
           </MotionBox>

@@ -510,39 +510,80 @@ const Register: React.FC = () => {
 
                   {step === 2 && (
                     <Fade key="step2-email">
-                      <Box textAlign="center">
-                        <Heading as="h2" size="sm" mb={3} color="#65a8bf" fontWeight="bold">
-                          {t("auth.verify_email_title") || "Verify your email"}
+                      <Box
+                        textAlign="center"
+                        p={{ base: 6, md: 8 }}
+                        borderRadius="xl"
+                        bg={colorMode === "dark" ? "whiteAlpha.100" : "gray.50"}
+                        border="1px solid"
+                        borderColor={colorMode === "dark" ? "whiteAlpha.200" : "gray.200"}
+                      >
+                        <Box
+                          w={16}
+                          h={16}
+                          mx="auto"
+                          mb={4}
+                          borderRadius="full"
+                          bg={colorMode === "dark" ? "blue.900" : "blue.50"}
+                          display="flex"
+                          alignItems="center"
+                          justifyContent="center"
+                        >
+                          <Box as="span" fontSize="2xl">✉️</Box>
+                        </Box>
+                        <Heading as="h2" size="md" mb={2} fontWeight="bold">
+                          {t("auth.verify_email_title")}
                         </Heading>
-                        <Text mb={4} color="#65a8bf">
-                          {t("auth.verify_email_instructions") ||
-                            `We sent a 6-digit code to ${email}. Please check your inbox and spam folder.`}
+                        <Text mb={1} fontSize="sm" color={colorMode === "dark" ? "gray.300" : "gray.600"}>
+                          {t("auth.verify_email_instructions")}
                         </Text>
-                        <VStack spacing={3} align="center">
+                        <Text mb={5} fontSize="sm" fontWeight="medium" color={colorMode === "dark" ? "blue.300" : "blue.600"}>
+                          {email}
+                        </Text>
+                        <VStack spacing={4} align="center">
                           <Input
                             value={emailCode}
                             onChange={(e) => setEmailCode(e.target.value)}
-                            placeholder={(t("auth.email_code_placeholder") as string) || "Enter 6-digit code"}
-                            maxW="260px"
+                            placeholder={t("auth.email_code_placeholder") as string}
+                            maxW="280px"
                             textAlign="center"
+                            fontSize="xl"
+                            letterSpacing="0.3em"
+                            fontWeight="bold"
+                            py={6}
+                            borderRadius="lg"
+                            bg={colorMode === "dark" ? "whiteAlpha.100" : "white"}
+                            _focus={{ borderColor: "blue.500", boxShadow: "0 0 0 1px var(--chakra-colors-blue-500)" }}
                           />
-                          <HStack spacing={3} justify="center">
+                          <HStack spacing={3} justify="center" flexWrap="wrap">
                             <Button
                               onClick={verifyEmail}
                               isLoading={emailVerifying}
-                              disabled={!emailCode}
-                              bg="#65a8bf"
+                              disabled={!emailCode || emailCode.length < 6}
+                              colorScheme="blue"
+                              size="lg"
+                              px={8}
                             >
-                              {t("auth.verify_email") || "Verify"}
+                              {t("auth.verify_email")}
                             </Button>
-                            <Button onClick={resendEmail} disabled={!resendAvailable} bg="#eee">
+                            <Button
+                              onClick={resendEmail}
+                              disabled={!resendAvailable}
+                              variant="outline"
+                              size="lg"
+                              colorScheme={resendAvailable ? "gray" : "gray"}
+                              opacity={resendAvailable ? 1 : 0.6}
+                            >
                               {resendAvailable
-                                ? t("auth.resend_email") || "Resend code"
-                                : `${t("auth.resend_in") || "Resend in"} ${Math.ceil(resendCountdown)}s`}
+                                ? t("auth.resend_email")
+                                : `${t("auth.resend_in")} ${Math.ceil(resendCountdown)}s`}
                             </Button>
                           </HStack>
                           {emailVerified && (
-                            <CheckCircleIcon boxSize={8} color="#65a8bf" />
+                            <HStack spacing={2} color="green.500">
+                              <CheckCircleIcon boxSize={6} />
+                              <Text fontWeight="medium">{t("auth.email_verified")}</Text>
+                            </HStack>
                           )}
                         </VStack>
                       </Box>

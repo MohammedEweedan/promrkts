@@ -42,19 +42,274 @@ async function retryDbOperation<T>(
   throw new Error('Max retries exceeded');
 }
 
-// -------------------- NAME POOLS --------------------
-const AR_FIRST = [
-  "أحمد","اسماء","ياسمين","عائشة","فاطمة","سارة","ريان","ريما","ريم","مريم",
-  "محمد","خالد","علي","يوسف","عمر","سالم","مروان","فهد","طارق","سامي","حسن","عبدالله","مصطفى","كريم",
+// -------------------- NAME POOLS (GLOBALLY DIVERSE) --------------------
+
+// === ARABIC NAMES (Middle East + North Africa) ===
+// Gulf States (Saudi, UAE, Kuwait, Qatar, Bahrain, Oman)
+const GULF_FIRST_M = ["محمد","أحمد","عبدالله","خالد","فهد","سلطان","راشد","سعود","ناصر","عبدالرحمن","سالم","حمد","ماجد","طلال","بندر","فيصل","تركي","مشاري","عبدالعزيز","يوسف"];
+const GULF_FIRST_F = ["فاطمة","مريم","عائشة","نورة","سارة","لطيفة","موزة","شيخة","هند","دانة","ريم","لولوة","جواهر","العنود","منيرة","أمل","ابتسام","حصة","بدور","غالية"];
+const GULF_LAST = ["آل سعود","آل نهيان","آل مكتوم","آل ثاني","آل خليفة","الدوسري","العتيبي","القحطاني","الشمري","المطيري","الحربي","الغامدي","الزهراني","البلوشي","المري","الهاجري","الرشيدي","السبيعي","الفضلي","العجمي"];
+
+// Levant (Syria, Lebanon, Jordan, Palestine)
+const LEVANT_FIRST_M = ["عمر","أحمد","محمد","خالد","كريم","طارق","باسل","رامي","سامر","مازن","وسيم","زياد","فادي","جورج","إيلي","أنطوان","بيار","مروان","غسان","نبيل"];
+const LEVANT_FIRST_F = ["رنا","دانا","لينا","ريما","مايا","نادين","كارلا","ريتا","جويل","ناديا","سوسن","غادة","هبة","رولا","ميرنا","ياسمين","سلمى","ديما","لمى","تالا"];
+const LEVANT_LAST = ["حداد","خوري","نصر","عيسى","سلامة","حبيب","فرح","نعمة","شاهين","عبود","الأسعد","الحسن","العلي","الخطيب","الشامي","البيطار","الصباغ","القاضي","المصري","الدمشقي"];
+
+// Iraq
+const IRAQ_FIRST_M = ["علي","حسين","حسن","عباس","جعفر","مهدي","كاظم","صادق","رضا","محمد","أحمد","مصطفى","حيدر","قاسم","عمار","زيد","يحيى","عدنان","سعد","فاضل"];
+const IRAQ_FIRST_F = ["زهراء","فاطمة","مريم","زينب","رقية","سكينة","نور","هدى","سارة","دعاء","إيمان","آلاء","رنا","شيماء","بتول","حوراء","ياسمين","رغد","سجى","تبارك"];
+const IRAQ_LAST = ["الموسوي","الحسيني","العلوي","الهاشمي","البغدادي","الكربلائي","النجفي","البصري","السامرائي","التكريتي","الكردي","الجبوري","الدليمي","العبيدي","الشمري","الزبيدي","الربيعي","العزاوي","الراوي","الحديثي"];
+
+// Egypt
+const EGYPT_FIRST_M = ["محمد","أحمد","محمود","مصطفى","عمرو","كريم","عمر","يوسف","حسام","طارق","شريف","هشام","وليد","أيمن","سامح","خالد","إسلام","تامر","رامي","باسم"];
+const EGYPT_FIRST_F = ["فاطمة","مريم","نور","سارة","ياسمين","منى","هبة","دينا","رانيا","شيرين","نهى","مي","سلمى","جنى","ملك","هنا","فرح","لمياء","إيمان","أمل"];
+const EGYPT_LAST = ["المصري","الشريف","السيد","عبدالله","إبراهيم","حسن","علي","محمود","أحمد","مصطفى","الفقي","البنا","الجمال","السعيد","الطيب","النجار","الحداد","الصياد","البحيري","الإسكندراني"];
+
+// Libya
+const LIBYA_FIRST_M = ["محمد","أحمد","علي","عمر","خالد","عبدالسلام","مصطفى","إبراهيم","يوسف","عبدالله","سالم","عبدالرحمن","فتحي","رمضان","ميلاد","عادل","جمال","حسين","عماد","طارق"];
+const LIBYA_FIRST_F = ["فاطمة","عائشة","خديجة","مريم","آمنة","سعاد","نجاة","حليمة","زهرة","سالمة","رقية","فتحية","نورية","عزيزة","كريمة","سارة","إيمان","هدى","أمل","نور"];
+const LIBYA_LAST = ["الطرابلسي","البنغازي","المصراتي","الزاوي","السبراتي","الغرياني","الورفلي","المقريف","الكيب","جبريل","الثني","الحاسي","بوسنينة","طروم","محمودي","العلاقي","المسعودي","أبوجراد","الشريف","الطاهر"];
+
+// Tunisia
+const TUNISIA_FIRST_M = ["محمد","أحمد","علي","يوسف","أمين","سامي","كريم","وليد","رامي","حاتم","عماد","نبيل","فاروق","منير","صابر","رضا","عادل","جمال","خالد","طارق"];
+const TUNISIA_FIRST_F = ["فاطمة","مريم","آمال","سلوى","نجوى","ليلى","سناء","هند","إيناس","أسماء","سارة","ياسمين","نور","رانيا","منى","هبة","إيمان","سمر","ريم","دنيا"];
+const TUNISIA_LAST = ["التونسي","بن علي","بوعزيزي","الجبالي","المرزوقي","السبسي","الغنوشي","بن يوسف","بورقيبة","الشابي","بن سلامة","الطرابلسي","القيرواني","الصفاقسي","السوسي","بن عمر","بن محمد","الحبيب","العياري","الجريبي"];
+
+// Algeria
+const ALGERIA_FIRST_M = ["محمد","أحمد","يوسف","عبدالقادر","كريم","أمين","رضا","جمال","خالد","عمر","ياسين","بلال","سفيان","إسلام","عادل","نبيل","فؤاد","رشيد","مراد","عبدالحق"];
+const ALGERIA_FIRST_F = ["فاطمة","خديجة","عائشة","مريم","أمينة","سارة","ياسمين","نور","إيمان","هاجر","سمية","نسرين","وفاء","حياة","صبرينة","نادية","سهام","ليلى","جميلة","كريمة"];
+const ALGERIA_LAST = ["بن حديد","بوتفليقة","بن بلة","زيدان","بن زيمة","محرز","سليماني","بلخير","بوضياف","الإبراهيمي","بن باديس","مسعلي","عباس","بومدين","الشاذلي","بن جديد","زروال","بوقرة","مجاني","فغولي"];
+
+// Morocco
+const MOROCCO_FIRST_M = ["محمد","أحمد","يوسف","عمر","كريم","أمين","ياسين","أيوب","إلياس","آدم","حمزة","سعد","رشيد","هشام","عادل","نبيل","جواد","سفيان","أنس","زكرياء"];
+const MOROCCO_FIRST_F = ["فاطمة الزهراء","مريم","سارة","ياسمين","نور","إيمان","حنان","سناء","ليلى","سلمى","هاجر","آية","دعاء","أسماء","خديجة","عائشة","زينب","رجاء","نادية","سميرة"];
+const MOROCCO_LAST = ["العلوي","الفاسي","المراكشي","الرباطي","البيضاوي","الطنجاوي","بنعلي","بنموسى","الشرقاوي","العمراني","بنكيران","أخنوش","المنصوري","الإدريسي","حكيمي","زياش","بونو","أمرابط","مزراوي","الركراكي"];
+
+// === AFRICAN NAMES ===
+// Nigeria (Yoruba, Igbo, Hausa)
+const NIGERIA_FIRST_M = ["Chukwuemeka","Oluwaseun","Adebayo","Chijioke","Olumide","Emeka","Tunde","Chinedu","Obinna","Kayode","Segun","Femi","Yinka","Damilola","Ikechukwu","Nnamdi","Uche","Kelechi","Musa","Ibrahim","Abubakar","Sani","Yusuf","Abdullahi"];
+const NIGERIA_FIRST_F = ["Chidinma","Oluwabunmi","Adaeze","Ngozi","Funke","Yetunde","Chiamaka","Nneka","Adaora","Folake","Titilayo","Amara","Ifeoma","Uchenna","Adanna","Oluchi","Ebele","Nkechi","Aisha","Fatima","Hauwa","Zainab","Hadiza","Amina"];
+const NIGERIA_LAST = ["Okonkwo","Adeyemi","Okafor","Eze","Nwosu","Adebayo","Obi","Onyeka","Afolabi","Okoro","Chukwu","Nwachukwu","Adeleke","Ogundimu","Balogun","Abubakar","Mohammed","Suleiman","Abdullahi","Danjuma","Tinubu","Sanusi","Dangote","Otedola"];
+
+// Ghana
+const GHANA_FIRST_M = ["Kwame","Kofi","Kwesi","Yaw","Kwaku","Kojo","Kwabena","Akwasi","Nana","Osei","Mensah","Ebo","Fiifi","Paa","Kobby","Nii","Tetteh","Adjei","Asante","Boateng"];
+const GHANA_FIRST_F = ["Ama","Akua","Adwoa","Yaa","Afia","Efua","Abena","Akosua","Nana","Afua","Adjoa","Araba","Ekua","Esi","Kukua","Maame","Naana","Serwaa","Abenaa","Akosua"];
+const GHANA_LAST = ["Mensah","Asante","Osei","Boateng","Owusu","Agyemang","Amoah","Appiah","Gyasi","Kufuor","Mahama","Akufo-Addo","Rawlings","Nkrumah","Danquah","Busia","Essien","Gyan","Ayew","Asamoah"];
+
+// South Africa
+const SOUTH_AFRICA_FIRST_M = ["Thabo","Sipho","Mandla","Bongani","Siyabonga","Themba","Lungile","Sandile","Sibusiso","Nkosinathi","Pieter","Johan","Willem","Hendrik","Francois","David","Michael","James","John","Robert"];
+const SOUTH_AFRICA_FIRST_F = ["Nomvula","Thandi","Lindiwe","Nompumelelo","Zanele","Nokuthula","Precious","Grace","Lerato","Palesa","Annemarie","Charlize","Elsa","Ingrid","Liesl","Sarah","Emma","Olivia","Jessica","Michelle"];
+const SOUTH_AFRICA_LAST = ["Mandela","Zuma","Mbeki","Ramaphosa","Sisulu","Tambo","Buthelezi","Dlamini","Nkosi","Mthembu","Van der Merwe","Botha","Du Plessis","Pretorius","Van Zyl","Mokoena","Khumalo","Ndlovu","Naidoo","Pillay"];
+
+// Kenya
+const KENYA_FIRST_M = ["Uhuru","Raila","William","Mwai","Daniel","Jomo","Eliud","David","Kipchoge","Dennis","Paul","Peter","John","James","Joseph","Samuel","Michael","Stephen","George","Patrick"];
+const KENYA_FIRST_F = ["Wangari","Lupita","Margaret","Grace","Mary","Jane","Faith","Hope","Joy","Mercy","Charity","Beatrice","Catherine","Elizabeth","Anne","Rose","Esther","Ruth","Naomi","Sarah"];
+const KENYA_LAST = ["Kenyatta","Odinga","Ruto","Kibaki","Moi","Kipchoge","Kimetto","Rudisha","Wanjiru","Kosgei","Mutai","Cheruiyot","Kipruto","Kamau","Mwangi","Ochieng","Otieno","Wekesa","Musyoka","Muturi"];
+
+// Ethiopia
+const ETHIOPIA_FIRST_M = ["Abiy","Haile","Tedros","Meles","Mengistu","Gebre","Bekele","Kenenisa","Yohannes","Tewodros","Dawit","Solomon","Samuel","Daniel","Michael","Gabriel","Yared","Bereket","Girma","Mekonnen"];
+const ETHIOPIA_FIRST_F = ["Tigist","Meseret","Genzebe","Almaz","Birtukan","Meaza","Hiwot","Selamawit","Bethlehem","Rahel","Sara","Meron","Lidya","Hanna","Ruth","Abeba","Tsehay","Yeshi","Aster","Zewditu"];
+const ETHIOPIA_LAST = ["Ahmed","Gebrselassie","Dibaba","Zenawi","Desalegn","Bekele","Haile","Tedros","Abebe","Kebede","Tadesse","Getachew","Assefa","Tesfaye","Wolde","Girma","Mekonnen","Alemayehu","Negash","Berhane"];
+
+// === EUROPEAN NAMES ===
+// British/Irish
+const UK_FIRST_M = ["James","Oliver","William","Harry","George","Jack","Noah","Charlie","Thomas","Oscar","Henry","Leo","Alfie","Arthur","Freddie","Archie","Edward","Alexander","Daniel","Benjamin"];
+const UK_FIRST_F = ["Olivia","Emma","Amelia","Isla","Ava","Mia","Grace","Freya","Lily","Sophie","Emily","Ella","Scarlett","Poppy","Isabella","Charlotte","Daisy","Jessica","Alice","Florence"];
+const UK_LAST = ["Smith","Jones","Williams","Brown","Taylor","Davies","Wilson","Evans","Thomas","Johnson","Roberts","Walker","Wright","Robinson","Thompson","White","Hughes","Edwards","Green","Hall","O'Brien","Murphy","Kelly","Ryan"];
+
+// German
+const GERMAN_FIRST_M = ["Lukas","Leon","Maximilian","Felix","Paul","Jonas","Elias","Noah","Ben","Finn","Tim","Jan","Niklas","David","Moritz","Alexander","Julian","Tobias","Sebastian","Philipp"];
+const GERMAN_FIRST_F = ["Emma","Mia","Hannah","Sofia","Anna","Emilia","Lena","Marie","Lea","Lina","Laura","Julia","Sarah","Lisa","Johanna","Katharina","Franziska","Christina","Melanie","Stefanie"];
+const GERMAN_LAST = ["Müller","Schmidt","Schneider","Fischer","Weber","Meyer","Wagner","Becker","Schulz","Hoffmann","Schäfer","Koch","Bauer","Richter","Klein","Wolf","Schröder","Neumann","Schwarz","Zimmermann"];
+
+// French
+const FRENCH_FIRST_M = ["Lucas","Gabriel","Léo","Raphaël","Arthur","Louis","Jules","Adam","Hugo","Nathan","Thomas","Théo","Noah","Ethan","Mathis","Maxime","Alexandre","Antoine","Pierre","Nicolas"];
+const FRENCH_FIRST_F = ["Emma","Jade","Louise","Alice","Chloé","Léa","Manon","Inès","Camille","Sarah","Zoé","Lina","Léonie","Rose","Anna","Juliette","Charlotte","Marie","Sophie","Margot"];
+const FRENCH_LAST = ["Martin","Bernard","Dubois","Thomas","Robert","Richard","Petit","Durand","Leroy","Moreau","Simon","Laurent","Lefebvre","Michel","Garcia","David","Bertrand","Roux","Vincent","Fournier"];
+
+// Spanish
+const SPANISH_FIRST_M = ["Hugo","Martín","Lucas","Mateo","Leo","Daniel","Alejandro","Pablo","Manuel","Álvaro","Adrián","David","Mario","Diego","Javier","Carlos","Miguel","Antonio","José","Francisco"];
+const SPANISH_FIRST_F = ["Lucía","Sofía","Martina","María","Paula","Julia","Daniela","Valeria","Alba","Emma","Carla","Sara","Noa","Carmen","Claudia","Valentina","Laura","Irene","Elena","Adriana"];
+const SPANISH_LAST = ["García","Rodríguez","Martínez","López","González","Hernández","Pérez","Sánchez","Ramírez","Torres","Flores","Rivera","Gómez","Díaz","Reyes","Morales","Jiménez","Ruiz","Álvarez","Romero"];
+
+// Italian
+const ITALIAN_FIRST_M = ["Leonardo","Francesco","Alessandro","Lorenzo","Mattia","Andrea","Gabriele","Riccardo","Tommaso","Edoardo","Federico","Giuseppe","Marco","Luca","Giovanni","Antonio","Davide","Simone","Filippo","Matteo"];
+const ITALIAN_FIRST_F = ["Sofia","Giulia","Aurora","Alice","Ginevra","Emma","Giorgia","Greta","Beatrice","Anna","Chiara","Sara","Martina","Francesca","Valentina","Alessia","Elisa","Camilla","Arianna","Elena"];
+const ITALIAN_LAST = ["Rossi","Russo","Ferrari","Esposito","Bianchi","Romano","Colombo","Ricci","Marino","Greco","Bruno","Gallo","Conti","De Luca","Mancini","Costa","Giordano","Rizzo","Lombardi","Moretti"];
+
+// Russian
+const RUSSIAN_FIRST_M = ["Alexander","Dmitri","Maxim","Ivan","Artem","Mikhail","Nikita","Sergei","Andrei","Alexei","Vladimir","Pavel","Ilya","Kirill","Denis","Oleg","Viktor","Yuri","Boris","Igor"];
+const RUSSIAN_FIRST_F = ["Anastasia","Maria","Daria","Anna","Sofia","Polina","Victoria","Elizabeth","Ekaterina","Alexandra","Natalia","Olga","Tatiana","Irina","Elena","Svetlana","Marina","Ksenia","Yulia","Alina"];
+const RUSSIAN_LAST = ["Ivanov","Smirnov","Kuznetsov","Popov","Vasiliev","Petrov","Sokolov","Mikhailov","Novikov","Fedorov","Morozov","Volkov","Alexeev","Lebedev","Semenov","Egorov","Pavlov","Kozlov","Stepanov","Nikolaev"];
+
+// Polish
+const POLISH_FIRST_M = ["Antoni","Jakub","Jan","Szymon","Aleksander","Franciszek","Filip","Mikołaj","Wojciech","Kacper","Adam","Michał","Mateusz","Piotr","Tomasz","Krzysztof","Paweł","Marcin","Łukasz","Kamil"];
+const POLISH_FIRST_F = ["Zuzanna","Julia","Zofia","Hanna","Maja","Lena","Alicja","Maria","Amelia","Oliwia","Natalia","Wiktoria","Aleksandra","Anna","Karolina","Magdalena","Katarzyna","Agnieszka","Monika","Joanna"];
+const POLISH_LAST = ["Nowak","Kowalski","Wiśniewski","Wójcik","Kowalczyk","Kamiński","Lewandowski","Zieliński","Szymański","Woźniak","Dąbrowski","Kozłowski","Jankowski","Mazur","Kwiatkowski","Krawczyk","Piotrowski","Grabowski"];
+
+// === ASIAN NAMES ===
+// Chinese
+const CHINESE_FIRST_M = ["Wei","Fang","Lei","Jun","Jian","Hao","Chen","Ming","Tao","Xiang","Yong","Qiang","Peng","Bo","Cheng","Long","Feng","Kai","Jie","Yang"];
+const CHINESE_FIRST_F = ["Xiu","Ying","Mei","Li","Na","Fang","Yan","Juan","Ling","Hui","Jing","Xia","Hong","Yun","Qing","Min","Ping","Lan","Zhen","Hua"];
+const CHINESE_LAST = ["Wang","Li","Zhang","Liu","Chen","Yang","Huang","Zhao","Wu","Zhou","Xu","Sun","Ma","Zhu","Hu","Guo","Lin","He","Gao","Luo"];
+
+// Japanese
+const JAPANESE_FIRST_M = ["Haruto","Yuto","Sota","Yuki","Hayato","Haruki","Ryusei","Kota","Sosuke","Riku","Takumi","Kaito","Ren","Shota","Daiki","Kenji","Hiroshi","Takeshi","Masashi","Akira"];
+const JAPANESE_FIRST_F = ["Yui","Rio","Koharu","Hina","Yuna","Sakura","Mio","Ichika","Rin","Miyu","Aoi","Himari","Yuzuki","Akari","Mei","Haruka","Nanami","Riko","Saki","Ayaka"];
+const JAPANESE_LAST = ["Sato","Suzuki","Takahashi","Tanaka","Watanabe","Ito","Yamamoto","Nakamura","Kobayashi","Kato","Yoshida","Yamada","Sasaki","Yamaguchi","Matsumoto","Inoue","Kimura","Hayashi","Shimizu","Yamazaki"];
+
+// Korean
+const KOREAN_FIRST_M = ["Min-jun","Seo-jun","Do-yun","Ye-jun","Si-woo","Ha-jun","Ji-ho","Jun-seo","Joon-woo","Hyun-woo","Ji-hoon","Sung-min","Tae-hyung","Jin-woo","Dong-hyun","Seung-ho","Young-ho","Jae-min","Woo-jin","Hyun-jun"];
+const KOREAN_FIRST_F = ["Seo-yeon","Ha-yoon","Ji-woo","Seo-yun","Min-seo","Ha-eun","Ye-eun","Ji-yoo","Chae-won","So-yeon","Yuna","Ji-min","Su-bin","Ye-jin","Hye-jin","Min-ji","Soo-yeon","Eun-ji","Ji-hye","Yoon-ah"];
+const KOREAN_LAST = ["Kim","Lee","Park","Choi","Jung","Kang","Cho","Yoon","Jang","Lim","Han","Oh","Seo","Shin","Kwon","Hwang","Ahn","Song","Yoo","Hong"];
+
+// Indian
+const INDIAN_FIRST_M = ["Aarav","Vivaan","Aditya","Vihaan","Arjun","Sai","Reyansh","Ayaan","Krishna","Ishaan","Shaurya","Atharva","Advait","Pranav","Kabir","Dhruv","Ritvik","Arnav","Rohan","Rahul"];
+const INDIAN_FIRST_F = ["Aadhya","Ananya","Aaradhya","Myra","Aanya","Pari","Saanvi","Anika","Navya","Diya","Priya","Shreya","Kavya","Ishita","Riya","Tanvi","Neha","Pooja","Anjali","Divya"];
+const INDIAN_LAST = ["Sharma","Patel","Singh","Kumar","Gupta","Agarwal","Verma","Jain","Shah","Reddy","Rao","Nair","Menon","Iyer","Pillai","Choudhury","Banerjee","Mukherjee","Chatterjee","Das"];
+
+// Pakistani
+const PAKISTANI_FIRST_M = ["Muhammad","Ali","Ahmed","Hassan","Hussain","Usman","Bilal","Hamza","Zain","Abdullah","Saad","Fahad","Omar","Imran","Shahid","Faisal","Tariq","Asif","Kamran","Wasim"];
+const PAKISTANI_FIRST_F = ["Fatima","Ayesha","Maryam","Zainab","Khadija","Sana","Hira","Mahnoor","Amna","Iqra","Noor","Sara","Aliza","Nimra","Areeba","Laiba","Kinza","Mehak","Rabia","Sidra"];
+const PAKISTANI_LAST = ["Khan","Ahmed","Ali","Malik","Hussain","Butt","Chaudhry","Sheikh","Qureshi","Siddiqui","Iqbal","Raza","Javed","Mirza","Bhatti","Akhtar","Aslam","Rashid","Aziz","Nawaz"];
+
+// Indonesian
+const INDONESIAN_FIRST_M = ["Budi","Agus","Dedi","Eko","Hendra","Irwan","Joko","Kurniawan","Lukman","Muhammad","Nugroho","Putra","Rudi","Slamet","Teguh","Umar","Wahyu","Yanto","Zainal","Ahmad"];
+const INDONESIAN_FIRST_F = ["Siti","Sri","Dewi","Fitri","Indah","Lestari","Maya","Ningsih","Putri","Ratna","Sari","Tuti","Wati","Yanti","Ayu","Bunga","Citra","Dian","Eka","Farah"];
+const INDONESIAN_LAST = ["Wijaya","Susanto","Santoso","Setiawan","Kusuma","Pratama","Hidayat","Saputra","Nugroho","Wibowo","Suryadi","Hartono","Gunawan","Budiman","Halim","Lim","Tan","Ng","Oei","Tanuwijaya"];
+
+// === AMERICAN/CANADIAN NAMES ===
+const US_FIRST_M = ["James","Robert","John","Michael","David","William","Richard","Joseph","Thomas","Christopher","Charles","Daniel","Matthew","Anthony","Mark","Donald","Steven","Paul","Andrew","Joshua","Liam","Noah","Oliver","Elijah","Lucas"];
+const US_FIRST_F = ["Mary","Patricia","Jennifer","Linda","Barbara","Elizabeth","Susan","Jessica","Sarah","Karen","Lisa","Nancy","Betty","Margaret","Sandra","Ashley","Kimberly","Emily","Donna","Michelle","Olivia","Emma","Ava","Charlotte","Sophia"];
+const US_LAST = ["Smith","Johnson","Williams","Brown","Jones","Garcia","Miller","Davis","Rodriguez","Martinez","Hernandez","Lopez","Gonzalez","Wilson","Anderson","Thomas","Taylor","Moore","Jackson","Martin","Lee","Perez","Thompson","White","Harris"];
+
+// African American
+const AFRICAN_AMERICAN_FIRST_M = ["Jamal","Darnell","Terrell","DeShawn","Tyrone","Malik","Darius","Andre","Marcus","Lamar","Kendrick","Trayvon","Jaylen","Dwayne","LeBron","Kobe","Shaquille","Denzel","Isaiah","Elijah"];
+const AFRICAN_AMERICAN_FIRST_F = ["Aaliyah","Imani","Jasmine","Destiny","Ebony","Keisha","Latoya","Shaniqua","Tamika","Tanisha","Beyoncé","Rihanna","Serena","Oprah","Michelle","Kamala","Simone","Naomi","Zendaya","Coco"];
+const AFRICAN_AMERICAN_LAST = ["Washington","Jefferson","Jackson","Robinson","Harris","Lewis","Walker","Green","Baker","Hall","Allen","Young","King","Wright","Scott","Adams","Nelson","Carter","Mitchell","Turner"];
+
+// Canadian
+const CANADIAN_FIRST_M = ["Liam","Noah","Oliver","Lucas","Ethan","Benjamin","William","James","Logan","Alexander","Jacob","Jack","Owen","Nathan","Samuel","Jean","Pierre","François","Michel","André"];
+const CANADIAN_FIRST_F = ["Olivia","Emma","Charlotte","Amelia","Ava","Sophia","Mia","Isabella","Evelyn","Harper","Camila","Aria","Scarlett","Chloe","Ella","Marie","Sophie","Chloé","Léa","Émilie"];
+const CANADIAN_LAST = ["Smith","Brown","Tremblay","Martin","Roy","Wilson","Macdonald","Gagnon","Johnson","Taylor","Côté","Campbell","Anderson","Leblanc","Lee","Wong","Singh","Patel","Chen","Kim"];
+
+// === LATIN AMERICAN NAMES ===
+// Mexican
+const MEXICAN_FIRST_M = ["José","Juan","Luis","Carlos","Miguel","Francisco","Antonio","Jesús","Pedro","Alejandro","Jorge","Ricardo","Fernando","Eduardo","Rafael","Sergio","Javier","Manuel","Arturo","Roberto"];
+const MEXICAN_FIRST_F = ["María","Guadalupe","Margarita","Verónica","Leticia","Rosa","Patricia","Elizabeth","Alejandra","Adriana","Gabriela","Fernanda","Daniela","Valeria","Ximena","Sofía","Camila","Regina","Renata","Valentina"];
+const MEXICAN_LAST = ["García","Hernández","López","Martínez","González","Rodríguez","Pérez","Sánchez","Ramírez","Torres","Flores","Rivera","Gómez","Díaz","Reyes","Morales","Jiménez","Ruiz","Álvarez","Romero"];
+
+// Brazilian
+const BRAZILIAN_FIRST_M = ["Miguel","Arthur","Heitor","Bernardo","Théo","Davi","Lorenzo","Gabriel","Pedro","Samuel","João","Lucas","Matheus","Rafael","Guilherme","Felipe","Gustavo","Bruno","Leonardo","Rodrigo"];
+const BRAZILIAN_FIRST_F = ["Helena","Alice","Laura","Maria","Valentina","Heloísa","Sophia","Isabella","Manuela","Júlia","Luísa","Lorena","Lívia","Giovanna","Maria Eduarda","Beatriz","Maria Clara","Cecília","Eloá","Lara"];
+const BRAZILIAN_LAST = ["Silva","Santos","Oliveira","Souza","Rodrigues","Ferreira","Alves","Pereira","Lima","Gomes","Costa","Ribeiro","Martins","Carvalho","Almeida","Lopes","Soares","Fernandes","Vieira","Barbosa"];
+
+// Argentine
+const ARGENTINE_FIRST_M = ["Santiago","Mateo","Benjamín","Joaquín","Bautista","Lautaro","Santino","Valentino","Thiago","Felipe","Tomás","Lucas","Nicolás","Facundo","Agustín","Martín","Franco","Gonzalo","Diego","Lionel"];
+const ARGENTINE_FIRST_F = ["Sofía","Emma","Olivia","Mía","Valentina","Isabella","Martina","Catalina","Lucía","Victoria","Emilia","Renata","Alma","Delfina","Josefina","Juana","Camila","Florencia","Agustina","Milagros"];
+const ARGENTINE_LAST = ["González","Rodríguez","Gómez","Fernández","López","Díaz","Martínez","Pérez","García","Sánchez","Romero","Sosa","Torres","Álvarez","Ruiz","Ramírez","Flores","Acosta","Medina","Benítez"];
+
+// Colombian
+const COLOMBIAN_FIRST_M = ["Samuel","Matías","Nicolás","Sebastián","Alejandro","Santiago","Daniel","Andrés","David","Juan","Carlos","Felipe","Camilo","Diego","Pablo","Sergio","Julián","Esteban","Mauricio","Oscar"];
+const COLOMBIAN_FIRST_F = ["Sofía","Valentina","Isabella","Mariana","Gabriela","Daniela","María","Camila","Sara","Luciana","Paula","Andrea","Natalia","Carolina","Juliana","Alejandra","Diana","Paola","Mónica","Claudia"];
+const COLOMBIAN_LAST = ["García","Rodríguez","Martínez","López","González","Hernández","Sánchez","Ramírez","Torres","Flores","Rivera","Gómez","Díaz","Reyes","Morales","Jiménez","Ruiz","Álvarez","Romero","Vargas"];
+
+// -------------------- REGION SELECTION + NAME GENERATION --------------------
+type Region = "GULF" | "LEVANT" | "IRAQ" | "EGYPT" | "LIBYA" | "TUNISIA" | "ALGERIA" | "MOROCCO" | "NIGERIA" | "GHANA" | "SOUTH_AFRICA" | "KENYA" | "ETHIOPIA" | "UK" | "GERMAN" | "FRENCH" | "SPANISH" | "ITALIAN" | "RUSSIAN" | "POLISH" | "CHINESE" | "JAPANESE" | "KOREAN" | "INDIAN" | "PAKISTANI" | "INDONESIAN" | "US" | "AFRICAN_AMERICAN" | "CANADIAN" | "MEXICAN" | "BRAZILIAN" | "ARGENTINE" | "COLOMBIAN";
+
+const REGION_WEIGHTS: Array<{ region: Region; weight: number; phonePrefix: string }> = [
+  // Arabic MENA (~35%)
+  { region: "GULF", weight: 8, phonePrefix: "+966" },
+  { region: "LEVANT", weight: 5, phonePrefix: "+962" },
+  { region: "IRAQ", weight: 4, phonePrefix: "+964" },
+  { region: "EGYPT", weight: 6, phonePrefix: "+20" },
+  { region: "LIBYA", weight: 4, phonePrefix: "+218" },
+  { region: "TUNISIA", weight: 3, phonePrefix: "+216" },
+  { region: "ALGERIA", weight: 3, phonePrefix: "+213" },
+  { region: "MOROCCO", weight: 4, phonePrefix: "+212" },
+  // African (~12%)
+  { region: "NIGERIA", weight: 4, phonePrefix: "+234" },
+  { region: "GHANA", weight: 2, phonePrefix: "+233" },
+  { region: "SOUTH_AFRICA", weight: 3, phonePrefix: "+27" },
+  { region: "KENYA", weight: 2, phonePrefix: "+254" },
+  { region: "ETHIOPIA", weight: 2, phonePrefix: "+251" },
+  // European (~18%)
+  { region: "UK", weight: 4, phonePrefix: "+44" },
+  { region: "GERMAN", weight: 3, phonePrefix: "+49" },
+  { region: "FRENCH", weight: 3, phonePrefix: "+33" },
+  { region: "SPANISH", weight: 3, phonePrefix: "+34" },
+  { region: "ITALIAN", weight: 2, phonePrefix: "+39" },
+  { region: "RUSSIAN", weight: 2, phonePrefix: "+7" },
+  { region: "POLISH", weight: 2, phonePrefix: "+48" },
+  // Asian (~18%)
+  { region: "CHINESE", weight: 4, phonePrefix: "+86" },
+  { region: "JAPANESE", weight: 2, phonePrefix: "+81" },
+  { region: "KOREAN", weight: 2, phonePrefix: "+82" },
+  { region: "INDIAN", weight: 4, phonePrefix: "+91" },
+  { region: "PAKISTANI", weight: 3, phonePrefix: "+92" },
+  { region: "INDONESIAN", weight: 3, phonePrefix: "+62" },
+  // Americas (~17%)
+  { region: "US", weight: 5, phonePrefix: "+1" },
+  { region: "AFRICAN_AMERICAN", weight: 2, phonePrefix: "+1" },
+  { region: "CANADIAN", weight: 2, phonePrefix: "+1" },
+  { region: "MEXICAN", weight: 3, phonePrefix: "+52" },
+  { region: "BRAZILIAN", weight: 3, phonePrefix: "+55" },
+  { region: "ARGENTINE", weight: 2, phonePrefix: "+54" },
+  { region: "COLOMBIAN", weight: 2, phonePrefix: "+57" },
 ];
-const AR_LAST = [
-  "الشريف","الطاهر","الشامي","مصطفى","الهاشمي","البغدادي","التائب","طلحة","محمودي","طروم",
-  "بوسنينه","الدوسري","الشامري","البنغازي","المصري","ابوجراد","المسعودي","العلاقي",
-];
-const EN_FIRST = ["Ahmed","Mohamed","Khaled","Ali","Youssef","Omar","Salem","Marwan","Fahd","Tariq","Sami","Hassan"];
-const EN_LAST = ["Al-Sharif","Al-Taher","Talha","Taroum","Bousnina","Al-Dosari","Al-Shamri","Al-Benghazi"];
-const FR_FIRST = ["Ahmed","Mohamed","Youssef","Omar","Karim","Rachid","Yassine","Hicham"];
-const FR_LAST = ["Bennani","El Mansouri","Haddad","El Amrani","Cherkaoui","Mansour"];
+
+function pickRegion(): { region: Region; phonePrefix: string } {
+  const total = REGION_WEIGHTS.reduce((s, r) => s + r.weight, 0);
+  let x = Math.random() * total;
+  for (const r of REGION_WEIGHTS) {
+    if (x < r.weight) return { region: r.region, phonePrefix: r.phonePrefix };
+    x -= r.weight;
+  }
+  return REGION_WEIGHTS[0];
+}
+
+function generateName(region: Region): { firstName: string; lastName: string } {
+  const isMale = Math.random() < 0.52;
+  let firstName: string, lastName: string;
+
+  switch (region) {
+    case "GULF": firstName = randomElement(isMale ? GULF_FIRST_M : GULF_FIRST_F); lastName = randomElement(GULF_LAST); break;
+    case "LEVANT": firstName = randomElement(isMale ? LEVANT_FIRST_M : LEVANT_FIRST_F); lastName = randomElement(LEVANT_LAST); break;
+    case "IRAQ": firstName = randomElement(isMale ? IRAQ_FIRST_M : IRAQ_FIRST_F); lastName = randomElement(IRAQ_LAST); break;
+    case "EGYPT": firstName = randomElement(isMale ? EGYPT_FIRST_M : EGYPT_FIRST_F); lastName = randomElement(EGYPT_LAST); break;
+    case "LIBYA": firstName = randomElement(isMale ? LIBYA_FIRST_M : LIBYA_FIRST_F); lastName = randomElement(LIBYA_LAST); break;
+    case "TUNISIA": firstName = randomElement(isMale ? TUNISIA_FIRST_M : TUNISIA_FIRST_F); lastName = randomElement(TUNISIA_LAST); break;
+    case "ALGERIA": firstName = randomElement(isMale ? ALGERIA_FIRST_M : ALGERIA_FIRST_F); lastName = randomElement(ALGERIA_LAST); break;
+    case "MOROCCO": firstName = randomElement(isMale ? MOROCCO_FIRST_M : MOROCCO_FIRST_F); lastName = randomElement(MOROCCO_LAST); break;
+    case "NIGERIA": firstName = randomElement(isMale ? NIGERIA_FIRST_M : NIGERIA_FIRST_F); lastName = randomElement(NIGERIA_LAST); break;
+    case "GHANA": firstName = randomElement(isMale ? GHANA_FIRST_M : GHANA_FIRST_F); lastName = randomElement(GHANA_LAST); break;
+    case "SOUTH_AFRICA": firstName = randomElement(isMale ? SOUTH_AFRICA_FIRST_M : SOUTH_AFRICA_FIRST_F); lastName = randomElement(SOUTH_AFRICA_LAST); break;
+    case "KENYA": firstName = randomElement(isMale ? KENYA_FIRST_M : KENYA_FIRST_F); lastName = randomElement(KENYA_LAST); break;
+    case "ETHIOPIA": firstName = randomElement(isMale ? ETHIOPIA_FIRST_M : ETHIOPIA_FIRST_F); lastName = randomElement(ETHIOPIA_LAST); break;
+    case "UK": firstName = randomElement(isMale ? UK_FIRST_M : UK_FIRST_F); lastName = randomElement(UK_LAST); break;
+    case "GERMAN": firstName = randomElement(isMale ? GERMAN_FIRST_M : GERMAN_FIRST_F); lastName = randomElement(GERMAN_LAST); break;
+    case "FRENCH": firstName = randomElement(isMale ? FRENCH_FIRST_M : FRENCH_FIRST_F); lastName = randomElement(FRENCH_LAST); break;
+    case "SPANISH": firstName = randomElement(isMale ? SPANISH_FIRST_M : SPANISH_FIRST_F); lastName = randomElement(SPANISH_LAST); break;
+    case "ITALIAN": firstName = randomElement(isMale ? ITALIAN_FIRST_M : ITALIAN_FIRST_F); lastName = randomElement(ITALIAN_LAST); break;
+    case "RUSSIAN": firstName = randomElement(isMale ? RUSSIAN_FIRST_M : RUSSIAN_FIRST_F); lastName = randomElement(RUSSIAN_LAST); break;
+    case "POLISH": firstName = randomElement(isMale ? POLISH_FIRST_M : POLISH_FIRST_F); lastName = randomElement(POLISH_LAST); break;
+    case "CHINESE": firstName = randomElement(isMale ? CHINESE_FIRST_M : CHINESE_FIRST_F); lastName = randomElement(CHINESE_LAST); break;
+    case "JAPANESE": firstName = randomElement(isMale ? JAPANESE_FIRST_M : JAPANESE_FIRST_F); lastName = randomElement(JAPANESE_LAST); break;
+    case "KOREAN": firstName = randomElement(isMale ? KOREAN_FIRST_M : KOREAN_FIRST_F); lastName = randomElement(KOREAN_LAST); break;
+    case "INDIAN": firstName = randomElement(isMale ? INDIAN_FIRST_M : INDIAN_FIRST_F); lastName = randomElement(INDIAN_LAST); break;
+    case "PAKISTANI": firstName = randomElement(isMale ? PAKISTANI_FIRST_M : PAKISTANI_FIRST_F); lastName = randomElement(PAKISTANI_LAST); break;
+    case "INDONESIAN": firstName = randomElement(isMale ? INDONESIAN_FIRST_M : INDONESIAN_FIRST_F); lastName = randomElement(INDONESIAN_LAST); break;
+    case "US": firstName = randomElement(isMale ? US_FIRST_M : US_FIRST_F); lastName = randomElement(US_LAST); break;
+    case "AFRICAN_AMERICAN": firstName = randomElement(isMale ? AFRICAN_AMERICAN_FIRST_M : AFRICAN_AMERICAN_FIRST_F); lastName = randomElement(AFRICAN_AMERICAN_LAST); break;
+    case "CANADIAN": firstName = randomElement(isMale ? CANADIAN_FIRST_M : CANADIAN_FIRST_F); lastName = randomElement(CANADIAN_LAST); break;
+    case "MEXICAN": firstName = randomElement(isMale ? MEXICAN_FIRST_M : MEXICAN_FIRST_F); lastName = randomElement(MEXICAN_LAST); break;
+    case "BRAZILIAN": firstName = randomElement(isMale ? BRAZILIAN_FIRST_M : BRAZILIAN_FIRST_F); lastName = randomElement(BRAZILIAN_LAST); break;
+    case "ARGENTINE": firstName = randomElement(isMale ? ARGENTINE_FIRST_M : ARGENTINE_FIRST_F); lastName = randomElement(ARGENTINE_LAST); break;
+    case "COLOMBIAN": firstName = randomElement(isMale ? COLOMBIAN_FIRST_M : COLOMBIAN_FIRST_F); lastName = randomElement(COLOMBIAN_LAST); break;
+    default: firstName = randomElement(US_FIRST_M); lastName = randomElement(US_LAST);
+  }
+  return { firstName, lastName };
+}
 
 // -------------------- HELPERS --------------------
 function randomElement<T>(arr: T[]): T {
@@ -392,9 +647,9 @@ async function main() {
     console.log("📚 No course tiers found, creating basic tiers...");
     const basicTiers = [
       { name: "Free", description: "Free tier", price_stripe: 0, price_usdt: 0, level: "BEGINNER", productType: "COURSE" },
-      { name: "Pro", description: "Pro tier", price_stripe: 4999, price_usdt: 49.99, level: "INTERMEDIATE", productType: "COURSE" },
+      { name: "Pro", description: "Pro tier", price_stripe: 5999, price_usdt: 59.99, level: "INTERMEDIATE", productType: "COURSE" },
       { name: "Master", description: "Master tier", price_stripe: 9999, price_usdt: 99.99, level: "ADVANCED", productType: "COURSE" },
-      { name: "Elite", description: "Elite tier", price_stripe: 19999, price_usdt: 199.99, level: "ADVANCED", productType: "COURSE" },
+      { name: "Elite", description: "Elite tier", price_stripe: 13999, price_usdt: 139.99, level: "ADVANCED", productType: "COURSE" },
     ];
     
     for (const tier of basicTiers) {
@@ -543,13 +798,10 @@ async function main() {
     const batchUsers: any[] = [];
     for (let i = 0; i < batchSize; i++) {
       const userIndex = totalCreated + i;
-      const localeRand = Math.random();
-      const locale = localeRand < 0.6 ? "ar" : localeRand < 0.85 ? "en" : "fr";
-
-      let firstName: string, lastName: string;
-      if (locale === "ar") { firstName = randomElement(AR_FIRST); lastName = randomElement(AR_LAST); }
-      else if (locale === "en") { firstName = randomElement(EN_FIRST); lastName = randomElement(EN_LAST); }
-      else { firstName = randomElement(FR_FIRST); lastName = randomElement(FR_LAST); }
+      
+      // Pick a random region and generate culturally appropriate name
+      const { region, phonePrefix } = pickRegion();
+      const { firstName, lastName } = generateName(region);
 
       const monthsAgo = weightedRandom(registrationWeights);
       const createdAt = randomDate(
@@ -562,11 +814,15 @@ async function main() {
         ? randomDate(new Date(Date.now() - 30 * 24 * 60 * 60 * 1000), now)
         : randomDate(createdAt, new Date(Date.now() - 30 * 24 * 60 * 60 * 1000));
 
+      // Generate realistic phone number with region-appropriate prefix
+      const hasPhone = Math.random() < 0.55;
+      const phone = hasPhone ? `${phonePrefix}${randomInt(100000000, 999999999)}` : null;
+
       batchUsers.push({
         name: `${firstName} ${lastName}`,
         email: generateEmail(firstName, lastName, userIndex),
         password: hashedPassword,
-        phone: Math.random() < 0.5 ? `+218${randomInt(100000000, 999999999)}` : null,
+        phone,
         role: "fake_user",
         status: "active",
         created_at: createdAt,

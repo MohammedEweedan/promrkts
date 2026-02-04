@@ -603,10 +603,10 @@ const Checkout: React.FC = () => {
       >
         <HStack justify="space-between" align="center" flexWrap="wrap" gap={3}>
           <Box minW={0}>
-            <Text fontWeight={600} color="#65a8bf">
+            <Text fontWeight={600} color="white">
               {t("checkout.addons.vip.title", { defaultValue: "VIP Telegram (monthly)" })}
             </Text>
-            <Text fontSize="sm" color="#65a8bf">
+            <Text fontSize="sm" color="white">
               {t("checkout.addons.vip.subtitle", {
                 defaultValue: `Recurring $${vipPriceUsd}/month. Cancel anytime.`,
               })}
@@ -618,7 +618,7 @@ const Checkout: React.FC = () => {
               checked={vipTelegram}
               onChange={(e) => setVipTelegram(e.target.checked)}
             />
-            <Text fontSize="sm" color="#65a8bf">
+            <Text fontSize="sm" color="white">
               {t("checkout.addons.vip.choose", {
                 defaultValue: `Add ($${vipPriceUsd || 10}/month)`,
               })}
@@ -944,7 +944,6 @@ const Checkout: React.FC = () => {
                         isLoading={loading}
                         disabled={!tierId || alreadyEnrolled}
                         variant="solid"
-                        bg="#65a8bf"
                         w={{ base: "100%", sm: "auto" }}
                       >
                         {t("checkout.actions.complete", { defaultValue: "Complete Purchase" })}
@@ -973,7 +972,6 @@ const Checkout: React.FC = () => {
                     disabled={!tierId || alreadyEnrolled}
                     variant="solid"
                     bg={brand}
-                    color="#65a8bf"
                     _hover={{ opacity: 0.9 }}
                     w={{ base: "100%", sm: "auto" }}
                   >
@@ -1135,7 +1133,6 @@ const Checkout: React.FC = () => {
                 isLoading={loading}
                 disabled={!tierId || alreadyEnrolled}
                 variant="solid"
-                bg="#65a8bf"
                 w={{ base: "100%", sm: "auto" }}
               >
                 {t("checkout.actions.complete", { defaultValue: "Complete Purchase" })}

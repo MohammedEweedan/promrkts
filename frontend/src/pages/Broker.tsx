@@ -127,14 +127,14 @@ const Broker: React.FC = () => {
                           {PARTNER_LABEL}
                         </Badge>
 
-                        <Text fontSize="xs" color="gray.400">
+                        <Text fontSize="xs">
                           {t("broker.partner_label", {
                             defaultValue: "Official referral link",
                           })}
                         </Text>
                       </HStack>
 
-                      <Text fontSize="sm" color="gray.200" fontWeight="semibold">
+                      <Text fontSize="sm" fontWeight="semibold">
                         {t("broker.anax_brand", { defaultValue: "ANAX Capital" })}
                       </Text>
                     </VStack>
@@ -150,7 +150,7 @@ const Broker: React.FC = () => {
 
                     <Text
                       fontSize={{ base: "sm", md: "md" }}
-                      color="gray.300"
+                     
                       maxW={{ base: "full", md: "lg" }}
                     >
                       {t("broker.hero_subtitle", {
@@ -166,19 +166,19 @@ const Broker: React.FC = () => {
                     >
                       <HStack spacing={2}>
                         <Icon as={ShieldCheck} color={brand} />
-                        <Text fontSize="xs" color="gray.300">
+                        <Text fontSize="xs">
                           {t("broker.hero_point_1")}
                         </Text>
                       </HStack>
                       <HStack spacing={2}>
                         <Icon as={LineChart} color={brand} />
-                        <Text fontSize="xs" color="gray.300">
+                        <Text fontSize="xs">
                           {t("broker.hero_point_2")}
                         </Text>
                       </HStack>
                     </HStack>
 
-                    <Text fontSize="xs" color="gray.500" mt={2} maxW={{ base: "full", md: "lg" }}>
+                    <Text fontSize="xs" mt={2} maxW={{ base: "full", md: "lg" }}>
                       {t("broker.disclaimer_short")}
                     </Text>
                   </VStack>
@@ -284,7 +284,7 @@ const Broker: React.FC = () => {
                   {t("broker.why_title")}
                 </Heading>
 
-                <Text fontSize={{ base: "sm", md: "sm" }} color="gray.300" maxW="2xl">
+                <Text fontSize={{ base: "sm", md: "sm" }} maxW="2xl">
                   {t("broker.why_subtitle", {
                     defaultValue:
                       "By registering through our official IB link, you help us negotiate better conditions with the broker and unlock extra perks aligned with the way we actually trade in promrkts.",
@@ -347,10 +347,10 @@ const Broker: React.FC = () => {
                 <Text fontSize={{ base: "sm", md: "md" }} color={brand} fontWeight="bold">
                   {t(`${ANAX_NAMESPACE}.hero_badge`)}
                 </Text>
-                <Text fontSize={{ base: "sm", md: "md" }} color="gray.200">
+                <Text fontSize={{ base: "sm", md: "md" }}>
                   {t(`${ANAX_NAMESPACE}.hero_intro`)}
                 </Text>
-                <Text fontSize={{ base: "sm", md: "md" }} color="gray.300">
+                <Text fontSize={{ base: "sm", md: "md" }}>
                   {t(`${ANAX_NAMESPACE}.hero_intro_secondary`)}
                 </Text>
               </VStack>
@@ -403,7 +403,7 @@ const Broker: React.FC = () => {
 
               <Text
                 fontSize="sm"
-                color="gray.300"
+               
                 maxW="4xl"
                 textAlign={{ base: "center", md: "left" }}
               >
@@ -411,7 +411,7 @@ const Broker: React.FC = () => {
               </Text>
               <Text
                 fontSize="sm"
-                color="gray.300"
+               
                 maxW="4xl"
                 textAlign={{ base: "center", md: "left" }}
               >
@@ -429,7 +429,7 @@ const Broker: React.FC = () => {
                       <Heading size="sm" color="#65a8bf" mb={2}>
                         {t(`${ANAX_NAMESPACE}.features.${key}.title`)}
                       </Heading>
-                      <Text fontSize="sm" color="gray.300">
+                      <Text fontSize="sm">
                         {t(`${ANAX_NAMESPACE}.features.${key}.description`)}
                       </Text>
                     </Box>
@@ -457,7 +457,7 @@ const Broker: React.FC = () => {
                       <Text fontWeight="semibold" color="#65a8bf" mb={1}>
                         {t(`${ANAX_NAMESPACE}.platforms.${key}.title`)}
                       </Text>
-                      <Text fontSize="sm" color="gray.300">
+                      <Text fontSize="sm">
                         {t(`${ANAX_NAMESPACE}.platforms.${key}.description`)}
                       </Text>
                     </Box>
@@ -481,7 +481,7 @@ const Broker: React.FC = () => {
                           <Text fontWeight="semibold" color={brand} fontSize="sm">
                             {t(`${ANAX_NAMESPACE}.steps.${key}.title`)}
                           </Text>
-                          <Text fontSize="xs" color="gray.300">
+                          <Text fontSize="xs">
                             {t(`${ANAX_NAMESPACE}.steps.${key}.description`)}
                           </Text>
                         </Box>
@@ -493,7 +493,7 @@ const Broker: React.FC = () => {
                     <Heading size="sm" color="#65a8bf" mb={2}>
                       {t(`${ANAX_NAMESPACE}.support_title`)}
                     </Heading>
-                    <List spacing={2} color="gray.300" fontSize="sm">
+                    <List spacing={2} fontSize="sm">
                       {anaxSupportKeys.map((key) => (
                         <ListItem key={key}>
                           <ListIcon as={CheckCircle2} color={brand} />
@@ -582,7 +582,7 @@ const Broker: React.FC = () => {
         <Box mt={10} borderTop="1px solid rgba(255,255,255,0.08)" pt={6}>
           <VStack align="stretch" spacing={4}>
             {anaxDisclaimerKeys.map((key) => (
-              <Text key={key} fontSize="xs" color="gray.500">
+              <Text key={key} fontSize="xs">
                 {t(`${ANAX_NAMESPACE}.disclaimer.${key}`)}
               </Text>
             ))}
@@ -600,11 +600,11 @@ const Broker: React.FC = () => {
                 ×
               </Text>
 
-              <Text fontSize="sm" color="gray.300" fontWeight="semibold">
+              <Text fontSize="sm" fontWeight="semibold">
                 {YOUR_BRAND_LABEL}
               </Text>
 
-              <Text fontSize="xs" color="gray.500">
+              <Text fontSize="xs">
                 {t("broker.ib_partner_note", { defaultValue: "Introducing Broker (IB) partner" })}
               </Text>
             </VStack>
