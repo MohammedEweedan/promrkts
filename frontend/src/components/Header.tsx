@@ -31,35 +31,6 @@ import { useAuth } from "../auth/AuthContext";
 import Switch from "./Switch";
 import LanguageModal from "./LangModal";
 
-const LanguageIcon: React.FC<{
-  code: string;
-  isActive: boolean;
-  onClick: () => void;
-}> = ({ code, isActive, onClick }) => {
-
-  return (
-    <Box
-      w="50px"
-      h="50px"
-      borderRadius="14px"
-      border="2px solid"
-      borderColor="#65a8bf"
-      display="flex"
-      alignItems="center"
-      justifyContent="center"
-      fontWeight="700"
-      fontSize="13px"
-      color="#65a8bf"
-      transition="all 0.2s ease"
-      cursor="pointer"
-      onClick={onClick}
-      userSelect="none"
-    >
-      {code}
-    </Box>
-  );
-};
-
 const Header: React.FC = () => {
   const { t, i18n } = useTranslation() as any;
   const [menuOpen, setMenuOpen] = React.useState(false);
