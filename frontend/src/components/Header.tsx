@@ -18,6 +18,7 @@ import {
   MessageSquare,
   BookOpen,
   LayoutDashboard,
+  MapIcon,
   ShoppingBag,
   Languages,
   Sun,
@@ -124,7 +125,7 @@ const Header: React.FC = () => {
         onClick: () => navigate("/dashboard"),
       });
       base.push({
-        icon: <BookOpen strokeWidth={1.5} />,
+        icon: <MapIcon strokeWidth={1.5} />,
         label: t("header.path") || "My Path",
         onClick: () => navigate("/path"),
       });
@@ -568,6 +569,20 @@ const Header: React.FC = () => {
                     {t("nav.enrolled")}
                   </Button>
                   <Button
+                    as={RouterLink}
+                    to="/path"
+                    onClick={() => setMenuOpen(false)}
+                    variant="ghost"
+                    justifyContent="flex-start"
+                    px={6}
+                    py={6}
+                    fontSize="lg"
+                    color={mode === "dark" ? "white" : "#111111"}
+                    leftIcon={<MapIcon />}
+                  >
+                    {t("header.path") || "My Path"}
+                  </Button>
+                  <Button
                     onClick={async () => {
                       await logout();
                       setMenuOpen(false);
@@ -629,9 +644,6 @@ const Header: React.FC = () => {
                 <VStack spacing={3} align="center">
                   <HStack spacing={2} align="center">
                     <Languages size={20} color="#65a8bf" />
-                    <Box fontSize="sm" fontWeight="600" color="#65a8bf">
-                      {t("nav.language") || "Language"}
-                    </Box>
                   </HStack>
                   <Box
                     as="select"

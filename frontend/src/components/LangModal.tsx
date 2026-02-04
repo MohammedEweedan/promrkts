@@ -4,9 +4,17 @@ import { AnimatePresence, motion } from "framer-motion";
 import SpotlightCard from "./SpotlightCard";
 
 const languages = [
-  { code: "EN", name: "English", flag: "🇬🇧" },
+  { code: "EN", name: "English", flag: "🇺🇸" },
   { code: "AR", name: "العربية", flag: "🇸🇦" },
   { code: "FR", name: "Français", flag: "🇫🇷" },
+  { code: "RU", name: "Русский", flag: "🇷🇺" },
+  { code: "ZH", name: "中文", flag: "🇨🇳" },
+  { code: "PT", name: "Português", flag: "🇧🇷" },
+  { code: "ES", name: "Español", flag: "🇪🇸" },
+  { code: "HI", name: "हिंदी", flag: "🇮🇳" },
+  { code: "UR", name: "اردو", flag: "🇵🇰" },
+  { code: "DE", name: "Deutsch", flag: "🇩🇪" },
+  { code: "NL", name: "Nederlands", flag: "🇳🇱" },
 ];
 
 const LanguageModal: React.FC<{ isOpen: boolean; onClose: () => void; currentLang: string; onSelect: (lang: string) => void }> = ({
@@ -38,38 +46,46 @@ const LanguageModal: React.FC<{ isOpen: boolean; onClose: () => void; currentLan
             style={{
               padding: 24,
               borderRadius: 20,
+              maxHeight: "80vh",
+              overflowY: "auto",
             }}
           >
-            <div style={{ display: "flex", flexDirection: "column", gap: 12, maxWidth: 520, margin: "0 auto" }}>
+            <div style={{ 
+              display: "grid", 
+              gridTemplateColumns: "repeat(2, 1fr)", 
+              gap: 10, 
+              maxWidth: 520, 
+              margin: "0 auto" 
+            }}>
               {languages.map(({ code, name, flag }) => (
                 <motion.button
                   key={code}
-                  whileHover={{ scale: 1.05 }}
+                  whileHover={{ scale: 1.03 }}
                   whileTap={{ scale: 0.98 }}
                   style={{
                     display: "flex",
                     alignItems: "center",
-                    gap: 12,
-                    padding: "10px 14px",
-                    borderRadius: 14,
+                    gap: 10,
+                    padding: "10px 12px",
+                    borderRadius: 12,
                     border:
-                      currentLang === code ? "2px solid #65a8bf" : "1px solid rgba(0,0,0,1)",
+                      currentLang === code ? "2px solid #65a8bf" : "1px solid rgba(0,0,0,0.2)",
                     background:
-                      currentLang === code ? "rgba(104,165,191,1)" : "rgba(255,255,255,0.9)",
+                      currentLang === code ? "rgba(104,165,191,1)" : "rgba(255,255,255,0.95)",
                     cursor: "pointer",
                     fontWeight: 600,
-                    fontSize: 14,
-                    color: "#222",
-                    minWidth: 240,
+                    fontSize: 13,
+                    color: currentLang === code ? "#fff" : "#222",
+                    minWidth: 140,
+                    transition: "all 0.2s ease",
                   }}
                   onClick={() => {
                     onSelect(code);
                     onClose();
                   }}
                 >
-                  <span style={{ fontSize: 20 }}>{flag}</span>
-                  <span style={{ flex: 1 }}>{name}</span>
-                  <span style={{ opacity: 0.6 }}>{code}</span>
+                  <span style={{ fontSize: 18 }}>{flag}</span>
+                  <span style={{ flex: 1, textAlign: "left" }}>{name}</span>
                 </motion.button>
               ))}
             </div>

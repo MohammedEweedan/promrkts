@@ -19,6 +19,13 @@ import {
   TabPanels,
   Tab,
   TabPanel,
+  Modal,
+  ModalOverlay,
+  ModalContent,
+  ModalHeader,
+  ModalBody,
+  ModalCloseButton,
+  useDisclosure,
 } from "@chakra-ui/react";
 import { Link as RouterLink } from "react-router-dom";
 import api from "../../api/client";
@@ -68,20 +75,42 @@ const CoursesList: React.FC = () => {
   const [tiers, setTiers] = React.useState<CourseTier[]>([]);
   const [loading, setLoading] = React.useState<boolean>(true);
   const [error, setError] = React.useState<string | null>(null);
+  const { isOpen: isExitOpen, onOpen: onExitOpen, onClose: onExitClose } = useDisclosure();
+  const [hasShownExit, setHasShownExit] = React.useState(false);
+
+  // Exit-intent detection
+  React.useEffect(() => {
+    const handleMouseLeave = (e: MouseEvent) => {
+      if (e.clientY <= 0 && !hasShownExit) {
+        setHasShownExit(true);
+        onExitOpen();
+      }
+    };
+    const handleVisibilityChange = () => {
+      if (document.visibilityState === "hidden" && !hasShownExit) {
+        setHasShownExit(true);
+        onExitOpen();
+      }
+    };
+    document.addEventListener("mouseleave", handleMouseLeave);
+    document.addEventListener("visibilitychange", handleVisibilityChange);
+    return () => {
+      document.removeEventListener("mouseleave", handleMouseLeave);
+      document.removeEventListener("visibilitychange", handleVisibilityChange);
+    };
+  }, [hasShownExit, onExitOpen]);
 
   React.useEffect(() => {
     (async () => {
       try {
-        // Load challenges + courses + subscriptions
-        const [challengesResp, coursesResp, subsResp] = await Promise.all([
-          api.get("/challenges").catch(() => ({ data: [] })),
+        // Load courses + subscriptions (challenges removed)
+        const [coursesResp, subsResp] = await Promise.all([
           api.get("/courses").catch(() => ({ data: [] })),
           api.get("/subscriptions").catch(() => ({ data: [] })),
         ]);
-        const challenges = Array.isArray(challengesResp.data) ? challengesResp.data : [];
         const courses = Array.isArray(coursesResp.data) ? coursesResp.data : [];
         const subs = Array.isArray(subsResp.data) ? subsResp.data : [];
-        setTiers([...challenges, ...courses, ...subs]);
+        setTiers([...courses, ...subs]);
       } catch (e: any) {
         setError(
           e?.response?.data?.message || t("errors.load_failed", { defaultValue: "Failed to load." })
@@ -115,31 +144,13 @@ const CoursesList: React.FC = () => {
     return null;
   };
 
-  const {
-    challengesOnly,
-    challengesOneStep,
-    challengesTwoStep,
-    coursesOnly,
-    vipOnly,
-  } = React.useMemo(() => {
-    const challenges = tiers.filter(
-      (x: any) => String((x as any)?.productType || "").toUpperCase() === "CHALLENGE"
-    );
-    const courses = tiers.filter(
+  const { guidesOnly, communityOnly, freeGuide } = React.useMemo(() => {
+    const guides = tiers.filter(
       (x: any) => String((x as any)?.productType || "").toUpperCase() === "COURSE"
     );
-    const subs = tiers.filter((x) => isVip(x));
-
-    const one = challenges.filter((c: any) => getChallengeSteps(c) === 1);
-    const two = challenges.filter((c: any) => getChallengeSteps(c) === 2);
-
-    return {
-      challengesOnly: challenges,
-      challengesOneStep: one,
-      challengesTwoStep: two,
-      coursesOnly: courses,
-      vipOnly: subs,
-    };
+    const community = tiers.filter((x) => isVip(x));
+    const free = guides.find((g) => (g.price_usdt ?? 0) <= 0);
+    return { guidesOnly: guides, communityOnly: community, freeGuide: free };
   }, [tiers]);
 
   const renderSnippetStyleStars = (tier: CourseTier) => {
@@ -211,7 +222,7 @@ const CoursesList: React.FC = () => {
                   _hover={{ bg: "rgba(255,255,255,0.08)" }}
                   _selected={{ bg: "#65a8bf" }}
                 >
-                  {t("challenges.tab", { defaultValue: "Challenges" })}
+                  {t("guides.tab", { defaultValue: "Guides" })}
                 </Tab>
                 <Tab
                   borderRadius="md"
@@ -219,330 +230,14 @@ const CoursesList: React.FC = () => {
                   _hover={{ bg: "rgba(255,255,255,0.08)" }}
                   _selected={{ bg: "#65a8bf" }}
                 >
-                  {t("courses.tab", { defaultValue: "Courses" })}
-                </Tab>
-                <Tab
-                  borderRadius="md"
-                  fontWeight="semibold"
-                  _hover={{ bg: "rgba(255,255,255,0.08)" }}
-                  _selected={{ bg: "#65a8bf" }}
-                >
-                  {t("subscriptions.tab", { defaultValue: "Subscriptions" })}
+                  {t("community.tab", { defaultValue: "Community" })}
                 </Tab>
               </TabList>
               <TabPanels>
+                {/* Guides tab */}
                 <TabPanel px={0}>
-                {/* Challenges tab (nested split: 1-step / 2-step) */}
-                <Tabs variant="unstyled" w="full" isFitted>
-                  <TabList w="full" bg="rgba(255,255,255,0.06)" borderRadius="xl" p="2" gap="2" mb={4}>
-                    <Tab
-                      borderRadius="md"
-                      fontWeight="semibold"
-                      _hover={{ bg: "rgba(255,255,255,0.08)" }}
-                      _selected={{ bg: "#65a8bf" }}
-                    >
-                      {t("challenges.one_step", { defaultValue: "1-Step" })}
-                      <Badge ml={2} bg="transparent" border={`1px solid ${GOLD}`} color={GOLD}>
-                        {challengesOneStep.length}
-                      </Badge>
-                    </Tab>
-
-                    <Tab
-                      borderRadius="md"
-                      fontWeight="semibold"
-                      _hover={{ bg: "rgba(255,255,255,0.08)" }}
-                      _selected={{ bg: "#65a8bf" }}
-                    >
-                      {t("challenges.two_step", { defaultValue: "2-Step" })}
-                      <Badge ml={2} bg="transparent" border={`1px solid ${GOLD}`} color={GOLD}>
-                        {challengesTwoStep.length}
-                      </Badge>
-                    </Tab>
-
-                    <Tab
-                      borderRadius="md"
-                      fontWeight="semibold"
-                      _hover={{ bg: "rgba(255,255,255,0.08)" }}
-                      _selected={{ bg: "#65a8bf" }}
-                    >
-                      {t("common.all", { defaultValue: "All" })}
-                      <Badge ml={2} bg="transparent" border={`1px solid ${GOLD}`} color={GOLD}>
-                        {challengesOnly.length}
-                      </Badge>
-                    </Tab>
-                  </TabList>
-
-                  <TabPanels>
-                    {/* 1-step */}
-                    <TabPanel px={0}>
-                      <SimpleGrid columns={{ base: 1, sm: 2, lg: 2 }} gap={{ base: 4, md: 6 }}>
-                        {challengesOneStep.map((tier: any) => (
-                          <SpotlightCard key={tier.id}>
-                            <Box
-                              border="1px solid"
-                              borderColor={GOLD}
-                              borderRadius="lg"
-                              p={{ base: 4, md: 5 }}
-                              _hover={{ boxShadow: "lg", transform: "translateY(-2px)" }}
-                              transition="all 200ms ease"
-                              bg="bg.surface"
-                            >
-                              <Stack gap={4}>
-                                <HStack justify="space-between" align="start">
-                                  <Heading size={{ base: "md", md: "lg" }} noOfLines={2}>
-                                    {tier.name}
-                                  </Heading>
-                                  <Badge
-                                    color={GOLD}
-                                    variant="subtle"
-                                    borderRadius="md"
-                                    border={`1px solid ${GOLD}`}
-                                  >
-                                    {t("challenges.one_step", { defaultValue: "1-Step" })}
-                                  </Badge>
-                                </HStack>
-
-                                <Text noOfLines={{ base: 3, md: 4 }} opacity={0.85}>
-                                  {tier.description}
-                                </Text>
-
-                                <HStack justify="space-between" align="center" flexWrap="wrap" gap={3}>
-                                  <HStack
-                                    px={3}
-                                    py={1}
-                                    borderRadius="lg"
-                                    border="1px solid"
-                                    borderColor={GOLD}
-                                    bg="transparent"
-                                    gap={2}
-                                  >
-                                    <Icon as={TokenUSDT} boxSize={5} />
-                                    <Text fontWeight="bold">
-                                      {t("price.usdt", {
-                                        value: tier.price_usdt,
-                                        defaultValue: `${tier.price_usdt} USDT`,
-                                      })}
-                                    </Text>
-                                  </HStack>
-
-                                  <HStack gap={3}>
-                                    <Button
-                                      as={RouterLink}
-                                      to={`/products/${tier.id}`}
-                                      variant="outline"
-                                      borderColor={GOLD}
-                                      color={GOLD}
-                                    >
-                                      {t("actions.view_details", { defaultValue: "View details" })}
-                                    </Button>
-                                    <Button
-                                      as={RouterLink}
-                                      to={`/checkout?tierId=${tier.id}`}
-                                      bg={GOLD}
-                                      _hover={{ opacity: 0.9 }}
-                                      color="black"
-                                    >
-                                      {t("actions.buy_challenge", { defaultValue: "Buy Challenge" })}
-                                    </Button>
-                                  </HStack>
-                                </HStack>
-                              </Stack>
-                            </Box>
-                          </SpotlightCard>
-                        ))}
-
-                        {challengesOneStep.length === 0 && (
-                          <Text>
-                            {t("challenges.none_one_step", { defaultValue: "No 1-Step challenges available." })}
-                          </Text>
-                        )}
-                      </SimpleGrid>
-                    </TabPanel>
-
-                    {/* 2-step */}
-                    <TabPanel px={0}>
-                      <SimpleGrid columns={{ base: 1, sm: 2, lg: 2 }} gap={{ base: 4, md: 6 }}>
-                        {challengesTwoStep.map((tier: any) => (
-                          <SpotlightCard key={tier.id}>
-                            <Box
-                              border="1px solid"
-                              borderColor={GOLD}
-                              borderRadius="lg"
-                              p={{ base: 4, md: 5 }}
-                              _hover={{ boxShadow: "lg", transform: "translateY(-2px)" }}
-                              transition="all 200ms ease"
-                              bg="bg.surface"
-                            >
-                              <Stack gap={4}>
-                                <HStack justify="space-between" align="start">
-                                  <Heading size={{ base: "md", md: "lg" }} noOfLines={2}>
-                                    {tier.name}
-                                  </Heading>
-                                  <Badge
-                                    color={GOLD}
-                                    variant="subtle"
-                                    borderRadius="md"
-                                    border={`1px solid ${GOLD}`}
-                                  >
-                                    {t("challenges.two_step", { defaultValue: "2-Step" })}
-                                  </Badge>
-                                </HStack>
-
-                                <Text noOfLines={{ base: 3, md: 4 }} opacity={0.85}>
-                                  {tier.description}
-                                </Text>
-
-                                <HStack justify="space-between" align="center" flexWrap="wrap" gap={3}>
-                                  <HStack
-                                    px={3}
-                                    py={1}
-                                    borderRadius="lg"
-                                    border="1px solid"
-                                    borderColor={GOLD}
-                                    bg="transparent"
-                                    gap={2}
-                                  >
-                                    <Icon as={TokenUSDT} boxSize={5} />
-                                    <Text fontWeight="bold">
-                                      {t("price.usdt", {
-                                        value: tier.price_usdt,
-                                        defaultValue: `${tier.price_usdt} USDT`,
-                                      })}
-                                    </Text>
-                                  </HStack>
-
-                                  <HStack gap={3}>
-                                    <Button
-                                      as={RouterLink}
-                                      to={`/products/${tier.id}`}
-                                      variant="outline"
-                                      borderColor={GOLD}
-                                      color={GOLD}
-                                    >
-                                      {t("actions.view_details", { defaultValue: "View details" })}
-                                    </Button>
-                                    <Button
-                                      as={RouterLink}
-                                      to={`/checkout?tierId=${tier.id}`}
-                                      bg={GOLD}
-                                      _hover={{ opacity: 0.9 }}
-                                      color="black"
-                                    >
-                                      {t("actions.buy_challenge", { defaultValue: "Buy Challenge" })}
-                                    </Button>
-                                  </HStack>
-                                </HStack>
-                              </Stack>
-                            </Box>
-                          </SpotlightCard>
-                        ))}
-
-                        {challengesTwoStep.length === 0 && (
-                          <Text>
-                            {t("challenges.none_two_step", { defaultValue: "No 2-Step challenges available." })}
-                          </Text>
-                        )}
-                      </SimpleGrid>
-                    </TabPanel>
-
-                    {/* All */}
-                    <TabPanel px={0}>
-                      <SimpleGrid columns={{ base: 1, sm: 2, lg: 2 }} gap={{ base: 4, md: 6 }}>
-                        {challengesOnly.map((tier: any) => (
-                          <SpotlightCard key={tier.id}>
-                            <Box
-                              border="1px solid"
-                              borderColor={GOLD}
-                              borderRadius="lg"
-                              p={{ base: 4, md: 5 }}
-                              _hover={{ boxShadow: "lg", transform: "translateY(-2px)" }}
-                              transition="all 200ms ease"
-                              bg="bg.surface"
-                            >
-                              <Stack gap={4}>
-                                <HStack justify="space-between" align="start">
-                                  <Heading size={{ base: "md", md: "lg" }} noOfLines={2}>
-                                    {tier.name}
-                                  </Heading>
-
-                                  {/* show steps badge if detectable */}
-                                  <Badge
-                                    color={GOLD}
-                                    variant="subtle"
-                                    borderRadius="md"
-                                    border={`1px solid ${GOLD}`}
-                                  >
-                                    {(() => {
-                                      const s = getChallengeSteps(tier);
-                                      if (s === 1) return t("challenges.one_step", { defaultValue: "1-Step" });
-                                      if (s === 2) return t("challenges.two_step", { defaultValue: "2-Step" });
-                                      return String(tier?.challengePlatform || "MT5");
-                                    })()}
-                                  </Badge>
-                                </HStack>
-
-                                <Text noOfLines={{ base: 3, md: 4 }} opacity={0.85}>
-                                  {tier.description}
-                                </Text>
-
-                                <HStack justify="space-between" align="center" flexWrap="wrap" gap={3}>
-                                  <HStack
-                                    px={3}
-                                    py={1}
-                                    borderRadius="lg"
-                                    border="1px solid"
-                                    borderColor={GOLD}
-                                    bg="transparent"
-                                    gap={2}
-                                  >
-                                    <Icon as={TokenUSDT} boxSize={5} />
-                                    <Text fontWeight="bold">
-                                      {t("price.usdt", {
-                                        value: tier.price_usdt,
-                                        defaultValue: `${tier.price_usdt} USDT`,
-                                      })}
-                                    </Text>
-                                  </HStack>
-
-                                  <HStack gap={3}>
-                                    <Button
-                                      as={RouterLink}
-                                      to={`/products/${tier.id}`}
-                                      variant="outline"
-                                      borderColor={GOLD}
-                                      color={GOLD}
-                                    >
-                                      {t("actions.view_details", { defaultValue: "View details" })}
-                                    </Button>
-                                    <Button
-                                      as={RouterLink}
-                                      to={`/checkout?tierId=${tier.id}`}
-                                      bg={GOLD}
-                                      _hover={{ opacity: 0.9 }}
-                                      color="black"
-                                    >
-                                      {t("actions.buy_challenge", { defaultValue: "Buy Challenge" })}
-                                    </Button>
-                                  </HStack>
-                                </HStack>
-                              </Stack>
-                            </Box>
-                          </SpotlightCard>
-                        ))}
-
-                        {challengesOnly.length === 0 && (
-                          <Text>{t("challenges.none", { defaultValue: "No challenges available yet." })}</Text>
-                        )}
-                      </SimpleGrid>
-                    </TabPanel>
-                  </TabPanels>
-                </Tabs>
-              </TabPanel>
-
-                <TabPanel px={0}>
-                  {/* Courses tab */}
                   <SimpleGrid columns={{ base: 1, sm: 2, lg: 2 }} gap={{ base: 4, md: 6 }}>
-                    {coursesOnly.map((tier) => (
+                    {guidesOnly.map((tier) => (
                       <SpotlightCard>
                         <Box
                           key={tier.id}
@@ -626,11 +321,15 @@ const CoursesList: React.FC = () => {
                         </Box>
                       </SpotlightCard>
                     ))}
+                    {guidesOnly.length === 0 && (
+                      <Text>{t("guides.none", { defaultValue: "No guides available yet." })}</Text>
+                    )}
                   </SimpleGrid>
                 </TabPanel>
+                {/* Community tab */}
                 <TabPanel px={0}>
                   <SimpleGrid columns={{ base: 1, sm: 1, lg: 1 }} gap={{ base: 4, md: 6 }}>
-                    {vipOnly.map((tier) => (
+                    {communityOnly.map((tier) => (
                       <SpotlightCard>
                         <Box
                           key={tier.id}
@@ -666,9 +365,9 @@ const CoursesList: React.FC = () => {
                         </Box>
                       </SpotlightCard> 
                     ))}
-                    {vipOnly.length === 0 && (
+                    {communityOnly.length === 0 && (
                       <Text>
-                        {t("subscriptions.none", { defaultValue: "No subscriptions available." })}
+                        {t("community.none", { defaultValue: "No community subscriptions available." })}
                       </Text>
                     )}
                   </SimpleGrid>
@@ -678,6 +377,69 @@ const CoursesList: React.FC = () => {
           )}
         </VStack>
       </Container>
+
+      {/* Exit-Intent Modal - Try our free guide */}
+      <Modal isOpen={isExitOpen} onClose={onExitClose} isCentered>
+        <ModalOverlay bg="blackAlpha.700" backdropFilter="blur(8px)" />
+        <ModalContent
+          bg="gray.900"
+          border="1px solid"
+          borderColor={GOLD}
+          borderRadius="xl"
+          mx={4}
+        >
+          <ModalCloseButton color="gray.400" />
+          <ModalHeader textAlign="center" pt={8} pb={2}>
+            <Text fontSize="2xl" fontWeight="bold" color={GOLD}>
+              {t("exit_intent.title", { defaultValue: "Wait! Before you go..." })}
+            </Text>
+          </ModalHeader>
+          <ModalBody textAlign="center" pb={8}>
+            <VStack spacing={4}>
+              <Text fontSize="lg" opacity={0.9}>
+                {t("exit_intent.message", { defaultValue: "Try our free guide and see what we offer!" })}
+              </Text>
+              {freeGuide ? (
+                <VStack spacing={3} w="full">
+                  <Text fontWeight="semibold" color={GOLD}>
+                    {freeGuide.name}
+                  </Text>
+                  <Text fontSize="sm" opacity={0.7} noOfLines={2}>
+                    {freeGuide.description}
+                  </Text>
+                  <Button
+                    as={RouterLink}
+                    to={`/learn/${freeGuide.id}`}
+                    bg={GOLD}
+                    color="black"
+                    size="lg"
+                    w="full"
+                    _hover={{ opacity: 0.9, transform: "translateY(-2px)" }}
+                    onClick={onExitClose}
+                  >
+                    {t("exit_intent.cta", { defaultValue: "Start Free Guide" })}
+                  </Button>
+                </VStack>
+              ) : (
+                <Button
+                  as={RouterLink}
+                  to="/contact"
+                  bg={GOLD}
+                  color="black"
+                  size="lg"
+                  _hover={{ opacity: 0.9 }}
+                  onClick={onExitClose}
+                >
+                  {t("exit_intent.contact", { defaultValue: "Contact Us" })}
+                </Button>
+              )}
+              <Button variant="ghost" size="sm" onClick={onExitClose} opacity={0.6}>
+                {t("exit_intent.dismiss", { defaultValue: "No thanks" })}
+              </Button>
+            </VStack>
+          </ModalBody>
+        </ModalContent>
+      </Modal>
     </Box>
   );
 };

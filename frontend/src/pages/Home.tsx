@@ -61,21 +61,22 @@ import {
 // ===== Animation helpers =====
 const MotionBox = motion(Box);
 
-const FloatingEmojiLayer: React.FC<{ count?: number; mode: string }> = ({ count = 18, mode }) => {
+const FloatingEmojiLayer: React.FC<{ count?: number; mode: string }> = ({ count = 20, mode }) => {
   const items = React.useMemo(() => {
-    const emojis = ["📈", "💹", "🪙", "💰", "🔥", "⚡️", "🚀", "📉", "💵"];
+    const emojis = ["📈", "💹", "🪙", "💰", "🔥", "⚡️", "🚀", "📉", "💵", "💎", "🏆", "📊", "🎯", "✨", "🌟"];
     return Array.from({ length: count }).map((_, i) => {
       const emoji = emojis[i % emojis.length];
-      const left = Math.random() * 100;
-      const size = 14 + Math.random() * 22;
-      const duration = 10 + Math.random() * 10;
-      const delay = Math.random() * 8;
-      const drift = (Math.random() - 0.5) * 80;
-      return { id: i, emoji, left, size, duration, delay, drift };
+      const left = Math.random() * 90 + 5;
+      const size = 20 + Math.random() * 28;
+      const duration = 12 + Math.random() * 8;
+      const delay = Math.random() * 5;
+      const drift = (Math.random() - 0.5) * 60;
+      const hueStart = Math.random() * 30 - 15;
+      return { id: i, emoji, left, size, duration, delay, drift, hueStart };
     });
   }, [count]);
 
-  const opacity = mode === "dark" ? 0.32 : 0.18;
+  const baseOpacity = mode === "dark" ? 0.75 : 0.6;
 
   return (
     <Box position="absolute" inset={0} zIndex={0} pointerEvents="none" overflow="hidden">
@@ -84,23 +85,165 @@ const FloatingEmojiLayer: React.FC<{ count?: number; mode: string }> = ({ count 
           key={it.id}
           position="absolute"
           left={`${it.left}%`}
-          bottom="-10vh"
+          bottom="-5vh"
           fontSize={`${it.size}px`}
-          style={{ opacity, filter: mode === "dark" ? "blur(0px)" : "blur(0.2px)" }}
+          style={{ 
+            filter: `drop-shadow(0 0 4px rgba(101, 168, 191, 0.3))`,
+            textShadow: "0 0 6px rgba(101, 168, 191, 0.2)",
+          }}
           animate={{
-            y: ["0vh", "-125vh"],
-            x: [0, it.drift],
-            rotate: [0, 6, -6, 0],
+            y: ["0vh", "-110vh"],
+            x: [0, it.drift, it.drift * 0.5],
+            rotate: [0, 12, -8, 5, 0],
+            opacity: [0, baseOpacity, baseOpacity, baseOpacity * 0.6, 0],
+            filter: [
+              `hue-rotate(${it.hueStart}deg) drop-shadow(0 0 3px rgba(101, 168, 191, 0.25))`,
+              `hue-rotate(${it.hueStart + 20}deg) drop-shadow(0 0 5px rgba(101, 168, 191, 0.3))`,
+              `hue-rotate(${it.hueStart - 15}deg) drop-shadow(0 0 6px rgba(101, 168, 191, 0.35))`,
+              `hue-rotate(${it.hueStart + 10}deg) drop-shadow(0 0 5px rgba(101, 168, 191, 0.3))`,
+              `hue-rotate(${it.hueStart}deg) drop-shadow(0 0 3px rgba(101, 168, 191, 0.25))`,
+            ],
           }}
           transition={{
             duration: it.duration,
             delay: it.delay,
             repeat: Infinity,
-            ease: "linear",
+            ease: "easeInOut",
           }}
         >
           {it.emoji}
         </MotionBox>
+      ))}
+    </Box>
+  );
+};
+
+// Raindrop ripple effect - like drops of water on a puddle in corners
+const RaindropRipples: React.FC<{ mode: string }> = ({ mode }) => {
+  const [ripples, setRipples] = React.useState<Array<{
+    id: number;
+    x: number;
+    y: number;
+    size: number;
+    duration: number;
+  }>>([]);
+
+  React.useEffect(() => {
+    // Corner zones where ripples can appear (avoiding center)
+    const getRandomCornerPosition = () => {
+      const zones = [
+        { xMin: 2, xMax: 18, yMin: 5, yMax: 30 },   // top-left
+        { xMin: 82, xMax: 98, yMin: 5, yMax: 30 },  // top-right
+        { xMin: 2, xMax: 18, yMin: 65, yMax: 90 },  // bottom-left
+        { xMin: 82, xMax: 98, yMin: 65, yMax: 90 }, // bottom-right
+      ];
+      const zone = zones[Math.floor(Math.random() * zones.length)];
+      return {
+        x: zone.xMin + Math.random() * (zone.xMax - zone.xMin),
+        y: zone.yMin + Math.random() * (zone.yMax - zone.yMin),
+      };
+    };
+
+    const createRipple = () => {
+      const pos = getRandomCornerPosition();
+      const newRipple = {
+        id: Date.now() + Math.random(),
+        x: pos.x,
+        y: pos.y,
+        size: 8 + Math.random() * 12, // Small initial size (8-20px)
+        duration: 2 + Math.random() * 1.5, // 2-3.5s duration
+      };
+      setRipples(prev => [...prev.slice(-12), newRipple]); // Keep max 12 ripples
+    };
+
+    // Initial ripples
+    for (let i = 0; i < 4; i++) {
+      setTimeout(() => createRipple(), i * 400);
+    }
+
+    // Continuous ripples at random intervals
+    const interval = setInterval(() => {
+      createRipple();
+    }, 800 + Math.random() * 600);
+
+    return () => clearInterval(interval);
+  }, []);
+
+  const baseOpacity = mode === "dark" ? 0.12 : 0.08;
+
+  return (
+    <Box position="absolute" inset={0} zIndex={0} pointerEvents="none" overflow="hidden">
+      {ripples.map((ripple) => (
+        <React.Fragment key={ripple.id}>
+          {/* Primary ripple ring */}
+          <MotionBox
+            position="absolute"
+            left={`${ripple.x}%`}
+            top={`${ripple.y}%`}
+            width={`${ripple.size}px`}
+            height={`${ripple.size}px`}
+            borderRadius="50%"
+            border="1px solid"
+            borderColor={`rgba(101, 168, 191, ${baseOpacity * 2})`}
+            bg="transparent"
+            initial={{ scale: 0, opacity: baseOpacity * 3 }}
+            animate={{ 
+              scale: [0, 3, 5],
+              opacity: [baseOpacity * 3, baseOpacity, 0],
+            }}
+            transition={{
+              duration: ripple.duration,
+              ease: "easeOut",
+            }}
+            style={{ transform: "translate(-50%, -50%)" }}
+          />
+          {/* Secondary ripple ring (delayed) */}
+          <MotionBox
+            position="absolute"
+            left={`${ripple.x}%`}
+            top={`${ripple.y}%`}
+            width={`${ripple.size * 0.7}px`}
+            height={`${ripple.size * 0.7}px`}
+            borderRadius="50%"
+            border="1px solid"
+            borderColor={`rgba(101, 168, 191, ${baseOpacity * 1.5})`}
+            bg="transparent"
+            initial={{ scale: 0, opacity: baseOpacity * 2 }}
+            animate={{ 
+              scale: [0, 2.5, 4],
+              opacity: [baseOpacity * 2, baseOpacity * 0.5, 0],
+            }}
+            transition={{
+              duration: ripple.duration * 0.9,
+              delay: 0.1,
+              ease: "easeOut",
+            }}
+            style={{ transform: "translate(-50%, -50%)" }}
+          />
+          {/* Tertiary subtle ring */}
+          <MotionBox
+            position="absolute"
+            left={`${ripple.x}%`}
+            top={`${ripple.y}%`}
+            width={`${ripple.size * 0.5}px`}
+            height={`${ripple.size * 0.5}px`}
+            borderRadius="50%"
+            border="1px solid"
+            borderColor={`rgba(101, 168, 191, ${baseOpacity})`}
+            bg="transparent"
+            initial={{ scale: 0, opacity: baseOpacity * 1.5 }}
+            animate={{ 
+              scale: [0, 2, 3],
+              opacity: [baseOpacity * 1.5, baseOpacity * 0.3, 0],
+            }}
+            transition={{
+              duration: ripple.duration * 0.8,
+              delay: 0.2,
+              ease: "easeOut",
+            }}
+            style={{ transform: "translate(-50%, -50%)" }}
+          />
+        </React.Fragment>
       ))}
     </Box>
   );
@@ -2171,6 +2314,10 @@ const Home: React.FC = () => {
           ) : (
             <>
               <Box as="section" id="hero-section" position="relative" minH="100vh" bg="transparent">
+                {/* Floating Trading Emojis for Guest */}
+                <FloatingEmojiLayer count={20} mode={mode} />
+                {/* Raindrop Ripples in Corners */}
+                <RaindropRipples mode={mode} />
                 <Container
                   maxW="100vw"
                   w="100%"
