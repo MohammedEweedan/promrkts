@@ -162,7 +162,7 @@ const CoursesList: React.FC = () => {
       <Container maxW="7xl">
         <VStack align="stretch" gap={6}>
 
-          <Alert status="info" variant="subtle" borderRadius="md">
+          <Alert status="info" variant="subtle" borderRadius="md" mt={20}>
             <AlertIcon />
             <HStack w="full" gap={3} flexWrap="wrap">
               <Text>
