@@ -2272,13 +2272,13 @@ const Home: React.FC = () => {
                   maxW="100vw"
                   w="100%"
                   px={{ base: 2, md: 4 }}
-                  py={{ base: 10, md: 12 }}
+                  py={{ base: 6, md: 8 }}
                   position="relative"
                   zIndex={1}
                   display="flex"
-                  alignItems="center"
+                  alignItems="flex-start"
                   justifyContent="center"
-                  minH={{ base: "calc(100vh - 100px)", md: "calc(100vh - 140px)" }}
+                  minH={{ base: "80vh", md: "85vh" }}
                 >
                   <MotionBox
                     initial={{ opacity: 0, scale: 0.95 }}

@@ -633,9 +633,56 @@ function pickWeighted<T>(items: Array<{ item: T; w: number }>): T {
   return items[items.length - 1].item;
 }
 
+// -------------------- DATABASE WIPE --------------------
+async function wipeDatabase() {
+  console.log("🗑️ WIPING ALL DATABASE DATA...\n");
+  
+  // Delete in order to respect foreign key constraints (children first)
+  const deleteOrder = [
+    "challengeDailyStat",
+    "challengeAccount", 
+    "tokenPriceTick",
+    "tokenTrade",
+    "userTokenHolding",
+    "walletAddress",
+    "userWallet",
+    "profitSharePayout",
+    "traderPayout",
+    "payoutLedger",
+    "userBadge",
+    "courseReview",
+    "dailyActivity",
+    "studentProgress",
+    "purchase",
+    "userCommunity",
+    "UserProfile",
+    "users",
+    "badge",
+    "tokenSale",
+    // Keep these - they're configuration
+    // "courseTier",
+  ];
+
+  for (const modelName of deleteOrder) {
+    if (hasModel(modelName)) {
+      try {
+        const result = await (prisma as any)[modelName].deleteMany({});
+        console.log(`  ✓ Deleted ${result.count} rows from ${modelName}`);
+      } catch (e: any) {
+        console.warn(`  ⚠️ Could not delete ${modelName}: ${e.message}`);
+      }
+    }
+  }
+
+  console.log("\n✅ Database wipe complete!\n");
+}
+
 // -------------------- MAIN --------------------
 async function main() {
   console.log("🚀 Starting MEGA simulation seed...\n");
+
+  // WIPE DATABASE FIRST
+  await wipeDatabase();
 
   const now = new Date();
 
@@ -770,6 +817,7 @@ async function main() {
   let totalChallengePassed = 0;
   let totalChallengeFailed = 0;
   let totalPayouts = 0;
+  let totalSubscriptions = 0;
 
   // token market rolling price
   let rollingPrice = sale?.priceUsdtPerTok ?? TOKEN_BASE_PRICE;
@@ -1031,6 +1079,45 @@ async function main() {
     if (allBadgesRows.length && canUserBadge) {
       await retryDbOperation(() => prisma.userBadge.createMany({ data: allBadgesRows, skipDuplicates: true }));
       totalBadges += allBadgesRows.length;
+    }
+
+    // ---------- VIP SUBSCRIPTIONS (CommunityAccess) ----------
+    const communityAccessRows: any[] = [];
+    const canCommunityAccess = hasModel("communityAccess");
+    
+    if (canCommunityAccess) {
+      for (const user of createdUsers) {
+        // ~8% of users have VIP subscription
+        const hasVip = Math.random() < 0.08;
+        // ~15% have telegram access, ~12% discord, ~10% twitter
+        const hasTelegram = Math.random() < 0.15;
+        const hasDiscord = Math.random() < 0.12;
+        const hasTwitter = Math.random() < 0.10;
+        
+        if (hasVip || hasTelegram || hasDiscord || hasTwitter) {
+          const userCreatedAt = new Date(user.created_at);
+          const vipStart = hasVip ? randomDate(userCreatedAt, now) : null;
+          // VIP duration: 1-12 months
+          const vipDurationMonths = randomInt(1, 12);
+          const vipEnd = vipStart ? addDaysUTC(vipStart, vipDurationMonths * 30) : null;
+          
+          communityAccessRows.push({
+            userId: user.id,
+            telegram: hasTelegram,
+            discord: hasDiscord,
+            twitter: hasTwitter,
+            vip: hasVip,
+            vipStart,
+            vipEnd,
+            vipStripeSubscriptionId: hasVip ? `sub_${makeHex(24)}` : null,
+          });
+        }
+      }
+      
+      if (communityAccessRows.length) {
+        await retryDbOperation(() => prisma.communityAccess.createMany({ data: communityAccessRows, skipDuplicates: true }));
+        totalSubscriptions += communityAccessRows.length;
+      }
     }
 
     // ---------- TOKEN SIM (FK-safe, REALISTIC MARKET) ----------
@@ -1885,6 +1972,7 @@ async function main() {
   console.log(`✓ Activities: ${totalActivities}`);
   console.log(`✓ Reviews: ${totalReviews}`);
   console.log(`✓ Badges: ${totalBadges}`);
+  console.log(`✓ VIP Subscriptions: ${totalSubscriptions}`);
 
   console.log(`✓ Wallets: ${totalWallets}`);
   console.log(`✓ Token trades (approx): ${totalTokenTrades}`);

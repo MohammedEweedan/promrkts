@@ -89,7 +89,7 @@ export default function GuestLanding({
       )}
 
       {splashComplete && (
-      <VStack gap={5} align="center" textAlign="center" w="100%" mt={{ base: 10, md: 0 }}>
+      <VStack gap={6} align="center" textAlign="center" w="100%" pt={{ base: 16, md: 24 }} pb={{ base: 8, md: 12 }}>
         <MotionBox
           initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}
