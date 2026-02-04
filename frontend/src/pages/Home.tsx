@@ -501,30 +501,36 @@ const MarketsBoard: React.FC<{
   t: any;
   hideHeader?: boolean;
 }> = React.memo(({ mode, accentColor, t, hideHeader = false }) => {
-  const symbolsFX = React.useMemo(
+  // Default symbols: BTC, XAUUSD, EURUSD, OIL (as requested)
+  const defaultSymbols = React.useMemo(
     () => [
+      "COINBASE:BTCUSD",
       "OANDA:XAUUSD",
       "FX:EURUSD",
-      "FX:GBPUSD",
-      "FX:USDJPY",
-      "FX:USDCHF",
-      "FX:USDCAD",
-      "FX:AUDUSD",
-      "FX:NZDUSD",
-      "FX:EURGBP",
-      "FX:EURJPY",
-      "FX:EURCHF",
-      "FX:EURCAD",
-      "FX:EURAUD",
-      "FX:EURNZD",
-      "FOREXCOM:SPXUSD",
-      "FOREXCOM:NSXUSD",
+      "TVC:USOIL",
     ],
     []
   );
 
-  const symbolsCR = React.useMemo(
-    () => ["COINBASE:BTCUSD", "COINBASE:ETHUSD", "BINANCE:SOLUSDT", "COINBASE:XRPUSD"],
+  const allSymbols = React.useMemo(
+    () => [
+      "COINBASE:BTCUSD",
+      "OANDA:XAUUSD",
+      "FX:EURUSD",
+      "TVC:USOIL",
+      "COINBASE:ETHUSD",
+      "FX:GBPUSD",
+      "FX:USDJPY",
+      "BINANCE:SOLUSDT",
+      "FX:USDCHF",
+      "FX:AUDUSD",
+      "FOREXCOM:SPXUSD",
+      "FOREXCOM:NSXUSD",
+      "FX:EURGBP",
+      "FX:EURJPY",
+      "COINBASE:XRPUSD",
+      "FX:USDCAD",
+    ],
     []
   );
 
@@ -535,15 +541,12 @@ const MarketsBoard: React.FC<{
 
   const paddingY = hideHeader ? { base: 0, md: 0 } : { base: 6, md: 10 };
 
-  // Layout: 2x2 / 3x3 / 4x4
+  // Layout: 1x1 / 2x2 / 3x3 / 4x4 (default 1)
   const [gridN, setGridN] = React.useState<number>(() => {
-    const stored = Number(localStorage.getItem("mbGridN") || 2);
-    return stored === 3 || stored === 4 ? stored : 2;
+    const stored = Number(localStorage.getItem("mbGridN") || 1);
+    return [1, 2, 3, 4].includes(stored) ? stored : 1;
   });
 
-  const [tabIndex, setTabIndex] = React.useState(() =>
-    Number(localStorage.getItem("mbTabIndex") || 0)
-  );
 
   // UI toggles
   const [hideSidebar, setHideSidebar] = React.useState<boolean>(
@@ -633,114 +636,92 @@ const MarketsBoard: React.FC<{
   const count = gridN * gridN;
 
   const makeDefaultSymbols = React.useCallback(
-    (symbols: string[], prefix: string) => {
+    () => {
       const out: string[] = [];
       for (let i = 0; i < count; i++) {
-        const key = `${prefix}_${gridN}_${i}`;
+        const key = `mbSymbol_${gridN}_${i}`;
         const stored = localStorage.getItem(key);
-        const fallback = symbols[i % symbols.length];
-        out.push(stored && symbols.includes(stored) ? stored : fallback);
+        const fallback = defaultSymbols[i % defaultSymbols.length];
+        out.push(stored && allSymbols.includes(stored) ? stored : fallback);
       }
       return out;
     },
-    [count, gridN]
+    [count, gridN, defaultSymbols, allSymbols]
   );
 
-  const [fxSymbolsState, setFxSymbolsState] = React.useState<string[]>(() =>
-    makeDefaultSymbols(symbolsFX, "mbFxSymbol")
-  );
-
-  const [crSymbolsState, setCrSymbolsState] = React.useState<string[]>(() =>
-    makeDefaultSymbols(symbolsCR, "mbCrSymbol")
+  const [symbolsState, setSymbolsState] = React.useState<string[]>(() =>
+    makeDefaultSymbols()
   );
 
   // When grid size changes, rebuild symbol arrays (and persist gridN)
   React.useEffect(() => {
     localStorage.setItem("mbGridN", String(gridN));
-    setFxSymbolsState(makeDefaultSymbols(symbolsFX, "mbFxSymbol"));
-    setCrSymbolsState(makeDefaultSymbols(symbolsCR, "mbCrSymbol"));
-  }, [gridN, makeDefaultSymbols, symbolsFX, symbolsCR]);
+    setSymbolsState(makeDefaultSymbols());
+  }, [gridN, makeDefaultSymbols]);
 
   // Fullscreen single chart
-  const [fullscreen, setFullscreen] = React.useState<null | { tab: "fx" | "cr"; idx: number }>(
-    null
-  );
+  const [fullscreen, setFullscreen] = React.useState<null | { idx: number }>(null);
 
   // Fullscreen the whole grid (wall)
   const [wallFullscreen, setWallFullscreen] = React.useState(false);
 
   const setSymbolFor = React.useCallback(
-    (tab: "fx" | "cr", idx: number, v: string) => {
-      if (tab === "fx") {
-        setFxSymbolsState((prev) => {
-          const next = [...prev];
-          next[idx] = v;
-          localStorage.setItem(`mbFxSymbol_${gridN}_${idx}`, v);
-          return next;
-        });
-      } else {
-        setCrSymbolsState((prev) => {
-          const next = [...prev];
-          next[idx] = v;
-          localStorage.setItem(`mbCrSymbol_${gridN}_${idx}`, v);
-          return next;
-        });
-      }
+    (idx: number, v: string) => {
+      setSymbolsState((prev) => {
+        const next = [...prev];
+        next[idx] = v;
+        localStorage.setItem(`mbSymbol_${gridN}_${idx}`, v);
+        return next;
+      });
     },
     [gridN]
   );
 
   const ChartCell: React.FC<{
-    tab: "fx" | "cr";
     idx: number;
-    symbols: string[];
     value: string;
-    onChange: (v: string) => void;
     onFullscreen: () => void;
     isFullscreen?: boolean;
-  }> = ({ tab, idx, symbols, value, onChange, onFullscreen, isFullscreen }) => {
-    // IMPORTANT:
-    // TradingView embed widgets often need a remount to apply config changes like hide_side_toolbar/hide_volume.
-    const remountKey = `${tab}-${gridN}-${idx}-${themeRTW}-${hideSidebar ? 1 : 0}-${
+  }> = ({ idx, value, onFullscreen, isFullscreen }) => {
+    const remountKey = `chart-${gridN}-${idx}-${themeRTW}-${hideSidebar ? 1 : 0}-${
       hideVolume ? 1 : 0
     }-${hideTop ? 1 : 0}-${interval}-${studies.join(",")}`;
 
+    const symbolLabel = value.split(":")[1] || value;
+
     return (
       <Box position="relative" w="100%" h="100%" bg="rgba(5, 8, 17, 0.98)" overflow="hidden">
-        {/* Selector overlay */}
-        <Box position="absolute" top="10px" left="10px" zIndex={3} maxW="70%">
-          <Select
-            value={value}
-            onChange={(e) => onChange(e.target.value)}
-            size="sm"
-            bg="rgba(0,0,0,0.55)"
-            borderColor="rgba(255,255,255,0.12)"
-            color="white"
-            _hover={{ borderColor: "rgba(255,255,255,0.22)" }}
-            _focus={{ borderColor: UI.accent, boxShadow: "0 0 0 1px rgba(0,191,99,0.35)" }}
-          >
-            {symbols.map((s) => (
-              <option key={s} value={s} style={{ background: "#050811", color: "white" }}>
-                {s.split(":")[1] || s}
-              </option>
-            ))}
-          </Select>
+        {/* Symbol label (no dropdown) */}
+        <Box
+          position="absolute"
+          top="8px"
+          left="10px"
+          zIndex={3}
+          px={2}
+          py={1}
+          bg="rgba(0,0,0,0.6)"
+          borderRadius="md"
+          border="1px solid rgba(255,255,255,0.1)"
+        >
+          <Text fontSize="xs" fontWeight="600" color="white" letterSpacing="0.5px">
+            {symbolLabel}
+          </Text>
         </Box>
 
-        {/* Fullscreen toggle overlay */}
+        {/* Fullscreen toggle */}
         <IconButton
           aria-label={isFullscreen ? "Exit fullscreen" : "Fullscreen"}
-          icon={<Icon as={isFullscreen ? Minimize2 : Maximize2} />}
+          icon={<Icon as={isFullscreen ? Minimize2 : Maximize2} boxSize={3} />}
           onClick={onFullscreen}
-          size="sm"
+          size="xs"
           position="absolute"
-          top="10px"
-          right="10px"
+          top="8px"
+          right="8px"
           zIndex={3}
-          bg="rgba(0,0,0,0.55)"
-          border="1px solid rgba(255,255,255,0.12)"
+          bg="rgba(0,0,0,0.6)"
+          border="1px solid rgba(255,255,255,0.1)"
           color="white"
-          _hover={{ bg: "rgba(0,0,0,0.75)" }}
+          _hover={{ bg: "rgba(0,0,0,0.8)" }}
         />
 
         {/* Chart */}
@@ -758,10 +739,10 @@ const MarketsBoard: React.FC<{
             width="100%"
             hide_side_toolbar={hideSidebar}
             hide_top_toolbar={hideTop}
-            hide_legend={hideTop} // optional: keeps it clean when top is hidden
+            hide_legend={hideTop}
             {...({ hide_volume: hideVolume } as any)}
             {...({ studies } as any)}
-            {...({ container_id: `tv-${tab}-${gridN}-${idx}` } as any)}
+            {...({ container_id: `tv-chart-${gridN}-${idx}` } as any)}
           />
         </Box>
       </Box>
@@ -769,112 +750,124 @@ const MarketsBoard: React.FC<{
   };
 
   const GridHeader: React.FC<{ onFullscreenWall: () => void }> = ({ onFullscreenWall }) => (
-    <HStack
-      justify="space-between"
-      align="center"
-      flexWrap="wrap"
-      gap={3}
-      mb={3}
-      w="100%"
-      justifyContent="center"
-    >
-      {/* Layout */}
-      <HStack gap={2} wrap="wrap" justify="center">
-        {[2, 3, 4].map((n) => (
-          <Button
-            key={n}
-            size="sm"
-            variant={gridN === n ? "solid" : "outline"}
-            bg={gridN === n ? UI.accent : "transparent"}
-            color={gridN === n ? "black" : UI.accent}
-            borderColor={UI.accent}
-            onClick={() => setGridN(n)}
-          >
-            {n}×{n}
-          </Button>
-        ))}
-      </HStack>
+    <Box mb={4}>
+      {/* Main controls row */}
+      <HStack
+        justify="center"
+        align="center"
+        flexWrap="wrap"
+        gap={2}
+        p={3}
+        bg="rgba(0,0,0,0.25)"
+        borderRadius="xl"
+        border="1px solid rgba(255,255,255,0.08)"
+      >
+        {/* Layout buttons */}
+        <HStack gap={1} bg="rgba(0,0,0,0.3)" p={1} borderRadius="lg">
+          {[1, 2, 3, 4].map((n) => (
+            <Button
+              key={n}
+              size="xs"
+              variant={gridN === n ? "solid" : "ghost"}
+              bg={gridN === n ? UI.accent : "transparent"}
+              color={gridN === n ? "black" : "white"}
+              onClick={() => setGridN(n)}
+              minW="32px"
+              fontWeight="600"
+              _hover={{ bg: gridN === n ? UI.accent : "rgba(255,255,255,0.1)" }}
+            >
+              {n === 1 ? "1" : `${n}×${n}`}
+            </Button>
+          ))}
+        </HStack>
 
-      {/* UI toggles */}
-      <HStack gap={2} wrap="wrap" justify="center">
-        <Button
-          size="sm"
-          variant={hideTop ? "solid" : "outline"}
-          bg={hideTop ? UI.accent : "transparent"}
-          color={hideTop ? "black" : UI.accent}
-          borderColor={UI.accent}
-          onClick={() => setHideTop((v) => !v)}
-        >
-          {hideTop ? "Top: Off" : "Top: On"}
-        </Button>
+        {/* Divider */}
+        <Box w="1px" h="20px" bg="rgba(255,255,255,0.15)" display={{ base: "none", md: "block" }} />
 
-        <Button
-          size="sm"
-          variant={hideSidebar ? "solid" : "outline"}
-          bg={hideSidebar ? UI.accent : "transparent"}
-          color={hideSidebar ? "black" : UI.accent}
-          borderColor={UI.accent}
-          onClick={() => setHideSidebar((v) => !v)}
-        >
-          {hideSidebar ? "Sidebar: Off" : "Sidebar: On"}
-        </Button>
-
-        <Button
-          size="sm"
-          variant={hideVolume ? "solid" : "outline"}
-          bg={hideVolume ? UI.accent : "transparent"}
-          color={hideVolume ? "black" : UI.accent}
-          borderColor={UI.accent}
-          onClick={() => setHideVolume((v) => !v)}
-        >
-          {hideVolume ? "Volume: Off" : "Volume: On"}
-        </Button>
-
-        {/* Timeline dropdown */}
+        {/* Timeframe */}
         <Select
           value={interval}
           onChange={(e) => setInterval(e.target.value as TVInterval)}
-          size="sm"
-          maxW="130px"
-          bg="rgba(0,0,0,0.35)"
-          borderColor="rgba(255,255,255,0.14)"
+          size="xs"
+          maxW="70px"
+          bg="rgba(0,0,0,0.4)"
+          borderColor="rgba(255,255,255,0.12)"
           color="white"
+          borderRadius="md"
+          fontSize="xs"
         >
           {INTERVALS.map((x) => (
-            <option key={x.value} value={x.value} style={{ background: "#050811", color: "white" }}>
+            <option key={x.value} value={x.value} style={{ background: "#0a0a0a", color: "white" }}>
               {x.label}
             </option>
           ))}
         </Select>
 
+        {/* Toggle buttons */}
+        <HStack gap={1}>
+          <Button
+            size="xs"
+            variant="ghost"
+            color={!hideTop ? UI.accent : "gray.400"}
+            onClick={() => setHideTop((v) => !v)}
+            fontSize="xs"
+            px={2}
+          >
+            Top
+          </Button>
+          <Button
+            size="xs"
+            variant="ghost"
+            color={!hideSidebar ? UI.accent : "gray.400"}
+            onClick={() => setHideSidebar((v) => !v)}
+            fontSize="xs"
+            px={2}
+          >
+            Tools
+          </Button>
+          <Button
+            size="xs"
+            variant="ghost"
+            color={!hideVolume ? UI.accent : "gray.400"}
+            onClick={() => setHideVolume((v) => !v)}
+            fontSize="xs"
+            px={2}
+          >
+            Vol
+          </Button>
+        </HStack>
+
+        {/* Divider */}
+        <Box w="1px" h="20px" bg="rgba(255,255,255,0.15)" display={{ base: "none", md: "block" }} />
+
         {/* Indicators */}
         <Button
-          size="sm"
-          variant="outline"
-          borderColor={UI.accent}
-          color={UI.accent}
+          size="xs"
+          variant={indicatorsOpen ? "solid" : "ghost"}
+          bg={indicatorsOpen ? "rgba(101,168,191,0.2)" : "transparent"}
+          color={indicatorsOpen ? UI.accent : "gray.300"}
           onClick={() => setIndicatorsOpen((v) => !v)}
+          fontSize="xs"
+          px={3}
         >
           Indicators
         </Button>
 
-        <Button
-          size="sm"
+        {/* Fullscreen */}
+        <IconButton
+          aria-label="Fullscreen Wall"
+          icon={<Icon as={Maximize2} boxSize={3.5} />}
+          size="xs"
           bg={UI.accent}
           color="black"
-          boxShadow={UI.glow}
           onClick={onFullscreenWall}
-        >
-          Fullscreen Wall
-        </Button>
+          _hover={{ opacity: 0.9 }}
+        />
       </HStack>
-    </HStack>
+    </Box>
   );
 
-  const renderWall = (tab: "fx" | "cr", asFullscreenOverlay: boolean) => {
-    const symbols = tab === "fx" ? symbolsFX : symbolsCR;
-    const values = tab === "fx" ? fxSymbolsState : crSymbolsState;
-
+  const renderWall = (asFullscreenOverlay: boolean) => {
     return (
       <Box w="100%">
         {!asFullscreenOverlay && <GridHeader onFullscreenWall={() => setWallFullscreen(true)} />}
@@ -929,32 +922,29 @@ const MarketsBoard: React.FC<{
 
         <Grid
           w="100%"
-          h={asFullscreenOverlay ? "100vh" : { base: "75vh", md: "70vh", lg: "70vh" }}
-          minH={asFullscreenOverlay ? "100vh" : "360px"}
+          h={asFullscreenOverlay ? "100vh" : gridN === 1 ? { base: "50vh", md: "60vh" } : { base: "75vh", md: "70vh", lg: "70vh" }}
+          minH={asFullscreenOverlay ? "100vh" : gridN === 1 ? "300px" : "360px"}
           templateColumns={{
-            base: `repeat(${Math.min(2, gridN)}, 1fr)`,
+            base: gridN === 1 ? "1fr" : `repeat(${Math.min(2, gridN)}, 1fr)`,
             md: `repeat(${gridN}, 1fr)`,
           }}
           templateRows={{ md: `repeat(${gridN}, 1fr)` }}
-          gap={0}
+          gap={gridN === 1 ? 0 : 1}
           overflow="hidden"
           borderRadius={asFullscreenOverlay ? "0px" : "18px"}
           bg="rgba(5, 8, 17, 0.98)"
         >
           {Array.from({ length: count }).map((_, idx) => (
             <Box
-              key={`${tab}-${idx}`}
+              key={`chart-${idx}`}
               w="100%"
               h="100%"
-              minH={asFullscreenOverlay ? "0px" : { base: "260px", md: "0px" }}
+              minH={asFullscreenOverlay ? "0px" : gridN === 1 ? "300px" : { base: "260px", md: "0px" }}
             >
               <ChartCell
-                tab={tab}
                 idx={idx}
-                symbols={symbols}
-                value={values[idx] || symbols[0]}
-                onChange={(v) => setSymbolFor(tab, idx, v)}
-                onFullscreen={() => setFullscreen({ tab, idx })}
+                value={symbolsState[idx] || defaultSymbols[idx % defaultSymbols.length]}
+                onFullscreen={() => setFullscreen({ idx })}
               />
             </Box>
           ))}
@@ -966,20 +956,15 @@ const MarketsBoard: React.FC<{
   const renderFullscreenSingle = () => {
     if (!fullscreen) return null;
 
-    const tab = fullscreen.tab;
     const idx = fullscreen.idx;
-    const symbols = tab === "fx" ? symbolsFX : symbolsCR;
-    const value = tab === "fx" ? fxSymbolsState[idx] : crSymbolsState[idx];
+    const value = symbolsState[idx] || defaultSymbols[idx % defaultSymbols.length];
 
     return (
       <Box position="fixed" inset={0} zIndex={9999} bg="#000" overflow="hidden">
         <Box position="absolute" inset={0}>
           <ChartCell
-            tab={tab}
             idx={idx}
-            symbols={symbols}
-            value={value || symbols[0]}
-            onChange={(v) => setSymbolFor(tab, idx, v)}
+            value={value}
             onFullscreen={() => setFullscreen(null)}
             isFullscreen
           />
@@ -1006,82 +991,75 @@ const MarketsBoard: React.FC<{
   const renderFullscreenWall = () => {
     if (!wallFullscreen) return null;
 
-    // fullscreen the currently selected tab wall
-    const tab = tabIndex === 0 ? "fx" : "cr";
-
     return (
       <Box position="fixed" inset={0} zIndex={9998} bg="#000" overflow="hidden">
         {/* Wall */}
         <Box position="absolute" inset={0}>
-          {renderWall(tab, true)}
+          {renderWall(true)}
         </Box>
 
         {/* Floating controls */}
-        <HStack position="fixed" top="14px" left="14px" zIndex={10000} gap={2} wrap="wrap">
-          <Button
-            size="sm"
-            variant={hideSidebar ? "solid" : "outline"}
-            bg={hideSidebar ? UI.accent : "rgba(0,0,0,0.55)"}
-            color={hideSidebar ? "black" : "white"}
-            borderColor="rgba(255,255,255,0.18)"
-            onClick={() => setHideSidebar((v) => !v)}
-          >
-            {hideSidebar ? "Sidebar: Off" : "Sidebar: On"}
-          </Button>
+        <HStack
+          position="fixed"
+          top="12px"
+          left="12px"
+          zIndex={10000}
+          gap={1}
+          p={2}
+          bg="rgba(0,0,0,0.7)"
+          borderRadius="lg"
+          border="1px solid rgba(255,255,255,0.1)"
+        >
+          {/* Layout */}
+          {[1, 2, 3, 4].map((n) => (
+            <Button
+              key={n}
+              size="xs"
+              variant={gridN === n ? "solid" : "ghost"}
+              bg={gridN === n ? UI.accent : "transparent"}
+              color={gridN === n ? "black" : "white"}
+              onClick={() => setGridN(n)}
+              minW="28px"
+            >
+              {n === 1 ? "1" : `${n}×${n}`}
+            </Button>
+          ))}
 
-          <Button
-            size="sm"
-            variant={hideVolume ? "solid" : "outline"}
-            bg={hideVolume ? UI.accent : "rgba(0,0,0,0.55)"}
-            color={hideVolume ? "black" : "white"}
-            borderColor="rgba(255,255,255,0.18)"
-            onClick={() => setHideVolume((v) => !v)}
-          >
-            {hideVolume ? "Volume: Off" : "Volume: On"}
-          </Button>
+          <Box w="1px" h="16px" bg="rgba(255,255,255,0.2)" mx={1} />
+
           <Select
             value={interval}
             onChange={(e) => setInterval(e.target.value as TVInterval)}
-            size="sm"
-            maxW="120px"
-            bg="rgba(0,0,0,0.55)"
-            borderColor="rgba(255,255,255,0.18)"
+            size="xs"
+            maxW="65px"
+            bg="transparent"
+            borderColor="rgba(255,255,255,0.15)"
             color="white"
           >
             {INTERVALS.map((x) => (
-              <option
-                key={x.value}
-                value={x.value}
-                style={{ background: "#050811", color: "white" }}
-              >
+              <option key={x.value} value={x.value} style={{ background: "#0a0a0a" }}>
                 {x.label}
               </option>
             ))}
           </Select>
 
           <Button
-            size="sm"
-            variant="outline"
-            borderColor="rgba(255,255,255,0.18)"
-            color="white"
-            onClick={() => setIndicatorsOpen((v) => !v)}
+            size="xs"
+            variant="ghost"
+            color={!hideSidebar ? UI.accent : "gray.400"}
+            onClick={() => setHideSidebar((v) => !v)}
           >
-            Indicators
+            Tools
           </Button>
 
-          {[2, 3, 4].map((n) => (
-            <Button
-              key={n}
-              size="sm"
-              variant={gridN === n ? "solid" : "outline"}
-              bg={gridN === n ? UI.accent : "rgba(0,0,0,0.55)"}
-              color={gridN === n ? "black" : "white"}
-              borderColor="rgba(255,255,255,0.18)"
-              onClick={() => setGridN(n)}
-            >
-              {n}×{n}
-            </Button>
-          ))}
+          <Button
+            size="xs"
+            variant="ghost"
+            color={!hideVolume ? UI.accent : "gray.400"}
+            onClick={() => setHideVolume((v) => !v)}
+          >
+            Vol
+          </Button>
         </HStack>
 
         <IconButton
@@ -1089,14 +1067,14 @@ const MarketsBoard: React.FC<{
           icon={<Icon as={Minimize2} />}
           onClick={() => setWallFullscreen(false)}
           position="fixed"
-          top="16px"
-          right="16px"
+          top="12px"
+          right="12px"
           zIndex={10000}
-          size="md"
-          bg="rgba(0,0,0,0.65)"
-          border="1px solid rgba(255,255,255,0.18)"
+          size="sm"
+          bg="rgba(0,0,0,0.7)"
+          border="1px solid rgba(255,255,255,0.15)"
           color="white"
-          _hover={{ bg: "rgba(0,0,0,0.85)" }}
+          _hover={{ bg: "rgba(0,0,0,0.9)" }}
         />
       </Box>
     );
@@ -1121,40 +1099,8 @@ const MarketsBoard: React.FC<{
       {renderFullscreenWall()}
       {renderFullscreenSingle()}
 
-      <Tabs
-        index={tabIndex}
-        onChange={(i) => {
-          setTabIndex(i);
-          localStorage.setItem("mbTabIndex", String(i));
-        }}
-        isFitted
-        color="#65a8bf"
-        variant="solid"
-      >
-        <TabList>
-          <Tab
-            _hover={{ bg: "rgba(104, 165, 191, .18)" }}
-            _selected={{ bg: "rgba(104, 165, 191, .18)" }}
-            borderWidth={"1px"}
-            borderRadius={"2xl"}
-          >
-            Forex
-          </Tab>
-          <Tab
-            _hover={{ bg: "rgba(104, 165, 191, .18)" }}
-            _selected={{ bg: "rgba(104, 165, 191, .18)" }}
-            borderWidth={"1px"}
-            borderRadius={"2xl"}
-          >
-            Crypto
-          </Tab>
-        </TabList>
-
-        <TabPanels>
-          <TabPanel p={3}>{renderWall("fx", false)}</TabPanel>
-          <TabPanel p={3}>{renderWall("cr", false)}</TabPanel>
-        </TabPanels>
-      </Tabs>
+      {/* Charts wall */}
+      {renderWall(false)}
     </Box>
   );
 });
