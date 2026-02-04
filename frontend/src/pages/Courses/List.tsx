@@ -121,29 +121,6 @@ const CoursesList: React.FC = () => {
     })();
   }, [t]);
 
-  const getChallengeSteps = (c: any): 1 | 2 | null => {
-  const meta = c?.challengeMeta || c?.challenge_meta || {};
-    const direct =
-      Number(meta?.steps) ||
-      Number(meta?.stepCount) ||
-      Number(meta?.phases) ||
-      Number(c?.steps) ||
-      Number(c?.stepCount);
-
-    if (direct === 1) return 1;
-    if (direct === 2) return 2;
-
-    // fallback: infer from name/description
-    const hay = `${c?.name || ""} ${c?.description || ""}`.toLowerCase();
-    const twoHints = ["2-step", "2 step", "two-step", "two step", "phase 2", "phase ii", "step 2"];
-    const oneHints = ["1-step", "1 step", "one-step", "one step", "single step", "phase 1 only"];
-
-    if (twoHints.some((k) => hay.includes(k))) return 2;
-    if (oneHints.some((k) => hay.includes(k))) return 1;
-
-    return null;
-  };
-
   const { guidesOnly, communityOnly, freeGuide } = React.useMemo(() => {
     const guides = tiers.filter(
       (x: any) => String((x as any)?.productType || "").toUpperCase() === "COURSE"
