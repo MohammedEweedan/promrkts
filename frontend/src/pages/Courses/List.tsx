@@ -410,7 +410,7 @@ const CoursesList: React.FC = () => {
                   <Button
                     as={RouterLink}
                     to={`/learn/${freeGuide.id}`}
-                    bg={GOLD}
+                    bg="white"
                     color="black"
                     size="lg"
                     w="full"
@@ -424,8 +424,8 @@ const CoursesList: React.FC = () => {
                 <Button
                   as={RouterLink}
                   to="/contact"
-                  bg={GOLD}
-                  color="black"
+                  bg="black"
+                  color="white"
                   size="lg"
                   _hover={{ opacity: 0.9 }}
                   onClick={onExitClose}
