@@ -680,33 +680,40 @@ const MarketsBoard: React.FC<{
   const ChartCell: React.FC<{
     idx: number;
     value: string;
+    onChange: (v: string) => void;
     onFullscreen: () => void;
     isFullscreen?: boolean;
-  }> = ({ idx, value, onFullscreen, isFullscreen }) => {
+  }> = ({ idx, value, onChange, onFullscreen, isFullscreen }) => {
     const remountKey = `chart-${gridN}-${idx}-${themeRTW}-${hideSidebar ? 1 : 0}-${
       hideVolume ? 1 : 0
     }-${hideTop ? 1 : 0}-${interval}-${studies.join(",")}`;
 
-    const symbolLabel = value.split(":")[1] || value;
-
     return (
       <Box position="relative" w="100%" h="100%" bg="rgba(5, 8, 17, 0.98)" overflow="hidden">
-        {/* Symbol label (no dropdown) */}
-        <Box
+        {/* Pair selector dropdown */}
+        <Select
+          value={value}
+          onChange={(e) => onChange(e.target.value)}
+          size="xs"
           position="absolute"
           top="8px"
-          left="10px"
+          left="8px"
           zIndex={3}
-          px={2}
-          py={1}
-          bg="rgba(0,0,0,0.6)"
+          maxW="120px"
+          bg="rgba(0,0,0,0.7)"
+          borderColor="rgba(255,255,255,0.15)"
+          color="white"
+          fontSize="xs"
           borderRadius="md"
-          border="1px solid rgba(255,255,255,0.1)"
+          _hover={{ borderColor: "rgba(255,255,255,0.3)" }}
+          _focus={{ borderColor: UI.accent, boxShadow: "none" }}
         >
-          <Text fontSize="xs" fontWeight="600" color="white" letterSpacing="0.5px">
-            {symbolLabel}
-          </Text>
-        </Box>
+          {allSymbols.map((s) => (
+            <option key={s} value={s} style={{ background: "#0a0a0a", color: "white" }}>
+              {s.split(":")[1] || s}
+            </option>
+          ))}
+        </Select>
 
         {/* Fullscreen toggle */}
         <IconButton
@@ -718,10 +725,10 @@ const MarketsBoard: React.FC<{
           top="8px"
           right="8px"
           zIndex={3}
-          bg="rgba(0,0,0,0.6)"
-          border="1px solid rgba(255,255,255,0.1)"
+          bg="rgba(0,0,0,0.7)"
+          border="1px solid rgba(255,255,255,0.15)"
           color="white"
-          _hover={{ bg: "rgba(0,0,0,0.8)" }}
+          _hover={{ bg: "rgba(0,0,0,0.9)" }}
         />
 
         {/* Chart */}
@@ -912,11 +919,6 @@ const MarketsBoard: React.FC<{
                 Clear
               </Button>
             </HStack>
-
-            <Text mt={2} fontSize="xs" opacity={0.75}>
-              Note: studies support depends on the TradingView widget wrapper. If these don’t
-              appear, you’ll need the licensed Charting Library for full indicator UI.
-            </Text>
           </Box>
         )}
 
@@ -944,6 +946,7 @@ const MarketsBoard: React.FC<{
               <ChartCell
                 idx={idx}
                 value={symbolsState[idx] || defaultSymbols[idx % defaultSymbols.length]}
+                onChange={(v) => setSymbolFor(idx, v)}
                 onFullscreen={() => setFullscreen({ idx })}
               />
             </Box>
@@ -965,6 +968,7 @@ const MarketsBoard: React.FC<{
           <ChartCell
             idx={idx}
             value={value}
+            onChange={(v) => setSymbolFor(idx, v)}
             onFullscreen={() => setFullscreen(null)}
             isFullscreen
           />
