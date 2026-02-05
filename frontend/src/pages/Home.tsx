@@ -1501,7 +1501,7 @@ const Home: React.FC = () => {
   
   // App screenshot carousel state
   const [currentSlide, setCurrentSlide] = React.useState(0);
-  const screenshots = ["/1.png", "/2.png", "/3.png", "/4.png", "/5.png"];
+  const screenshots = ["/1.PNG", "/2.PNG", "/3.PNG", "/4.PNG", "/5.PNG"];
   
   React.useEffect(() => {
     const interval = setInterval(() => {
@@ -3228,7 +3228,7 @@ const Home: React.FC = () => {
                     </Text>
                   </MotionBox>
 
-                  <Box position="relative" maxW="1000px" mx="auto" px={{ base: 4, md: 8 }}>
+                  <Container maxW="1000px" px={{ base: 4, md: 8 }}>
                     {[
                       { key: "education", icon: "📚" },
                       { key: "strategies", icon: "📊" },
@@ -3261,16 +3261,14 @@ const Home: React.FC = () => {
                               bg="linear-gradient(135deg, #0a0f1a 0%, #111827 100%)"
                               borderRadius="38px"
                               p={{ base: 6, md: 10 }}
-                              minH={{ base: "280px", md: "320px" }}
-                              display="flex"
-                              alignItems="center"
+                              minH={{ base: "auto", md: "320px" }}
                             >
-                              <HStack gap={{ base: 5, md: 8 }} align="flex-start" w="100%">
+                              <VStack align="start" gap={{ base: 4, md: 5 }} w="100%">
                                 <Box
-                                  fontSize={{ base: "4xl", md: "6xl" }}
-                                  w={{ base: "80px", md: "120px" }}
-                                  h={{ base: "80px", md: "120px" }}
-                                  borderRadius="30px"
+                                  fontSize={{ base: "3xl", md: "5xl" }}
+                                  w={{ base: "60px", md: "80px" }}
+                                  h={{ base: "60px", md: "80px" }}
+                                  borderRadius="20px"
                                   bgGradient="linear(135deg, rgba(101, 168, 191, 0.2) 0%, rgba(183, 162, 125, 0.2) 100%)"
                                   border="2px solid"
                                   borderColor="rgba(101, 168, 191, 0.3)"
@@ -3282,7 +3280,7 @@ const Home: React.FC = () => {
                                 >
                                   {card.icon}
                                 </Box>
-                                <VStack align="start" gap={{ base: 3, md: 4 }} flex={1}>
+                                <VStack align="start" gap={{ base: 3, md: 4 }} w="100%">
                                   <Heading
                                     fontSize={{ base: "xl", md: "3xl" }}
                                     fontWeight="bold"
@@ -3317,13 +3315,13 @@ const Home: React.FC = () => {
                                     ))}
                                   </HStack>
                                 </VStack>
-                              </HStack>
+                              </VStack>
                             </Box>
                           </Box>
                         </MotionBox>
                       </Box>
                     ))}
-                  </Box>
+                  </Container>
                 </Box>
 
                 {/* App Showcase Section */}

@@ -249,12 +249,10 @@ const Broker: React.FC = () => {
                           </SimpleGrid>
 
                           <Button
-                            size="lg"
                             w="100%"
                             bg={brand}
                             color="black"
                             borderRadius="xl"
-                            _hover={{ bg: "rgba(104,165,191,0.9)" }}
                             onClick={handleJoin}
                           >
                             {t("broker.cta_primary", { defaultValue: "Open via IB Link" })}
