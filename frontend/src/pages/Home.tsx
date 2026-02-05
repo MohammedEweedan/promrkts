@@ -1112,7 +1112,7 @@ const MarketsBoard: React.FC<{
 // ===== How It Works =====
 const HowItWorks: React.FC<{ t: any }> = ({ t }) => (
   <Box py={{ base: 10, md: 14 }}>
-    <Heading textAlign="center" mb={8}  fontSize={{ base: "2xl", md: "3xl" }}>
+    <Heading textAlign="center" mb={8} fontSize={{ base: "2xl", md: "3xl" }} bgGradient="linear(to-r, #65a8bf, #b7a27d)" bgClip="text">
       {t("ai.how.title") || "How It Works"}
     </Heading>
     <SimpleGrid columns={{ base: 1, md: 4 }} gap={6} color="#65a8bf">
@@ -1404,26 +1404,64 @@ const ReviewCard: React.FC<{ review: Review }> = ({ review }) => {
   );
 };
 
-// ===== FAQ Row =====
-const FaqRow: React.FC<{ q: string; a: string }> = ({ q, a }) => {
+// ===== FAQ Row (Modern Accordion) =====
+const FaqRow: React.FC<{ q: string; a: string; index: number }> = ({ q, a, index }) => {
   const [open, setOpen] = React.useState(false);
   return (
-    <Box bg="bg.surface">
+    <Box
+      bg="rgba(255,255,255,0.02)"
+      backdropFilter="blur(10px)"
+      border="1px solid"
+      borderColor={open ? "rgba(101, 168, 191, 0.4)" : "rgba(101, 168, 191, 0.15)"}
+      borderRadius="xl"
+      overflow="hidden"
+      transition="all 0.3s ease"
+      _hover={{ borderColor: "rgba(101, 168, 191, 0.3)", bg: "rgba(255,255,255,0.03)" }}
+    >
       <Button
         onClick={() => setOpen((v) => !v)}
         w="full"
         justifyContent="space-between"
-        px={4}
-        py={4}
-        borderRadius="0"
+        px={{ base: 4, md: 6 }}
+        py={{ base: 4, md: 5 }}
+        bg="transparent"
+        _hover={{ bg: "transparent" }}
+        _active={{ bg: "transparent" }}
+        borderRadius="xl"
       >
-        <Box textAlign="start" fontWeight="semibold" flex="1" pr={3}>
-          {q}
-        </Box>
+        <HStack gap={3} flex="1">
+          <Box
+            w="28px"
+            h="28px"
+            borderRadius="lg"
+            bg={open ? "rgba(101, 168, 191, 0.2)" : "rgba(101, 168, 191, 0.1)"}
+            display="flex"
+            alignItems="center"
+            justifyContent="center"
+            fontSize="sm"
+            fontWeight="bold"
+            color="#65a8bf"
+            transition="all 0.3s ease"
+          >
+            {index + 1}
+          </Box>
+          <Text textAlign="start" fontWeight="600" flex="1" fontSize={{ base: "sm", md: "md" }} color="white">
+            {q}
+          </Text>
+        </HStack>
         <Box
           as="span"
-          transition="transform 0.2s"
-          style={{ transform: open ? "rotate(180deg)" : "rotate(0deg)" }}
+          w="32px"
+          h="32px"
+          borderRadius="full"
+          bg={open ? "rgba(101, 168, 191, 0.2)" : "rgba(101, 168, 191, 0.1)"}
+          display="flex"
+          alignItems="center"
+          justifyContent="center"
+          transition="all 0.3s ease"
+          transform={open ? "rotate(180deg)" : "rotate(0deg)"}
+          color="#65a8bf"
+          fontSize="lg"
         >
           ▾
         </Box>
@@ -1433,15 +1471,18 @@ const FaqRow: React.FC<{ q: string; a: string }> = ({ q, a }) => {
           initial={{ height: 0, opacity: 0 }}
           animate={{ height: "auto", opacity: 1 }}
           exit={{ height: 0, opacity: 0 }}
-          transition={{ duration: 0.2 }}
+          transition={{ duration: 0.25 }}
           overflow="hidden"
-          borderTop="1px solid"
-          borderColor={UI.glow}
-          color="#65a8bf"
-          bg="rgba(182, 233, 255,0.04)"
         >
-          <Box px={4} py={4}>
-            <Text>{a}</Text>
+          <Box
+            px={{ base: 4, md: 6 }}
+            pb={{ base: 4, md: 5 }}
+            pt={0}
+            ml={{ base: 0, md: "44px" }}
+          >
+            <Text color="gray.300" fontSize={{ base: "sm", md: "md" }} lineHeight="1.7">
+              {a}
+            </Text>
           </Box>
         </MotionBox>
       )}
@@ -2648,7 +2689,7 @@ const Home: React.FC = () => {
                         transition={{ duration: 0.8 }}
                         viewport={{ once: true, amount: 0.3 }}
                       >
-                        <Heading textAlign="center" mb={6} fontSize={{ base: "2xl", md: "2xl" }}>
+                        <Heading textAlign="center" mb={6} fontSize={{ base: "2xl", md: "3xl" }} bgGradient="linear(to-r, #65a8bf, #b7a27d)" bgClip="text">
                           {t("home.benefits.title") || "Experience a Premium, AI-Powered Journey"}
                         </Heading>
                       </MotionBox>
@@ -2799,7 +2840,8 @@ const Home: React.FC = () => {
                     >
                       <Heading
                         textAlign="center"
-                        color={accentColor}
+                        bgGradient="linear(to-r, #65a8bf, #b7a27d)"
+                        bgClip="text"
                         mb={6}
                         fontSize={{ base: "3xl", md: "4xl" }}
                       >
@@ -3059,8 +3101,8 @@ const Home: React.FC = () => {
                         >
                           <VStack spacing={2} align="center">
                             <HStack>
-                              <Icon as={Trophy} boxSize={8} color={accentColor} />
-                              <Heading size="xl" color={accentColor}>
+                              <Icon as={Trophy} boxSize={8} color="#65a8bf" />
+                              <Heading size="xl" bgGradient="linear(to-r, #65a8bf, #b7a27d)" bgClip="text">
                                 {t("leaderboard.title") || "Top Students"}
                               </Heading>
                             </HStack>
@@ -3107,7 +3149,8 @@ const Home: React.FC = () => {
                       <Heading
                         textAlign="center"
                         mb={6}
-                        color={accentColor}
+                        bgGradient="linear(to-r, #65a8bf, #b7a27d)"
+                        bgClip="text"
                         fontSize={{ base: "3xl", md: "4xl" }}
                       >
                         {t("home.trustpilot.title") ||
@@ -3136,7 +3179,7 @@ const Home: React.FC = () => {
                           display="flex"
                           gap={4}
                           animate={{ x: ["0%", "-50%"] }}
-                          transition={{ duration: 30, ease: "linear", repeat: Infinity }}
+                          transition={{ duration: 15, ease: "linear", repeat: Infinity }}
                           style={{ direction: "ltr", whiteSpace: "nowrap" }}
                         >
                           {[...reviewsToShow, ...reviewsToShow].map((r, i) => (
@@ -3147,6 +3190,411 @@ const Home: React.FC = () => {
                         </MotionBox>
                       </Box>
                     </MotionBox>
+                  </Box>
+                </ParallaxSection>
+
+                {/* Services Stacking Cards with Overlap Effect */}
+                <Box position="relative" py={{ base: 10, md: 20 }}>
+                  <MotionBox
+                    initial={{ opacity: 0, y: 30 }}
+                    whileInView={{ opacity: 1, y: 0 }}
+                    transition={{ duration: 0.8 }}
+                    viewport={{ once: true, amount: 0.2 }}
+                    mb={{ base: 8, md: 12 }}
+                  >
+                    <Heading
+                      textAlign="center"
+                      fontSize={{ base: "3xl", md: "5xl" }}
+                      bgGradient="linear(to-r, #65a8bf, #b7a27d)"
+                      bgClip="text"
+                      mb={4}
+                    >
+                      {t("home.services.title") || "How We Help Traders Succeed"}
+                    </Heading>
+                    <Text textAlign="center" color="gray.400" maxW="600px" mx="auto" fontSize={{ base: "md", md: "lg" }}>
+                      {t("home.services.subtitle") || "Our proven strategies have helped thousands of traders trade smarter and earn more."}
+                    </Text>
+                  </MotionBox>
+
+                  <Box position="relative" maxW="1000px" mx="auto" px={{ base: 4, md: 8 }}>
+                    {[
+                      { key: "education", icon: "📚" },
+                      { key: "strategies", icon: "📊" },
+                      { key: "community", icon: "👥" },
+                      { key: "support", icon: "🎯" },
+                    ].map((card, idx) => (
+                      <Box
+                        key={card.key}
+                        position="sticky"
+                        top={`${80 + idx * 30}px`}
+                        zIndex={10 + idx}
+                        mb={{ base: 6, md: 8 }}
+                        transform={`scale(${1 - idx * 0.02})`}
+                        transformOrigin="top center"
+                      >
+                        <MotionBox
+                          initial={{ opacity: 0, y: 80 }}
+                          whileInView={{ opacity: 1, y: 0 }}
+                          transition={{ duration: 0.7, delay: idx * 0.1 }}
+                          viewport={{ once: true, amount: 0.2 }}
+                        >
+                          <Box
+                            position="relative"
+                            borderRadius="40px"
+                            p="3px"
+                            bgGradient="linear(135deg, #65a8bf 0%, #b7a27d 50%, #65a8bf 100%)"
+                            boxShadow="0 30px 60px -15px rgba(0, 0, 0, 0.6), 0 0 40px rgba(101, 168, 191, 0.15)"
+                          >
+                            <Box
+                              bg="linear-gradient(135deg, #0a0f1a 0%, #111827 100%)"
+                              borderRadius="38px"
+                              p={{ base: 6, md: 10 }}
+                              minH={{ base: "280px", md: "320px" }}
+                              display="flex"
+                              alignItems="center"
+                            >
+                              <HStack gap={{ base: 5, md: 8 }} align="flex-start" w="100%">
+                                <Box
+                                  fontSize={{ base: "4xl", md: "6xl" }}
+                                  w={{ base: "80px", md: "120px" }}
+                                  h={{ base: "80px", md: "120px" }}
+                                  borderRadius="30px"
+                                  bgGradient="linear(135deg, rgba(101, 168, 191, 0.2) 0%, rgba(183, 162, 125, 0.2) 100%)"
+                                  border="2px solid"
+                                  borderColor="rgba(101, 168, 191, 0.3)"
+                                  display="flex"
+                                  alignItems="center"
+                                  justifyContent="center"
+                                  flexShrink={0}
+                                  boxShadow="0 0 30px rgba(101, 168, 191, 0.2)"
+                                >
+                                  {card.icon}
+                                </Box>
+                                <VStack align="start" gap={{ base: 3, md: 4 }} flex={1}>
+                                  <Heading
+                                    fontSize={{ base: "xl", md: "3xl" }}
+                                    fontWeight="bold"
+                                    bgGradient="linear(to-r, #ffffff, #e2e8f0)"
+                                    bgClip="text"
+                                  >
+                                    {t(`home.services.${card.key}.title`) || card.key}
+                                  </Heading>
+                                  <Text
+                                    fontSize={{ base: "sm", md: "lg" }}
+                                    color="gray.400"
+                                    lineHeight="1.8"
+                                  >
+                                    {t(`home.services.${card.key}.description`) || ""}
+                                  </Text>
+                                  <HStack gap={2} mt={2} flexWrap="wrap">
+                                    {(t(`home.services.${card.key}.tags`, { returnObjects: true }) as string[] || []).map((tag: string, i: number) => (
+                                      <Badge
+                                        key={i}
+                                        bg="rgba(101, 168, 191, 0.1)"
+                                        color="#65a8bf"
+                                        px={{ base: 3, md: 4 }}
+                                        py={{ base: 1, md: 2 }}
+                                        borderRadius="full"
+                                        fontSize={{ base: "xs", md: "sm" }}
+                                        fontWeight="500"
+                                        border="1px solid"
+                                        borderColor="rgba(101, 168, 191, 0.3)"
+                                      >
+                                        {tag}
+                                      </Badge>
+                                    ))}
+                                  </HStack>
+                                </VStack>
+                              </HStack>
+                            </Box>
+                          </Box>
+                        </MotionBox>
+                      </Box>
+                    ))}
+                  </Box>
+                </Box>
+
+                {/* App Showcase Section */}
+                <ParallaxSection speed={0.4}>
+                  <Box py={{ base: 16, md: 24 }} position="relative" overflow="hidden">
+                    <Box
+                      position="absolute"
+                      top="50%"
+                      left="50%"
+                      transform="translate(-50%, -50%)"
+                      w="800px"
+                      h="800px"
+                      borderRadius="full"
+                      bgGradient="radial(circle, rgba(101, 168, 191, 0.1) 0%, transparent 70%)"
+                      pointerEvents="none"
+                    />
+                    
+                    <Container maxW="1200px">
+                      <Grid templateColumns={{ base: "1fr", lg: "1fr 1fr" }} gap={{ base: 10, md: 16 }} alignItems="center">
+                        <MotionBox
+                          initial={{ opacity: 0, x: -50 }}
+                          whileInView={{ opacity: 1, x: 0 }}
+                          transition={{ duration: 0.8 }}
+                          viewport={{ once: true, amount: 0.3 }}
+                        >
+                          <Badge
+                            bg="rgba(101, 168, 191, 0.15)"
+                            color="#65a8bf"
+                            px={4}
+                            py={2}
+                            borderRadius="full"
+                            fontSize="sm"
+                            fontWeight="600"
+                            mb={4}
+                          >
+                            {t("home.app.badge") || "Coming Soon"}
+                          </Badge>
+                          
+                          <Heading
+                            fontSize={{ base: "3xl", md: "5xl" }}
+                            fontWeight="bold"
+                            mb={6}
+                            lineHeight="1.1"
+                          >
+                            <Text as="span" bgGradient="linear(to-r, #65a8bf, #b7a27d)" bgClip="text">
+                              {t("home.app.title") || "The promrkts Companion App"}
+                            </Text>
+                          </Heading>
+                          
+                          <Text fontSize={{ base: "lg", md: "xl" }} color="gray.300" mb={8} lineHeight="1.8">
+                            {t("home.app.description") || "A revolutionary social platform built exclusively for traders. Connect, learn, and grow with our proprietary Fear & Greed Index, private chat rooms, and community-driven insights."}
+                          </Text>
+                          
+                          <VStack align="start" gap={4} mb={10}>
+                            {[
+                              { icon: "📊", key: "fearGreed", fallback: "Proprietary Fear & Greed Index — real-time market sentiment at your fingertips" },
+                              { icon: "💬", key: "chatRooms", fallback: "Private chat rooms & groups to discuss pairs and strategies" },
+                              { icon: "🤝", key: "connect", fallback: "Revolutionary approach to connecting traders worldwide" },
+                              { icon: "📱", key: "companion", fallback: "Your trading companion — alerts, journals, and insights on the go" },
+                            ].map((feature, i) => (
+                              <MotionBox
+                                key={feature.key}
+                                initial={{ opacity: 0, x: -20 }}
+                                whileInView={{ opacity: 1, x: 0 }}
+                                transition={{ duration: 0.5, delay: i * 0.1 }}
+                                viewport={{ once: true }}
+                              >
+                                <HStack gap={4} align="flex-start">
+                                  <Box
+                                    fontSize="2xl"
+                                    w="50px"
+                                    h="50px"
+                                    borderRadius="xl"
+                                    bg="rgba(101, 168, 191, 0.1)"
+                                    display="flex"
+                                    alignItems="center"
+                                    justifyContent="center"
+                                    flexShrink={0}
+                                  >
+                                    {feature.icon}
+                                  </Box>
+                                  <Text color="gray.300" fontSize={{ base: "sm", md: "md" }} pt={2}>
+                                    {t(`home.app.features.${feature.key}`) || feature.fallback}
+                                  </Text>
+                                </HStack>
+                              </MotionBox>
+                            ))}
+                          </VStack>
+                          
+                          <HStack gap={4} flexWrap="wrap">
+                            <MotionBox
+                              whileHover={{ scale: 1.05 }}
+                              whileTap={{ scale: 0.95 }}
+                            >
+                              <ChakraLink
+                                href="#"
+                                isExternal
+                                _hover={{ textDecoration: "none" }}
+                              >
+                                <Box
+                                  bg="black"
+                                  borderRadius="xl"
+                                  px={5}
+                                  py={3}
+                                  border="1px solid"
+                                  borderColor="gray.700"
+                                  display="flex"
+                                  alignItems="center"
+                                  gap={3}
+                                  _hover={{ borderColor: "#65a8bf", bg: "gray.900" }}
+                                  transition="all 0.2s"
+                                >
+                                  <Box fontSize="2xl">🍎</Box>
+                                  <VStack align="start" gap={0}>
+                                    <Text fontSize="xs" color="gray.400">{t("home.app.downloadOn") || "Download on the"}</Text>
+                                    <Text fontSize="md" fontWeight="bold" color="white">App Store</Text>
+                                  </VStack>
+                                </Box>
+                              </ChakraLink>
+                            </MotionBox>
+                            
+                            <MotionBox
+                              whileHover={{ scale: 1.05 }}
+                              whileTap={{ scale: 0.95 }}
+                            >
+                              <ChakraLink
+                                href="#"
+                                isExternal
+                                _hover={{ textDecoration: "none" }}
+                              >
+                                <Box
+                                  bg="black"
+                                  borderRadius="xl"
+                                  px={5}
+                                  py={3}
+                                  border="1px solid"
+                                  borderColor="gray.700"
+                                  display="flex"
+                                  alignItems="center"
+                                  gap={3}
+                                  _hover={{ borderColor: "#b7a27d", bg: "gray.900" }}
+                                  transition="all 0.2s"
+                                >
+                                  <Box fontSize="2xl">▶️</Box>
+                                  <VStack align="start" gap={0}>
+                                    <Text fontSize="xs" color="gray.400">{t("home.app.getItOn") || "Get it on"}</Text>
+                                    <Text fontSize="md" fontWeight="bold" color="white">Google Play</Text>
+                                  </VStack>
+                                </Box>
+                              </ChakraLink>
+                            </MotionBox>
+                          </HStack>
+                        </MotionBox>
+                        
+                        <MotionBox
+                          initial={{ opacity: 0, x: 50, rotateY: -15 }}
+                          whileInView={{ opacity: 1, x: 0, rotateY: 0 }}
+                          transition={{ duration: 0.8, delay: 0.2 }}
+                          viewport={{ once: true, amount: 0.3 }}
+                          display="flex"
+                          justifyContent="center"
+                          position="relative"
+                        >
+                          <Box
+                            position="relative"
+                            w={{ base: "280px", md: "320px" }}
+                            h={{ base: "560px", md: "640px" }}
+                          >
+                            <Box
+                              position="absolute"
+                              top="-20px"
+                              left="-20px"
+                              right="-20px"
+                              bottom="-20px"
+                              borderRadius="50px"
+                              bgGradient="linear(135deg, #65a8bf 0%, #b7a27d 100%)"
+                              opacity={0.3}
+                              filter="blur(30px)"
+                            />
+                            
+                            <Box
+                              position="relative"
+                              w="100%"
+                              h="100%"
+                              borderRadius="40px"
+                              p="4px"
+                              bgGradient="linear(135deg, #65a8bf 0%, #b7a27d 50%, #65a8bf 100%)"
+                              boxShadow="0 40px 80px -20px rgba(0, 0, 0, 0.5)"
+                            >
+                              <Box
+                                w="100%"
+                                h="100%"
+                                borderRadius="38px"
+                                bg="linear-gradient(180deg, #1a1a2e 0%, #0f0f1a 100%)"
+                                overflow="hidden"
+                                position="relative"
+                              >
+                                <Box
+                                  position="absolute"
+                                  top="12px"
+                                  left="50%"
+                                  transform="translateX(-50%)"
+                                  w="100px"
+                                  h="28px"
+                                  bg="black"
+                                  borderRadius="full"
+                                />
+                                
+                                <VStack h="100%" justify="center" gap={6} px={6}>
+                                  <Box
+                                    w="80px"
+                                    h="80px"
+                                    borderRadius="2xl"
+                                    bgGradient="linear(135deg, #65a8bf, #b7a27d)"
+                                    display="flex"
+                                    alignItems="center"
+                                    justifyContent="center"
+                                  >
+                                    <Text fontSize="3xl" fontWeight="bold" color="white">P</Text>
+                                  </Box>
+                                  
+                                  <Text fontSize="xl" fontWeight="bold" color="white">promrkts</Text>
+                                  <Text fontSize="sm" color="gray.400" textAlign="center">
+                                    {t("home.app.mockup.tagline") || "Trade Smarter. Together."}
+                                  </Text>
+                                  
+                                  <VStack w="100%" gap={3} mt={4}>
+                                    <Box
+                                      w="100%"
+                                      h="60px"
+                                      borderRadius="xl"
+                                      bg="rgba(101, 168, 191, 0.1)"
+                                      border="1px solid"
+                                      borderColor="rgba(101, 168, 191, 0.2)"
+                                      display="flex"
+                                      alignItems="center"
+                                      px={4}
+                                      gap={3}
+                                    >
+                                      <Text fontSize="xl">📊</Text>
+                                      <VStack align="start" gap={0}>
+                                        <Text fontSize="xs" color="gray.500">Fear & Greed</Text>
+                                        <Text fontSize="sm" fontWeight="bold" color="#22c55e">72 - Greed</Text>
+                                      </VStack>
+                                    </Box>
+                                    
+                                    <Box
+                                      w="100%"
+                                      h="60px"
+                                      borderRadius="xl"
+                                      bg="rgba(183, 162, 125, 0.1)"
+                                      border="1px solid"
+                                      borderColor="rgba(183, 162, 125, 0.2)"
+                                      display="flex"
+                                      alignItems="center"
+                                      px={4}
+                                      gap={3}
+                                    >
+                                      <Text fontSize="xl">💬</Text>
+                                      <VStack align="start" gap={0}>
+                                        <Text fontSize="xs" color="gray.500">Active Rooms</Text>
+                                        <Text fontSize="sm" fontWeight="bold" color="#b7a27d">12 discussions</Text>
+                                      </VStack>
+                                    </Box>
+                                  </VStack>
+                                </VStack>
+                                
+                                <Box
+                                  position="absolute"
+                                  bottom="8px"
+                                  left="50%"
+                                  transform="translateX(-50%)"
+                                  w="120px"
+                                  h="4px"
+                                  bg="gray.600"
+                                  borderRadius="full"
+                                />
+                              </Box>
+                            </Box>
+                          </Box>
+                        </MotionBox>
+                      </Grid>
+                    </Container>
                   </Box>
                 </ParallaxSection>
 
@@ -3162,7 +3610,7 @@ const Home: React.FC = () => {
                       transition={{ duration: 0.8 }}
                       viewport={{ once: true, amount: 0.3 }}
                     >
-                      <Heading textAlign="center" mb={6} fontSize={{ base: "3xl", md: "4xl" }}>
+                      <Heading textAlign="center" mb={6} fontSize={{ base: "3xl", md: "4xl" }} bgGradient="linear(to-r, #65a8bf, #b7a27d)" bgClip="text">
                         {t("home.faq.title") || "Frequently Asked Questions"}
                       </Heading>
                       <Text textAlign="center" mb={8} opacity={0.9}>
@@ -3170,16 +3618,16 @@ const Home: React.FC = () => {
                           "Find quick answers below. Still stuck? Reach out — we're happy to help."}
                       </Text>
                     </MotionBox>
-                    <VStack gap={4} align="stretch" color="#65a8bf">
+                    <VStack gap={3} align="stretch" maxW="800px" mx="auto">
                       {faqItems.map((item, idx) => (
                         <MotionBox
                           key={idx}
-                          initial={{ opacity: 0, x: -20 }}
-                          whileInView={{ opacity: 1, x: 0 }}
-                          transition={{ duration: 0.5, delay: idx * 0.1 }}
+                          initial={{ opacity: 0, y: 20 }}
+                          whileInView={{ opacity: 1, y: 0 }}
+                          transition={{ duration: 0.4, delay: idx * 0.08 }}
                           viewport={{ once: true, amount: 0.3 }}
                         >
-                          <FaqRow q={item.q} a={item.a} />
+                          <FaqRow q={item.q} a={item.a} index={idx} />
                         </MotionBox>
                       ))}
                     </VStack>
@@ -3226,13 +3674,14 @@ const Home: React.FC = () => {
                     >
                       <VStack gap={6} align="center" textAlign="center">
                         <Text
-                          color={accentColor}
+                          bgGradient="linear(to-r, #65a8bf, #b7a27d)"
+                          bgClip="text"
                           fontWeight="bold"
                           fontSize={{ base: "3xl", md: "4xl" }}
                         >
                           {t("home.cta.kicker") || "Ready to Learn?"}
                         </Text>
-                        <Heading fontSize={{ base: "3xl", md: "4xl" }}>
+                        <Heading fontSize={{ base: "3xl", md: "4xl" }} bgGradient="linear(to-r, #b7a27d, #65a8bf)" bgClip="text">
                           {t("home.cta.title") || "Start Your Learning Journey Today"}
                         </Heading>
                         <Text fontSize="lg">

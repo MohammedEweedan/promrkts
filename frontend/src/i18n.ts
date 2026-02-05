@@ -852,7 +852,7 @@ const resources = {
         search: 'Search',
         hero: {
           title: 'Your partners in success.',
-          subtitle: 'Join +4,200 learners making real profit in around 4 weeks.',
+          subtitle: 'Join +51,000 learners making real profit in around 4 weeks.',
           cta_primary: 'Start Learning Now',
           welcome: 'Hello, {{name}}',
           welcome_sub: 'Pick up where you left off — your Guides, tools, and community await.',
@@ -987,6 +987,46 @@ const resources = {
           broker_cta: 'Join Our Broker',
           progress_complete: 'complete',
           progress_not_started: 'Not started yet',
+        },
+        services: {
+          title: "How We Help Traders Succeed",
+          subtitle: "Our proven strategies have helped thousands of traders trade smarter and earn more.",
+          education: {
+            title: "Expert-Led Education",
+            description: "Comprehensive courses designed by professional traders with years of market experience. From fundamentals to advanced strategies, we break down complex concepts into actionable knowledge.",
+            tags: ["Video Lessons", "Live Sessions", "Downloadable Resources"]
+          },
+          strategies: {
+            title: "Proven Trading Strategies",
+            description: "Battle-tested strategies that have generated consistent results. Learn our proprietary methods for identifying high-probability setups in Forex, Crypto, and Indices markets.",
+            tags: ["Risk Management", "Entry/Exit Rules", "Backtested Systems"]
+          },
+          community: {
+            title: "Elite Trading Community",
+            description: "Join a network of serious traders sharing insights, setups, and support. Access private Telegram and Discord channels with daily market analysis and trade ideas.",
+            tags: ["Daily Signals", "Live Trading Rooms", "Peer Support"]
+          },
+          support: {
+            title: "Dedicated Success Support",
+            description: "Personal guidance from our success team to help you stay on track. Whether you're stuck on a concept or need accountability, we're here to help you reach your goals.",
+            tags: ["1-on-1 Coaching", "Progress Tracking", "24/7 Support"]
+          }
+        },
+        app: {
+          badge: "Coming Soon",
+          title: "The promrkts Companion App",
+          description: "A revolutionary social platform built exclusively for traders. Connect, learn, and grow with our proprietary Fear & Greed Index, private chat rooms, and community-driven insights.",
+          downloadOn: "Download on the",
+          getItOn: "Get it on",
+          features: {
+            fearGreed: "Proprietary Fear & Greed Index — real-time market sentiment at your fingertips",
+            chatRooms: "Private chat rooms & groups to discuss pairs and strategies",
+            connect: "Revolutionary approach to connecting traders worldwide",
+            companion: "Your trading companion — alerts, journals, and insights on the go"
+          },
+          mockup: {
+            tagline: "Trade Smarter. Together."
+          }
         },
       },
       token: {
@@ -2270,7 +2310,7 @@ const resources = {
         spin_and_win: 'Spin & Win',
         hero: {
           title: 'Devenez un trader expert avec les meilleurs.',
-          subtitle: 'Rejoignez des +4,200 d\'apprenants.',
+          subtitle: 'Rejoignez des +51,000 d\'apprenants.',
           cta_primary: 'Commencer la formation',
           welcome: 'Bienvenue, {{name}}',
           welcome_sub: 'Reprenez là où vous vous êtes arrêté — vos cours, outils et communauté vous attendent.',
@@ -2372,6 +2412,46 @@ const resources = {
           subtitle: 'Rejoignez des apprenants dans le monde entier et accédez à notre bibliothèque premium.',
           primary: 'Parcourir les cours',
           secondary: 'Contactez-nous',
+        },
+        services: {
+          title: "Comment nous aidons les traders à réussir",
+          subtitle: "Nos stratégies éprouvées ont aidé des milliers de traders à trader plus intelligemment et à gagner plus.",
+          education: {
+            title: "Formation dirigée par des experts",
+            description: "Des cours complets conçus par des traders professionnels avec des années d'expérience sur les marchés. Des fondamentaux aux stratégies avancées, nous décomposons les concepts complexes en connaissances exploitables.",
+            tags: ["Leçons vidéo", "Sessions en direct", "Ressources téléchargeables"]
+          },
+          strategies: {
+            title: "Stratégies de trading éprouvées",
+            description: "Des stratégies testées qui ont généré des résultats constants. Apprenez nos méthodes propriétaires pour identifier les configurations à haute probabilité sur les marchés Forex, Crypto et Indices.",
+            tags: ["Gestion des risques", "Règles d'entrée/sortie", "Systèmes backtestés"]
+          },
+          community: {
+            title: "Communauté de trading d'élite",
+            description: "Rejoignez un réseau de traders sérieux partageant des analyses, des configurations et du soutien. Accédez aux canaux privés Telegram et Discord avec des analyses de marché quotidiennes.",
+            tags: ["Signaux quotidiens", "Salles de trading en direct", "Soutien entre pairs"]
+          },
+          support: {
+            title: "Support dédié à votre réussite",
+            description: "Un accompagnement personnel de notre équipe pour vous aider à rester sur la bonne voie. Que vous soyez bloqué sur un concept ou que vous ayez besoin de responsabilisation, nous sommes là pour vous aider.",
+            tags: ["Coaching 1-à-1", "Suivi des progrès", "Support 24/7"]
+          }
+        },
+        app: {
+          badge: "Bientôt disponible",
+          title: "L'application compagnon promrkts",
+          description: "Une plateforme sociale révolutionnaire conçue exclusivement pour les traders. Connectez-vous, apprenez et évoluez avec notre indice propriétaire Fear & Greed, des salons privés et des analyses communautaires.",
+          downloadOn: "Télécharger sur",
+          getItOn: "Disponible sur",
+          features: {
+            fearGreed: "Indice Fear & Greed propriétaire — sentiment du marché en temps réel",
+            chatRooms: "Salons privés et groupes pour discuter des paires et stratégies",
+            connect: "Approche révolutionnaire pour connecter les traders du monde entier",
+            companion: "Votre compagnon de trading — alertes, journaux et analyses en déplacement"
+          },
+          mockup: {
+            tagline: "Tradez plus intelligemment. Ensemble."
+          }
         },
       },
       broker: {
@@ -3648,7 +3728,7 @@ const resources = {
         },
         hero: {
           title: 'أتقن التداول مع الخبراء.',
-          subtitle: 'انضم إلى +4,200 طالب يحققون أرباحًا حقيقية خلال حوالي 4 أسابيع فقط.',
+          subtitle: 'انضم إلى +51,000 طالب يحققون أرباحًا حقيقية خلال حوالي 4 أسابيع فقط.',
           cta_primary: 'ابدأ التعلم الآن',
           welcome: 'أهلاً {{name}}',
           welcome_sub: 'كمل ما تركته - كورساتك، أدواتك، ومجتمعك ينتظرك.',
@@ -3779,9 +3859,49 @@ const resources = {
           secondary: 'اتصل بنا',
           image_alt: 'ابدأ التداول — تعليم احترافي لكل المستويات',
         },
+        services: {
+          title: "كيف نساعد المتداولين على النجاح",
+          subtitle: "استراتيجياتنا المجرّبة ساعدت آلاف المتداولين على التداول بذكاء وتحقيق أرباح أكبر.",
+          education: {
+            title: "تعليم بقيادة خبراء",
+            description: "دورات شاملة صممها متداولون محترفون بسنوات من الخبرة في الأسواق.",
+            tags: ["دروس فيديو", "جلسات مباشرة", "موارد قابلة للتحميل"]
+          },
+          strategies: {
+            title: "استراتيجيات تداول مجرّبة",
+            description: "استراتيجيات مختبرة حققت نتائج ثابتة في أسواق الفوركس والعملات الرقمية.",
+            tags: ["إدارة المخاطر", "قواعد الدخول/الخروج", "أنظمة مختبرة"]
+          },
+          community: {
+            title: "مجتمع تداول نخبوي",
+            description: "انضم إلى شبكة من المتداولين الجادين يتشاركون التحليلات والدعم.",
+            tags: ["إشارات يومية", "غرف تداول مباشرة", "دعم الأقران"]
+          },
+          support: {
+            title: "دعم مخصص لنجاحك",
+            description: "إرشاد شخصي من فريق النجاح لمساعدتك على البقاء في المسار الصحيح.",
+            tags: ["تدريب فردي", "تتبع التقدم", "دعم 24/7"]
+          }
+        },
+        app: {
+          badge: "قريباً",
+          title: "تطبيق promrkts المرافق",
+          description: "منصة اجتماعية ثورية مصممة حصرياً للمتداولين. تواصل وتعلّم وتطوّر مع مؤشر الخوف والطمع الخاص بنا، وغرف الدردشة الخاصة، والتحليلات المجتمعية.",
+          downloadOn: "حمّل من",
+          getItOn: "احصل عليه من",
+          features: {
+            fearGreed: "مؤشر الخوف والطمع الخاص — معنويات السوق في الوقت الفعلي",
+            chatRooms: "غرف دردشة خاصة ومجموعات لمناقشة الأزواج والاستراتيجيات",
+            connect: "نهج ثوري لربط المتداولين حول العالم",
+            companion: "رفيقك في التداول — تنبيهات ويوميات وتحليلات أينما كنت"
+          },
+          mockup: {
+            tagline: "تداول بذكاء. معاً."
+          }
+        },
       },
       broker: {
-        partner_label: "وسيط معرِّف",
+        partner_label: "وسيط معرِّف",
         anax_brand: "شركة ANAX Capital",
         hero_title: "تداول مع وسيطنا المفضّل",
         hero_subtitle:

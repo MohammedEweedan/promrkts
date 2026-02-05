@@ -171,13 +171,14 @@ const SplitText: React.FC<SplitTextProps> = ({
     const style: React.CSSProperties = {
       textAlign,
       overflow: 'visible', // 👈 don't clip multi-line text
-      display: 'block',    // 👈 block so it takes full width and height
+      display: 'block',    // 👈 block so it takes full width
       whiteSpace: 'normal',
       wordWrap: 'break-word',
       willChange: 'transform, opacity',
       margin: 0,
       fontSize: fontSize ?? 'clamp(2rem, 4vw, 3rem)', // big heading
       fontWeight: fontWeight ?? 800,                  // bold
+      color: '#b7a27d',
     };
 
     const classes = `split-parent ${className}`;

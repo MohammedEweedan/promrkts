@@ -7,7 +7,7 @@ import { useTranslation } from "react-i18next";
 import { motion, AnimatePresence } from "framer-motion";
 import SplitText from "./SplitText";
 import { useThemeMode } from "../themeProvider";
-import { Award, TrendingUp, Users, Clock, Shield } from "lucide-react";
+import { Award, TrendingUp, Users, Clock, Shield, Banknote, CandlestickChartIcon } from "lucide-react";
 import * as THREE from "three";
 
 const BRAND = "#65a8bf";
@@ -106,9 +106,9 @@ const CandlestickChart: React.FC = () => {
     const scene = new THREE.Scene();
     sceneRef.current = scene;
 
-    // Camera - positioned to view chart from side angle
+    // Camera - positioned to view chart from front (left to right)
     const camera = new THREE.PerspectiveCamera(50, width / height, 0.1, 1000);
-    camera.position.set(15, 8, 20);
+    camera.position.set(0, 5, 25);
     camera.lookAt(0, 5, 0);
 
     // Renderer
@@ -145,9 +145,9 @@ const CandlestickChart: React.FC = () => {
 
     // Initialize candles
     let currentPrice = 5;
-    const numCandles = 50;
+    const numCandles = 60;
     const candleWidth = 0.35;
-    const spacing = 0.5;
+    const spacing = 0.6;
     const candleGroup = new THREE.Group();
 
     for (let i = 0; i < numCandles; i++) {
@@ -155,22 +155,30 @@ const CandlestickChart: React.FC = () => {
       candleDataRef.current.push(candle);
       currentPrice = candle.close + (candle.bullish ? 0.05 : -0.02);
 
+      // Position from left to right
       const x = (i - numCandles / 2) * spacing;
       
-      // Candle body
+      // Candle body with fade based on position (fade to right)
       const bodyHeight = Math.abs(candle.close - candle.open) || 0.05;
       const bodyY = (candle.open + candle.close) / 2;
       const bodyGeometry = new THREE.BoxGeometry(candleWidth, bodyHeight, candleWidth * 0.6);
+      
+      // Calculate opacity based on position (fade right side)
+      const fadePosition = (i / numCandles);
+      const opacity = 1 - (fadePosition * 0.7); // Fade from 100% to 30%
+      
       const bodyMaterial = new THREE.MeshPhongMaterial({
         color: candle.bullish ? 0x22c55e : 0xef4444,
         emissive: candle.bullish ? 0x115522 : 0x551111,
         emissiveIntensity: 0.4,
         shininess: 100,
+        transparent: true,
+        opacity: opacity,
       });
       const body = new THREE.Mesh(bodyGeometry, bodyMaterial);
       body.position.set(x, bodyY, 0);
 
-      // Wick
+      // Wick with matching fade
       const wickHeight = candle.high - candle.low;
       const wickY = (candle.high + candle.low) / 2;
       const wickGeometry = new THREE.BoxGeometry(0.04, wickHeight, 0.04);
@@ -178,6 +186,8 @@ const CandlestickChart: React.FC = () => {
         color: candle.bullish ? 0x22c55e : 0xef4444,
         emissive: candle.bullish ? 0x0a2210 : 0x220a0a,
         emissiveIntensity: 0.3,
+        transparent: true,
+        opacity: opacity,
       });
       const wick = new THREE.Mesh(wickGeometry, wickMaterial);
       wick.position.set(x, wickY, 0);
@@ -190,36 +200,35 @@ const CandlestickChart: React.FC = () => {
     scene.add(candleGroup);
 
     // Add subtle grid floor
-    const gridHelper = new THREE.GridHelper(60, 60, 0x65a8bf, 0x1a2a35);
+    const gridHelper = new THREE.GridHelper(60, 60, 0x5ba8c1, 0x1a2a35);
     gridHelper.position.y = 0;
     gridHelper.material.opacity = 0.1;
     gridHelper.material.transparent = true;
     scene.add(gridHelper);
 
-    // Animation - scrolling chart effect
+    // Animation - natural candle appearance like real charts
     let time = 0;
-    let scrollOffset = 0;
-    const scrollSpeed = 0.015;
     let lastCandleTime = 0;
-    const candleInterval = 2; // New candle every 2 seconds worth of animation
+    const candleInterval = 3; // New candle every 3 seconds
+    let currentCandleIndex = numCandles;
 
     const animate = () => {
       animationRef.current = requestAnimationFrame(animate);
       time += 0.016; // ~60fps
-      scrollOffset += scrollSpeed;
 
-      // Move all candles to the left (scrolling effect)
-      candleGroup.position.x = -scrollOffset * spacing * 60;
-
-      // Add new candle periodically
-      if (time - lastCandleTime > candleInterval) {
+      // Add new candle periodically on the right side
+      if (time - lastCandleTime > candleInterval && currentCandleIndex < numCandles + 20) {
         lastCandleTime = time;
         
         const lastCandle = candleDataRef.current[candleDataRef.current.length - 1];
         const newCandle = generateCandle(lastCandle.close + (lastCandle.bullish ? 0.05 : -0.02));
         candleDataRef.current.push(newCandle);
 
-        const newX = (candleDataRef.current.length - 1 - numCandles / 2) * spacing;
+        const newX = (currentCandleIndex - numCandles / 2) * spacing;
+        
+        // Calculate fade based on position (fade right side)
+        const fadePosition = (currentCandleIndex / (numCandles + 20));
+        const opacity = 1 - (fadePosition * 0.7);
         
         // Create new candle meshes
         const bodyHeight = Math.abs(newCandle.close - newCandle.open) || 0.05;
@@ -230,6 +239,8 @@ const CandlestickChart: React.FC = () => {
           emissive: newCandle.bullish ? 0x115522 : 0x551111,
           emissiveIntensity: 0.4,
           shininess: 100,
+          transparent: true,
+          opacity: opacity,
         });
         const body = new THREE.Mesh(bodyGeometry, bodyMaterial);
         body.position.set(newX, bodyY, 0);
@@ -241,18 +252,21 @@ const CandlestickChart: React.FC = () => {
           color: newCandle.bullish ? 0x22c55e : 0xef4444,
           emissive: newCandle.bullish ? 0x0a2210 : 0x220a0a,
           emissiveIntensity: 0.3,
+          transparent: true,
+          opacity: opacity,
         });
         const wick = new THREE.Mesh(wickGeometry, wickMaterial);
         wick.position.set(newX, wickY, 0);
 
         candleGroup.add(body);
         candleGroup.add(wick);
+        candleMeshesRef.current.push({ body, wick });
+        currentCandleIndex++;
       }
 
-      // Gentle camera sway
-      camera.position.y = 8 + Math.sin(time * 0.3) * 0.5;
-      camera.position.x = 15 + Math.sin(time * 0.2) * 1;
-      camera.lookAt(candleGroup.position.x + 5, 5, 0);
+      // Very subtle camera movement
+      camera.position.y = 5 + Math.sin(time * 0.15) * 0.2;
+      camera.lookAt(0, 5, 0);
 
       renderer.render(scene, camera);
     };
@@ -307,12 +321,11 @@ export default function GuestLanding({
   const isDark = mode === "dark";
 
   const [showSplash, setShowSplash] = React.useState(true);
-  const [splashComplete, setSplashComplete] = React.useState(false);
+  const [splashComplete, setSplashComplete] = React.useState(true); // Always true to show content
   
   React.useEffect(() => {
     const timer = setTimeout(() => {
       setShowSplash(false);
-      setSplashComplete(true);
     }, 2000);
     return () => clearTimeout(timer);
   }, []);
@@ -402,13 +415,13 @@ export default function GuestLanding({
               zIndex={1}
             />
 
-            <VStack 
-              gap={8} 
-              align="center" 
-              textAlign="center" 
-              w="100%" 
-              px={4} 
-              pt={{ base: 20, md: 32 }} 
+            <VStack
+              gap={8}
+              align="center"
+              textAlign="center"
+              w="100%"
+              px={4}
+              pt={{ base: 20, md: 32 }}
               pb={{ base: 12, md: 20 }}
               position="relative"
               zIndex={2}
@@ -443,7 +456,10 @@ export default function GuestLanding({
                 maxW="600px"
               >
                 <Text fontSize={{ base: "md", md: "lg" }} color="gray.300" lineHeight="1.8">
-                  {t("home.hero.subtitle", { defaultValue: "Master the markets with professional-grade education and a community of elite traders." })}
+                  {t("home.hero.subtitle", {
+                    defaultValue:
+                      "Master the markets with professional-grade education and a community of elite traders.",
+                  })}
                 </Text>
               </MotionBox>
 
@@ -471,7 +487,9 @@ export default function GuestLanding({
                     onClick={() => navigate(expired ? "/contact" : "/products")}
                     animation={`${glowPulse} 3s ease-in-out infinite`}
                   >
-                    {expired ? t("home.urgency.waitlist") : t("home.hero.cta_primary", { defaultValue: "Start Learning" })}
+                    {expired
+                      ? t("home.urgency.waitlist")
+                      : t("home.hero.cta_primary", { defaultValue: "Start Learning" })}
                   </Button>
 
                   <Button
@@ -505,15 +523,13 @@ export default function GuestLanding({
                   <Button
                     size="lg"
                     onClick={onOpenSpin}
-                    bg="linear-gradient(135deg, #d4af37 0%, #f4d03f 50%, #d4af37 100%)"
+                    bg="#b7a27d"
                     color="#1a1a2e"
                     px={8}
                     py={6}
                     fontSize="md"
                     fontWeight="bold"
                     borderRadius="xl"
-                    border="2px solid"
-                    borderColor="rgba(212, 175, 55, 0.5)"
                     _hover={{
                       transform: "translateY(-2px)",
                       bg: "linear-gradient(135deg, #f4d03f 0%, #d4af37 50%, #f4d03f 100%)",
@@ -529,7 +545,7 @@ export default function GuestLanding({
 
               {/* Stats section */}
               <Grid
-                templateColumns={{ base: "repeat(2, 1fr)", md: "repeat(3, 1fr)" }}
+                templateColumns={{ base: "repeat(2, 1fr)", md: "repeat(4, 1fr)" }}
                 gap={{ base: 4, md: 6 }}
                 w="100%"
                 maxW="800px"
@@ -538,6 +554,7 @@ export default function GuestLanding({
                 <StatCard icon={TrendingUp} value="50K+" label="Active Traders" delay={1.0} />
                 <StatCard icon={Users} value="10K+" label="Community Members" delay={1.1} />
                 <StatCard icon={Shield} value="24/7" label="Support" delay={1.2} />
+                <StatCard icon={CandlestickChartIcon} value="140k+" label="Learners" delay={1.3} />
               </Grid>
 
               {/* Trust text */}
