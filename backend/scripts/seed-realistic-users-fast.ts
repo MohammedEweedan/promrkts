@@ -633,7 +633,141 @@ function pickWeighted<T>(items: Array<{ item: T; w: number }>): T {
   return items[items.length - 1].item;
 }
 
-// -------------------- DATABASE WIPE --------------------
+// -------------------- DATABASE WIPE (FAKE USERS ONLY) --------------------
+// Fake users are identified by their email pattern: contains the RUN_TAG or common seed patterns
+const FAKE_EMAIL_PATTERNS = [
+  // Seeded users have emails like: firstname.lastname.RUNTAG.index@domain.com
+  /@gmail\.com$/i,
+  /@yahoo\.com$/i,
+  /@hotmail\.com$/i,
+];
+
+// More specific: seeded emails have a pattern with dots and numbers before the domain
+const isFakeEmail = (email: string): boolean => {
+  // Seeded emails follow pattern: name.name.tag.number@domain.com
+  // Real users typically don't have this exact pattern
+  const seedPattern = /^[a-z-]+\.[a-z-]+\.[a-f0-9]+\.\d+@(gmail|yahoo|hotmail)\.com$/i;
+  return seedPattern.test(email);
+};
+
+async function wipeFakeUsersOnly() {
+  console.log("🗑️ WIPING FAKE/SEEDED USERS AND THEIR DATA...\n");
+  
+  // First, find all fake users by email pattern
+  const allUsers = await prisma.users.findMany({
+    select: { id: true, email: true, role: true },
+  });
+  
+  const fakeUserIds = allUsers
+    .filter((u: any) => isFakeEmail(u.email) && u.role !== 'admin')
+    .map((u: any) => u.id);
+  
+  console.log(`  Found ${fakeUserIds.length} fake users out of ${allUsers.length} total users`);
+  
+  if (fakeUserIds.length === 0) {
+    console.log("  No fake users to delete.\n");
+    return;
+  }
+  
+  // Delete related records in order (children first) for fake users only
+  const userRelatedModels = [
+    { name: "challengeDailyStat", fk: null, parentModel: "challengeAccount" },
+    { name: "challengeAccount", fk: "userId" },
+    { name: "tokenTrade", fk: "userId" },
+    { name: "userTokenHolding", fk: "userId" },
+    { name: "walletAddress", fk: "userId" },
+    { name: "userWallet", fk: "userId" },
+    { name: "profitSharePayout", fk: "userId" },
+    { name: "userBadge", fk: "userId" },
+    { name: "courseReview", fk: "userId" },
+    { name: "dailyActivity", fk: "userId" },
+    { name: "studentProgress", fk: "userId" },
+    { name: "purchase", fk: "userId" },
+    { name: "communityAccess", fk: "userId" },
+    { name: "conversation", fk: "userId" },
+    { name: "quizAttempt", fk: "userId" },
+    { name: "event", fk: "userId" },
+    { name: "botFeedback", fk: "userId" },
+    { name: "tokenPurchase", fk: "userId" },
+    { name: "privateMessage", fk: "senderId" },
+    { name: "userEncryptionKey", fk: "userId" },
+    { name: "userHeroDashboardLayout", fk: "userId" },
+    { name: "dashboardWorkspace", fk: "userId" },
+    { name: "profileSnapshot", fk: "userId" },
+    { name: "userEntitlement", fk: "userId" },
+    { name: "userJourney", fk: "userId" },
+    { name: "tradeJournalEntry", fk: "userId" },
+    { name: "post", fk: "userId" },
+    { name: "brokerSignup", fk: "userId" },
+    { name: "affiliate", fk: "userId" },
+    { name: "accountConfirmCode", fk: "userId" },
+    { name: "password_reset_tokens", fk: "user_id" },
+    { name: "refresh_tokens", fk: "user_id" },
+  ];
+
+  // Delete challenge daily stats first (nested relation)
+  if (hasModel("challengeAccount") && hasModel("challengeDailyStat")) {
+    try {
+      const challengeAccounts = await (prisma as any).challengeAccount.findMany({
+        where: { userId: { in: fakeUserIds } },
+        select: { id: true },
+      });
+      const accountIds = challengeAccounts.map((a: any) => a.id);
+      if (accountIds.length > 0) {
+        const result = await (prisma as any).challengeDailyStat.deleteMany({
+          where: { challengeAccountId: { in: accountIds } },
+        });
+        console.log(`  ✓ Deleted ${result.count} rows from challengeDailyStat`);
+      }
+    } catch (e: any) {
+      console.warn(`  ⚠️ Could not delete challengeDailyStat: ${e.message}`);
+    }
+  }
+
+  // Delete received private messages (where fake user is receiver)
+  if (hasModel("privateMessage")) {
+    try {
+      const result = await (prisma as any).privateMessage.deleteMany({
+        where: { receiverId: { in: fakeUserIds } },
+      });
+      console.log(`  ✓ Deleted ${result.count} received messages from privateMessage`);
+    } catch (e: any) {
+      console.warn(`  ⚠️ Could not delete received privateMessage: ${e.message}`);
+    }
+  }
+
+  // Delete user-related records
+  for (const { name, fk } of userRelatedModels) {
+    if (!fk || !hasModel(name)) continue;
+    try {
+      const result = await (prisma as any)[name].deleteMany({
+        where: { [fk]: { in: fakeUserIds } },
+      });
+      if (result.count > 0) {
+        console.log(`  ✓ Deleted ${result.count} rows from ${name}`);
+      }
+    } catch (e: any) {
+      console.warn(`  ⚠️ Could not delete ${name}: ${e.message}`);
+    }
+  }
+
+  // Finally delete the fake users themselves
+  try {
+    const result = await prisma.users.deleteMany({
+      where: { id: { in: fakeUserIds } },
+    });
+    console.log(`  ✓ Deleted ${result.count} fake users`);
+  } catch (e: any) {
+    console.warn(`  ⚠️ Could not delete users: ${e.message}`);
+  }
+
+  // Clean up orphaned token data (optional - keeps market history)
+  // We keep tokenSale, tokenPriceTick for market history
+
+  console.log("\n✅ Fake users cleanup complete!\n");
+}
+
+// Legacy function for full wipe (kept for backwards compatibility)
 async function wipeDatabase() {
   console.log("🗑️ WIPING ALL DATABASE DATA...\n");
   
@@ -681,8 +815,13 @@ async function wipeDatabase() {
 async function main() {
   console.log("🚀 Starting MEGA simulation seed...\n");
 
-  // WIPE DATABASE FIRST
-  await wipeDatabase();
+  // WIPE FAKE USERS ONLY (preserves real users and admins)
+  // Set WIPE_ALL=1 to wipe entire database instead
+  if (process.env.WIPE_ALL === "1") {
+    await wipeDatabase();
+  } else {
+    await wipeFakeUsersOnly();
+  }
 
   const now = new Date();
 

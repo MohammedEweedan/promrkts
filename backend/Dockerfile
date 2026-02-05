@@ -83,7 +83,7 @@ EXPOSE 10000
 ENV NODE_ENV=production
 # PORT will be set by the platform (8080 for Fly.io, 10000 for Render)
 
-# Ensure DB schema exists, promote admin, start server; optionally seed in background
-# SEED_ON_START=1 will run the seed script which now WIPES the database first and regenerates 100k users
-# with subscriptions, badges, and XP
-CMD ["sh", "-c", "set -e; npx prisma generate; npx prisma migrate deploy; node dist/scripts/promote-admin.js; if [ \"${SEED_ON_START}\" = \"1\" ]; then echo '🗑️ SEED_ON_START=1 detected - will wipe DB and seed 100k users...'; node dist/scripts/seed-realistic-users-fast.js & fi; exec node dist/index.js"]
+# Ensure DB schema exists, promote admin, start server
+# WARNING: SEED_ON_START=1 will DELETE fake users and regenerate them - DO NOT SET IN PRODUCTION
+# To seed manually, run: docker exec <container> node dist/scripts/seed-realistic-users-fast.js
+CMD ["sh", "-c", "set -e; echo '🚀 Starting promrkts Backend...'; npx prisma generate; echo '📦 Running migrations...'; npx prisma migrate deploy; echo '👤 Promoting admin...'; node dist/scripts/promote-admin.js || true; if [ \"${SEED_ON_START}\" = \"1\" ]; then echo '⚠️ SEED_ON_START=1 detected - THIS WILL DELETE FAKE USERS AND RESEED. Remove this env var in production!'; node dist/scripts/seed-realistic-users-fast.js & fi; echo '✅ Starting server...'; exec node dist/index.js"]

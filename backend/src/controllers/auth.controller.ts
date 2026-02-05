@@ -11,6 +11,7 @@ import logger from '../utils/logger';
 import { sendWhatsAppText } from '../utils/whatsapp';
 import { ensureJourney } from '../services/journey.service';
 import { ensureEntitlements } from '../services/entitlements.service';
+import { sendWelcomeEmail, sendConfirmationCodeEmail } from '../services/email.service';
 
 const JWT_SECRET = (process.env.JWT_SECRET || 'your_jwt_secret_key') as jwt.Secret;
 const JWT_EXPIRES_IN = process.env.JWT_EXPIRES_IN || '30d';
@@ -180,21 +181,34 @@ export const register = async (req: Request, res: Response) => {
     // Save code to DB (add a new table or reuse existing, here as example)
     await db.query('INSERT INTO account_confirm_codes (user_id, code, expires_at, used) VALUES ($1, $2, $3, $4)', [newUser.rows[0].id, confirmCode, new Date(Date.now() + 15 * 60 * 1000), false]);
 
-    // Send confirmation email (async, non-blocking)
+    // Send confirmation email via Resend (async, non-blocking)
     try {
-      const { sendMail } = await import('../utils/mailer');
-      const subject = 'Confirm your promrkts account';
-      const attachments = await getLogoAttachment();
-      const baseHtml = await fs.readFile(path.resolve(__dirname, '../../templates/emailBase.html'), 'utf8');
-      const confirmHtml = await fs.readFile(path.resolve(__dirname, '../../templates/emailConfirm.html'), 'utf8');
-      const htmlBody = confirmHtml.replace(/{{code}}/g, confirmCode).replace(/{{name}}/g, String(name || email));
-      const logoUrl = `${(process.env.FRONTEND_URL || 'http://localhost:3003').replace(/\/$/, '')}/logo.png`;
+      await sendConfirmationCodeEmail({ email, name: name || email }, confirmCode);
+    } catch (e) {
+      logger.warn('Failed to send confirmation email via Resend:', e);
+      // Fallback to legacy mailer
+      try {
+        const { sendMail } = await import('../utils/mailer');
+        const subject = 'Confirm your promrkts account';
+        const attachments = await getLogoAttachment();
+        const baseHtml = await fs.readFile(path.resolve(__dirname, '../../templates/emailBase.html'), 'utf8');
+        const confirmHtml = await fs.readFile(path.resolve(__dirname, '../../templates/emailConfirm.html'), 'utf8');
+        const htmlBody = confirmHtml.replace(/{{code}}/g, confirmCode).replace(/{{name}}/g, String(name || email));
+        const logoUrl = `${(process.env.FRONTEND_URL || 'http://localhost:3003').replace(/\/$/, '')}/logo.png`;
         const logoSrc = attachments && attachments.length ? 'cid:promrkts.logo' : logoUrl;
         const html = baseHtml.replace(/{{subject}}/g, subject).replace(/{{body}}/g, htmlBody).replace(/{{logoSrc}}/g, logoSrc);
-      const text = `Your confirmation code: ${confirmCode}`;
-      await sendMail({ to: email, subject, html, text, attachments });
+        const text = `Your confirmation code: ${confirmCode}`;
+        await sendMail({ to: email, subject, html, text, attachments });
+      } catch (fallbackErr) {
+        logger.warn('Fallback mailer also failed:', fallbackErr);
+      }
+    }
+
+    // Send welcome email via Resend (async, non-blocking)
+    try {
+      await sendWelcomeEmail({ email, name: name || email });
     } catch (e) {
-      logger.warn('Failed to send confirmation email:', e);
+      logger.warn('Failed to send welcome email:', e);
     }
 
     // Send code via WhatsApp if phone is provided (use sendWhatsAppText)

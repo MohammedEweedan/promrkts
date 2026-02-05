@@ -20,6 +20,7 @@ const PORT = process.env.PORT || 5000;
 const STATIC_ALLOWED_ORIGINS = [
   "https://promrkts.com",
   "https://www.promrkts.com",
+  "https://api.promrkts.com",
   "http://localhost:3003",
   "http://localhost:5173",
   "http://127.0.0.1:3003",
@@ -27,7 +28,20 @@ const STATIC_ALLOWED_ORIGINS = [
   "http://127.0.0.1:8081",
   "http://172.20.10.7:8081",
   "http://192.168.1.124:8081",
+  // DigitalOcean droplet
+  "http://157.245.221.241",
+  "https://157.245.221.241",
+  "http://157.245.221.241:8080",
+  "https://157.245.221.241:8080",
 ];
+
+// Also allow origins from CORS_ORIGINS env var (comma-separated)
+if (process.env.CORS_ORIGINS) {
+  process.env.CORS_ORIGINS.split(',').forEach(origin => {
+    const trimmed = origin.trim();
+    if (trimmed) STATIC_ALLOWED_ORIGINS.push(trimmed);
+  });
+}
 
 const normalizeOrigin = (origin?: string) => (origin || "").replace(/\/$/, "");
 

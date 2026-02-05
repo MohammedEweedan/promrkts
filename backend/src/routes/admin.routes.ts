@@ -24,6 +24,18 @@ import {
 
 import { listPrizes, createPrize, createPrizeDraw } from '../controllers/prizes.controller';
 import { createFakeUsers, seedMixedReviews } from '../controllers/fakes.controller';
+import {
+  listModels,
+  getRecords,
+  getRecord,
+  createRecord,
+  updateRecord,
+  deleteRecord,
+  bulkDeleteRecords,
+  executeQuery,
+  getModelSchema,
+  getDatabaseStats,
+} from '../controllers/dbAdmin.controller';
 
 import {
   listCommunications,
@@ -108,5 +120,17 @@ router.get('/challenges/accounts', listChallengeAccounts as any);
 router.patch('/challenges/accounts/:id', updateChallengeAccount as any);
 router.post('/challenges/accounts/:id/daily', upsertChallengeDaily as any);
 router.post('/challenges/accounts/:id/payouts', createChallengePayout as any);
+
+// Database Admin (TablePlus-like interface)
+router.get('/db/models', listModels as any);
+router.get('/db/stats', getDatabaseStats as any);
+router.get('/db/:model/schema', getModelSchema as any);
+router.get('/db/:model', getRecords as any);
+router.get('/db/:model/:id', getRecord as any);
+router.post('/db/:model', createRecord as any);
+router.patch('/db/:model/:id', updateRecord as any);
+router.delete('/db/:model/:id', deleteRecord as any);
+router.post('/db/:model/bulk-delete', bulkDeleteRecords as any);
+router.post('/db/query', executeQuery as any);
 
 export default router;

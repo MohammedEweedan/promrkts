@@ -45,6 +45,7 @@ import ProgressWidget from "../components/ProgressWidget";
 import StudentProgressAnalytics from "../components/admin/StudentProgressAnalytics";
 import BadgeLeaderboard from "../components/admin/BadgeLeaderboard";
 import ChallengesAdminPanel from "../components/admin/ChallengesAdminPanel";
+import DatabaseAdminPanel from "../components/admin/DatabaseAdminPanel";
 
 // Charts
 import {
@@ -205,6 +206,7 @@ const Dashboard: React.FC = () => {
     | "applications"
     | "progress"
     | "tokenomics"
+    | "database"
   >("analytics");
 
   const isAdmin = String(user?.role || "").toLowerCase() === "admin";
@@ -867,6 +869,7 @@ const Dashboard: React.FC = () => {
     { id: "applications", label: t("admin.applications") || "Applications", icon: Users },
     { id: "progress", label: t("admin.progress") || "Progress", icon: TrendingUp },
     { id: "tokenomics", label: t("admin.tokenomics") || "Tokenomics", icon: Coins },
+    { id: "database", label: t("admin.database") || "Database", icon: BarChart3 },
   ];
 
   const kpiBg = "rgba(182, 233, 255, 0.1)";
@@ -1694,6 +1697,13 @@ const Dashboard: React.FC = () => {
               {adminSubTab === "tokenomics" && (
                 <SpotlightCard>
                   <TokenomicsAdminPanel />
+                </SpotlightCard>
+              )}
+
+              {/* Database Admin tab */}
+              {adminSubTab === "database" && (
+                <SpotlightCard>
+                  <DatabaseAdminPanel />
                 </SpotlightCard>
               )}
 

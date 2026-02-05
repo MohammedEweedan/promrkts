@@ -8,6 +8,7 @@ import Stripe from 'stripe';
 import { markCourseEngagement, markEvaluating } from '../services/journey.service';
 import { refreshEntitlements } from '../services/entitlements.service';
 import pushNotificationService from '../services/pushNotification.service';
+import { sendUpsellEmail, sendInvoiceEmail, InvoiceData } from '../services/email.service';
 
 const __adminCache: Record<string, { expiresAt: number; value: any }> = {};
 function getCached<T>(key: string): T | null {
@@ -141,6 +142,51 @@ export async function handlePurchaseConfirmed(purchaseId: string) {
       await sendReceiptEmail(purchase.id);
     } catch (e) {
       logger.warn('Failed to send receipt email:', e as any);
+    }
+  })();
+
+  // Send invoice email via Resend (non-blocking)
+  (async () => {
+    try {
+      const user = await prisma.users.findUnique({ where: { id: purchase.userId }, select: { email: true, name: true } });
+      const tier: any = (purchase as any)?.tier;
+      if (user && tier) {
+        const invoiceData: InvoiceData = {
+          invoiceNumber: `INV-${purchase.id.slice(0, 8).toUpperCase()}`,
+          purchaseDate: new Date(),
+          items: [{
+            name: tier.name || 'Product',
+            description: tier.description || undefined,
+            quantity: 1,
+            unitPrice: Number(tier.price_usdt) || 0,
+            total: Number((purchase as any).finalPriceUsd) || Number(tier.price_usdt) || 0,
+          }],
+          subtotal: Number(tier.price_usdt) || 0,
+          discount: Number((purchase as any).discountUsd) || undefined,
+          total: Number((purchase as any).finalPriceUsd) || Number(tier.price_usdt) || 0,
+          paymentMethod: (purchase as any).stripeId ? 'Card' : (purchase as any).txnHash ? 'USDT (TRC20)' : 'Free',
+          transactionId: (purchase as any).txnHash || (purchase as any).stripeId || undefined,
+        };
+        await sendInvoiceEmail({ email: user.email, name: user.name }, invoiceData);
+      }
+    } catch (e) {
+      logger.warn('Failed to send invoice email:', e as any);
+    }
+  })();
+
+  // Send upsell email for FREE course purchases (non-blocking)
+  (async () => {
+    try {
+      const tier: any = (purchase as any)?.tier;
+      const isFree = Number(tier?.price_usdt || 0) === 0;
+      if (isFree) {
+        const user = await prisma.users.findUnique({ where: { id: purchase.userId }, select: { email: true, name: true } });
+        if (user) {
+          await sendUpsellEmail({ email: user.email, name: user.name }, tier?.name || 'Free Course');
+        }
+      }
+    } catch (e) {
+      logger.warn('Failed to send upsell email:', e as any);
     }
   })();
 }
