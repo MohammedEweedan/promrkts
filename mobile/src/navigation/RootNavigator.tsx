@@ -12,8 +12,8 @@ import api from '../api/client';
 // Screens
 import NewHomeScreen from '../screens/NewHomeScreen';
 import StoreScreen from '../screens/StoreScreen';
-import AccountScreen from '../screens/AccountScreen';
-import SettingsScreen from '../screens/SettingsScreen';
+import AccountSettingsScreen from '../screens/AccountSettingsScreen';
+import MessagesScreen from '../screens/MessagesScreen';
 import CheckoutScreen from '../screens/CheckoutScreen';
 import ProductDetailScreen from '../screens/ProductDetailScreen';
 import CourseContentScreen from '../screens/CourseContentScreen';
@@ -117,10 +117,10 @@ function MainTabs() {
             case 'Store':
               iconName = focused ? 'storefront' : 'storefront';
               break;
-            case 'Account':
-              iconName = focused ? 'person' : 'person-outline';
+            case 'Chat':
+              iconName = focused ? 'chatbubble' : 'chatbubble-outline';
               break;
-            case 'Settings':
+            case 'AccountSettings':
               iconName = focused ? 'settings' : 'settings-outline';
               break;
           }
@@ -190,14 +190,14 @@ function MainTabs() {
       />
 
       <Tab.Screen
-        name="Account"
-        component={AccountScreen}
-        options={{ title: t('tabs.account') }}
+        name="Chat"
+        component={MessagesScreen}
+        options={{ title: 'Chat' }}
       />
       <Tab.Screen
-        name="Settings"
-        component={SettingsScreen}
-        options={{ title: t('tabs.settings') }}
+        name="AccountSettings"
+        component={AccountSettingsScreen}
+        options={{ title: 'Account' }}
       />
     </Tab.Navigator>
   );
@@ -261,6 +261,11 @@ function MainStack() {
       <Stack.Screen 
         name="UserSearch" 
         component={UserSearchScreen}
+        options={{ headerShown: false }}
+      />
+      <Stack.Screen 
+        name="Messages" 
+        component={MessagesScreen}
         options={{ headerShown: false }}
       />
     </Stack.Navigator>

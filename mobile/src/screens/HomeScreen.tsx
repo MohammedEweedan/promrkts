@@ -1,4 +1,4 @@
-import React, { useState, useCallback } from 'react';
+import React, { useState, useCallback, useEffect } from 'react';
 import {
   View,
   Text,
@@ -8,6 +8,9 @@ import {
   TextInput,
   Image,
   RefreshControl,
+  Modal,
+  ScrollView,
+  ActivityIndicator,
 } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { Ionicons } from '@expo/vector-icons';
@@ -15,6 +18,8 @@ import { useTranslation } from 'react-i18next';
 import { useTheme } from '../context/ThemeContext';
 import { useAuth } from '../context/AuthContext';
 import { Header } from '../components';
+import { socialAPI } from '../api/client';
+import { useNavigation } from '@react-navigation/native';
 
 type Post = {
   id: string;

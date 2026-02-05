@@ -20,13 +20,13 @@ const PORT = process.env.PORT || 5000;
 const STATIC_ALLOWED_ORIGINS = [
   "https://promrkts.com",
   "https://www.promrkts.com",
-  "http://localhost:3000",
-  "http://localhost:3001",
-  "http://localhost:3002",
   "http://localhost:3003",
   "http://localhost:5173",
-  "http://127.0.0.1:3000",
+  "http://127.0.0.1:3003",
   "http://127.0.0.1:5173",
+  "http://127.0.0.1:8081",
+  "http://172.20.10.7:8081",
+  "http://192.168.1.124:8081",
 ];
 
 const normalizeOrigin = (origin?: string) => (origin || "").replace(/\/$/, "");

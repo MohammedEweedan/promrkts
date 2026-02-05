@@ -34,7 +34,7 @@ import { useThemeMode } from "../themeProvider";
 import ProgressWidget from "../components/ProgressWidget";
 import Dock, { DockItemData } from "../components/Dock";
 import TrackedVideo from "../components/TrackedVideo";
-import TrackedPDF from "../components/TrackedPDF";
+import TrackedPDFPro from "../components/TrackedPDFPro";
 import { AdvancedRealTimeChart } from "react-ts-tradingview-widgets";
 
 type AiMessage = { id: string; from: "user" | "assistant"; text: string };
@@ -977,11 +977,32 @@ const Learn: React.FC = () => {
   const pdfsForRender = pdfs.filter((doc: any) => {
     try {
       const name = String(doc.url).split("/").pop() || "";
-      return name.toUpperCase().startsWith(`${langCode}_`);
+      const baseName = name.replace(/\.[^.]+$/, ""); // Remove file extension
+      return baseName.toUpperCase().endsWith(`_${langCode}`);
     } catch {
       return false;
     }
   });
+
+  const prettyDocName = (url: string) => {
+    const raw = String(url).split("?")[0].split("#")[0].split("/").pop() || "Document";
+    // Remove extension
+    let name = raw.replace(/\.[^.]+$/, "");
+
+    // Remove leading lang tag: EN_, AR_, FR_ (also EN-, EN )
+    name = name.replace(/^(EN|AR|FR)[\s._-]+/i, "");
+
+    // Remove trailing lang tag: _EN, -EN, .EN, (EN), [EN], " EN"
+    name = name.replace(/([\s._-]+(EN|AR|FR)$)|(\((EN|AR|FR)\)$)|(\[(EN|AR|FR)\]$)/i, "");
+
+    // Also handle double separators like "Title__EN" or "Title--EN"
+    name = name.replace(/[\s._-]+$/g, "");
+
+    // Make it prettier if you want:
+    name = name.replace(/_/g, " ").replace(/\s+/g, " ").trim();
+
+    return name || "Document";
+  };
 
   // Dock items
   const dockItems: DockItemData[] = [
@@ -1318,17 +1339,11 @@ const Learn: React.FC = () => {
                               `pdf-inline-${activePdfIdx}-${tier.id}`;
 
                             return (
-                              <TrackedPDF
+                              <TrackedPDFPro
                                 resourceId={resourceId}
                                 src={src}
-                                style={{
-                                  width: "100%",
-                                  height: "100%",
-                                }}
                                 tierId={tier.id}
-                                onContextMenu={
-                                  preventContext
-                                }
+                                style={{ width: "100%", height: "100%" }}
                                 watermark={
                                   <>
                                     <Box
@@ -1916,9 +1931,11 @@ const Learn: React.FC = () => {
                         doc.id || `pdf-${idx}-${tier.id}`;
                       const isLoaded =
                         loadedPDFs.has(idx);
-                      const fileName =
-                        String(doc.url).split("/").pop() ||
-                        `Document ${idx + 1}`;
+                      const displayName = prettyDocName(doc.url);
+
+                      <Text fontWeight="bold" fontSize="md" color={primaryTextColor}>
+                        {displayName}
+                      </Text>;
 
                       return (
                         <Box
@@ -1926,7 +1943,6 @@ const Learn: React.FC = () => {
                           borderRadius="lg"
                           overflow="hidden"
                           borderWidth={1}
-                          
                           position="relative"
                           onContextMenu={preventContext}
                         >
@@ -1936,74 +1952,37 @@ const Learn: React.FC = () => {
                               h="120px"
                               bg={surfaceBg}
                               borderWidth={2}
-                              
                               borderStyle="dashed"
                               _hover={{
-                                bg:
-                                  mode === "dark"
-                                    ? "whiteAlpha.50"
-                                    : "gray.100",
+                                bg: mode === "dark" ? "whiteAlpha.50" : "gray.100",
                                 borderStyle: "solid",
                               }}
                               onClick={() =>
-                                setLoadedPDFs(
-                                  (prev) => {
-                                    const s =
-                                      new Set(
-                                        prev
-                                      );
-                                    s.add(idx);
-                                    return s;
-                                  }
-                                )
+                                setLoadedPDFs((prev) => {
+                                  const s = new Set(prev);
+                                  s.add(idx);
+                                  return s;
+                                })
                               }
                             >
                               <VStack spacing={3}>
-                                <Icon
-                                  as={FileText}
-                                  boxSize={8}
-                                  color="#65a8bf"
-                                />
+                                <Icon as={FileText} boxSize={8} color="#65a8bf" />
                                 <VStack spacing={1}>
-                                  <Text
-                                    fontWeight="bold"
-                                    fontSize="md"
-                                    color={
-                                      primaryTextColor
-                                    }
-                                  >
-                                    {fileName.replace(
-                                      /^(EN_|FR_|AR_)/,
-                                      ""
-                                    )}
+                                  <Text fontWeight="bold" fontSize="md" color={primaryTextColor}>
+                                    {displayName}
                                   </Text>
-                                  <Text
-                                    fontSize="sm"
-                                    color={
-                                      mutedTextColor
-                                    }
-                                  >
-                                    {t(
-                                      "common.click_to_load"
-                                    ) ||
-                                      "Click to load PDF"}
+                                  <Text fontSize="sm" color={mutedTextColor}>
+                                    {t("common.click_to_load") || "Click to load PDF"}
                                   </Text>
                                 </VStack>
                               </VStack>
                             </Button>
                           ) : blob ? (
-                            <TrackedPDF
+                            <TrackedPDFPro
                               resourceId={resourceId}
                               src={src}
-                              style={{
-                                width: "100%",
-                                height: "70vh",
-                                maxHeight: 900,
-                              }}
                               tierId={tier.id}
-                              onContextMenu={
-                                preventContext
-                              }
+                              style={{ width: "100%", height: "100%" }}
                               watermark={
                                 <>
                                   <Box
@@ -2014,16 +1993,10 @@ const Learn: React.FC = () => {
                                   />
                                   <Watermark
                                     text={
-                                      user?.email ||
-                                      user?.id
-                                        ? t(
-                                            "learn.watermark.user",
-                                            {
-                                              user:
-                                                user?.email ||
-                                                user?.id,
-                                            }
-                                          )
+                                      user?.email || user?.id
+                                        ? t("learn.watermark.user", {
+                                            user: user?.email || user?.id,
+                                          })
                                         : undefined
                                     }
                                   />
@@ -2038,27 +2011,14 @@ const Learn: React.FC = () => {
                               height="40vh"
                             >
                               <Spinner />
-                              <Text
-                                ml={2}
-                                color={
-                                  primaryTextColor
-                                }
-                              >
-                                {t(
-                                  "learn.documents.loading"
-                                )}
+                              <Text ml={2} color={primaryTextColor}>
+                                {t("learn.documents.loading")}
                               </Text>
                             </Box>
                           )}
 
                           {isLoaded && (
-                            <Text
-                              mt={2}
-                              px={3}
-                              pb={3}
-                              fontSize="sm"
-                              color={mutedTextColor}
-                            >
+                            <Text mt={2} px={3} pb={3} fontSize="sm" color={mutedTextColor}>
                               {t("learn.guard.note")}
                             </Text>
                           )}

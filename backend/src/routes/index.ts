@@ -28,7 +28,9 @@ import marketRoutes from './market.routes';
 import socialRoutes from './social';
 import groupsRoutes from './groups';
 import uploadsRoutes from './uploads.routes';
+import quizRoutes from './quiz.routes';
 import notificationsRoutes from './notifications.routes';
+import messagesRoutes from './messages.routes';
 
 const router = Router();
 
@@ -44,6 +46,7 @@ router.use('/challenges', challengesRoutes);
 router.use('/subscriptions', subscriptionsRoutes);
 router.use('/purchase', purchaseRoutes);
 router.use('/resources', resourcesRoutes);
+router.use('/quizzes', quizRoutes);
 router.use('/community', communityRoutes);
 router.use('/broker', brokerRoutes);
 router.use('/analytics', analyticsRoutes);
@@ -66,5 +69,6 @@ router.use('/social', socialRoutes);
 router.use('/groups', groupsRoutes);
 router.use('/upload', uploadsRoutes);
 router.use('/notifications', notificationsRoutes);
+router.use('/messages', messagesRoutes);
 
 export default router;

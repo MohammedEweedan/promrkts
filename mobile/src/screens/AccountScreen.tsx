@@ -168,7 +168,7 @@ export default function AccountScreen() {
 
     setSaving(true);
     try {
-      await api.put('/user/me', { name });
+      await api.put('/users/me', { name });
       Alert.alert(t('common.success'), t('account.profile_updated'));
     } catch (error) {
       Alert.alert(t('common.error'), t('errors.update_failed'));
