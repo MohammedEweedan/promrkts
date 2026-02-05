@@ -3411,25 +3411,12 @@ const Home: React.FC = () => {
                                 isExternal
                                 _hover={{ textDecoration: "none" }}
                               >
-                                <Box
-                                  bg="black"
-                                  borderRadius="xl"
-                                  px={5}
-                                  py={3}
-                                  border="1px solid"
-                                  borderColor="gray.700"
-                                  display="flex"
-                                  alignItems="center"
-                                  gap={3}
-                                  _hover={{ borderColor: "#65a8bf", bg: "gray.900" }}
-                                  transition="all 0.2s"
-                                >
-                                  <Box fontSize="2xl">🍎</Box>
-                                  <VStack align="start" gap={0}>
-                                    <Text fontSize="xs" color="gray.400">{t("home.app.downloadOn") || "Download on the"}</Text>
-                                    <Text fontSize="md" fontWeight="bold" color="white">App Store</Text>
-                                  </VStack>
-                                </Box>
+                                <Image
+                                  src="https://tools.applemediaservices.com/api/badges/download-on-the-app-store/black/en-us?size=250x83&releaseDate=1705363200"
+                                  alt="Download on the App Store"
+                                  h="50px"
+                                  w="auto"
+                                />
                               </ChakraLink>
                             </MotionBox>
                             
@@ -3442,25 +3429,12 @@ const Home: React.FC = () => {
                                 isExternal
                                 _hover={{ textDecoration: "none" }}
                               >
-                                <Box
-                                  bg="black"
-                                  borderRadius="xl"
-                                  px={5}
-                                  py={3}
-                                  border="1px solid"
-                                  borderColor="gray.700"
-                                  display="flex"
-                                  alignItems="center"
-                                  gap={3}
-                                  _hover={{ borderColor: "#b7a27d", bg: "gray.900" }}
-                                  transition="all 0.2s"
-                                >
-                                  <Box fontSize="2xl">▶️</Box>
-                                  <VStack align="start" gap={0}>
-                                    <Text fontSize="xs" color="gray.400">{t("home.app.getItOn") || "Get it on"}</Text>
-                                    <Text fontSize="md" fontWeight="bold" color="white">Google Play</Text>
-                                  </VStack>
-                                </Box>
+                                <Image
+                                  src="https://play.google.com/intl/en_us/badges/static/images/badges/en_badge_web_generic.png"
+                                  alt="Get it on Google Play"
+                                  h="73px"
+                                  w="auto"
+                                />
                               </ChakraLink>
                             </MotionBox>
                           </HStack>
@@ -3477,8 +3451,8 @@ const Home: React.FC = () => {
                         >
                           <Box
                             position="relative"
-                            w={{ base: "280px", md: "320px" }}
-                            h={{ base: "560px", md: "640px" }}
+                            w={{ base: "300px", md: "393px" }}
+                            h={{ base: "600px", md: "852px" }}
                           >
                             <Box
                               position="absolute"
@@ -3486,110 +3460,170 @@ const Home: React.FC = () => {
                               left="-20px"
                               right="-20px"
                               bottom="-20px"
-                              borderRadius="50px"
+                              borderRadius="60px"
                               bgGradient="linear(135deg, #65a8bf 0%, #b7a27d 100%)"
-                              opacity={0.3}
-                              filter="blur(30px)"
+                              opacity={0.2}
+                              filter="blur(40px)"
                             />
                             
+                            {/* iPhone 14 Pro Frame */}
                             <Box
                               position="relative"
                               w="100%"
                               h="100%"
-                              borderRadius="40px"
-                              p="4px"
-                              bgGradient="linear(135deg, #65a8bf 0%, #b7a27d 50%, #65a8bf 100%)"
-                              boxShadow="0 40px 80px -20px rgba(0, 0, 0, 0.5)"
+                              borderRadius="55px"
+                              bg="#1d1d1f"
+                              p="3px"
+                              boxShadow="0 50px 100px -20px rgba(0, 0, 0, 0.7), inset 0 0 0 1px rgba(255,255,255,0.1)"
                             >
+                              {/* Screen */}
                               <Box
                                 w="100%"
                                 h="100%"
-                                borderRadius="38px"
-                                bg="linear-gradient(180deg, #1a1a2e 0%, #0f0f1a 100%)"
+                                borderRadius="52px"
+                                bg="black"
                                 overflow="hidden"
                                 position="relative"
                               >
-                                <Box
-                                  position="absolute"
-                                  top="12px"
-                                  left="50%"
-                                  transform="translateX(-50%)"
-                                  w="100px"
-                                  h="28px"
-                                  bg="black"
-                                  borderRadius="full"
-                                />
                                 
-                                <VStack h="100%" justify="center" gap={6} px={6}>
-                                  <Box
-                                    w="80px"
-                                    h="80px"
-                                    borderRadius="2xl"
-                                    bgGradient="linear(135deg, #65a8bf, #b7a27d)"
-                                    display="flex"
-                                    alignItems="center"
-                                    justifyContent="center"
-                                  >
-                                    <Text fontSize="3xl" fontWeight="bold" color="white">P</Text>
-                                  </Box>
-                                  
-                                  <Text fontSize="xl" fontWeight="bold" color="white">promrkts</Text>
-                                  <Text fontSize="sm" color="gray.400" textAlign="center">
-                                    {t("home.app.mockup.tagline") || "Trade Smarter. Together."}
-                                  </Text>
-                                  
-                                  <VStack w="100%" gap={3} mt={4}>
-                                    <Box
-                                      w="100%"
-                                      h="60px"
-                                      borderRadius="xl"
-                                      bg="rgba(101, 168, 191, 0.1)"
-                                      border="1px solid"
-                                      borderColor="rgba(101, 168, 191, 0.2)"
-                                      display="flex"
-                                      alignItems="center"
-                                      px={4}
-                                      gap={3}
-                                    >
-                                      <Text fontSize="xl">📊</Text>
-                                      <VStack align="start" gap={0}>
-                                        <Text fontSize="xs" color="gray.500">Fear & Greed</Text>
-                                        <Text fontSize="sm" fontWeight="bold" color="#22c55e">72 - Greed</Text>
-                                      </VStack>
-                                    </Box>
+                                {/* Screenshot Carousel */}
+                                <Box
+                                  w="100%"
+                                  h="100%"
+                                  bg="linear-gradient(180deg, #0a0f1a 0%, #050810 100%)"
+                                  position="relative"
+                                  overflow="hidden"
+                                >
+                                  {(() => {
+                                    const [currentSlide, setCurrentSlide] = React.useState(0);
                                     
-                                    <Box
-                                      w="100%"
-                                      h="60px"
-                                      borderRadius="xl"
-                                      bg="rgba(183, 162, 125, 0.1)"
-                                      border="1px solid"
-                                      borderColor="rgba(183, 162, 125, 0.2)"
-                                      display="flex"
-                                      alignItems="center"
-                                      px={4}
-                                      gap={3}
-                                    >
-                                      <Text fontSize="xl">💬</Text>
-                                      <VStack align="start" gap={0}>
-                                        <Text fontSize="xs" color="gray.500">Active Rooms</Text>
-                                        <Text fontSize="sm" fontWeight="bold" color="#b7a27d">12 discussions</Text>
-                                      </VStack>
-                                    </Box>
-                                  </VStack>
-                                </VStack>
-                                
-                                <Box
-                                  position="absolute"
-                                  bottom="8px"
-                                  left="50%"
-                                  transform="translateX(-50%)"
-                                  w="120px"
-                                  h="4px"
-                                  bg="gray.600"
-                                  borderRadius="full"
-                                />
+                                    const screenshots = [
+                                      "/1.png",
+                                      "/2.png",
+                                      "/3.png",
+                                      "/4.png",
+                                      "/5.png",
+                                    ];
+                                    
+                                    React.useEffect(() => {
+                                      const interval = setInterval(() => {
+                                        setCurrentSlide((prev) => (prev + 1) % screenshots.length);
+                                      }, 5000);
+                                      
+                                      return () => clearInterval(interval);
+                                    }, []);
+                                    
+                                    return (
+                                      <>
+                                        {screenshots.map((src, idx) => (
+                                          <MotionBox
+                                            key={idx}
+                                            position="absolute"
+                                            top={0}
+                                            left={0}
+                                            w="100%"
+                                            h="100%"
+                                            initial={{ opacity: 0 }}
+                                            animate={{ 
+                                              opacity: currentSlide === idx ? 1 : 0,
+                                              scale: currentSlide === idx ? 1 : 1.05,
+                                            }}
+                                            transition={{ duration: 0.7, ease: "easeInOut" }}
+                                          >
+                                            <Image
+                                              src={src}
+                                              alt={`promrkts app screenshot ${idx + 1}`}
+                                              w="100%"
+                                              h="100%"
+                                              objectFit="cover"
+                                              fallback={
+                                                <Box
+                                                  w="100%"
+                                                  h="100%"
+                                                  display="flex"
+                                                  alignItems="center"
+                                                  justifyContent="center"
+                                                  p={6}
+                                                >
+                                                  <VStack gap={4}>
+                                                    <Box
+                                                      w="80px"
+                                                      h="80px"
+                                                      borderRadius="2xl"
+                                                      bgGradient="linear(135deg, #65a8bf, #b7a27d)"
+                                                      display="flex"
+                                                      alignItems="center"
+                                                      justifyContent="center"
+                                                      boxShadow="0 10px 30px rgba(101, 168, 191, 0.3)"
+                                                    >
+                                                      <Text fontSize="3xl" fontWeight="bold" color="white">P</Text>
+                                                    </Box>
+                                                    <Text fontSize="sm" color="gray.600" textAlign="center">
+                                                      Screenshot {idx + 1}
+                                                    </Text>
+                                                  </VStack>
+                                                </Box>
+                                              }
+                                            />
+                                          </MotionBox>
+                                        ))}
+                                        
+                                        {/* Carousel indicators */}
+                                        <HStack
+                                          position="absolute"
+                                          bottom="20px"
+                                          left="50%"
+                                          transform="translateX(-50%)"
+                                          gap={2}
+                                          zIndex={5}
+                                        >
+                                          {screenshots.map((_, idx) => (
+                                            <Box
+                                              key={idx}
+                                              w={currentSlide === idx ? "24px" : "8px"}
+                                              h="8px"
+                                              borderRadius="full"
+                                              bg={currentSlide === idx ? "#65a8bf" : "rgba(255,255,255,0.3)"}
+                                              transition="all 0.3s"
+                                              cursor="pointer"
+                                              onClick={() => setCurrentSlide(idx)}
+                                            />
+                                          ))}
+                                        </HStack>
+                                      </>
+                                    );
+                                  })()}
+                                </Box>
                               </Box>
+                              
+                              {/* Side buttons */}
+                              <Box
+                                position="absolute"
+                                left="-2px"
+                                top="140px"
+                                w="3px"
+                                h="60px"
+                                bg="#1d1d1f"
+                                borderRadius="0 2px 2px 0"
+                              />
+                              <Box
+                                position="absolute"
+                                left="-2px"
+                                top="210px"
+                                w="3px"
+                                h="60px"
+                                bg="#1d1d1f"
+                                borderRadius="0 2px 2px 0"
+                              />
+                              <Box
+                                position="absolute"
+                                right="-2px"
+                                top="180px"
+                                w="3px"
+                                h="90px"
+                                bg="#1d1d1f"
+                                borderRadius="2px 0 0 2px"
+                              />
                             </Box>
                           </Box>
                         </MotionBox>
