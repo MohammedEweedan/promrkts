@@ -53,10 +53,15 @@ const ALLOWED_ORIGINS = new Set(
   STATIC_ALLOWED_ORIGINS.filter(Boolean).map((value) => normalizeOrigin(value as string))
 );
 
+const isVercelPreview = (origin: string) =>
+  /^https:\/\/promrkts(-[\w]+)?\.vercel\.app$/i.test(origin) ||
+  /^https:\/\/promrkts-[\w]+-promrkts\.vercel\.app$/i.test(origin);
+
 const isAllowedOrigin = (origin?: string) => {
   const normalized = normalizeOrigin(origin);
   if (!normalized) return false;
   if (ALLOWED_ORIGINS.has(normalized)) return true;
+  if (isVercelPreview(normalized)) return true;
   return false;
 };
 
