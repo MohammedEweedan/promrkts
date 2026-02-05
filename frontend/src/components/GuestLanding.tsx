@@ -552,7 +552,7 @@ export default function GuestLanding({
                 mt={8}
               >
                 <StatCard icon={TrendingUp} value="50K+" label="Active Traders" delay={1.0} />
-                <StatCard icon={Users} value="10K+" label="Community Members" delay={1.1} />
+                <StatCard icon={Users} value="10K+" label="Members" delay={1.1} />
                 <StatCard icon={Shield} value="24/7" label="Support" delay={1.2} />
                 <StatCard icon={CandlestickChartIcon} value="140k+" label="Learners" delay={1.3} />
               </Grid>
@@ -564,7 +564,12 @@ export default function GuestLanding({
                 transition={{ duration: 0.6, delay: 1.4 }}
                 mt={8}
               >
-                <Text fontSize="sm" color="gray.500" letterSpacing="wide">
+                <Text
+                  fontSize="sm"
+                  bgGradient="linear(135deg, #65a8bf 0%, #b7a27d 100%)"
+                  bgClip="text"
+                  letterSpacing="wide"
+                >
                   {t("home.trust", { defaultValue: "Trusted by traders worldwide" })}
                 </Text>
               </MotionBox>
@@ -606,7 +611,7 @@ export default function GuestLanding({
                 >
                   <Icon as={Award} boxSize={5} />
                   <Text display={{ base: "none", md: "block" }}>
-                    {t("home.spin_reminder", { defaultValue: "Don't forget to spin!" })}
+                    {t("home.spin_reminder", { defaultValue: "Spin & win!" })}
                   </Text>
                   <Text display={{ base: "block", md: "none" }}>Spin!</Text>
                 </Box>

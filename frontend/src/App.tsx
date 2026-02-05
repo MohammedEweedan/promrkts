@@ -40,8 +40,8 @@ import TokenPage from './pages/Token';
 import { Analytics } from "@vercel/analytics/react";
 import { SpeedInsights } from "@vercel/speed-insights/react";
 import Discord from './pages/Discord';
-// import GlobalProtection from './components/GlobalProtection';
-// import LightRays from "./components/LightRays";
+import GlobalProtection from './components/GlobalProtection';
+import LightRays from "./components/LightRays";
 import TokenCheckout from './pages/TokenCheckout';
 import Hub from './pages/Hub';
 import { useAuth } from './auth/AuthContext';
@@ -113,9 +113,9 @@ function App() {
           </Box>
         )}
         {/* Router is already provided ABOVE in index.tsx */}
-        {/* <GlobalProtection /> */}
+        <GlobalProtection />
         <ScrollToTop />
-        {/* <LightRays /> */}
+        <LightRays />
         {!isChatPage && <Header />}
         <Box pb={isChatPage ? 0 : 16} flex="1" w="100%">
           <RouteTracker />

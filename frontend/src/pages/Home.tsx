@@ -1480,7 +1480,7 @@ const FaqRow: React.FC<{ q: string; a: string; index: number }> = ({ q, a, index
             pt={0}
             ml={{ base: 0, md: "44px" }}
           >
-            <Text color="gray.300" fontSize={{ base: "sm", md: "md" }} lineHeight="1.7">
+            <Text fontSize={{ base: "sm", md: "md" }} lineHeight="1.7">
               {a}
             </Text>
           </Box>
@@ -1498,6 +1498,18 @@ const Home: React.FC = () => {
   const { mode } = useThemeMode();
 
   const pageRef = React.useRef<HTMLDivElement | null>(null);
+  
+  // App screenshot carousel state
+  const [currentSlide, setCurrentSlide] = React.useState(0);
+  const screenshots = ["/1.png", "/2.png", "/3.png", "/4.png", "/5.png"];
+  
+  React.useEffect(() => {
+    const interval = setInterval(() => {
+      setCurrentSlide((prev) => (prev + 1) % screenshots.length);
+    }, 5000);
+    
+    return () => clearInterval(interval);
+  }, [screenshots.length]);
 
   // progress: 0 at top of Home, 1 near bottom of Home
   const { scrollYProgress } = useScroll({
@@ -3361,7 +3373,7 @@ const Home: React.FC = () => {
                             </Text>
                           </Heading>
                           
-                          <Text fontSize={{ base: "lg", md: "xl" }} color="gray.300" mb={8} lineHeight="1.8">
+                          <Text fontSize={{ base: "lg", md: "xl" }} mb={8} lineHeight="1.8">
                             {t("home.app.description") || "A revolutionary social platform built exclusively for traders. Connect, learn, and grow with our proprietary Fear & Greed Index, private chat rooms, and community-driven insights."}
                           </Text>
                           
@@ -3393,7 +3405,7 @@ const Home: React.FC = () => {
                                   >
                                     {feature.icon}
                                   </Box>
-                                  <Text color="gray.300" fontSize={{ base: "sm", md: "md" }} pt={2}>
+                                  <Text fontSize={{ base: "sm", md: "md" }} pt={2}>
                                     {t(`home.app.features.${feature.key}`) || feature.fallback}
                                   </Text>
                                 </HStack>
@@ -3401,7 +3413,7 @@ const Home: React.FC = () => {
                             ))}
                           </VStack>
                           
-                          <HStack gap={4} flexWrap="wrap">
+                          <HStack gap={3} w="100%" maxW={{ base: "100%", md: "400px" }} justify="space-between">
                             <MotionBox
                               whileHover={{ scale: 1.05 }}
                               whileTap={{ scale: 0.95 }}
@@ -3410,13 +3422,23 @@ const Home: React.FC = () => {
                                 href="#"
                                 isExternal
                                 _hover={{ textDecoration: "none" }}
+                                display="block"
                               >
-                                <Image
-                                  src="https://tools.applemediaservices.com/api/badges/download-on-the-app-store/black/en-us?size=250x83&releaseDate=1705363200"
-                                  alt="Download on the App Store"
-                                  h="50px"
-                                  w="auto"
-                                />
+                                <Box
+                                  w="180px"
+                                  h="60px"
+                                  display="flex"
+                                  alignItems="center"
+                                  justifyContent="center"
+                                >
+                                  <Image
+                                    src="https://tools.applemediaservices.com/api/badges/download-on-the-app-store/black/en-us?size=250x83&releaseDate=1705363200"
+                                    alt="Download on the App Store"
+                                    maxW="100%"
+                                    maxH="100%"
+                                    objectFit="contain"
+                                  />
+                                </Box>
                               </ChakraLink>
                             </MotionBox>
                             
@@ -3428,13 +3450,23 @@ const Home: React.FC = () => {
                                 href="#"
                                 isExternal
                                 _hover={{ textDecoration: "none" }}
+                                display="block"
                               >
-                                <Image
-                                  src="https://play.google.com/intl/en_us/badges/static/images/badges/en_badge_web_generic.png"
-                                  alt="Get it on Google Play"
-                                  h="73px"
-                                  w="auto"
-                                />
+                                <Box
+                                  w="180px"
+                                  h="60px"
+                                  display="flex"
+                                  alignItems="center"
+                                  justifyContent="center"
+                                >
+                                  <Image
+                                    src="https://play.google.com/intl/en_us/badges/static/images/badges/en_badge_web_generic.png"
+                                    alt="Get it on Google Play"
+                                    maxW="100%"
+                                    maxH="100%"
+                                    objectFit="contain"
+                                  />
+                                </Box>
                               </ChakraLink>
                             </MotionBox>
                           </HStack>
@@ -3451,8 +3483,8 @@ const Home: React.FC = () => {
                         >
                           <Box
                             position="relative"
-                            w={{ base: "300px", md: "393px" }}
-                            h={{ base: "600px", md: "852px" }}
+                            w={{ base: "240px", md: "340px" }}
+                            h={{ base: "520px", md: "736px" }}
                           >
                             <Box
                               position="absolute"
@@ -3471,16 +3503,16 @@ const Home: React.FC = () => {
                               position="relative"
                               w="100%"
                               h="100%"
-                              borderRadius="55px"
+                              borderRadius="45px"
                               bg="#1d1d1f"
-                              p="3px"
+                              p="8px"
                               boxShadow="0 50px 100px -20px rgba(0, 0, 0, 0.7), inset 0 0 0 1px rgba(255,255,255,0.1)"
                             >
                               {/* Screen */}
                               <Box
                                 w="100%"
                                 h="100%"
-                                borderRadius="52px"
+                                borderRadius="38px"
                                 bg="black"
                                 overflow="hidden"
                                 position="relative"
@@ -3494,105 +3526,82 @@ const Home: React.FC = () => {
                                   position="relative"
                                   overflow="hidden"
                                 >
-                                  {(() => {
-                                    const [currentSlide, setCurrentSlide] = React.useState(0);
-                                    
-                                    const screenshots = [
-                                      "/1.png",
-                                      "/2.png",
-                                      "/3.png",
-                                      "/4.png",
-                                      "/5.png",
-                                    ];
-                                    
-                                    React.useEffect(() => {
-                                      const interval = setInterval(() => {
-                                        setCurrentSlide((prev) => (prev + 1) % screenshots.length);
-                                      }, 5000);
-                                      
-                                      return () => clearInterval(interval);
-                                    }, []);
-                                    
-                                    return (
-                                      <>
-                                        {screenshots.map((src, idx) => (
-                                          <MotionBox
-                                            key={idx}
-                                            position="absolute"
-                                            top={0}
-                                            left={0}
+                                  {screenshots.map((src, idx) => (
+                                    <MotionBox
+                                      key={idx}
+                                      position="absolute"
+                                      top={0}
+                                      left={0}
+                                      w="100%"
+                                      h="100%"
+                                      initial={{ opacity: 0 }}
+                                      animate={{ 
+                                        opacity: currentSlide === idx ? 1 : 0,
+                                        scale: currentSlide === idx ? 1 : 1.05,
+                                      }}
+                                      transition={{ duration: 0.7, ease: "easeInOut" }}
+                                    >
+                                      <Image
+                                        src={src}
+                                        alt={`promrkts app screenshot ${idx + 1}`}
+                                        w="100%"
+                                        h="100%"
+                                        objectFit="contain"
+                                        objectPosition="center"
+                                        fallback={
+                                          <Box
                                             w="100%"
                                             h="100%"
-                                            initial={{ opacity: 0 }}
-                                            animate={{ 
-                                              opacity: currentSlide === idx ? 1 : 0,
-                                              scale: currentSlide === idx ? 1 : 1.05,
-                                            }}
-                                            transition={{ duration: 0.7, ease: "easeInOut" }}
+                                            display="flex"
+                                            alignItems="center"
+                                            justifyContent="center"
+                                            p={6}
                                           >
-                                            <Image
-                                              src={src}
-                                              alt={`promrkts app screenshot ${idx + 1}`}
-                                              w="100%"
-                                              h="100%"
-                                              objectFit="cover"
-                                              fallback={
-                                                <Box
-                                                  w="100%"
-                                                  h="100%"
-                                                  display="flex"
-                                                  alignItems="center"
-                                                  justifyContent="center"
-                                                  p={6}
-                                                >
-                                                  <VStack gap={4}>
-                                                    <Box
-                                                      w="80px"
-                                                      h="80px"
-                                                      borderRadius="2xl"
-                                                      bgGradient="linear(135deg, #65a8bf, #b7a27d)"
-                                                      display="flex"
-                                                      alignItems="center"
-                                                      justifyContent="center"
-                                                      boxShadow="0 10px 30px rgba(101, 168, 191, 0.3)"
-                                                    >
-                                                      <Text fontSize="3xl" fontWeight="bold" color="white">P</Text>
-                                                    </Box>
-                                                    <Text fontSize="sm" color="gray.600" textAlign="center">
-                                                      Screenshot {idx + 1}
-                                                    </Text>
-                                                  </VStack>
-                                                </Box>
-                                              }
-                                            />
-                                          </MotionBox>
-                                        ))}
-                                        
-                                        {/* Carousel indicators */}
-                                        <HStack
-                                          position="absolute"
-                                          bottom="20px"
-                                          left="50%"
-                                          transform="translateX(-50%)"
-                                          gap={2}
-                                          zIndex={5}
-                                        >
-                                          {screenshots.map((_, idx) => (
-                                            <Box
-                                              key={idx}
-                                              w={currentSlide === idx ? "24px" : "8px"}
-                                              h="8px"
-                                              borderRadius="full"
-                                              bg={currentSlide === idx ? "#65a8bf" : "rgba(255,255,255,0.3)"}
-                                              transition="all 0.3s"
-                                              cursor="pointer"
-                                              onClick={() => setCurrentSlide(idx)}
-                                            />
-                                          ))}
-                                        </HStack>
-                                      </>
-                                    );
-                                  })()}
+                                            <VStack gap={4}>
+                                              <Box
+                                                w="80px"
+                                                h="80px"
+                                                borderRadius="2xl"
+                                                bgGradient="linear(135deg, #65a8bf, #b7a27d)"
+                                                display="flex"
+                                                alignItems="center"
+                                                justifyContent="center"
+                                                boxShadow="0 10px 30px rgba(101, 168, 191, 0.3)"
+                                              >
+                                                <Text fontSize="3xl" fontWeight="bold" color="white">P</Text>
+                                              </Box>
+                                              <Text fontSize="sm" color="gray.600" textAlign="center">
+                                                Screenshot {idx + 1}
+                                              </Text>
+                                            </VStack>
+                                          </Box>
+                                        }
+                                      />
+                                    </MotionBox>
+                                  ))}
+                                  
+                                  {/* Carousel indicators */}
+                                  <HStack
+                                    position="absolute"
+                                    bottom="20px"
+                                    left="50%"
+                                    transform="translateX(-50%)"
+                                    gap={2}
+                                    zIndex={5}
+                                  >
+                                    {screenshots.map((_, idx) => (
+                                      <Box
+                                        key={idx}
+                                        w={currentSlide === idx ? "24px" : "8px"}
+                                        h="8px"
+                                        borderRadius="full"
+                                        bg={currentSlide === idx ? "#65a8bf" : "rgba(255,255,255,0.3)"}
+                                        transition="all 0.3s"
+                                        cursor="pointer"
+                                        onClick={() => setCurrentSlide(idx)}
+                                      />
+                                    ))}
+                                  </HStack>
                                 </Box>
                               </Box>
                               
