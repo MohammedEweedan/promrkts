@@ -668,6 +668,24 @@ async function wipeFakeUsersOnly() {
     console.log("  No fake users to delete.\n");
     return;
   }
+
+  // Helper to delete in batches (PostgreSQL limit: 32767 bind variables)
+  const BATCH_SIZE = 31000;
+  async function deleteManyInBatches(model: string, field: string, ids: string[]) {
+    let totalDeleted = 0;
+    for (let i = 0; i < ids.length; i += BATCH_SIZE) {
+      const batch = ids.slice(i, i + BATCH_SIZE);
+      try {
+        const result = await (prisma as any)[model].deleteMany({
+          where: { [field]: { in: batch } },
+        });
+        totalDeleted += result.count;
+      } catch (e: any) {
+        console.warn(`  ⚠️ Batch ${i}-${i + batch.length} failed for ${model}: ${e.message}`);
+      }
+    }
+    return totalDeleted;
+  }
   
   // Delete related records in order (children first) for fake users only
   const userRelatedModels = [
@@ -705,58 +723,54 @@ async function wipeFakeUsersOnly() {
     { name: "refresh_tokens", fk: "user_id" },
   ];
 
-  // Delete challenge daily stats first (nested relation)
+  // Delete challenge daily stats first (nested relation) - in batches
   if (hasModel("challengeAccount") && hasModel("challengeDailyStat")) {
     try {
-      const challengeAccounts = await (prisma as any).challengeAccount.findMany({
-        where: { userId: { in: fakeUserIds } },
-        select: { id: true },
-      });
-      const accountIds = challengeAccounts.map((a: any) => a.id);
-      if (accountIds.length > 0) {
-        const result = await (prisma as any).challengeDailyStat.deleteMany({
-          where: { challengeAccountId: { in: accountIds } },
+      let allAccountIds: string[] = [];
+      for (let i = 0; i < fakeUserIds.length; i += BATCH_SIZE) {
+        const batch = fakeUserIds.slice(i, i + BATCH_SIZE);
+        const challengeAccounts = await (prisma as any).challengeAccount.findMany({
+          where: { userId: { in: batch } },
+          select: { id: true },
         });
-        console.log(`  ✓ Deleted ${result.count} rows from challengeDailyStat`);
+        allAccountIds = allAccountIds.concat(challengeAccounts.map((a: any) => a.id));
+      }
+      if (allAccountIds.length > 0) {
+        const deleted = await deleteManyInBatches("challengeDailyStat", "challengeAccountId", allAccountIds);
+        console.log(`  ✓ Deleted ${deleted} rows from challengeDailyStat`);
       }
     } catch (e: any) {
       console.warn(`  ⚠️ Could not delete challengeDailyStat: ${e.message}`);
     }
   }
 
-  // Delete received private messages (where fake user is receiver)
+  // Delete received private messages (where fake user is receiver) - in batches
   if (hasModel("privateMessage")) {
     try {
-      const result = await (prisma as any).privateMessage.deleteMany({
-        where: { receiverId: { in: fakeUserIds } },
-      });
-      console.log(`  ✓ Deleted ${result.count} received messages from privateMessage`);
+      const deleted = await deleteManyInBatches("privateMessage", "receiverId", fakeUserIds);
+      console.log(`  ✓ Deleted ${deleted} received messages from privateMessage`);
     } catch (e: any) {
       console.warn(`  ⚠️ Could not delete received privateMessage: ${e.message}`);
     }
   }
 
-  // Delete user-related records
+  // Delete user-related records - in batches
   for (const { name, fk } of userRelatedModels) {
     if (!fk || !hasModel(name)) continue;
     try {
-      const result = await (prisma as any)[name].deleteMany({
-        where: { [fk]: { in: fakeUserIds } },
-      });
-      if (result.count > 0) {
-        console.log(`  ✓ Deleted ${result.count} rows from ${name}`);
+      const deleted = await deleteManyInBatches(name, fk, fakeUserIds);
+      if (deleted > 0) {
+        console.log(`  ✓ Deleted ${deleted} rows from ${name}`);
       }
     } catch (e: any) {
       console.warn(`  ⚠️ Could not delete ${name}: ${e.message}`);
     }
   }
 
-  // Finally delete the fake users themselves
+  // Finally delete the fake users themselves - in batches
   try {
-    const result = await prisma.users.deleteMany({
-      where: { id: { in: fakeUserIds } },
-    });
-    console.log(`  ✓ Deleted ${result.count} fake users`);
+    const deleted = await deleteManyInBatches("users", "id", fakeUserIds);
+    console.log(`  ✓ Deleted ${deleted} fake users`);
   } catch (e: any) {
     console.warn(`  ⚠️ Could not delete users: ${e.message}`);
   }
