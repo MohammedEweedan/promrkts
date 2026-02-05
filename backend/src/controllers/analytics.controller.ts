@@ -258,7 +258,7 @@ export const getCoursesAgg = [authorize('admin'), async (_req: Request, res: Res
       t.name AS name,
       COUNT(p.id)::int AS sales,
       COALESCE(SUM(t.price_usdt), 0)::float8 AS revenue_usdt,
-      COALESCE(SUM(t.price_stripe), 0)::int AS revenue_stripe_cents
+      COALESCE(SUM(t.price_stripe), 0)::bigint AS revenue_stripe_cents
     FROM "Purchase" p
     JOIN "CourseTier" t ON t.id = p."tierId"
     WHERE p.status = 'CONFIRMED'
