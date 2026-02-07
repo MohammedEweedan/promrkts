@@ -1180,7 +1180,7 @@ const UrgencyBanner: React.FC<{ t: any }> = ({ t }) => {
             {t("home.urgency.title", { defaultValue: "Limited Time Offer" })}
           </Text>
         </HStack>
-        <Text color={UI.text} fontSize={{ base: "lg", md: "xl" }} fontWeight="600" mb={4}>
+        <Text fontSize={{ base: "lg", md: "xl" }} fontWeight="600" mb={4}>
           {t("home.urgency.message", { defaultValue: "Get 30% off all courses - Only 7 spots left at this price!" })}
         </Text>
         <HStack justify="center" spacing={4}>
@@ -1240,7 +1240,7 @@ const TrustSignals: React.FC<{ t: any }> = ({ t }) => {
             transition="all 0.3s"
           >
             <Icon as={signal.icon} boxSize={6} color={UI.accent} />
-            <Text fontWeight="600" color={UI.text} fontSize="sm" textAlign="center">{signal.title}</Text>
+            <Text fontWeight="600" fontSize="sm" textAlign="center">{signal.title}</Text>
             <Text fontSize="xs" color={UI.textSecondary} textAlign="center">{signal.desc}</Text>
           </VStack>
         </MotionBox>
@@ -1304,7 +1304,7 @@ const TestimonialCard: React.FC<{
             {avatarIcon && <Icon as={avatarIcon} boxSize={6} color="#0a0f1a" />}
           </Box>
           <VStack align="start" spacing={0}>
-            <Text fontWeight="600" color={UI.text}>{name}</Text>
+            <Text fontWeight="600">{name}</Text>
             <Text fontSize="sm" color={UI.textSecondary}>{role}</Text>
           </VStack>
         </HStack>
@@ -1424,7 +1424,7 @@ const StickyCTA: React.FC<{ t: any; onNavigate: () => void }> = ({ t, onNavigate
         boxShadow="0 20px 60px rgba(0,0,0,0.5)"
       >
         <VStack align="start" spacing={0}>
-          <Text fontSize="sm" fontWeight="600" color={UI.text}>
+          <Text fontSize="sm" fontWeight="600">
             {t("home.sticky.title", { defaultValue: "Ready to start?" })}
           </Text>
           <Text fontSize="xs" color={UI.textSecondary}>
@@ -1490,7 +1490,7 @@ const ValueProposition: React.FC<{ t: any }> = ({ t }) => {
           fontSize={{ base: "2.5rem", md: "3.5rem" }} 
           letterSpacing="-0.03em" 
           fontWeight="700"
-          color={UI.text}
+         
         >
           {t("home.value.title", { defaultValue: "Why Traders Choose Us" })}
         </Heading>
@@ -1534,7 +1534,7 @@ const ValueProposition: React.FC<{ t: any }> = ({ t }) => {
                 <Icon as={benefit.icon} boxSize={6} color="#0a0f1a" />
               </Box>
               <VStack align="start" spacing={1}>
-                <Text fontWeight="600" color={UI.text}>{benefit.title}</Text>
+                <Text fontWeight="600">{benefit.title}</Text>
                 <Text fontSize="sm" color={UI.textSecondary} lineHeight="1.6">{benefit.desc}</Text>
               </VStack>
             </HStack>
@@ -1626,7 +1626,7 @@ const HowItWorks: React.FC<{ t: any }> = ({ t }) => (
                   {s.step}
                 </Text>
               </HStack>
-              <Heading size="md" color={UI.text} fontWeight="600">
+              <Heading size="md" fontWeight="600">
                 {s.title}
               </Heading>
               <Text color={UI.textSecondary} fontSize="sm" lineHeight="1.7">
@@ -1917,7 +1917,7 @@ const FaqRow: React.FC<{ q: string; a: string; index: number }> = ({ q, a, index
           >
             {index + 1}
           </Box>
-          <Text textAlign="start" fontWeight="600" flex="1" fontSize={{ base: "sm", md: "md" }} color={UI.text} lineHeight="1.5">
+          <Text textAlign="start" fontWeight="600" flex="1" fontSize={{ base: "sm", md: "md" }} lineHeight="1.5">
             {q}
           </Text>
         </HStack>
@@ -2699,7 +2699,7 @@ const Home: React.FC = () => {
     >
       <VStack align="start" spacing={4}>
         <HStack justify="space-between" w="full">
-          <Heading size="md" color={UI.text} fontWeight="600">
+          <Heading size="md" fontWeight="600">
             {title}
           </Heading>
           {tag ? (
