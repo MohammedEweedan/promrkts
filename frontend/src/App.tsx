@@ -111,7 +111,7 @@ function App() {
             </VStack>
           </Box>
         )}
-        {/* <GlobalProtection /> */}
+        <GlobalProtection />
         <ScrollToTop />
         {!isChatPage && <Header />}
         <Box pb={isChatPage ? 0 : 16} flex="1" w="100%">
