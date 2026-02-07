@@ -645,7 +645,7 @@ const AiTradingCard: React.FC<{
       py={3}
     >
       <HStack justify="space-between" mb={2}>
-        <Text fontSize="sm" fontWeight="semibold" color="gray.100">
+        <Text fontSize="sm" fontWeight="semibold">
           {title}
         </Text>
         <Badge
@@ -735,13 +735,14 @@ const LockedWidget: React.FC<{
   description: string;
   ctaLabel: string;
   onCta: () => void;
-}> = ({ title, description, ctaLabel, onCta }) => (
+  mode: "dark" | "light";
+}> = ({ title, description, ctaLabel, onCta, mode }) => (
   <Box
     h="100%"
     w="100%"
     borderRadius="16px"
     border="1px solid rgba(148,163,184,0.35)"
-    bg="rgba(15,23,42,0.72)"
+    bg={mode === "dark" ? "rgba(15,23,42,0.72)" : "rgba(245,246,247,0.95)"}
     px={4}
     py={4}
     display="flex"
@@ -753,18 +754,18 @@ const LockedWidget: React.FC<{
         borderRadius="full"
         px={2}
         fontSize="0.65rem"
-        bg="rgba(255,255,255,0.06)"
-        color="#65a8bf"
-        border="1px solid rgba(0,191,99,0.35)"
+        bg={mode === "dark" ? "rgba(255,255,255,0.06)" : "rgba(0,0,0,0.06)"}
+        color={mode === "dark" ? "white" : "black"}
+        border="1px solid rgba(100,100,100,0.35)"
       >
         Locked
       </Badge>
 
-      <Text fontSize="sm" fontWeight="bold" color="#65a8bf">
+      <Text fontSize="sm" fontWeight="bold" color={mode === "dark" ? "white" : "black"}>
         {title}
       </Text>
 
-      <Text fontSize="xs" color="gray.300">
+      <Text fontSize="xs" color={mode === "dark" ? "gray.300" : "gray.600"}>
         {description}
       </Text>
     </VStack>
@@ -864,7 +865,7 @@ const WidgetSettingsModal: React.FC<WidgetSettingsModalProps> = ({
                 }
               >
                 {(Object.keys(WIDGET_TITLES) as DesktopWidgetKind[]).map((k) => (
-                  <option key={k} value={k} style={{ color: '#65a8bf' }}>
+                  <option key={k} value={k}>
                     {WIDGET_TITLES[k]}
                   </option>
                 ))}
@@ -1140,7 +1141,6 @@ const DashboardSettingsModal: React.FC<DashboardSettingsModalProps> = ({
               <HStack spacing={2} mt={2}>
                 <Button
                   size="xs"
-                  variant="outline"
                   onClick={() => {
                     const n = layoutNameInput.trim();
                     if (!n) return;
@@ -1180,7 +1180,7 @@ const DashboardSettingsModal: React.FC<DashboardSettingsModalProps> = ({
                   Apply
                 </Button>
               </HStack>
-              <Button mt={2} size="xs" variant="outline" onClick={resetToStandard}>
+              <Button mt={2} size="xs" onClick={resetToStandard}>
                 Reset to Standard
               </Button>
             </Box>
@@ -2090,7 +2090,7 @@ export default function Hero(props: HeroProps) {
             {t("home.hero.welcome_label", { defaultValue: "Welcome" })}
           </Text>
 
-          <Text fontSize={{ base: "lg", md: "xl" }} fontWeight="semibold" color="#65a8bf">
+          <Text fontSize={{ base: "lg", md: "xl" }} fontWeight="semibold" color={mode === "dark" ? "white" : "black"}>
             {displayName}
           </Text>
 
@@ -2143,7 +2143,7 @@ export default function Hero(props: HeroProps) {
                 defaultValue: "VIP Ends",
               })}
             </Text>
-            <Text color="#65a8bf" fontWeight="bold">
+            <Text color={mode === "dark" ? "white" : "black"} fontWeight="bold">
               {new Date(vipEnd).toLocaleDateString()}
             </Text>
           </HStack>
@@ -2208,7 +2208,7 @@ export default function Hero(props: HeroProps) {
               return (
                 <Box key={`${c.id ?? "course"}-dash-${i}`} p={3}>
                   <HStack justify="space-between" align="center" mb={1}>
-                    <Text fontWeight="semibold" noOfLines={2} color="#65a8bf">
+                    <Text fontWeight="semibold" noOfLines={2} color={mode === "dark" ? "white" : "black"}>
                       {c.name}
                     </Text>
                     <Button
@@ -2254,6 +2254,7 @@ export default function Hero(props: HeroProps) {
             description="This is a VIP community widget. Upgrade to unlock the Telegram room inside your dashboard."
             ctaLabel="Upgrade / View Plans"
             onCta={() => navigate("/products")}
+            mode={mode}
           />
         );
 
@@ -2266,6 +2267,7 @@ export default function Hero(props: HeroProps) {
             description="This widget is available for Discord VIP members. Upgrade to unlock access."
             ctaLabel="Upgrade / View Plans"
             onCta={() => navigate("/products")}
+            mode={mode}
           />
         );
 
@@ -2374,7 +2376,7 @@ export default function Hero(props: HeroProps) {
                         w="100%"
                         display="flex"
                         flexDirection="column"
-                        color="#65a8bf"
+                        color={mode === "dark" ? "white" : "black"}
                       >
                         <HStack
                           justify="space-between"
@@ -2386,7 +2388,7 @@ export default function Hero(props: HeroProps) {
                         >
                           <HStack spacing={2} align="center">
                             <DragHandle active={isEditingLayout} hideMobile={true} />
-                            <Text fontSize="xs" fontWeight="semibold" color="#65a8bf">
+                            <Text fontSize="xs" fontWeight="semibold" color={mode === "dark" ? "white" : "black"}>
                               {WIDGET_TITLES[widget.kind]}
                             </Text>
                           </HStack>
@@ -2503,7 +2505,7 @@ export default function Hero(props: HeroProps) {
                     zIndex={3}
                   >
                     <HStack spacing={2}>
-                      <Badge borderRadius="full" px={3} bg="blackAlpha.400" color="#65a8bf">
+                      <Badge borderRadius="full" px={3} bg="blackAlpha.400" color={mode === "dark" ? "white" : "black"}>
                         {activeLayoutName}
                       </Badge>
                       <Tooltip label="Previous layout" placement="bottom" hasArrow>
@@ -2511,7 +2513,7 @@ export default function Hero(props: HeroProps) {
                           aria-label="Previous layout"
                           icon={<Text fontSize="lg">{"←"}</Text>}
                           variant="ghost"
-                          color="#65a8bf"
+                          color={mode === "dark" ? "white" : "black"}
                           _hover={{ bg: "blackAlpha.300" }}
                           onClick={goPrevLayout}
                         />
@@ -2521,7 +2523,7 @@ export default function Hero(props: HeroProps) {
                           aria-label="Next layout"
                           icon={<Text fontSize="lg">{"→"}</Text>}
                           variant="ghost"
-                          color="#65a8bf"
+                          color={mode === "dark" ? "white" : "black"}
                           _hover={{ bg: "blackAlpha.300" }}
                           onClick={goNextLayout}
                         />
@@ -2587,7 +2589,7 @@ export default function Hero(props: HeroProps) {
                                 w="100%"
                                 display="flex"
                                 flexDirection="column"
-                                color="#65a8bf"
+                                color={mode === "dark" ? "white" : "black"}
                               >
                                 <HStack
                                   justify="space-between"
@@ -2603,7 +2605,7 @@ export default function Hero(props: HeroProps) {
                                       fontSize="xs"
                                       fontWeight="semibold"
                                       textTransform="capitalize"
-                                      color="#65a8bf"
+                                      color={mode === "dark" ? "white" : "black"}
                                     >
                                       {WIDGET_TITLES[widget.kind]}
                                     </Text>
