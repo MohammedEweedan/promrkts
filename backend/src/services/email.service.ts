@@ -1,9 +1,92 @@
 // Email Service using Resend
 // Supports multiple email aliases for different purposes
+// Premium email templates with gradient branding (#65a8bf to #b7a27d)
 import { Resend } from 'resend';
 
 // Initialize Resend with API key
 const resend = new Resend(process.env.RESEND_API_KEY);
+
+// Brand colors and assets
+const BRAND = {
+  primaryColor: '#65a8bf',
+  secondaryColor: '#b7a27d',
+  darkBg: '#0a0f1a',
+  logoUrl: 'https://promrkts.com/logo.png',
+  websiteUrl: 'https://promrkts.com',
+};
+
+// Premium email wrapper template
+const createPremiumEmailTemplate = (content: string, preheader?: string) => `
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <title>promrkts</title>
+  ${preheader ? `<span style="display:none;font-size:1px;color:#0a0f1a;line-height:1px;max-height:0px;max-width:0px;opacity:0;overflow:hidden;">${preheader}</span>` : ''}
+</head>
+<body style="margin: 0; padding: 0; font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Arial, sans-serif; background-color: #0a0f1a; -webkit-font-smoothing: antialiased;">
+  <table role="presentation" width="100%" cellpadding="0" cellspacing="0" style="background-color: #0a0f1a; padding: 40px 20px;">
+    <tr>
+      <td align="center">
+        <table role="presentation" width="600" cellpadding="0" cellspacing="0" style="max-width: 600px; width: 100%;">
+          <!-- Logo Header -->
+          <tr>
+            <td align="center" style="padding: 32px 0;">
+              <a href="${BRAND.websiteUrl}" style="text-decoration: none;">
+                <img src="${BRAND.logoUrl}" alt="promrkts" width="160" style="display: block; max-width: 160px; height: auto;" />
+              </a>
+            </td>
+          </tr>
+          <!-- Main Content Card -->
+          <tr>
+            <td>
+              <table role="presentation" width="100%" cellpadding="0" cellspacing="0" style="background: linear-gradient(145deg, #111827 0%, #0f172a 100%); border-radius: 24px; overflow: hidden; border: 1px solid rgba(101, 168, 191, 0.15);">
+                <!-- Gradient Top Border -->
+                <tr>
+                  <td style="height: 4px; background: linear-gradient(90deg, ${BRAND.primaryColor} 0%, ${BRAND.secondaryColor} 100%);"></td>
+                </tr>
+                <!-- Content -->
+                <tr>
+                  <td style="padding: 48px 40px;">
+                    ${content}
+                  </td>
+                </tr>
+              </table>
+            </td>
+          </tr>
+          <!-- Footer -->
+          <tr>
+            <td style="padding: 32px 20px; text-align: center;">
+              <table role="presentation" width="100%" cellpadding="0" cellspacing="0">
+                <tr>
+                  <td align="center" style="padding-bottom: 16px;">
+                    <a href="${BRAND.websiteUrl}" style="color: ${BRAND.primaryColor}; text-decoration: none; font-size: 14px; margin: 0 12px;">Website</a>
+                    <span style="color: #374151;">•</span>
+                    <a href="https://t.me/promrkts" style="color: ${BRAND.primaryColor}; text-decoration: none; font-size: 14px; margin: 0 12px;">Telegram</a>
+                    <span style="color: #374151;">•</span>
+                    <a href="https://discord.gg/promrkts" style="color: ${BRAND.primaryColor}; text-decoration: none; font-size: 14px; margin: 0 12px;">Discord</a>
+                  </td>
+                </tr>
+                <tr>
+                  <td align="center">
+                    <p style="color: #64748b; font-size: 12px; margin: 0; line-height: 1.6;">
+                      © ${new Date().getFullYear()} promrkts. All rights reserved.<br>
+                      <span style="color: #475569;">Premium Trading Education</span>
+                    </p>
+                  </td>
+                </tr>
+              </table>
+            </td>
+          </tr>
+        </table>
+      </td>
+    </tr>
+  </table>
+</body>
+</html>
+`;
 
 // Email aliases for different purposes
 export const EMAIL_ALIASES = {
@@ -73,83 +156,101 @@ export async function sendEmail(options: SendEmailOptions): Promise<{ success: b
 // Pre-built email templates
 // ============================================
 
-// Welcome email after successful signup
+// Welcome email - now calls the premium version after verification
 export async function sendWelcomeEmail(user: { email: string; name: string }): Promise<{ success: boolean; error?: string }> {
-  const html = `
-<!DOCTYPE html>
-<html>
-<head>
-  <meta charset="utf-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Welcome to promrkts</title>
-</head>
-<body style="margin: 0; padding: 0; font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; background-color: #f4f4f4;">
-  <table width="100%" cellpadding="0" cellspacing="0" style="background-color: #f4f4f4; padding: 40px 20px;">
-    <tr>
-      <td align="center">
-        <table width="600" cellpadding="0" cellspacing="0" style="background-color: #ffffff; border-radius: 12px; overflow: hidden; box-shadow: 0 4px 6px rgba(0,0,0,0.1);">
-          <!-- Header -->
-          <tr>
-            <td style="background: linear-gradient(135deg, #65a8bf 0%, #4a8fa6 100%); padding: 40px 30px; text-align: center;">
-              <h1 style="color: #ffffff; margin: 0; font-size: 28px; font-weight: 600;">Welcome to promrkts! 🎉</h1>
-            </td>
-          </tr>
-          
-          <!-- Content -->
-          <tr>
-            <td style="padding: 40px 30px;">
-              <p style="color: #333; font-size: 16px; line-height: 1.6; margin: 0 0 20px;">
-                Hi <strong>${user.name}</strong>,
-              </p>
-              <p style="color: #333; font-size: 16px; line-height: 1.6; margin: 0 0 20px;">
-                Welcome to the promrkts community! We're thrilled to have you join us on your trading journey.
-              </p>
-              <p style="color: #333; font-size: 16px; line-height: 1.6; margin: 0 0 20px;">
-                Here's what you can do next:
-              </p>
-              <ul style="color: #333; font-size: 16px; line-height: 1.8; margin: 0 0 30px; padding-left: 20px;">
-                <li>📚 Explore our <strong>free courses</strong> to get started</li>
-                <li>🎯 Take on a <strong>prop firm challenge</strong> to prove your skills</li>
-                <li>💬 Join our <strong>community</strong> on Telegram & Discord</li>
-                <li>🏆 Earn <strong>badges</strong> and climb the leaderboard</li>
-              </ul>
-              
-              <div style="text-align: center; margin: 30px 0;">
-                <a href="https://promrkts.com" style="display: inline-block; background: linear-gradient(135deg, #65a8bf 0%, #4a8fa6 100%); color: #ffffff; text-decoration: none; padding: 14px 40px; border-radius: 8px; font-weight: 600; font-size: 16px;">
-                  Go to Dashboard
-                </a>
-              </div>
-              
-              <p style="color: #666; font-size: 14px; line-height: 1.6; margin: 30px 0 0; padding-top: 20px; border-top: 1px solid #eee;">
-                If you have any questions, just reply to this email or reach out to our support team.
-              </p>
-            </td>
-          </tr>
-          
-          <!-- Footer -->
-          <tr>
-            <td style="background-color: #f8f9fa; padding: 20px 30px; text-align: center;">
-              <p style="color: #999; font-size: 12px; margin: 0;">
-                © ${new Date().getFullYear()} promrkts. All rights reserved.
-              </p>
-              <p style="color: #999; font-size: 12px; margin: 10px 0 0;">
-                <a href="https://promrkts.com" style="color: #65a8bf; text-decoration: none;">Website</a> • 
-                <a href="https://t.me/promrkts" style="color: #65a8bf; text-decoration: none;">Telegram</a> • 
-                <a href="https://discord.gg/promrkts" style="color: #65a8bf; text-decoration: none;">Discord</a>
-              </p>
-            </td>
-          </tr>
-        </table>
-      </td>
-    </tr>
-  </table>
-</body>
-</html>
+  return sendWelcomeEmailAfterVerification(user);
+}
+
+// Premium welcome email - sent AFTER email verification is confirmed
+export async function sendWelcomeEmailAfterVerification(user: { email: string; name: string }): Promise<{ success: boolean; error?: string }> {
+  const content = `
+    <h1 style="color: #ffffff; font-size: 32px; font-weight: 700; margin: 0 0 8px; letter-spacing: -0.5px;">
+      Welcome to promrkts
+    </h1>
+    <p style="color: ${BRAND.primaryColor}; font-size: 16px; margin: 0 0 32px; font-weight: 500;">
+      Your trading journey starts now
+    </p>
+    
+    <p style="color: #e2e8f0; font-size: 16px; line-height: 1.7; margin: 0 0 24px;">
+      Hi <strong style="color: #ffffff;">${user.name}</strong>,
+    </p>
+    
+    <p style="color: #cbd5e1; font-size: 16px; line-height: 1.7; margin: 0 0 32px;">
+      Welcome to the promrkts community! Your email has been verified and your account is now fully activated. We're excited to have you join thousands of traders on their path to mastery.
+    </p>
+    
+    <!-- Feature Cards -->
+    <table role="presentation" width="100%" cellpadding="0" cellspacing="0" style="margin-bottom: 32px;">
+      <tr>
+        <td style="padding: 20px; background: rgba(101, 168, 191, 0.08); border-radius: 16px; border: 1px solid rgba(101, 168, 191, 0.15);">
+          <table role="presentation" width="100%" cellpadding="0" cellspacing="0">
+            <tr>
+              <td width="48" valign="top">
+                <div style="width: 40px; height: 40px; background: linear-gradient(135deg, ${BRAND.primaryColor} 0%, ${BRAND.secondaryColor} 100%); border-radius: 12px; text-align: center; line-height: 40px; font-size: 20px;">📚</div>
+              </td>
+              <td style="padding-left: 16px;">
+                <p style="color: #ffffff; font-size: 15px; font-weight: 600; margin: 0 0 4px;">Expert-Led Courses</p>
+                <p style="color: #94a3b8; font-size: 14px; margin: 0;">Structured learning paths from fundamentals to advanced strategies</p>
+              </td>
+            </tr>
+          </table>
+        </td>
+      </tr>
+      <tr><td style="height: 12px;"></td></tr>
+      <tr>
+        <td style="padding: 20px; background: rgba(183, 162, 125, 0.08); border-radius: 16px; border: 1px solid rgba(183, 162, 125, 0.15);">
+          <table role="presentation" width="100%" cellpadding="0" cellspacing="0">
+            <tr>
+              <td width="48" valign="top">
+                <div style="width: 40px; height: 40px; background: linear-gradient(135deg, ${BRAND.secondaryColor} 0%, ${BRAND.primaryColor} 100%); border-radius: 12px; text-align: center; line-height: 40px; font-size: 20px;">🏆</div>
+              </td>
+              <td style="padding-left: 16px;">
+                <p style="color: #ffffff; font-size: 15px; font-weight: 600; margin: 0 0 4px;">Prop Firm Challenges</p>
+                <p style="color: #94a3b8; font-size: 14px; margin: 0;">Prove your skills and get funded to trade real capital</p>
+              </td>
+            </tr>
+          </table>
+        </td>
+      </tr>
+      <tr><td style="height: 12px;"></td></tr>
+      <tr>
+        <td style="padding: 20px; background: rgba(101, 168, 191, 0.08); border-radius: 16px; border: 1px solid rgba(101, 168, 191, 0.15);">
+          <table role="presentation" width="100%" cellpadding="0" cellspacing="0">
+            <tr>
+              <td width="48" valign="top">
+                <div style="width: 40px; height: 40px; background: linear-gradient(135deg, ${BRAND.primaryColor} 0%, ${BRAND.secondaryColor} 100%); border-radius: 12px; text-align: center; line-height: 40px; font-size: 20px;">💬</div>
+              </td>
+              <td style="padding-left: 16px;">
+                <p style="color: #ffffff; font-size: 15px; font-weight: 600; margin: 0 0 4px;">Premium Community</p>
+                <p style="color: #94a3b8; font-size: 14px; margin: 0;">Connect with traders worldwide on Telegram & Discord</p>
+              </td>
+            </tr>
+          </table>
+        </td>
+      </tr>
+    </table>
+    
+    <!-- CTA Button -->
+    <table role="presentation" width="100%" cellpadding="0" cellspacing="0">
+      <tr>
+        <td align="center" style="padding: 8px 0 32px;">
+          <a href="${BRAND.websiteUrl}" style="display: inline-block; background: linear-gradient(135deg, ${BRAND.primaryColor} 0%, ${BRAND.secondaryColor} 100%); color: #0a0f1a; text-decoration: none; padding: 16px 48px; border-radius: 12px; font-weight: 700; font-size: 16px;">
+            Start Learning Now
+          </a>
+        </td>
+      </tr>
+    </table>
+    
+    <p style="color: #64748b; font-size: 14px; line-height: 1.6; margin: 0; padding-top: 24px; border-top: 1px solid rgba(255,255,255,0.08);">
+      Questions? Simply reply to this email — we're here to help.
+    </p>
   `;
+
+  const html = createPremiumEmailTemplate(content, `Welcome ${user.name}! Your trading journey starts now.`);
 
   return sendEmail({
     to: user.email,
-    subject: `Welcome to promrkts, ${user.name}! 🎉`,
+    subject: `Welcome to promrkts, ${user.name}!`,
     html,
     from: 'hello',
     replyTo: EMAIL_ALIASES.support,
@@ -266,6 +367,7 @@ export interface InvoiceData {
   transactionId?: string;
 }
 
+// Premium invoice email with gradient branding
 export async function sendInvoiceEmail(
   user: { email: string; name: string },
   invoice: InvoiceData
@@ -279,133 +381,136 @@ export async function sendInvoiceEmail(
 
   const itemsHtml = invoice.items.map(item => `
     <tr>
-      <td style="padding: 12px; border-bottom: 1px solid #eee;">
-        <strong>${item.name}</strong>
-        ${item.description ? `<br><span style="color: #666; font-size: 13px;">${item.description}</span>` : ''}
+      <td style="padding: 16px; border-bottom: 1px solid rgba(255,255,255,0.06);">
+        <p style="color: #ffffff; font-size: 15px; font-weight: 600; margin: 0 0 4px;">${item.name}</p>
+        ${item.description ? `<p style="color: #64748b; font-size: 13px; margin: 0;">${item.description}</p>` : ''}
       </td>
-      <td style="padding: 12px; border-bottom: 1px solid #eee; text-align: center;">${item.quantity}</td>
-      <td style="padding: 12px; border-bottom: 1px solid #eee; text-align: right;">${formatCurrency(item.unitPrice)}</td>
-      <td style="padding: 12px; border-bottom: 1px solid #eee; text-align: right;">${formatCurrency(item.total)}</td>
+      <td style="padding: 16px; border-bottom: 1px solid rgba(255,255,255,0.06); text-align: center; color: #94a3b8; font-size: 14px;">${item.quantity}</td>
+      <td style="padding: 16px; border-bottom: 1px solid rgba(255,255,255,0.06); text-align: right; color: #94a3b8; font-size: 14px;">${formatCurrency(item.unitPrice)}</td>
+      <td style="padding: 16px; border-bottom: 1px solid rgba(255,255,255,0.06); text-align: right; color: #ffffff; font-size: 14px; font-weight: 600;">${formatCurrency(item.total)}</td>
     </tr>
   `).join('');
 
-  const html = `
-<!DOCTYPE html>
-<html>
-<head>
-  <meta charset="utf-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Invoice #${invoice.invoiceNumber}</title>
-</head>
-<body style="margin: 0; padding: 0; font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; background-color: #f4f4f4;">
-  <table width="100%" cellpadding="0" cellspacing="0" style="background-color: #f4f4f4; padding: 40px 20px;">
-    <tr>
-      <td align="center">
-        <table width="600" cellpadding="0" cellspacing="0" style="background-color: #ffffff; border-radius: 12px; overflow: hidden; box-shadow: 0 4px 6px rgba(0,0,0,0.1);">
-          <!-- Header -->
-          <tr>
-            <td style="background: linear-gradient(135deg, #1a1a2e 0%, #16213e 100%); padding: 30px;">
-              <table width="100%" cellpadding="0" cellspacing="0">
-                <tr>
-                  <td>
-                    <h1 style="color: #65a8bf; margin: 0; font-size: 24px;">promrkts</h1>
-                    <p style="color: #ffffff; margin: 5px 0 0; font-size: 14px;">Invoice</p>
-                  </td>
-                  <td style="text-align: right;">
-                    <p style="color: #ffffff; margin: 0; font-size: 14px;">
-                      <strong>Invoice #:</strong> ${invoice.invoiceNumber}<br>
-                      <strong>Date:</strong> ${formatDate(invoice.purchaseDate)}
-                    </p>
-                  </td>
-                </tr>
-              </table>
-            </td>
-          </tr>
-          
-          <!-- Bill To -->
-          <tr>
-            <td style="padding: 30px 30px 20px;">
-              <h3 style="color: #333; margin: 0 0 10px; font-size: 14px; text-transform: uppercase; letter-spacing: 1px;">Bill To:</h3>
-              <p style="color: #333; font-size: 16px; margin: 0;">
-                <strong>${user.name}</strong><br>
-                ${user.email}
-              </p>
-            </td>
-          </tr>
-          
-          <!-- Items Table -->
-          <tr>
-            <td style="padding: 0 30px 30px;">
-              <table width="100%" cellpadding="0" cellspacing="0" style="border: 1px solid #eee; border-radius: 8px; overflow: hidden;">
-                <thead>
-                  <tr style="background-color: #f8f9fa;">
-                    <th style="padding: 12px; text-align: left; font-size: 13px; color: #666; text-transform: uppercase;">Item</th>
-                    <th style="padding: 12px; text-align: center; font-size: 13px; color: #666; text-transform: uppercase;">Qty</th>
-                    <th style="padding: 12px; text-align: right; font-size: 13px; color: #666; text-transform: uppercase;">Price</th>
-                    <th style="padding: 12px; text-align: right; font-size: 13px; color: #666; text-transform: uppercase;">Total</th>
-                  </tr>
-                </thead>
-                <tbody>
-                  ${itemsHtml}
-                </tbody>
-                <tfoot>
+  const content = `
+    <!-- Invoice Header -->
+    <table role="presentation" width="100%" cellpadding="0" cellspacing="0" style="margin-bottom: 32px;">
+      <tr>
+        <td>
+          <p style="color: ${BRAND.primaryColor}; font-size: 12px; font-weight: 600; text-transform: uppercase; letter-spacing: 1.5px; margin: 0 0 8px;">Invoice</p>
+          <h1 style="color: #ffffff; font-size: 28px; font-weight: 700; margin: 0; letter-spacing: -0.5px;">#${invoice.invoiceNumber}</h1>
+        </td>
+        <td style="text-align: right;">
+          <p style="color: #94a3b8; font-size: 14px; margin: 0 0 4px;">${formatDate(invoice.purchaseDate)}</p>
+          <div style="display: inline-block; background: linear-gradient(135deg, rgba(34, 197, 94, 0.15) 0%, rgba(34, 197, 94, 0.05) 100%); border: 1px solid rgba(34, 197, 94, 0.3); border-radius: 100px; padding: 6px 16px;">
+            <span style="color: #22c55e; font-size: 13px; font-weight: 600;">✓ Paid</span>
+          </div>
+        </td>
+      </tr>
+    </table>
+    
+    <!-- Bill To -->
+    <table role="presentation" width="100%" cellpadding="0" cellspacing="0" style="margin-bottom: 32px;">
+      <tr>
+        <td style="padding: 20px; background: rgba(255,255,255,0.02); border-radius: 12px; border: 1px solid rgba(255,255,255,0.06);">
+          <p style="color: #64748b; font-size: 11px; font-weight: 600; text-transform: uppercase; letter-spacing: 1px; margin: 0 0 8px;">Billed To</p>
+          <p style="color: #ffffff; font-size: 16px; font-weight: 600; margin: 0 0 4px;">${user.name}</p>
+          <p style="color: #94a3b8; font-size: 14px; margin: 0;">${user.email}</p>
+        </td>
+      </tr>
+    </table>
+    
+    <!-- Items Table -->
+    <table role="presentation" width="100%" cellpadding="0" cellspacing="0" style="margin-bottom: 24px; background: rgba(255,255,255,0.02); border-radius: 16px; border: 1px solid rgba(255,255,255,0.06); overflow: hidden;">
+      <thead>
+        <tr style="background: rgba(255,255,255,0.03);">
+          <th style="padding: 14px 16px; text-align: left; font-size: 11px; color: #64748b; text-transform: uppercase; letter-spacing: 1px; font-weight: 600;">Item</th>
+          <th style="padding: 14px 16px; text-align: center; font-size: 11px; color: #64748b; text-transform: uppercase; letter-spacing: 1px; font-weight: 600;">Qty</th>
+          <th style="padding: 14px 16px; text-align: right; font-size: 11px; color: #64748b; text-transform: uppercase; letter-spacing: 1px; font-weight: 600;">Price</th>
+          <th style="padding: 14px 16px; text-align: right; font-size: 11px; color: #64748b; text-transform: uppercase; letter-spacing: 1px; font-weight: 600;">Total</th>
+        </tr>
+      </thead>
+      <tbody>
+        ${itemsHtml}
+      </tbody>
+    </table>
+    
+    <!-- Totals -->
+    <table role="presentation" width="100%" cellpadding="0" cellspacing="0" style="margin-bottom: 32px;">
+      <tr>
+        <td width="50%"></td>
+        <td width="50%">
+          <table role="presentation" width="100%" cellpadding="0" cellspacing="0">
+            <tr>
+              <td style="padding: 8px 0; color: #94a3b8; font-size: 14px;">Subtotal</td>
+              <td style="padding: 8px 0; color: #ffffff; font-size: 14px; text-align: right;">${formatCurrency(invoice.subtotal)}</td>
+            </tr>
+            ${invoice.discount ? `
+            <tr>
+              <td style="padding: 8px 0; color: #22c55e; font-size: 14px;">Discount</td>
+              <td style="padding: 8px 0; color: #22c55e; font-size: 14px; text-align: right;">-${formatCurrency(invoice.discount)}</td>
+            </tr>
+            ` : ''}
+            ${invoice.tax ? `
+            <tr>
+              <td style="padding: 8px 0; color: #94a3b8; font-size: 14px;">Tax</td>
+              <td style="padding: 8px 0; color: #ffffff; font-size: 14px; text-align: right;">${formatCurrency(invoice.tax)}</td>
+            </tr>
+            ` : ''}
+            <tr>
+              <td colspan="2" style="padding: 16px 0 0; border-top: 1px solid rgba(255,255,255,0.1);">
+                <table role="presentation" width="100%" cellpadding="0" cellspacing="0">
                   <tr>
-                    <td colspan="3" style="padding: 12px; text-align: right; font-size: 14px;">Subtotal:</td>
-                    <td style="padding: 12px; text-align: right; font-size: 14px;">${formatCurrency(invoice.subtotal)}</td>
+                    <td style="color: #ffffff; font-size: 16px; font-weight: 700;">Total</td>
+                    <td style="text-align: right;">
+                      <span style="background: linear-gradient(135deg, ${BRAND.primaryColor} 0%, ${BRAND.secondaryColor} 100%); -webkit-background-clip: text; -webkit-text-fill-color: transparent; font-size: 24px; font-weight: 700;">${formatCurrency(invoice.total)}</span>
+                    </td>
                   </tr>
-                  ${invoice.discount ? `
-                  <tr>
-                    <td colspan="3" style="padding: 12px; text-align: right; font-size: 14px; color: #28a745;">Discount:</td>
-                    <td style="padding: 12px; text-align: right; font-size: 14px; color: #28a745;">-${formatCurrency(invoice.discount)}</td>
-                  </tr>
-                  ` : ''}
-                  ${invoice.tax ? `
-                  <tr>
-                    <td colspan="3" style="padding: 12px; text-align: right; font-size: 14px;">Tax:</td>
-                    <td style="padding: 12px; text-align: right; font-size: 14px;">${formatCurrency(invoice.tax)}</td>
-                  </tr>
-                  ` : ''}
-                  <tr style="background-color: #f8f9fa;">
-                    <td colspan="3" style="padding: 15px 12px; text-align: right; font-size: 18px; font-weight: bold;">Total:</td>
-                    <td style="padding: 15px 12px; text-align: right; font-size: 18px; font-weight: bold; color: #65a8bf;">${formatCurrency(invoice.total)}</td>
-                  </tr>
-                </tfoot>
-              </table>
-            </td>
-          </tr>
-          
-          <!-- Payment Info -->
-          <tr>
-            <td style="padding: 0 30px 30px;">
-              <div style="background-color: #d4edda; border-radius: 8px; padding: 15px 20px;">
-                <p style="color: #155724; font-size: 14px; margin: 0;">
-                  <strong>✅ Payment Received</strong><br>
-                  Method: ${invoice.paymentMethod}
-                  ${invoice.transactionId ? `<br>Transaction ID: ${invoice.transactionId}` : ''}
+                </table>
+              </td>
+            </tr>
+          </table>
+        </td>
+      </tr>
+    </table>
+    
+    <!-- Payment Details -->
+    <table role="presentation" width="100%" cellpadding="0" cellspacing="0" style="margin-bottom: 32px;">
+      <tr>
+        <td style="padding: 20px; background: linear-gradient(135deg, rgba(34, 197, 94, 0.08) 0%, rgba(34, 197, 94, 0.02) 100%); border-radius: 12px; border: 1px solid rgba(34, 197, 94, 0.2);">
+          <table role="presentation" width="100%" cellpadding="0" cellspacing="0">
+            <tr>
+              <td width="40" valign="top">
+                <div style="width: 36px; height: 36px; background: rgba(34, 197, 94, 0.15); border-radius: 10px; text-align: center; line-height: 36px; font-size: 18px;">✓</div>
+              </td>
+              <td style="padding-left: 12px;">
+                <p style="color: #22c55e; font-size: 14px; font-weight: 600; margin: 0 0 4px;">Payment Successful</p>
+                <p style="color: #94a3b8; font-size: 13px; margin: 0;">
+                  ${invoice.paymentMethod}${invoice.transactionId ? ` • ${invoice.transactionId}` : ''}
                 </p>
-              </div>
-            </td>
-          </tr>
-          
-          <!-- Footer -->
-          <tr>
-            <td style="background-color: #f8f9fa; padding: 20px 30px; text-align: center;">
-              <p style="color: #666; font-size: 13px; margin: 0 0 10px;">
-                Thank you for your purchase! If you have any questions about this invoice,<br>
-                please contact us at <a href="mailto:support@promrkts.com" style="color: #65a8bf;">support@promrkts.com</a>
-              </p>
-              <p style="color: #999; font-size: 12px; margin: 0;">
-                © ${new Date().getFullYear()} promrkts. All rights reserved.
-              </p>
-            </td>
-          </tr>
-        </table>
-      </td>
-    </tr>
-  </table>
-</body>
-</html>
+              </td>
+            </tr>
+          </table>
+        </td>
+      </tr>
+    </table>
+    
+    <!-- CTA -->
+    <table role="presentation" width="100%" cellpadding="0" cellspacing="0">
+      <tr>
+        <td align="center">
+          <a href="${BRAND.websiteUrl}/purchases" style="display: inline-block; background: linear-gradient(135deg, ${BRAND.primaryColor} 0%, ${BRAND.secondaryColor} 100%); color: #0a0f1a; text-decoration: none; padding: 14px 40px; border-radius: 12px; font-weight: 700; font-size: 15px;">
+            View Your Purchases
+          </a>
+        </td>
+      </tr>
+    </table>
+    
+    <p style="color: #64748b; font-size: 13px; line-height: 1.6; margin: 32px 0 0; padding-top: 24px; border-top: 1px solid rgba(255,255,255,0.08); text-align: center;">
+      Questions about this invoice? Contact us at <a href="mailto:support@promrkts.com" style="color: ${BRAND.primaryColor}; text-decoration: none;">support@promrkts.com</a>
+    </p>
   `;
+
+  const html = createPremiumEmailTemplate(content, `Invoice #${invoice.invoiceNumber} - Thank you for your purchase!`);
 
   return sendEmail({
     to: user.email,
@@ -494,65 +599,53 @@ export async function sendPasswordResetEmail(
   });
 }
 
-// Email confirmation code
+// Premium verification code email
 export async function sendConfirmationCodeEmail(
   user: { email: string; name: string },
   code: string
 ): Promise<{ success: boolean; error?: string }> {
-  const html = `
-<!DOCTYPE html>
-<html>
-<head>
-  <meta charset="utf-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Confirm Your Email</title>
-</head>
-<body style="margin: 0; padding: 0; font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; background-color: #f4f4f4;">
-  <table width="100%" cellpadding="0" cellspacing="0" style="background-color: #f4f4f4; padding: 40px 20px;">
-    <tr>
-      <td align="center">
-        <table width="600" cellpadding="0" cellspacing="0" style="background-color: #ffffff; border-radius: 12px; overflow: hidden; box-shadow: 0 4px 6px rgba(0,0,0,0.1);">
-          <!-- Header -->
-          <tr>
-            <td style="background: linear-gradient(135deg, #65a8bf 0%, #4a8fa6 100%); padding: 40px 30px; text-align: center;">
-              <h1 style="color: #ffffff; margin: 0; font-size: 28px; font-weight: 600;">Confirm Your Email</h1>
-            </td>
-          </tr>
-          
-          <!-- Content -->
-          <tr>
-            <td style="padding: 40px 30px; text-align: center;">
-              <p style="color: #333; font-size: 16px; line-height: 1.6; margin: 0 0 30px;">
-                Hi <strong>${user.name}</strong>, use this code to verify your email address:
-              </p>
-              
-              <div style="background-color: #f8f9fa; border-radius: 12px; padding: 30px; margin: 20px 0;">
-                <p style="font-size: 42px; font-weight: bold; letter-spacing: 8px; color: #65a8bf; margin: 0;">
-                  ${code}
-                </p>
-              </div>
-              
-              <p style="color: #666; font-size: 14px; line-height: 1.6; margin: 30px 0 0;">
-                This code expires in 15 minutes. If you didn't create an account, you can ignore this email.
-              </p>
-            </td>
-          </tr>
-          
-          <!-- Footer -->
-          <tr>
-            <td style="background-color: #f8f9fa; padding: 20px 30px; text-align: center;">
-              <p style="color: #999; font-size: 12px; margin: 0;">
-                © ${new Date().getFullYear()} promrkts. All rights reserved.
-              </p>
-            </td>
-          </tr>
-        </table>
-      </td>
-    </tr>
-  </table>
-</body>
-</html>
+  const codeDigits = code.split('');
+  const digitBoxes = codeDigits.map(digit => `
+    <td style="width: 48px; height: 60px; background: linear-gradient(145deg, #1e293b 0%, #0f172a 100%); border-radius: 12px; text-align: center; vertical-align: middle; border: 2px solid rgba(101, 168, 191, 0.3);">
+      <span style="font-size: 28px; font-weight: 700; color: #ffffff; font-family: 'SF Mono', Monaco, monospace;">${digit}</span>
+    </td>
+  `).join('<td style="width: 8px;"></td>');
+
+  const content = `
+    <div style="text-align: center;">
+      <!-- Icon -->
+      <table role="presentation" cellpadding="0" cellspacing="0" style="margin: 0 auto 24px;">
+        <tr>
+          <td style="width: 72px; height: 72px; background: linear-gradient(135deg, ${BRAND.primaryColor} 0%, ${BRAND.secondaryColor} 100%); border-radius: 20px; text-align: center; vertical-align: middle; font-size: 32px;">🔐</td>
+        </tr>
+      </table>
+      
+      <h1 style="color: #ffffff; font-size: 28px; font-weight: 700; margin: 0 0 8px; letter-spacing: -0.5px;">
+        Verify Your Email
+      </h1>
+      <p style="color: #94a3b8; font-size: 16px; margin: 0 0 32px;">
+        Hi <strong style="color: #ffffff;">${user.name}</strong>, enter this code to continue
+      </p>
+      
+      <!-- Code Display -->
+      <table role="presentation" cellpadding="0" cellspacing="0" style="margin: 0 auto 32px;">
+        <tr>
+          ${digitBoxes}
+        </tr>
+      </table>
+      
+      <!-- Timer Badge -->
+      <div style="display: inline-block; background: rgba(101, 168, 191, 0.1); border: 1px solid rgba(101, 168, 191, 0.2); border-radius: 100px; padding: 8px 20px; margin-bottom: 32px;">
+        <span style="color: ${BRAND.primaryColor}; font-size: 13px; font-weight: 500;">⏱ Expires in 15 minutes</span>
+      </div>
+      
+      <p style="color: #64748b; font-size: 14px; line-height: 1.6; margin: 0;">
+        If you didn't request this code, you can safely ignore this email.
+      </p>
+    </div>
   `;
+
+  const html = createPremiumEmailTemplate(content, `${code} is your promrkts verification code`);
 
   return sendEmail({
     to: user.email,
@@ -562,12 +655,130 @@ export async function sendConfirmationCodeEmail(
   });
 }
 
+// Purchase confirmation email - sent immediately after successful payment
+export async function sendPurchaseConfirmationEmail(
+  user: { email: string; name: string },
+  purchase: {
+    productName: string;
+    productDescription?: string;
+    amount: number;
+    invoiceNumber: string;
+  }
+): Promise<{ success: boolean; error?: string }> {
+  const formatCurrency = (amount: number) => `$${amount.toFixed(2)}`;
+
+  const content = `
+    <div style="text-align: center;">
+      <!-- Success Icon -->
+      <table role="presentation" cellpadding="0" cellspacing="0" style="margin: 0 auto 24px;">
+        <tr>
+          <td style="width: 80px; height: 80px; background: linear-gradient(135deg, rgba(34, 197, 94, 0.2) 0%, rgba(34, 197, 94, 0.05) 100%); border-radius: 50%; text-align: center; vertical-align: middle; font-size: 40px;">✓</td>
+        </tr>
+      </table>
+      
+      <h1 style="color: #ffffff; font-size: 28px; font-weight: 700; margin: 0 0 8px; letter-spacing: -0.5px;">
+        Purchase Confirmed!
+      </h1>
+      <p style="color: #94a3b8; font-size: 16px; margin: 0 0 32px;">
+        Thank you for your purchase, <strong style="color: #ffffff;">${user.name}</strong>
+      </p>
+    </div>
+    
+    <!-- Purchase Details Card -->
+    <table role="presentation" width="100%" cellpadding="0" cellspacing="0" style="margin-bottom: 32px;">
+      <tr>
+        <td style="padding: 24px; background: linear-gradient(145deg, rgba(101, 168, 191, 0.1) 0%, rgba(183, 162, 125, 0.05) 100%); border-radius: 16px; border: 1px solid rgba(101, 168, 191, 0.2);">
+          <table role="presentation" width="100%" cellpadding="0" cellspacing="0">
+            <tr>
+              <td>
+                <p style="color: #64748b; font-size: 11px; font-weight: 600; text-transform: uppercase; letter-spacing: 1px; margin: 0 0 8px;">You purchased</p>
+                <p style="color: #ffffff; font-size: 20px; font-weight: 700; margin: 0 0 8px;">${purchase.productName}</p>
+                ${purchase.productDescription ? `<p style="color: #94a3b8; font-size: 14px; margin: 0;">${purchase.productDescription}</p>` : ''}
+              </td>
+              <td style="text-align: right; vertical-align: top;">
+                <p style="background: linear-gradient(135deg, ${BRAND.primaryColor} 0%, ${BRAND.secondaryColor} 100%); -webkit-background-clip: text; -webkit-text-fill-color: transparent; font-size: 24px; font-weight: 700; margin: 0;">${formatCurrency(purchase.amount)}</p>
+              </td>
+            </tr>
+          </table>
+        </td>
+      </tr>
+    </table>
+    
+    <!-- What's Next -->
+    <table role="presentation" width="100%" cellpadding="0" cellspacing="0" style="margin-bottom: 32px;">
+      <tr>
+        <td>
+          <p style="color: #ffffff; font-size: 16px; font-weight: 600; margin: 0 0 16px;">What's next?</p>
+        </td>
+      </tr>
+      <tr>
+        <td style="padding: 16px; background: rgba(255,255,255,0.02); border-radius: 12px; border: 1px solid rgba(255,255,255,0.06);">
+          <table role="presentation" width="100%" cellpadding="0" cellspacing="0">
+            <tr>
+              <td width="40" valign="top">
+                <div style="width: 32px; height: 32px; background: linear-gradient(135deg, ${BRAND.primaryColor} 0%, ${BRAND.secondaryColor} 100%); border-radius: 8px; text-align: center; line-height: 32px; color: #0a0f1a; font-weight: 700; font-size: 14px;">1</div>
+              </td>
+              <td style="padding-left: 12px;">
+                <p style="color: #ffffff; font-size: 14px; font-weight: 600; margin: 0 0 2px;">Access your content</p>
+                <p style="color: #94a3b8; font-size: 13px; margin: 0;">Your purchase is ready in your dashboard</p>
+              </td>
+            </tr>
+          </table>
+        </td>
+      </tr>
+      <tr><td style="height: 8px;"></td></tr>
+      <tr>
+        <td style="padding: 16px; background: rgba(255,255,255,0.02); border-radius: 12px; border: 1px solid rgba(255,255,255,0.06);">
+          <table role="presentation" width="100%" cellpadding="0" cellspacing="0">
+            <tr>
+              <td width="40" valign="top">
+                <div style="width: 32px; height: 32px; background: linear-gradient(135deg, ${BRAND.secondaryColor} 0%, ${BRAND.primaryColor} 100%); border-radius: 8px; text-align: center; line-height: 32px; color: #0a0f1a; font-weight: 700; font-size: 14px;">2</div>
+              </td>
+              <td style="padding-left: 12px;">
+                <p style="color: #ffffff; font-size: 14px; font-weight: 600; margin: 0 0 2px;">Join the community</p>
+                <p style="color: #94a3b8; font-size: 13px; margin: 0;">Connect with fellow traders on Discord & Telegram</p>
+              </td>
+            </tr>
+          </table>
+        </td>
+      </tr>
+    </table>
+    
+    <!-- CTA Button -->
+    <table role="presentation" width="100%" cellpadding="0" cellspacing="0">
+      <tr>
+        <td align="center" style="padding: 8px 0 24px;">
+          <a href="${BRAND.websiteUrl}/learn" style="display: inline-block; background: linear-gradient(135deg, ${BRAND.primaryColor} 0%, ${BRAND.secondaryColor} 100%); color: #0a0f1a; text-decoration: none; padding: 16px 48px; border-radius: 12px; font-weight: 700; font-size: 16px;">
+            Start Learning
+          </a>
+        </td>
+      </tr>
+    </table>
+    
+    <p style="color: #64748b; font-size: 13px; line-height: 1.6; margin: 0; padding-top: 24px; border-top: 1px solid rgba(255,255,255,0.08); text-align: center;">
+      Invoice #${purchase.invoiceNumber} • A detailed invoice has been sent separately
+    </p>
+  `;
+
+  const html = createPremiumEmailTemplate(content, `Your purchase of ${purchase.productName} is confirmed!`);
+
+  return sendEmail({
+    to: user.email,
+    subject: `Purchase Confirmed: ${purchase.productName}`,
+    html,
+    from: 'hello',
+    replyTo: EMAIL_ALIASES.support,
+  });
+}
+
 export default {
   sendEmail,
   sendWelcomeEmail,
+  sendWelcomeEmailAfterVerification,
   sendUpsellEmail,
   sendInvoiceEmail,
   sendPasswordResetEmail,
   sendConfirmationCodeEmail,
+  sendPurchaseConfirmationEmail,
   EMAIL_ALIASES,
 };

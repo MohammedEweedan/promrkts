@@ -36,7 +36,7 @@ import { AdvancedRealTimeChart } from "react-ts-tradingview-widgets";
 import api, { getMyPurchases } from "../api/client";
 import BannerCarousel from "../components/BannerCarousel";
 import { useThemeMode } from "../themeProvider";
-import { Star, Trophy, Maximize2, Minimize2 } from "lucide-react";
+import { Star, Trophy, Maximize2, Minimize2, Users, TrendingUp, DollarSign, Award, Target, Bot, MessageCircle, BarChart3, Smartphone, Lock, CheckCircle, GraduationCap, Globe, Flame, BookOpen, Rocket, Handshake } from "lucide-react";
 import Hero from "../components/Hero";
 import { useSessionMemory } from "../hooks/useSessionMemory";
 import CryptoMatrix from "../components/CryptoMatrix";
@@ -60,63 +60,6 @@ import {
 
 // ===== Animation helpers =====
 const MotionBox = motion(Box);
-
-const FloatingEmojiLayer: React.FC<{ count?: number; mode: string }> = ({ count = 20, mode }) => {
-  const items = React.useMemo(() => {
-    const emojis = ["📈", "💹", "🪙", "💰", "🔥", "⚡️", "🚀", "📉", "💵", "💎", "🏆", "📊", "🎯", "✨", "🌟"];
-    return Array.from({ length: count }).map((_, i) => {
-      const emoji = emojis[i % emojis.length];
-      const left = Math.random() * 90 + 5;
-      const size = 20 + Math.random() * 28;
-      const duration = 12 + Math.random() * 8;
-      const delay = Math.random() * 5;
-      const drift = (Math.random() - 0.5) * 60;
-      const hueStart = Math.random() * 30 - 15;
-      return { id: i, emoji, left, size, duration, delay, drift, hueStart };
-    });
-  }, [count]);
-
-  const baseOpacity = mode === "dark" ? 0.75 : 0.6;
-
-  return (
-    <Box position="absolute" inset={0} zIndex={0} pointerEvents="none" overflow="hidden">
-      {items.map((it) => (
-        <MotionBox
-          key={it.id}
-          position="absolute"
-          left={`${it.left}%`}
-          bottom="-5vh"
-          fontSize={`${it.size}px`}
-          style={{ 
-            filter: `drop-shadow(0 0 4px rgba(101, 168, 191, 0.3))`,
-            textShadow: "0 0 6px rgba(101, 168, 191, 0.2)",
-          }}
-          animate={{
-            y: ["0vh", "-110vh"],
-            x: [0, it.drift, it.drift * 0.5],
-            rotate: [0, 12, -8, 5, 0],
-            opacity: [0, baseOpacity, baseOpacity, baseOpacity * 0.6, 0],
-            filter: [
-              `hue-rotate(${it.hueStart}deg) drop-shadow(0 0 3px rgba(101, 168, 191, 0.25))`,
-              `hue-rotate(${it.hueStart + 20}deg) drop-shadow(0 0 5px rgba(101, 168, 191, 0.3))`,
-              `hue-rotate(${it.hueStart - 15}deg) drop-shadow(0 0 6px rgba(101, 168, 191, 0.35))`,
-              `hue-rotate(${it.hueStart + 10}deg) drop-shadow(0 0 5px rgba(101, 168, 191, 0.3))`,
-              `hue-rotate(${it.hueStart}deg) drop-shadow(0 0 3px rgba(101, 168, 191, 0.25))`,
-            ],
-          }}
-          transition={{
-            duration: it.duration,
-            delay: it.delay,
-            repeat: Infinity,
-            ease: "easeInOut",
-          }}
-        >
-          {it.emoji}
-        </MotionBox>
-      ))}
-    </Box>
-  );
-};
 
 // Raindrop ripple effect - like drops of water on a puddle in corners
 const RaindropRipples: React.FC<{ mode: string }> = ({ mode }) => {
@@ -271,21 +214,28 @@ const AppleReveal: React.FC<{ children: React.ReactNode; offset?: AppleRevealOff
   );
 };
 
-// ===== UI Brand Tokens =====
+// ===== UI Brand Tokens (Premium / Nfinite-inspired) =====
 const UI = {
   bg: "#050811",
-  surface: "rgba(15, 23, 42, 0.72)", // glass
-  surfaceStrong: "rgba(15, 23, 42, 0.92)",
-  border: "rgba(255,255,255,0.08)",
-  muted: "rgba(255,255,255,0.65)",
-  text: "#EAFBF2",
-  accent: "#65a8bf", // your brand green
-  glow: "0 0 40px rgba(0,191,99,0.22)",
+  surface: "rgba(15, 23, 42, 0.65)",
+  surfaceStrong: "rgba(15, 23, 42, 0.88)",
+  surfaceLight: "rgba(255, 255, 255, 0.03)",
+  border: "rgba(255,255,255,0.06)",
+  borderAccent: "rgba(101, 168, 191, 0.2)",
+  muted: "rgba(255,255,255,0.6)",
+  text: "#f8fafc",
+  textSecondary: "#94a3b8",
+  accent: "#65a8bf",
+  accentGold: "#b7a27d",
+  gradient: "linear-gradient(135deg, #65a8bf 0%, #b7a27d 100%)",
+  gradientReverse: "linear-gradient(135deg, #b7a27d 0%, #65a8bf 100%)",
+  glow: "0 0 60px rgba(101, 168, 191, 0.15)",
+  glowStrong: "0 0 80px rgba(101, 168, 191, 0.25)",
+  cardShadow: "0 25px 50px -12px rgba(0, 0, 0, 0.5)",
   gradHero:
-    "radial-gradient(1000px 600px at 10% 10%, rgba(0,191,99,0.20), transparent 60%)," +
-    "radial-gradient(900px 500px at 90% 20%, rgba(0,191,99,0.20), transparent 55%)," +
-    "radial-gradient(800px 500px at 50% 90%, rgba(59,130,246,0.12), transparent 60%)," +
-    "linear-gradient(180deg, #050811 0%, #050811 100%)",
+    "radial-gradient(ellipse 80% 50% at 50% -20%, rgba(101, 168, 191, 0.15), transparent)," +
+    "radial-gradient(ellipse 60% 40% at 80% 80%, rgba(183, 162, 125, 0.08), transparent)," +
+    "linear-gradient(180deg, #050811 0%, #0a0f1a 100%)",
 };
 
 
@@ -302,14 +252,29 @@ const HomeSection: React.FC<{
   subtitle?: string;
   children: React.ReactNode;
   id?: string;
-}> = ({ title, subtitle, children, id }) => (
-  <Box py={{ base: 14, md: 18 }} id={id}>
-    <VStack spacing={3} textAlign="center" mb={{ base: 10, md: 12 }}>
-      <Heading fontSize={{ base: "3xl", md: "5xl" }} letterSpacing="-0.045em" fontWeight="650">
+  gradient?: boolean;
+}> = ({ title, subtitle, children, id, gradient = true }) => (
+  <Box py={{ base: 16, md: 24 }} id={id}>
+    <VStack spacing={4} textAlign="center" mb={{ base: 12, md: 16 }}>
+      <Heading 
+        fontSize={{ base: "2.5rem", md: "3.5rem", lg: "4rem" }} 
+        letterSpacing="-0.03em" 
+        fontWeight="700"
+        lineHeight="1.1"
+        bgGradient={gradient ? "linear(to-r, #65a8bf, #b7a27d)" : undefined}
+        bgClip={gradient ? "text" : undefined}
+        color={gradient ? undefined : UI.text}
+      >
         {title}
       </Heading>
       {subtitle && (
-        <Text opacity={0.72} maxW="3xl" fontSize={{ base: "md", md: "lg" }} lineHeight="1.7">
+        <Text 
+          color={UI.textSecondary} 
+          maxW="2xl" 
+          fontSize={{ base: "md", md: "lg" }} 
+          lineHeight="1.8"
+          fontWeight="400"
+        >
           {subtitle}
         </Text>
       )}
@@ -401,7 +366,8 @@ const TiltCard: React.FC<{
   strength?: number;
   bg?: string;
   border?: string;
-}> = ({ children, strength = 12, bg = UI.surface, border = UI.border }) => {
+  noPadding?: boolean;
+}> = ({ children, strength = 8, bg = UI.surface, border = UI.border, noPadding = false }) => {
   const ref = React.useRef<HTMLDivElement | null>(null);
   const rx = useMotionValue(0);
   const ry = useMotionValue(0);
@@ -411,13 +377,13 @@ const TiltCard: React.FC<{
     const el = ref.current;
     if (!el) return;
     const r = el.getBoundingClientRect();
-    const px = (e.clientX - r.left) / r.width; // 0..1
-    const py = (e.clientY - r.top) / r.height; // 0..1
+    const px = (e.clientX - r.left) / r.width;
+    const py = (e.clientY - r.top) / r.height;
     ry.set((px - 0.5) * strength);
     rx.set(-(py - 0.5) * strength);
   };
 
-  const onEnter = () => scale.set(1.02);
+  const onEnter = () => scale.set(1.01);
   const onLeave = () => {
     scale.set(1);
     rx.set(0);
@@ -436,15 +402,16 @@ const TiltCard: React.FC<{
         scale,
         transformStyle: "preserve-3d",
       }}
-      transition="all 0.25s cubic-bezier(0.16, 1, 0.3, 1)"
-      borderRadius="24px"
+      transition="all 0.3s cubic-bezier(0.16, 1, 0.3, 1)"
+      borderRadius="28px"
       bg={bg}
       border="1px solid"
       borderColor={border}
-      boxShadow="0 20px 50px rgba(0,0,0,0.35)"
-      p={{ base: 5, md: 6 }}
+      boxShadow={UI.cardShadow}
+      p={noPadding ? 0 : { base: 6, md: 8 }}
+      overflow="hidden"
     >
-      <Box style={{ transform: "translateZ(20px)" }}>{children}</Box>
+      <Box style={{ transform: "translateZ(16px)" }}>{children}</Box>
     </MotionBox>
   );
 };
@@ -1109,63 +1076,566 @@ const MarketsBoard: React.FC<{
   );
 });
 
-// ===== How It Works =====
+// ===== CONVERSION PSYCHOLOGY COMPONENTS =====
+
+// Live activity indicator - shows real-time user activity
+const LiveActivityPulse: React.FC = () => {
+  const [count, setCount] = React.useState(Math.floor(Math.random() * 50) + 120);
+  
+  React.useEffect(() => {
+    const interval = setInterval(() => {
+      setCount(prev => prev + Math.floor(Math.random() * 3) - 1);
+    }, 3000);
+    return () => clearInterval(interval);
+  }, []);
+
+  return (
+    <HStack 
+      spacing={2} 
+      bg="rgba(34, 197, 94, 0.1)" 
+      border="1px solid rgba(34, 197, 94, 0.2)"
+      borderRadius="full" 
+      px={4} 
+      py={2}
+    >
+      <Box w="8px" h="8px" borderRadius="full" bg="#22c55e" animation="pulse 2s infinite" />
+      <Text fontSize="sm" color="#22c55e" fontWeight="600">
+        {count} traders online now
+      </Text>
+    </HStack>
+  );
+};
+
+// Social proof bar with animated stats
+const SocialProofBar: React.FC<{ t: any }> = ({ t }) => {
+  const stats = [
+    { value: "12,847", label: t("home.social.students", { defaultValue: "Active Students" }), icon: Users },
+    { value: "94%", label: t("home.social.success", { defaultValue: "Success Rate" }), icon: TrendingUp },
+    { value: "$2.4M+", label: t("home.social.profits", { defaultValue: "Student Profits" }), icon: DollarSign },
+    { value: "4.9/5", label: t("home.social.rating", { defaultValue: "Average Rating" }), icon: Star },
+  ];
+
+  return (
+    <Box py={6}>
+      <SimpleGrid columns={{ base: 2, md: 4 }} gap={{ base: 4, md: 8 }}>
+        {stats.map((stat, i) => (
+          <MotionBox
+            key={i}
+            initial={{ opacity: 0, y: 20 }}
+            whileInView={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.5, delay: i * 0.1 }}
+            viewport={{ once: true }}
+            textAlign="center"
+          >
+            <Icon as={stat.icon} boxSize={6} color={UI.accent} mb={2} />
+            <Text 
+              fontSize={{ base: "2xl", md: "3xl" }} 
+              fontWeight="800" 
+              bgGradient="linear(to-r, #65a8bf, #b7a27d)"
+              bgClip="text"
+            >
+              {stat.value}
+            </Text>
+            <Text fontSize="sm" color={UI.textSecondary}>{stat.label}</Text>
+          </MotionBox>
+        ))}
+      </SimpleGrid>
+    </Box>
+  );
+};
+
+// Urgency banner with countdown
+const UrgencyBanner: React.FC<{ t: any }> = ({ t }) => {
+  const [timeLeft, setTimeLeft] = React.useState({ hours: 23, minutes: 59, seconds: 59 });
+  
+  React.useEffect(() => {
+    const timer = setInterval(() => {
+      setTimeLeft(prev => {
+        if (prev.seconds > 0) return { ...prev, seconds: prev.seconds - 1 };
+        if (prev.minutes > 0) return { ...prev, minutes: prev.minutes - 1, seconds: 59 };
+        if (prev.hours > 0) return { hours: prev.hours - 1, minutes: 59, seconds: 59 };
+        return { hours: 23, minutes: 59, seconds: 59 }; // Reset
+      });
+    }, 1000);
+    return () => clearInterval(timer);
+  }, []);
+
+  return (
+    <MotionBox
+      initial={{ opacity: 0, scale: 0.95 }}
+      whileInView={{ opacity: 1, scale: 1 }}
+      viewport={{ once: true }}
+      transition={{ duration: 0.5 }}
+    >
+      <Box
+        p={{ base: 4, md: 6 }}
+        borderRadius="20px"
+        bg="linear-gradient(135deg, rgba(239, 68, 68, 0.1) 0%, rgba(234, 179, 8, 0.1) 100%)"
+        border="1px solid rgba(239, 68, 68, 0.3)"
+        textAlign="center"
+      >
+        <HStack justify="center" spacing={2} mb={3}>
+          <Icon as={Flame} boxSize={5} color="#ef4444" />
+          <Text color="#ef4444" fontWeight="700" fontSize={{ base: "sm", md: "md" }} textTransform="uppercase" letterSpacing="1px">
+            {t("home.urgency.title", { defaultValue: "Limited Time Offer" })}
+          </Text>
+        </HStack>
+        <Text color={UI.text} fontSize={{ base: "lg", md: "xl" }} fontWeight="600" mb={4}>
+          {t("home.urgency.message", { defaultValue: "Get 30% off all courses - Only 7 spots left at this price!" })}
+        </Text>
+        <HStack justify="center" spacing={4}>
+          {[
+            { value: timeLeft.hours, label: "HRS" },
+            { value: timeLeft.minutes, label: "MIN" },
+            { value: timeLeft.seconds, label: "SEC" },
+          ].map((unit, i) => (
+            <VStack key={i} spacing={0}>
+              <Box
+                bg="rgba(239, 68, 68, 0.2)"
+                borderRadius="12px"
+                px={4}
+                py={2}
+                minW="60px"
+              >
+                <Text fontSize={{ base: "xl", md: "2xl" }} fontWeight="800" color="#ef4444">
+                  {String(unit.value).padStart(2, '0')}
+                </Text>
+              </Box>
+              <Text fontSize="xs" color={UI.textSecondary} mt={1}>{unit.label}</Text>
+            </VStack>
+          ))}
+        </HStack>
+      </Box>
+    </MotionBox>
+  );
+};
+
+// Trust signals section
+const TrustSignals: React.FC<{ t: any }> = ({ t }) => {
+  const signals = [
+    { icon: Lock, title: t("home.trust_signals.secure", { defaultValue: "Secure Payment" }), desc: "256-bit SSL encryption" },
+    { icon: CheckCircle, title: t("home.trust_signals.guarantee", { defaultValue: "Money-Back Guarantee" }), desc: "30-day no questions asked" },
+    { icon: GraduationCap, title: t("home.trust_signals.certified", { defaultValue: "Certified Instructors" }), desc: "10+ years experience" },
+    { icon: Globe, title: t("home.trust_signals.global", { defaultValue: "Global Community" }), desc: "Students in 50+ countries" },
+  ];
+
+  return (
+    <SimpleGrid columns={{ base: 2, md: 4 }} gap={4} py={8}>
+      {signals.map((signal, i) => (
+        <MotionBox
+          key={i}
+          initial={{ opacity: 0, y: 20 }}
+          whileInView={{ opacity: 1, y: 0 }}
+          transition={{ duration: 0.4, delay: i * 0.1 }}
+          viewport={{ once: true }}
+        >
+          <VStack 
+            p={4} 
+            borderRadius="16px" 
+            bg={UI.surfaceLight}
+            border="1px solid"
+            borderColor={UI.border}
+            spacing={2}
+            _hover={{ borderColor: UI.borderAccent }}
+            transition="all 0.3s"
+          >
+            <Icon as={signal.icon} boxSize={6} color={UI.accent} />
+            <Text fontWeight="600" color={UI.text} fontSize="sm" textAlign="center">{signal.title}</Text>
+            <Text fontSize="xs" color={UI.textSecondary} textAlign="center">{signal.desc}</Text>
+          </VStack>
+        </MotionBox>
+      ))}
+    </SimpleGrid>
+  );
+};
+
+// Testimonial with video-style card
+const TestimonialCard: React.FC<{
+  name: string;
+  role: string;
+  quote: string;
+  profit: string;
+  avatarIcon?: any;
+  delay?: number;
+}> = ({ name, role, quote, profit, avatarIcon, delay = 0 }) => (
+  <MotionBox
+    initial={{ opacity: 0, y: 30 }}
+    whileInView={{ opacity: 1, y: 0 }}
+    transition={{ duration: 0.6, delay }}
+    viewport={{ once: true }}
+    whileHover={{ y: -8, transition: { duration: 0.3 } }}
+  >
+    <Box
+      p={6}
+      borderRadius="24px"
+      bg={UI.surfaceLight}
+      border="1px solid"
+      borderColor={UI.border}
+      position="relative"
+      overflow="hidden"
+      _hover={{ borderColor: UI.borderAccent }}
+      transition="all 0.3s"
+    >
+      {/* Profit badge */}
+      <Box
+        position="absolute"
+        top={4}
+        right={4}
+        bg="rgba(34, 197, 94, 0.15)"
+        border="1px solid rgba(34, 197, 94, 0.3)"
+        borderRadius="full"
+        px={3}
+        py={1}
+      >
+        <Text fontSize="sm" fontWeight="700" color="#22c55e">+{profit}</Text>
+      </Box>
+      
+      <VStack align="start" spacing={4}>
+        <HStack spacing={3}>
+          <Box
+            w="48px"
+            h="48px"
+            borderRadius="full"
+            bg={UI.gradient}
+            display="flex"
+            alignItems="center"
+            justifyContent="center"
+          >
+            {avatarIcon && <Icon as={avatarIcon} boxSize={6} color="#0a0f1a" />}
+          </Box>
+          <VStack align="start" spacing={0}>
+            <Text fontWeight="600" color={UI.text}>{name}</Text>
+            <Text fontSize="sm" color={UI.textSecondary}>{role}</Text>
+          </VStack>
+        </HStack>
+        
+        <Text color={UI.textSecondary} fontSize="sm" lineHeight="1.7" fontStyle="italic">
+          "{quote}"
+        </Text>
+        
+        <HStack spacing={1}>
+          {[1,2,3,4,5].map(i => (
+            <Text key={i} color="#fbbf24" fontSize="sm">★</Text>
+          ))}
+        </HStack>
+      </VStack>
+    </Box>
+  </MotionBox>
+);
+
+// Success stories carousel
+const SuccessStories: React.FC<{ t: any }> = ({ t }) => {
+  const testimonials = [
+    {
+      name: "Ahmed K.",
+      role: t("home.testimonial.role1", { defaultValue: "Forex Trader" }),
+      quote: t("home.testimonial.quote1", { defaultValue: "I went from losing money to consistent profits in just 3 months. The AI coaching changed everything." }),
+      profit: "$12,400",
+      avatarIcon: TrendingUp,
+    },
+    {
+      name: "Sarah M.",
+      role: t("home.testimonial.role2", { defaultValue: "Crypto Investor" }),
+      quote: t("home.testimonial.quote2", { defaultValue: "Best investment I've ever made. The community support is incredible and the strategies actually work." }),
+      profit: "$8,750",
+      avatarIcon: BarChart3,
+    },
+    {
+      name: "James L.",
+      role: t("home.testimonial.role3", { defaultValue: "Day Trader" }),
+      quote: t("home.testimonial.quote3", { defaultValue: "Finally quit my 9-5 after completing the advanced course. Trading full-time now with consistent income." }),
+      profit: "$23,000",
+      avatarIcon: Award,
+    },
+  ];
+
+  return (
+    <Box py={{ base: 12, md: 20 }}>
+      <VStack spacing={4} textAlign="center" mb={{ base: 10, md: 14 }}>
+        <Badge 
+          bg="rgba(101, 168, 191, 0.1)" 
+          color={UI.accent} 
+          px={4} 
+          py={1} 
+          borderRadius="full"
+          fontSize="xs"
+          fontWeight="600"
+          textTransform="uppercase"
+          letterSpacing="1px"
+        >
+          {t("home.stories.badge", { defaultValue: "Real Results" })}
+        </Badge>
+        <Heading 
+          fontSize={{ base: "2.5rem", md: "3.5rem" }} 
+          letterSpacing="-0.03em" 
+          fontWeight="700"
+          bgGradient="linear(to-r, #65a8bf, #b7a27d)" 
+          bgClip="text"
+        >
+          {t("home.stories.title", { defaultValue: "Success Stories" })}
+        </Heading>
+        <Text color={UI.textSecondary} maxW="xl" fontSize={{ base: "md", md: "lg" }}>
+          {t("home.stories.subtitle", { defaultValue: "Join thousands of traders who transformed their financial future" })}
+        </Text>
+      </VStack>
+      
+      <SimpleGrid columns={{ base: 1, md: 3 }} gap={6}>
+        {testimonials.map((t, i) => (
+          <TestimonialCard key={i} {...t} delay={i * 0.15} />
+        ))}
+      </SimpleGrid>
+    </Box>
+  );
+};
+
+// Sticky CTA that appears on scroll
+const StickyCTA: React.FC<{ t: any; onNavigate: () => void }> = ({ t, onNavigate }) => {
+  const [visible, setVisible] = React.useState(false);
+  
+  React.useEffect(() => {
+    const handleScroll = () => {
+      setVisible(window.scrollY > 800);
+    };
+    window.addEventListener('scroll', handleScroll, { passive: true });
+    return () => window.removeEventListener('scroll', handleScroll);
+  }, []);
+
+  return (
+    <MotionBox
+      position="fixed"
+      bottom={6}
+      left="50%"
+      transform="translateX(-50%)"
+      zIndex={100}
+      initial={{ opacity: 0, y: 100 }}
+      animate={{ opacity: visible ? 1 : 0, y: visible ? 0 : 100 }}
+      transition={{ duration: 0.3 }}
+      pointerEvents={visible ? "auto" : "none"}
+    >
+      <HStack
+        bg="rgba(10, 15, 26, 0.95)"
+        backdropFilter="blur(20px)"
+        border="1px solid"
+        borderColor={UI.borderAccent}
+        borderRadius="full"
+        p={2}
+        pl={6}
+        spacing={4}
+        boxShadow="0 20px 60px rgba(0,0,0,0.5)"
+      >
+        <VStack align="start" spacing={0}>
+          <Text fontSize="sm" fontWeight="600" color={UI.text}>
+            {t("home.sticky.title", { defaultValue: "Ready to start?" })}
+          </Text>
+          <Text fontSize="xs" color={UI.textSecondary}>
+            {t("home.sticky.subtitle", { defaultValue: "Join 12,000+ traders" })}
+          </Text>
+        </VStack>
+        <Button
+          bg={UI.gradient}
+          color="#0a0f1a"
+          fontWeight="700"
+          borderRadius="full"
+          px={6}
+          _hover={{ transform: "scale(1.05)" }}
+          transition="all 0.2s"
+          onClick={onNavigate}
+        >
+          {t("home.sticky.cta", { defaultValue: "Get Started" })}
+        </Button>
+      </HStack>
+    </MotionBox>
+  );
+};
+
+// Value proposition section with benefits
+const ValueProposition: React.FC<{ t: any }> = ({ t }) => {
+  const benefits = [
+    {
+      icon: Target,
+      title: t("home.value.benefit1_title", { defaultValue: "Proven Strategies" }),
+      desc: t("home.value.benefit1_desc", { defaultValue: "Battle-tested methods used by professional traders worldwide" }),
+    },
+    {
+      icon: Bot,
+      title: t("home.value.benefit2_title", { defaultValue: "AI-Powered Learning" }),
+      desc: t("home.value.benefit2_desc", { defaultValue: "Personalized curriculum that adapts to your skill level" }),
+    },
+    {
+      icon: MessageCircle,
+      title: t("home.value.benefit3_title", { defaultValue: "24/7 Community" }),
+      desc: t("home.value.benefit3_desc", { defaultValue: "Never trade alone - get support from mentors and peers" }),
+    },
+    {
+      icon: BarChart3,
+      title: t("home.value.benefit4_title", { defaultValue: "Live Trading Rooms" }),
+      desc: t("home.value.benefit4_desc", { defaultValue: "Watch experts trade in real-time and learn by doing" }),
+    },
+    {
+      icon: Trophy,
+      title: t("home.value.benefit5_title", { defaultValue: "Prop Firm Ready" }),
+      desc: t("home.value.benefit5_desc", { defaultValue: "Get funded and trade with capital up to $200,000" }),
+    },
+    {
+      icon: Smartphone,
+      title: t("home.value.benefit6_title", { defaultValue: "Mobile Access" }),
+      desc: t("home.value.benefit6_desc", { defaultValue: "Learn and trade anywhere with our mobile-first platform" }),
+    },
+  ];
+
+  return (
+    <Box py={{ base: 12, md: 20 }}>
+      <VStack spacing={4} textAlign="center" mb={{ base: 10, md: 14 }}>
+        <Heading 
+          fontSize={{ base: "2.5rem", md: "3.5rem" }} 
+          letterSpacing="-0.03em" 
+          fontWeight="700"
+          color={UI.text}
+        >
+          {t("home.value.title", { defaultValue: "Why Traders Choose Us" })}
+        </Heading>
+        <Text color={UI.textSecondary} maxW="xl" fontSize={{ base: "md", md: "lg" }}>
+          {t("home.value.subtitle", { defaultValue: "Everything you need to become a consistently profitable trader" })}
+        </Text>
+      </VStack>
+      
+      <SimpleGrid columns={{ base: 1, md: 2, lg: 3 }} gap={6}>
+        {benefits.map((benefit, i) => (
+          <MotionBox
+            key={i}
+            initial={{ opacity: 0, y: 30 }}
+            whileInView={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.5, delay: i * 0.1 }}
+            viewport={{ once: true }}
+            whileHover={{ scale: 1.02 }}
+          >
+            <HStack
+              p={6}
+              borderRadius="20px"
+              bg={UI.surfaceLight}
+              border="1px solid"
+              borderColor={UI.border}
+              spacing={4}
+              align="start"
+              h="100%"
+              _hover={{ borderColor: UI.borderAccent }}
+              transition="all 0.3s"
+            >
+              <Box
+                w="48px"
+                h="48px"
+                borderRadius="14px"
+                bg={UI.gradient}
+                display="flex"
+                alignItems="center"
+                justifyContent="center"
+                flexShrink={0}
+              >
+                <Icon as={benefit.icon} boxSize={6} color="#0a0f1a" />
+              </Box>
+              <VStack align="start" spacing={1}>
+                <Text fontWeight="600" color={UI.text}>{benefit.title}</Text>
+                <Text fontSize="sm" color={UI.textSecondary} lineHeight="1.6">{benefit.desc}</Text>
+              </VStack>
+            </HStack>
+          </MotionBox>
+        ))}
+      </SimpleGrid>
+    </Box>
+  );
+};
+
+// ===== How It Works (Premium / Nfinite-inspired) =====
 const HowItWorks: React.FC<{ t: any }> = ({ t }) => (
-  <Box py={{ base: 10, md: 14 }}>
-    <Heading textAlign="center" mb={8} fontSize={{ base: "2xl", md: "3xl" }} bgGradient="linear(to-r, #65a8bf, #b7a27d)" bgClip="text">
-      {t("ai.how.title") || "How It Works"}
-    </Heading>
-    <SimpleGrid columns={{ base: 1, md: 4 }} gap={6} color="#65a8bf">
+  <Box py={{ base: 16, md: 24 }}>
+    <VStack spacing={4} textAlign="center" mb={{ base: 12, md: 16 }}>
+      <Heading 
+        fontSize={{ base: "2.5rem", md: "3.5rem" }} 
+        letterSpacing="-0.03em" 
+        fontWeight="700"
+        bgGradient="linear(to-r, #65a8bf, #b7a27d)" 
+        bgClip="text"
+      >
+        {t("ai.how.title") || "How It Works"}
+      </Heading>
+    </VStack>
+    <SimpleGrid columns={{ base: 1, md: 2, lg: 4 }} gap={{ base: 6, md: 8 }}>
       {[
         {
           step: "01",
           title: t("ai.how.step1") || "Profile & Goals",
           desc: t("ai.how.step1_desc") || "Tell us your time, risk comfort, and objectives.",
+          icon: Target,
         },
         {
           step: "02",
           title: t("ai.how.step2") || "Adaptive Lessons",
           desc: t("ai.how.step2_desc") || "Bite-size modules tuned to your pace in AR/FR/EN.",
+          icon: BookOpen,
         },
         {
           step: "03",
           title: t("ai.how.step3") || "Simulate & Practice",
           desc: t("ai.how.step3_desc") || "Run strategy sims with guided debriefs.",
+          icon: BarChart3,
         },
         {
           step: "04",
-          title: t("ai.how.step4") || "Go Live (Optional)",
+          title: t("ai.how.step4") || "Go Live",
           desc: t("ai.how.step4_desc") || "Bridge to compliant brokers. Keep journaling with AI.",
+          icon: Rocket,
         },
-      ].map((s, i) =>
-        i % 2 === 0 ? (
-          <SpotlightCard key={i} spotlightColor={i === 0 ? "rgba(101, 168, 191, 0.22)" : "rgba(101, 168, 191, 0.14)"}>
-            <Box p={6}>
-              <VStack align="start" gap={2}>
-                <Badge variant="outline" borderWidth="1px" borderColor="#65a8bf" color="#65a8bf">
+      ].map((s, i) => (
+        <MotionBox
+          key={i}
+          initial={{ opacity: 0, y: 30 }}
+          whileInView={{ opacity: 1, y: 0 }}
+          transition={{ duration: 0.5, delay: i * 0.1 }}
+          viewport={{ once: true, amount: 0.3 }}
+        >
+          <Box 
+            p={{ base: 6, md: 8 }} 
+            borderRadius="24px" 
+            bg={UI.surfaceLight}
+            border="1px solid" 
+            borderColor={UI.border}
+            h="100%"
+            position="relative"
+            _hover={{ borderColor: UI.borderAccent, transform: "translateY(-4px)" }}
+            transition="all 0.3s ease"
+          >
+            <VStack align="start" gap={4}>
+              <HStack justify="space-between" w="100%">
+                <Box
+                  w="48px"
+                  h="48px"
+                  borderRadius="14px"
+                  bg={UI.gradient}
+                  display="flex"
+                  alignItems="center"
+                  justifyContent="center"
+                >
+                  <Icon as={s.icon} boxSize={6} color="#0a0f1a" />
+                </Box>
+                <Text 
+                  fontSize="sm" 
+                  fontWeight="700" 
+                  color={UI.accent}
+                  opacity={0.6}
+                >
                   {s.step}
-                </Badge>
-                <Heading size="md" color="#65a8bf">
-                  {s.title}
-                </Heading>
-                <Text opacity={0.9}>{s.desc}</Text>
-              </VStack>
-            </Box>
-          </SpotlightCard>
-        ) : (
-          <Box key={i} p={6} borderRadius="2xl" bg={UI.surface} border="1px solid" borderColor={UI.border}>
-            <VStack align="start" gap={2}>
-              <Badge variant="outline" borderWidth="1px" borderColor="#65a8bf" color="#65a8bf">
-                {s.step}
-              </Badge>
-              <Heading size="md" color="#65a8bf">
+                </Text>
+              </HStack>
+              <Heading size="md" color={UI.text} fontWeight="600">
                 {s.title}
               </Heading>
-              <Text opacity={0.9}>{s.desc}</Text>
+              <Text color={UI.textSecondary} fontSize="sm" lineHeight="1.7">
+                {s.desc}
+              </Text>
             </VStack>
           </Box>
-        )
-      )}
+        </MotionBox>
+      ))}
     </SimpleGrid>
   </Box>
 );
@@ -1404,48 +1874,50 @@ const ReviewCard: React.FC<{ review: Review }> = ({ review }) => {
   );
 };
 
-// ===== FAQ Row (Modern Accordion) =====
+// ===== FAQ Row (Premium / Nfinite-inspired) =====
 const FaqRow: React.FC<{ q: string; a: string; index: number }> = ({ q, a, index }) => {
   const [open, setOpen] = React.useState(false);
   return (
     <Box
-      bg="rgba(255,255,255,0.02)"
-      backdropFilter="blur(10px)"
+      bg={open ? "rgba(101, 168, 191, 0.03)" : "transparent"}
       border="1px solid"
-      borderColor={open ? "rgba(101, 168, 191, 0.4)" : "rgba(101, 168, 191, 0.15)"}
-      borderRadius="xl"
+      borderColor={open ? UI.borderAccent : UI.border}
+      borderRadius="20px"
       overflow="hidden"
       transition="all 0.3s ease"
-      _hover={{ borderColor: "rgba(101, 168, 191, 0.3)", bg: "rgba(255,255,255,0.03)" }}
+      _hover={{ borderColor: UI.borderAccent }}
     >
       <Button
         onClick={() => setOpen((v) => !v)}
         w="full"
         justifyContent="space-between"
-        px={{ base: 4, md: 6 }}
-        py={{ base: 4, md: 5 }}
+        px={{ base: 5, md: 8 }}
+        py={{ base: 5, md: 6 }}
         bg="transparent"
         _hover={{ bg: "transparent" }}
         _active={{ bg: "transparent" }}
-        borderRadius="xl"
+        borderRadius="20px"
+        h="auto"
+        minH="auto"
       >
-        <HStack gap={3} flex="1">
+        <HStack gap={4} flex="1">
           <Box
-            w="28px"
-            h="28px"
-            borderRadius="lg"
-            bg={open ? "rgba(101, 168, 191, 0.2)" : "rgba(101, 168, 191, 0.1)"}
+            w="32px"
+            h="32px"
+            borderRadius="10px"
+            bg={open ? UI.gradient : "rgba(101, 168, 191, 0.1)"}
             display="flex"
             alignItems="center"
             justifyContent="center"
             fontSize="sm"
-            fontWeight="bold"
-            color="#65a8bf"
+            fontWeight="700"
+            color={open ? "#0a0f1a" : UI.accent}
             transition="all 0.3s ease"
+            flexShrink={0}
           >
             {index + 1}
           </Box>
-          <Text textAlign="start" fontWeight="600" flex="1" fontSize={{ base: "sm", md: "md" }} color="white">
+          <Text textAlign="start" fontWeight="600" flex="1" fontSize={{ base: "sm", md: "md" }} color={UI.text} lineHeight="1.5">
             {q}
           </Text>
         </HStack>
@@ -1471,16 +1943,16 @@ const FaqRow: React.FC<{ q: string; a: string; index: number }> = ({ q, a, index
           initial={{ height: 0, opacity: 0 }}
           animate={{ height: "auto", opacity: 1 }}
           exit={{ height: 0, opacity: 0 }}
-          transition={{ duration: 0.25 }}
+          transition={{ duration: 0.3 }}
           overflow="hidden"
         >
           <Box
-            px={{ base: 4, md: 6 }}
-            pb={{ base: 4, md: 5 }}
+            px={{ base: 5, md: 8 }}
+            pb={{ base: 5, md: 6 }}
             pt={0}
-            ml={{ base: 0, md: "44px" }}
+            ml={{ base: 0, md: "48px" }}
           >
-            <Text fontSize={{ base: "sm", md: "md" }} lineHeight="1.7">
+            <Text fontSize={{ base: "sm", md: "md" }} lineHeight="1.8" color={UI.textSecondary}>
               {a}
             </Text>
           </Box>
@@ -2216,22 +2688,22 @@ const Home: React.FC = () => {
     href: string;
   }> = ({ title, desc, tag, cta, href }) => (
     <Box
-      p={6}
-      borderRadius="2xl"
-      bg={UI.surface}
+      p={{ base: 6, md: 8 }}
+      borderRadius="24px"
+      bg={UI.surfaceLight}
       border="1px solid"
       borderColor={UI.border}
-      boxShadow="0 18px 40px rgba(0,0,0,0.35)"
-      _hover={{ transform: "translateY(-2px)", borderColor: "rgba(0,191,99,0.35)" }}
-      transition="all .18s ease"
+      boxShadow={UI.cardShadow}
+      _hover={{ transform: "translateY(-4px)", borderColor: UI.borderAccent }}
+      transition="all 0.3s ease"
     >
-      <VStack align="start" spacing={3}>
+      <VStack align="start" spacing={4}>
         <HStack justify="space-between" w="full">
-          <Heading size="md" color={UI.text}>
+          <Heading size="md" color={UI.text} fontWeight="600">
             {title}
           </Heading>
           {tag ? (
-            <Badge borderRadius="full" px={3} bg="rgba(0,191,99,0.12)" color={UI.accent}>
+            <Badge borderRadius="full" px={3} py={1} bg="rgba(101, 168, 191, 0.12)" color={UI.accent} fontSize="xs" fontWeight="600">
               {tag}
             </Badge>
           ) : null}
@@ -2315,40 +2787,12 @@ const Home: React.FC = () => {
               onOpenContact={() => navigate("/contact")}
             />
           ) : (
-            <>
-              <Box as="section" id="hero-section" position="relative" minH="100vh" bg="transparent">
-                {/* Floating Trading Emojis for Guest */}
-                <FloatingEmojiLayer count={20} mode={mode} />
-                {/* Raindrop Ripples in Corners */}
-                <RaindropRipples mode={mode} />
-                <Container
-                  maxW="100vw"
-                  w="100%"
-                  px={{ base: 2, md: 4 }}
-                  py={{ base: 6, md: 8 }}
-                  position="relative"
-                  zIndex={1}
-                  display="flex"
-                  alignItems="flex-start"
-                  justifyContent="center"
-                  minH={{ base: "80vh", md: "85vh" }}
-                >
-                  <MotionBox
-                    initial={{ opacity: 0, scale: 0.95 }}
-                    animate={{ opacity: 1, scale: 1 }}
-                    transition={{ duration: 1.2, ease: "easeOut" }}
-                    w="full"
-                  >
-                    <GuestLanding
-                      expired={false}
-                      onOpenSpin={() => setSpinOpen(true)}
-                      showSpinButton={showSpinButton}
-                      setShowSpinButton={setShowSpinButton}
-                    />
-                  </MotionBox>
-                </Container>
-              </Box>
-            </>
+            <GuestLanding
+              expired={false}
+              onOpenSpin={() => setSpinOpen(true)}
+              showSpinButton={showSpinButton}
+              setShowSpinButton={setShowSpinButton}
+            />
           )}
 
           <Container maxW="container.xl">
@@ -3230,10 +3674,10 @@ const Home: React.FC = () => {
 
                   <Container maxW="1000px" px={{ base: 4, md: 8 }}>
                     {[
-                      { key: "education", icon: "📚" },
-                      { key: "strategies", icon: "📊" },
-                      { key: "community", icon: "👥" },
-                      { key: "support", icon: "🎯" },
+                      { key: "education", icon: BookOpen },
+                      { key: "strategies", icon: BarChart3 },
+                      { key: "community", icon: Users },
+                      { key: "support", icon: Target },
                     ].map((card, idx) => (
                       <Box
                         key={card.key}
@@ -3265,7 +3709,6 @@ const Home: React.FC = () => {
                             >
                               <VStack align="start" gap={{ base: 4, md: 5 }} w="100%">
                                 <Box
-                                  fontSize={{ base: "3xl", md: "5xl" }}
                                   w={{ base: "60px", md: "80px" }}
                                   h={{ base: "60px", md: "80px" }}
                                   borderRadius="20px"
@@ -3278,7 +3721,7 @@ const Home: React.FC = () => {
                                   flexShrink={0}
                                   boxShadow="0 0 30px rgba(101, 168, 191, 0.2)"
                                 >
-                                  {card.icon}
+                                  <Icon as={card.icon} boxSize={{ base: 8, md: 10 }} color={UI.accent} />
                                 </Box>
                                 <VStack align="start" gap={{ base: 3, md: 4 }} w="100%">
                                   <Heading
@@ -3332,8 +3775,6 @@ const Home: React.FC = () => {
                       top="50%"
                       left="50%"
                       transform="translate(-50%, -50%)"
-                      w="800px"
-                      h="800px"
                       borderRadius="full"
                       bgGradient="radial(circle, rgba(101, 168, 191, 0.1) 0%, transparent 70%)"
                       pointerEvents="none"
@@ -3377,10 +3818,10 @@ const Home: React.FC = () => {
                           
                           <VStack align="start" gap={4} mb={10}>
                             {[
-                              { icon: "📊", key: "fearGreed", fallback: "Proprietary Fear & Greed Index — real-time market sentiment at your fingertips" },
-                              { icon: "💬", key: "chatRooms", fallback: "Private chat rooms & groups to discuss pairs and strategies" },
-                              { icon: "🤝", key: "connect", fallback: "Revolutionary approach to connecting traders worldwide" },
-                              { icon: "📱", key: "companion", fallback: "Your trading companion — alerts, journals, and insights on the go" },
+                              { icon: BarChart3, key: "fearGreed", fallback: "Proprietary Fear & Greed Index — real-time market sentiment at your fingertips" },
+                              { icon: MessageCircle, key: "chatRooms", fallback: "Private chat rooms & groups to discuss pairs and strategies" },
+                              { icon: Handshake, key: "connect", fallback: "Revolutionary approach to connecting traders worldwide" },
+                              { icon: Smartphone, key: "companion", fallback: "Your trading companion — alerts, journals, and insights on the go" },
                             ].map((feature, i) => (
                               <MotionBox
                                 key={feature.key}
@@ -3391,7 +3832,6 @@ const Home: React.FC = () => {
                               >
                                 <HStack gap={4} align="flex-start">
                                   <Box
-                                    fontSize="2xl"
                                     w="50px"
                                     h="50px"
                                     borderRadius="xl"
@@ -3401,7 +3841,7 @@ const Home: React.FC = () => {
                                     justifyContent="center"
                                     flexShrink={0}
                                   >
-                                    {feature.icon}
+                                    <Icon as={feature.icon} boxSize={6} color={UI.accent} />
                                   </Box>
                                   <Text fontSize={{ base: "sm", md: "md" }} pt={2}>
                                     {t(`home.app.features.${feature.key}`) || feature.fallback}
@@ -3642,24 +4082,67 @@ const Home: React.FC = () => {
                 {/* How It Works */}
                 <HowItWorks t={t} />
 
+                {/* Social Proof Stats */}
+                <ParallaxSection speed={0.2}>
+                  <Container maxW="container.xl">
+                    <SocialProofBar t={t} />
+                  </Container>
+                </ParallaxSection>
+
+                {/* Value Proposition - Why Choose Us */}
+                <ParallaxSection speed={0.3}>
+                  <Container maxW="container.xl">
+                    <ValueProposition t={t} />
+                  </Container>
+                </ParallaxSection>
+
+                {/* Success Stories / Testimonials */}
+                <ParallaxSection speed={0.3}>
+                  <Container maxW="container.xl">
+                    <SuccessStories t={t} />
+                  </Container>
+                </ParallaxSection>
+
+                {/* Urgency Banner */}
+                <ParallaxSection speed={0.2}>
+                  <Container maxW="container.lg">
+                    <UrgencyBanner t={t} />
+                  </Container>
+                </ParallaxSection>
+
+                {/* Trust Signals */}
+                <ParallaxSection speed={0.2}>
+                  <Container maxW="container.xl">
+                    <TrustSignals t={t} />
+                  </Container>
+                </ParallaxSection>
+
                 {/* FAQ */}
                 <ParallaxSection speed={0.3}>
-                  <Box py={{ base: 10, md: 16 }}>
+                  <Box py={{ base: 16, md: 24 }}>
                     <MotionBox
                       initial={{ opacity: 0, y: 30 }}
                       whileInView={{ opacity: 1, y: 0 }}
                       transition={{ duration: 0.8 }}
                       viewport={{ once: true, amount: 0.3 }}
                     >
-                      <Heading textAlign="center" mb={6} fontSize={{ base: "3xl", md: "4xl" }} bgGradient="linear(to-r, #65a8bf, #b7a27d)" bgClip="text">
-                        {t("home.faq.title") || "Frequently Asked Questions"}
-                      </Heading>
-                      <Text textAlign="center" mb={8} opacity={0.9}>
-                        {t("home.faq.subtitle") ||
-                          "Find quick answers below. Still stuck? Reach out — we're happy to help."}
-                      </Text>
+                      <VStack spacing={4} textAlign="center" mb={{ base: 12, md: 16 }}>
+                        <Heading 
+                          fontSize={{ base: "2.5rem", md: "3.5rem" }} 
+                          letterSpacing="-0.03em" 
+                          fontWeight="700"
+                          bgGradient="linear(to-r, #65a8bf, #b7a27d)" 
+                          bgClip="text"
+                        >
+                          {t("home.faq.title") || "Frequently Asked Questions"}
+                        </Heading>
+                        <Text color={UI.textSecondary} maxW="xl" fontSize={{ base: "md", md: "lg" }}>
+                          {t("home.faq.subtitle") ||
+                            "Find quick answers below. Still stuck? Reach out — we're happy to help."}
+                        </Text>
+                      </VStack>
                     </MotionBox>
-                    <VStack gap={3} align="stretch" maxW="800px" mx="auto">
+                    <VStack gap={4} align="stretch" maxW="800px" mx="auto">
                       {faqItems.map((item, idx) => (
                         <MotionBox
                           key={idx}
@@ -3675,16 +4158,32 @@ const Home: React.FC = () => {
                   </Box>
                 </ParallaxSection>
 
-                {/* Closing CTA */}
+                {/* Closing CTA - Premium */}
                 <ParallaxSection speed={0.5}>
-                  <Box>
+                  <Box py={{ base: 16, md: 24 }}>
                     <MotionBox
-                      initial={{ opacity: 0, scale: 0.9 }}
+                      initial={{ opacity: 0, scale: 0.95 }}
                       whileInView={{ opacity: 1, scale: 1 }}
-                      transition={{ duration: 1, ease: "easeOut" }}
+                      transition={{ duration: 0.8, ease: "easeOut" }}
                       viewport={{ once: true, amount: 0.3 }}
                     >
-                      <Box mb={{ base: 8, md: 12 }} px={{ base: 4, md: 0 }}>
+                      <Box 
+                        mb={{ base: 10, md: 14 }} 
+                        px={{ base: 4, md: 0 }}
+                        position="relative"
+                      >
+                        {/* Gradient glow behind image */}
+                        <Box
+                          position="absolute"
+                          top="50%"
+                          left="50%"
+                          transform="translate(-50%, -50%)"
+                          w="80%"
+                          h="80%"
+                          bgGradient="radial(ellipse at center, rgba(101, 168, 191, 0.15), transparent 70%)"
+                          filter="blur(60px)"
+                          pointerEvents="none"
+                        />
                         <Image
                           src={
                             isAR
@@ -3699,11 +4198,12 @@ const Home: React.FC = () => {
                               : t("home.cta.image_alt") ||
                                 "Start trading — premium education for every level"
                           }
-                          w="70%"
-                          maxW="container.lg"
+                          w="60%"
+                          maxW="container.md"
                           mx="auto"
                           objectFit="cover"
                           loading="lazy"
+                          position="relative"
                         />
                       </Box>
                     </MotionBox>
@@ -3713,37 +4213,55 @@ const Home: React.FC = () => {
                       viewport={{ once: true }}
                       variants={fadeIn}
                     >
-                      <VStack gap={6} align="center" textAlign="center">
+                      <VStack gap={8} align="center" textAlign="center" maxW="2xl" mx="auto">
                         <Text
-                          bgGradient="linear(to-r, #65a8bf, #b7a27d)"
-                          bgClip="text"
-                          fontWeight="bold"
-                          fontSize={{ base: "3xl", md: "4xl" }}
+                          color={UI.accent}
+                          fontWeight="600"
+                          fontSize={{ base: "sm", md: "md" }}
+                          textTransform="uppercase"
+                          letterSpacing="2px"
                         >
                           {t("home.cta.kicker") || "Ready to Learn?"}
                         </Text>
-                        <Heading fontSize={{ base: "3xl", md: "4xl" }} bgGradient="linear(to-r, #b7a27d, #65a8bf)" bgClip="text">
+                        <Heading 
+                          fontSize={{ base: "2.5rem", md: "3.5rem", lg: "4rem" }} 
+                          letterSpacing="-0.03em"
+                          fontWeight="700"
+                          lineHeight="1.1"
+                          bgGradient="linear(to-r, #65a8bf, #b7a27d)" 
+                          bgClip="text"
+                        >
                           {t("home.cta.title") || "Start Your Learning Journey Today"}
                         </Heading>
-                        <Text fontSize="lg">
+                        <Text fontSize={{ base: "md", md: "lg" }} color={UI.textSecondary} maxW="xl" lineHeight="1.8">
                           {t("home.cta.subtitle") ||
                             "Join learners globally and access our premium course library."}
                         </Text>
-                        <HStack gap={6} wrap="wrap" justify="center">
+                        <HStack gap={4} wrap="wrap" justify="center" pt={4}>
                           <Button
-                            bg={accentColor}
-                            boxShadow={UI.glow}
-                            _hover={{ transform: "scale(1.05)" }}
+                            size="lg"
+                            bg={UI.gradient}
+                            color="#0a0f1a"
+                            fontWeight="700"
+                            px={8}
+                            borderRadius="14px"
+                            boxShadow={UI.glowStrong}
+                            _hover={{ transform: "translateY(-2px)", boxShadow: "0 0 100px rgba(101, 168, 191, 0.35)" }}
                             transition="all 0.3s"
                             onClick={() => navigate("/products")}
                           >
                             {t("home.cta.primary") || "Browse Courses"}
                           </Button>
                           <Button
+                            size="lg"
                             variant="outline"
-                            borderColor={accentColor}
-                            color={accentColor}
-                            _hover={{ transform: "scale(1.05)", bg: "rgba(0,191,99,0.1)" }}
+                            borderColor={UI.borderAccent}
+                            borderWidth="2px"
+                            color={UI.accent}
+                            fontWeight="600"
+                            px={8}
+                            borderRadius="14px"
+                            _hover={{ transform: "translateY(-2px)", bg: "rgba(101, 168, 191, 0.08)" }}
                             transition="all 0.3s"
                             onClick={() => navigate("/contact")}
                           >
@@ -3755,32 +4273,64 @@ const Home: React.FC = () => {
                   </Box>
                 </ParallaxSection>
 
-                {/* Lead Magnet */}
+                {/* Lead Magnet - Premium */}
                 <GradualFooter>
-                  <Box my={{ base: 10, md: 16 }} px={{ base: 4, md: 0 }}>
-
+                  <Box my={{ base: 12, md: 20 }} px={{ base: 4, md: 0 }}>
                     {/* Broker CTA */}
-                    <Box textAlign="center" p={{ base: 5, md: 6 }}>
-                      <Heading size="md" mb={2} color={accentColor}>
-                        {t("home.enrolled.broker_title", {
-                          defaultValue: "Trade With Our Preferred Broker",
-                        })}
-                      </Heading>
-                      <Text opacity={0.9} mb={4} color="#65a8bf">
-                        {t("home.enrolled.broker_sub", {
-                          defaultValue: "Tight spreads, ECN execution, and fast withdrawals.",
-                        })}
-                      </Text>
-                      <Button
-                        size="lg"
-                        bg={accentColor}
-                        boxShadow={UI.glow}
-                        onClick={() => window.open("/broker", "_self")}
-                      >
-                        {t("home.enrolled.broker_cta", {
-                          defaultValue: "Join Our Broker",
-                        })}
-                      </Button>
+                    <Box 
+                      textAlign="center" 
+                      p={{ base: 8, md: 12 }}
+                      borderRadius="28px"
+                      bg={UI.surfaceLight}
+                      border="1px solid"
+                      borderColor={UI.border}
+                      position="relative"
+                      overflow="hidden"
+                    >
+                      {/* Background gradient accent */}
+                      <Box
+                        position="absolute"
+                        top="-50%"
+                        left="50%"
+                        transform="translateX(-50%)"
+                        w="120%"
+                        h="100%"
+                        bgGradient="radial(ellipse at center, rgba(101, 168, 191, 0.08), transparent 60%)"
+                        pointerEvents="none"
+                      />
+                      <VStack spacing={4} position="relative">
+                        <Heading 
+                          size="lg" 
+                          bgGradient="linear(to-r, #65a8bf, #b7a27d)" 
+                          bgClip="text"
+                          fontWeight="700"
+                        >
+                          {t("home.enrolled.broker_title", {
+                            defaultValue: "Trade With Our Preferred Broker",
+                          })}
+                        </Heading>
+                        <Text color={UI.textSecondary} maxW="md" fontSize={{ base: "sm", md: "md" }}>
+                          {t("home.enrolled.broker_sub", {
+                            defaultValue: "Tight spreads, ECN execution, and fast withdrawals.",
+                          })}
+                        </Text>
+                        <Button
+                          size="lg"
+                          bg={UI.gradient}
+                          color="#0a0f1a"
+                          fontWeight="700"
+                          px={10}
+                          borderRadius="14px"
+                          boxShadow={UI.glow}
+                          _hover={{ transform: "translateY(-2px)", boxShadow: UI.glowStrong }}
+                          transition="all 0.3s"
+                          onClick={() => window.open("/broker", "_self")}
+                        >
+                          {t("home.enrolled.broker_cta", {
+                            defaultValue: "Join Our Broker",
+                          })}
+                        </Button>
+                      </VStack>
                     </Box>
                   </Box>
                 </GradualFooter>
@@ -3788,6 +4338,9 @@ const Home: React.FC = () => {
             )}
           </Container>
           <SpinningWheel isOpen={spinOpen} onClose={() => setSpinOpen(false)} />
+          
+          {/* Sticky CTA - appears on scroll for non-enrolled users */}
+          {!isEnrolled && <StickyCTA t={t} onNavigate={() => navigate("/products")} />}
         </Box>
       </Box>
     </MotionBox>

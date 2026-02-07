@@ -72,53 +72,32 @@ const styles = {
     },
 
     /* ------------------------------------------------------
-       Dot pattern layer (now above section BGs, below content)
+       Pixel Snow background animation (replaces dots)
        ------------------------------------------------------ */
-    "body::before": {
-      content: "''",
-      position: "fixed",
-      inset: 0,
-      zIndex: 2,              // ↑ above hero BG (z=0/1), below content (z=3+)
-      pointerEvents: "none",
-
-      /* mode-aware dot color via CSS var */
-      backgroundImage: "radial-gradient(var(--dot-color, rgba(101, 168, 191, 1)) 1.2px, transparent 2px)",
-      backgroundSize: "22px 22px", // less condensed dots
-      backgroundPosition: "0 0",
-      opacity: "var(--dots-opacity, 0)",
-
-      /* Hide dots over hero; reveal after hero-bottom with a soft fade */
-      WebkitMaskImage:
-        "linear-gradient(to bottom, transparent 0, transparent calc(var(--hero-bottom, 60vh) - var(--dots-fade, 12vh)), rgba(101, 168, 191, 1) calc(var(--hero-bottom, 60vh) + var(--dots-fade, 12vh)), #222222 calc(100% - 3vh), transparent 100%)",
-      maskImage:
-        "linear-gradient(to bottom, transparent 0, transparent calc(var(--hero-bottom, 60vh) - var(--dots-fade, 12vh)), rgba(101, 168, 191, 1) calc(var(--hero-bottom, 60vh) + var(--dots-fade, 12vh)), #222222 calc(100% - 3vh), transparent 100%)",
+    "@keyframes pixelSnowFall": {
+      "0%": {
+        transform: "translateY(-100vh)",
+        opacity: 0,
+      },
+      "10%": {
+        opacity: 1,
+      },
+      "90%": {
+        opacity: 1,
+      },
+      "100%": {
+        transform: "translateY(100vh)",
+        opacity: 0,
+      },
     },
-
-    /* ------------------------------------------------------
-       Subtle rgb(104, 165, 191)7.80%) shimmer at top & bottom (also above hero BGs)
-       ------------------------------------------------------ */
-    "body::after": {
-      content: "''",
-      position: "fixed",
-      inset: 0,
-      zIndex: 2,              // sits with dots layer; ::after paints above ::before
-      pointerEvents: "none",
-      backgroundImage:
-        "linear-gradient(to bottom, rgba(101, 168, 191, 0.1), rgba(101, 168, 191, 1)" +
-        "linear-gradient(to top, rgba(101, 168, 191, 0.1)), rgba(101, 168, 191, 1))",
-      backgroundRepeat: "no-repeat, no-repeat",
-      backgroundPosition: "top, bottom",
-      backgroundSize: "100% 18vh, 100% 8vh", // slightly slimmer for elegance
-      filter: "blur(0.2px)",
+    "@keyframes pixelSnowShimmer": {
+      "0%, 100%": {
+        opacity: 0.3,
+      },
+      "50%": {
+        opacity: 0.8,
+      },
     },
-
-    /* ---- Light mode dot color ---- */
-    "html:not([data-theme='dark']).chakra-ui-light body, html:not([data-theme='dark']) body:not(.chakra-ui-dark)":
-      { "--dot-color": "rgba(101, 168, 191, 0.25)" },
-
-    /* ---- Dark mode dot color (brand gold) ---- */
-    "html.chakra-ui-dark body, body.chakra-ui-dark, html[data-theme='dark'] body, [data-theme='dark'] body":
-      { "--dot-color": "rgba(101, 168, 191, 0.25)" },
 
     /* === Dir-aware base font === */
     "html[dir='ltr'] body": {

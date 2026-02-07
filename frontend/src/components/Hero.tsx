@@ -41,6 +41,7 @@ import { Responsive, WidthProvider } from "react-grid-layout";
 
 import "react-grid-layout/css/styles.css";
 import "react-resizable/css/styles.css";
+import GuestLanding from "./GuestLanding";
 
 const ResponsiveGridLayout = WidthProvider(Responsive);
 
@@ -99,24 +100,6 @@ const getWidgetTheme = (mode: "dark" | "light") => {
   };
 };
 
-const glowPulse = keyframes`
-  0% {
-    box-shadow:
-      0 0 0.4rem rgba(183, 162, 125, 0.6),
-      0 0 0.9rem rgba(183, 162, 125, 0.3);
-  }
-  50% {
-    box-shadow:
-      0 0 0.9rem rgba(183, 162, 125, 0.9),
-      0 0 1.8rem rgba(183, 162, 125, 0.5);
-  }
-  100% {
-    box-shadow:
-      0 0 0.4rem rgba(183, 162, 125, 0.6),
-      0 0 0.9rem rgba(183, 162, 125, 0.3);
-  }
-`;
-
 const flowingTextGradient = keyframes`
   0% {
     background-position: 0% 50%;
@@ -128,143 +111,6 @@ const flowingTextGradient = keyframes`
     background-position: 0% 50%;
   }
 `;
-
-const scrollBounce = keyframes`
-  0% {
-    transform: translateY(0);
-    opacity: 0.7;
-  }
-  50% {
-    transform: translateY(6px);
-    opacity: 1;
-  }
-  100% {
-    transform: translateY(0);
-    opacity: 0.7;
-  }
-`;
-
-// ---------- FLOATING TRADING EMOJIS ----------
-const TRADING_EMOJIS = ["📈", "📉", "💹", "💰", "💎", "🚀", "⚡", "🔥", "💵", "🏆", "📊", "🎯", "💼", "🌟", "✨"];
-
-const emojiFloat = keyframes`
-  0% {
-    transform: translateY(0) rotate(0deg) scale(0.3);
-    opacity: 0;
-  }
-  15% {
-    opacity: 0.9;
-    transform: translateY(-15vh) rotate(10deg) scale(1);
-  }
-  50% {
-    opacity: 1;
-    transform: translateY(-45vh) rotate(-5deg) scale(1.1);
-  }
-  85% {
-    opacity: 0.7;
-    transform: translateY(-75vh) rotate(8deg) scale(0.9);
-  }
-  100% {
-    transform: translateY(-100vh) rotate(0deg) scale(0.5);
-    opacity: 0;
-  }
-`;
-
-const emojiGlow = keyframes`
-  0%, 100% {
-    filter: hue-rotate(0deg) drop-shadow(0 0 8px #65a8bf) drop-shadow(0 0 16px rgba(101, 168, 191, 0.6));
-  }
-  25% {
-    filter: hue-rotate(20deg) drop-shadow(0 0 12px #65a8bf) drop-shadow(0 0 24px rgba(101, 168, 191, 0.8));
-  }
-  50% {
-    filter: hue-rotate(-15deg) drop-shadow(0 0 16px #65a8bf) drop-shadow(0 0 32px rgba(101, 168, 191, 1));
-  }
-  75% {
-    filter: hue-rotate(15deg) drop-shadow(0 0 12px #65a8bf) drop-shadow(0 0 24px rgba(101, 168, 191, 0.8));
-  }
-`;
-
-type FloatingEmoji = {
-  id: number;
-  emoji: string;
-  left: number;
-  delay: number;
-  duration: number;
-  size: number;
-};
-
-const FloatingTradingEmojis: React.FC = () => {
-  const [emojis, setEmojis] = React.useState<FloatingEmoji[]>([]);
-
-  React.useEffect(() => {
-    const generateEmoji = (): FloatingEmoji => ({
-      id: Date.now() + Math.random(),
-      emoji: TRADING_EMOJIS[Math.floor(Math.random() * TRADING_EMOJIS.length)],
-      left: Math.random() * 85 + 5,
-      delay: 0,
-      duration: Math.random() * 5 + 10,
-      size: Math.random() * 1 + 1.8,
-    });
-
-    // Initial batch - spread across the screen
-    const initial: FloatingEmoji[] = [];
-    for (let i = 0; i < 15; i++) {
-      initial.push({
-        ...generateEmoji(),
-        delay: Math.random() * 3,
-        left: (i * 6) + Math.random() * 4,
-      });
-    }
-    setEmojis(initial);
-
-    // Continuously add new emojis
-    const interval = setInterval(() => {
-      setEmojis((prev) => {
-        const filtered = prev.length > 25 ? prev.slice(-18) : prev;
-        return [...filtered, generateEmoji()];
-      });
-    }, 1500);
-
-    return () => clearInterval(interval);
-  }, []);
-
-  return (
-    <Box
-      position="absolute"
-      top={0}
-      left={0}
-      right={0}
-      bottom={0}
-      overflow="hidden"
-      pointerEvents="none"
-      zIndex={0}
-    >
-      {emojis.map((e) => (
-        <Box
-          key={e.id}
-          position="absolute"
-          left={`${e.left}%`}
-          bottom="-20px"
-          fontSize={`${e.size}rem`}
-          opacity={0}
-          animation={`${emojiFloat} ${e.duration}s ease-in-out ${e.delay}s forwards`}
-          sx={{
-            animationName: `${emojiFloat}, ${emojiGlow}`,
-            animationDuration: `${e.duration}s, 3s`,
-            animationTimingFunction: "ease-in-out, ease-in-out",
-            animationDelay: `${e.delay}s, 0s`,
-            animationIterationCount: "1, infinite",
-            animationFillMode: "forwards, none",
-            textShadow: `0 0 12px ${BRAND}, 0 0 24px ${BRAND}, 0 0 36px rgba(101, 168, 191, 0.4)`,
-          }}
-        >
-          {e.emoji}
-        </Box>
-      ))}
-    </Box>
-  );
-};
 
 // ---------- DASHBOARD TYPES / CONSTANTS ----------
 
@@ -1385,15 +1231,8 @@ export default function Hero(props: HeroProps) {
   const W = React.useMemo(() => getWidgetTheme(mode), [mode]);
   const [showSpinButton, setShowSpinButton] = React.useState(false);
   
-  // GIF splash overlay state
-  const [showSplash, setShowSplash] = React.useState(true);
-  
-  React.useEffect(() => {
-    const timer = setTimeout(() => {
-      setShowSplash(false);
-    }, 2000);
-    return () => clearTimeout(timer);
-  }, []);
+  // No splash delay - show dashboard instantly
+  const [showSplash] = React.useState(false);
 
   const handleAnimationComplete = () => setShowSpinButton(true);
 
@@ -2828,98 +2667,12 @@ export default function Hero(props: HeroProps) {
                 renderLoggedInMobile()
               )
             ) : (
-              <Box position="relative" w="100%" minH="80vh">
-                {/* Floating Trading Emojis */} 
-                <FloatingTradingEmojis />
-
-                <VStack
-                  gap={5}
-                  align="center"
-                  textAlign="center"
-                  dir={dir}
-                  w="100%"
-                  mt={{ base: 10, md: 0 }}
-                  position="relative"
-                  zIndex={1}
-                >
-                  <MotionBox
-                    initial={{ opacity: 0, y: 20 }}
-                    animate={{ opacity: 1, y: 0 }}
-                    transition={{ duration: 0.8, ease: "easeOut" }}
-                  ></MotionBox>
-
-                {showSpinButton && (
-                  <MotionBox
-                    initial={{ opacity: 0, y: 12 }}
-                    animate={{ opacity: 1, y: 0 }}
-                    transition={{ duration: 0.5, ease: "easeOut" }}
-                    px={{ base: 4, md: 6 }}
-                    py={{ base: 2, md: 3 }}
-                  >
-                    <HStack justify="center">
-                      <Button
-                        borderColor="#65a8bf"
-                        borderWidth="1px"
-                        borderRadius="full"
-                        px={{ base: 6, md: 8 }}
-                        py={{ base: 3, md: 4 }}
-                        onClick={() => setSpinOpen(true)}
-                        _hover={{
-                          transform: "translateY(-1px) scale(1.02)",
-                          filter: "brightness(1.05)",
-                        }}
-                        _active={{
-                          transform: "translateY(0) scale(0.99)",
-                          filter: "brightness(0.98)",
-                        }}
-                        animation={`${glowPulse} 2.4s ease-in-out infinite`}
-                        transition="transform 0.15s ease, filter 0.15s ease"
-                      >
-                        <Text
-                          bgGradient="linear(to-r, black, gray.500, white, gray.500, black)"
-                          bgClip="text"
-                          fontWeight="bold"
-                          fontSize={{ base: "md", md: "lg" }}
-                          backgroundSize="200% 200%"
-                          animation={`${flowingTextGradient} 4s linear infinite`}
-                          letterSpacing="wide"
-                        >
-                          {t("home.spin_and_win", {
-                            defaultValue: "Spin & Win",
-                          })}
-                        </Text>
-                      </Button>
-                    </HStack>
-                  </MotionBox>
-                )}
-
-                <HStack gap={2} justify="center" flexWrap="wrap">
-                  <Button
-                    bg="#65a8bf"
-                    color="#1a1a1a"
-                    borderColor="#65a8bf"
-                    borderWidth="1px"
-                    _hover={{ bg: "blackAlpha.300" }}
-                    onClick={() => navigate(expired ? "/contact" : "/products")}
-                    borderRadius="xl"
-                  >
-                    {expired ? t("home.urgency.waitlist") : t("home.hero.cta_primary")}
-                  </Button>
-                  <Button
-                    variant="solid"
-                    bg={BRAND}
-                    borderColor="#65a8bf"
-                    borderWidth="1px"
-                    color={mode === "dark" ? "white" : "#1a1a1a"}
-                    _hover={{ bg: "blackAlpha.300" }}
-                    onClick={() => navigate("/company/about")}
-                    borderRadius="xl"
-                  >
-                    {t("footer.about", { defaultValue: "About Us" })}
-                  </Button>
-                </HStack>
-              </VStack>
-              </Box>
+             <GuestLanding
+                expired={false}
+                onOpenSpin={() => setSpinOpen(true)}
+                showSpinButton={showSpinButton}
+                setShowSpinButton={setShowSpinButton}
+              />
             )}
           </Box>
         </Container>

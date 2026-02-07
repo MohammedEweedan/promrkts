@@ -1,6 +1,6 @@
 import React from 'react';
 import { Routes, Route, useLocation } from 'react-router-dom';
-import { Box, Image } from '@chakra-ui/react';
+import { Box, Image, Spinner, VStack } from '@chakra-ui/react';
 import './App.css';
 import Home from './pages/Home';
 import CoursesList from './pages/Courses/List'; 
@@ -41,18 +41,19 @@ import { Analytics } from "@vercel/analytics/react";
 import { SpeedInsights } from "@vercel/speed-insights/react";
 import Discord from './pages/Discord';
 import GlobalProtection from './components/GlobalProtection';
-import LightRays from "./components/LightRays";
 import TokenCheckout from './pages/TokenCheckout';
 import Hub from './pages/Hub';
 import { useAuth } from './auth/AuthContext';
+import PixelSnow from './components/PixelSnow';
 
 function App() {
   const location = useLocation();
   const isChatPage = location.pathname === '/chat';
   const { loading: authLoading } = useAuth();
 
+  // Only show splash on initial app load (auth resolving), not on every page
   const [showSplash, setShowSplash] = React.useState(false);
-  const splashStartRef = React.useRef<number | null>(null);
+  const hasShownInitialSplash = React.useRef(false);
   const splashTimerRef = React.useRef<number | null>(null);
 
   React.useEffect(() => {
@@ -62,35 +63,24 @@ function App() {
   }, []);
 
   React.useEffect(() => {
-    // Initial app load: show splash while auth is resolving.
-    if (authLoading) {
-      splashStartRef.current = Date.now();
+    // Only show splash on initial auth load, not subsequent navigations
+    if (authLoading && !hasShownInitialSplash.current) {
       setShowSplash(true);
       return;
     }
 
-    // Ensure a minimum display time so it doesn't flash.
-    const startedAt = splashStartRef.current;
-    const elapsed = startedAt ? Date.now() - startedAt : 0;
-    const minMs = 650;
-    const delay = Math.max(0, minMs - elapsed);
-    if (splashTimerRef.current) window.clearTimeout(splashTimerRef.current);
-    splashTimerRef.current = window.setTimeout(() => setShowSplash(false), delay);
-  }, [authLoading]);
-
-  React.useEffect(() => {
-    // After auth success (login/signup), show splash once.
-    const key = 'auth_splash_once';
-    if (sessionStorage.getItem(key) === '1') {
-      sessionStorage.removeItem(key);
+    // Auth finished loading - hide splash after short delay
+    if (!authLoading && showSplash) {
+      hasShownInitialSplash.current = true;
       if (splashTimerRef.current) window.clearTimeout(splashTimerRef.current);
-      setShowSplash(true);
-      splashTimerRef.current = window.setTimeout(() => setShowSplash(false), 900);
+      // Shorter duration - 400ms
+      splashTimerRef.current = window.setTimeout(() => setShowSplash(false), 400);
     }
-  }, [location.pathname]);
+  }, [authLoading, showSplash]);
 
   return (
     <Box minH="100vh" display="flex" flexDirection="column">
+      <PixelSnow density={60} speed={0.8} color="#65a8bf" />
       <Analytics />
       <SpeedInsights />
         {showSplash && (
@@ -98,24 +88,32 @@ function App() {
             position="fixed"
             inset={0}
             zIndex={2000}
-            bg="rgba(5, 8, 17, 0.92)"
+            bg="rgba(5, 8, 17, 0.96)"
             display="flex"
             alignItems="center"
             justifyContent="center"
             pointerEvents="none"
           >
-            <Image
-              src={process.env.PUBLIC_URL + '/logo.gif'}
-              alt="Loading"
-              w={{ base: '160px', md: '220px' }}
-              h="auto"
-            />
+            <VStack spacing={6}>
+              <Image
+                src={process.env.PUBLIC_URL + '/logo.gif'}
+                alt="Loading"
+                w={{ base: '140px', md: '180px' }}
+                h="auto"
+              />
+              <Spinner
+                size="md"
+                color="#65a8bf"
+                thickness="3px"
+                speed="0.8s"
+                emptyColor="rgba(255,255,255,0.1)"
+              />
+            </VStack>
           </Box>
         )}
         {/* Router is already provided ABOVE in index.tsx */}
         <GlobalProtection />
         <ScrollToTop />
-        <LightRays />
         {!isChatPage && <Header />}
         <Box pb={isChatPage ? 0 : 16} flex="1" w="100%">
           <RouteTracker />

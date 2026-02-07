@@ -1,38 +1,43 @@
 /* eslint-disable react-hooks/exhaustive-deps */
 /* eslint-disable @typescript-eslint/no-unused-vars */
 import React, { useRef, useEffect } from "react";
-import { Box, VStack, HStack, Text, Button, keyframes, Portal, Icon, Grid } from "@chakra-ui/react";
+import { Box, VStack, HStack, Text, Button, keyframes, Icon, Grid, Container } from "@chakra-ui/react";
 import { useNavigate } from "react-router-dom";
 import { useTranslation } from "react-i18next";
-import { motion, AnimatePresence } from "framer-motion";
-import SplitText from "./SplitText";
 import { useThemeMode } from "../themeProvider";
-import { Award, TrendingUp, Users, Clock, Shield, Banknote, CandlestickChartIcon } from "lucide-react";
+import { Award, TrendingUp, Users, Shield, Zap, Globe, ChevronRight, Play } from "lucide-react";
 import * as THREE from "three";
 
-const BRAND = "#65a8bf";
-const MotionBox = motion(Box);
-
-const glowPulse = keyframes`
-  0% { box-shadow: 0 0 20px rgba(101, 168, 191, 0.3), 0 0 40px rgba(101, 168, 191, 0.1); }
-  50% { box-shadow: 0 0 30px rgba(101, 168, 191, 0.5), 0 0 60px rgba(101, 168, 191, 0.2); }
-  100% { box-shadow: 0 0 20px rgba(101, 168, 191, 0.3), 0 0 40px rgba(101, 168, 191, 0.1); }
-`;
+// ===== DESIGN SYSTEM =====
+const UI = {
+  // Brand colors
+  primary: "#65a8bf",
+  secondary: "#b7a27d",
+  gradient: "linear-gradient(135deg, #65a8bf 0%, #b7a27d 100%)",
+  gradientReverse: "linear-gradient(135deg, #b7a27d 0%, #65a8bf 100%)",
+  
+  // Surfaces
+  bgDark: "#0a0f1a",
+  surface: "rgba(15, 23, 42, 0.6)",
+  surfaceLight: "rgba(255, 255, 255, 0.03)",
+  
+  // Text
+  textSecondary: "rgba(255, 255, 255, 0.7)",
+  textMuted: "rgba(255, 255, 255, 0.5)",
+  
+  // Borders
+  border: "rgba(255, 255, 255, 0.08)",
+  borderAccent: "rgba(101, 168, 191, 0.3)",
+  
+  // Effects
+  glow: "0 0 60px rgba(101, 168, 191, 0.25)",
+  glowStrong: "0 0 80px rgba(101, 168, 191, 0.4)",
+};
 
 const goldGlow = keyframes`
-  0% { box-shadow: 0 0 15px rgba(212, 175, 55, 0.4), 0 0 30px rgba(212, 175, 55, 0.2); }
-  50% { box-shadow: 0 0 25px rgba(212, 175, 55, 0.6), 0 0 50px rgba(212, 175, 55, 0.3); }
-  100% { box-shadow: 0 0 15px rgba(212, 175, 55, 0.4), 0 0 30px rgba(212, 175, 55, 0.2); }
-`;
-
-const pulseScale = keyframes`
-  0%, 100% { transform: scale(1); }
-  50% { transform: scale(1.05); }
-`;
-
-const float = keyframes`
-  0%, 100% { transform: translateY(0px); }
-  50% { transform: translateY(-10px); }
+  0% { box-shadow: 0 0 20px rgba(183, 162, 125, 0.3); }
+  50% { box-shadow: 0 0 40px rgba(183, 162, 125, 0.5); }
+  100% { box-shadow: 0 0 20px rgba(183, 162, 125, 0.3); }
 `;
 
 type Props = {
@@ -42,58 +47,63 @@ type Props = {
   setShowSpinButton: (v: boolean) => void;
 };
 
-// Stat Card Component
+// Premium Stat Card Component
 const StatCard = ({ icon, value, label, delay }: { icon: any; value: string; label: string; delay: number }) => (
-  <MotionBox
-    initial={{ opacity: 0, y: 30 }}
-    animate={{ opacity: 1, y: 0 }}
-    transition={{ duration: 0.6, delay, ease: "easeOut" }}
-    bg="rgba(255,255,255,0.03)"
-    backdropFilter="blur(10px)"
+  <Box
+    bg={UI.surfaceLight}
+    backdropFilter="blur(20px)"
     border="1px solid"
-    borderColor="rgba(91, 168, 193, 0.2)"
-    borderRadius="xl"
-    p={{ base: 4, md: 6 }}
+    borderColor={UI.border}
+    borderRadius="20px"
+    p={{ base: 5, md: 6 }}
     textAlign="center"
     position="relative"
     overflow="hidden"
     _hover={{
-      borderColor: "rgba(101, 168, 191, 0.5)",
+      borderColor: UI.borderAccent,
       transform: "translateY(-4px)",
-      bg: "rgba(255,255,255,0.05)",
     }}
+    transition="all 0.3s ease"
   >
     <Box
       position="absolute"
       top={0}
-      left={0}
-      right={0}
+      left="50%"
+      transform="translateX(-50%)"
+      w="60%"
       height="1px"
-      bgGradient="linear(to-r, transparent, rgba(101, 168, 191, 0.5), transparent)"
+      bg={UI.gradient}
+      opacity={0.5}
     />
-    <Icon as={icon} boxSize={{ base: 6, md: 8 }} color={BRAND} mb={3} />
+    <Icon as={icon} boxSize={{ base: 5, md: 6 }} color={UI.primary} mb={3} />
     <Text
       fontSize={{ base: "2xl", md: "3xl" }}
-      fontWeight="bold"
-      bgGradient={`linear(to-r, ${BRAND}, #8fd3f4)`}
+      fontWeight="700"
+      letterSpacing="-0.02em"
+      bgGradient={UI.gradient}
       bgClip="text"
     >
       {value}
     </Text>
-    <Text fontSize={{ base: "xs", md: "sm" }} color="gray.400" mt={1} textTransform="uppercase" letterSpacing="wider">
+    <Text
+      fontSize="xs"
+      bgGradient={UI.gradient}
+      bgClip="text"
+      mt={1}
+      textTransform="uppercase"
+      letterSpacing="0.1em"
+      fontWeight="500"
+    >
       {label}
     </Text>
-  </MotionBox>
+  </Box>
 );
 
-// Three.js Candlestick Chart Component - Moving like a real chart
-const CandlestickChart: React.FC = () => {
+// ===== THREE.JS GLOBE COMPONENT =====
+const GlobeAnimation: React.FC = () => {
   const containerRef = useRef<HTMLDivElement>(null);
-  const sceneRef = useRef<THREE.Scene | null>(null);
   const rendererRef = useRef<THREE.WebGLRenderer | null>(null);
   const animationRef = useRef<number>(0);
-  const candleDataRef = useRef<{ open: number; close: number; high: number; low: number; bullish: boolean }[]>([]);
-  const candleMeshesRef = useRef<{ body: THREE.Mesh; wick: THREE.Mesh }[]>([]);
 
   useEffect(() => {
     if (!containerRef.current) return;
@@ -102,171 +112,83 @@ const CandlestickChart: React.FC = () => {
     const width = container.clientWidth;
     const height = container.clientHeight;
 
-    // Scene setup
+    // Scene
     const scene = new THREE.Scene();
-    sceneRef.current = scene;
 
-    // Camera - positioned to view chart from front (left to right)
-    const camera = new THREE.PerspectiveCamera(50, width / height, 0.1, 1000);
-    camera.position.set(0, 5, 25);
-    camera.lookAt(0, 5, 0);
+    // Camera (match example)
+    const camera = new THREE.PerspectiveCamera(44, width / height, 4.51, 90);
+    camera.position.z = 11.5;
 
     // Renderer
     const renderer = new THREE.WebGLRenderer({ antialias: true, alpha: true });
     renderer.setSize(width, height);
     renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2));
     renderer.setClearColor(0x000000, 0);
+    renderer.outputColorSpace = THREE.SRGBColorSpace;
     container.appendChild(renderer.domElement);
     rendererRef.current = renderer;
 
-    // Lighting
-    const ambientLight = new THREE.AmbientLight(0xffffff, 0.5);
+    // Sphere Geometry with Displacement (match provided example)
+    const geometry = new THREE.SphereGeometry(2.3, 60, 72);
+    const positionAttribute = geometry.attributes.position as THREE.BufferAttribute;
+    const vertexCount = positionAttribute.count;
+    const vertex = new THREE.Vector3();
+
+    for (let i = 0; i < vertexCount; i++) {
+      vertex.fromBufferAttribute(positionAttribute, i);
+      const offset = (Math.random() - 0.5) * 0.55;
+      vertex.multiplyScalar(1 + offset * Math.sin(vertex.length() * 1.6));
+      positionAttribute.setXYZ(i, vertex.x, vertex.y, vertex.z);
+    }
+    geometry.computeVertexNormals();
+
+    // Shiny, dim sun-like effect (adapted)
+    const material = new THREE.MeshStandardMaterial({
+      color: 0x65a8bf,
+      metalness: 0.5,
+      roughness: 0.65,
+      transparent: true,
+      opacity: 0.22,
+      emissive: 0xb7a27d,
+      emissiveIntensity: 0.75,
+    });
+
+    const sphere = new THREE.Mesh(geometry, material);
+    scene.add(sphere);
+
+    // Lighting Setup
+    const pointLight = new THREE.PointLight(0x404040, 5, 360);
+    pointLight.position.set(9, 9, 9);
+    scene.add(pointLight);
+
+    const ambientLight = new THREE.AmbientLight(0x404040, 1.2);
     scene.add(ambientLight);
 
-    const directionalLight = new THREE.DirectionalLight(0xffffff, 0.8);
-    directionalLight.position.set(10, 20, 10);
-    scene.add(directionalLight);
+    const hueA = new THREE.Color("#65a8bf");
+    const hueB = new THREE.Color("#b7a27d");
+    const tmpColor = new THREE.Color();
+    const tmpEmissive = new THREE.Color();
 
-    // Generate initial candlestick data
-    const generateCandle = (prevPrice: number) => {
-      // 70% chance of bullish candle (upward trend)
-      const bullish = Math.random() > 0.3;
-      const volatility = 0.2 + Math.random() * 0.4;
-      
-      const open = prevPrice;
-      const change = volatility * (bullish ? 1 : -1) * (0.5 + Math.random() * 0.5);
-      const close = open + change;
-      const wickSize = volatility * 0.4;
-      const high = Math.max(open, close) + Math.random() * wickSize;
-      const low = Math.min(open, close) - Math.random() * wickSize;
-      
-      return { open, close, high, low, bullish };
-    };
-
-    // Initialize candles
-    let currentPrice = 5;
-    const numCandles = 60;
-    const candleWidth = 0.35;
-    const spacing = 0.6;
-    const candleGroup = new THREE.Group();
-
-    for (let i = 0; i < numCandles; i++) {
-      const candle = generateCandle(currentPrice);
-      candleDataRef.current.push(candle);
-      currentPrice = candle.close + (candle.bullish ? 0.05 : -0.02);
-
-      // Position from left to right
-      const x = (i - numCandles / 2) * spacing;
-      
-      // Candle body with fade based on position (fade to right)
-      const bodyHeight = Math.abs(candle.close - candle.open) || 0.05;
-      const bodyY = (candle.open + candle.close) / 2;
-      const bodyGeometry = new THREE.BoxGeometry(candleWidth, bodyHeight, candleWidth * 0.6);
-      
-      // Calculate opacity based on position (fade right side)
-      const fadePosition = (i / numCandles);
-      const opacity = 1 - (fadePosition * 0.7); // Fade from 100% to 30%
-      
-      const bodyMaterial = new THREE.MeshPhongMaterial({
-        color: candle.bullish ? 0x22c55e : 0xef4444,
-        emissive: candle.bullish ? 0x115522 : 0x551111,
-        emissiveIntensity: 0.4,
-        shininess: 100,
-        transparent: true,
-        opacity: opacity,
-      });
-      const body = new THREE.Mesh(bodyGeometry, bodyMaterial);
-      body.position.set(x, bodyY, 0);
-
-      // Wick with matching fade
-      const wickHeight = candle.high - candle.low;
-      const wickY = (candle.high + candle.low) / 2;
-      const wickGeometry = new THREE.BoxGeometry(0.04, wickHeight, 0.04);
-      const wickMaterial = new THREE.MeshPhongMaterial({
-        color: candle.bullish ? 0x22c55e : 0xef4444,
-        emissive: candle.bullish ? 0x0a2210 : 0x220a0a,
-        emissiveIntensity: 0.3,
-        transparent: true,
-        opacity: opacity,
-      });
-      const wick = new THREE.Mesh(wickGeometry, wickMaterial);
-      wick.position.set(x, wickY, 0);
-
-      candleGroup.add(body);
-      candleGroup.add(wick);
-      candleMeshesRef.current.push({ body, wick });
-    }
-
-    scene.add(candleGroup);
-
-    // Add subtle grid floor
-    const gridHelper = new THREE.GridHelper(60, 60, 0x5ba8c1, 0x1a2a35);
-    gridHelper.position.y = 0;
-    gridHelper.material.opacity = 0.1;
-    gridHelper.material.transparent = true;
-    scene.add(gridHelper);
-
-    // Animation - natural candle appearance like real charts
+    // Animate Sphere Rotation and Shine Effect
     let time = 0;
-    let lastCandleTime = 0;
-    const candleInterval = 3; // New candle every 3 seconds
-    let currentCandleIndex = numCandles;
-
     const animate = () => {
       animationRef.current = requestAnimationFrame(animate);
-      time += 0.016; // ~60fps
 
-      // Add new candle periodically on the right side
-      if (time - lastCandleTime > candleInterval && currentCandleIndex < numCandles + 20) {
-        lastCandleTime = time;
-        
-        const lastCandle = candleDataRef.current[candleDataRef.current.length - 1];
-        const newCandle = generateCandle(lastCandle.close + (lastCandle.bullish ? 0.05 : -0.02));
-        candleDataRef.current.push(newCandle);
+      time += 0.01;
+      sphere.rotation.x += 0.004;
+      sphere.rotation.y += 0.008;
 
-        const newX = (currentCandleIndex - numCandles / 2) * spacing;
-        
-        // Calculate fade based on position (fade right side)
-        const fadePosition = (currentCandleIndex / (numCandles + 20));
-        const opacity = 1 - (fadePosition * 0.7);
-        
-        // Create new candle meshes
-        const bodyHeight = Math.abs(newCandle.close - newCandle.open) || 0.05;
-        const bodyY = (newCandle.open + newCandle.close) / 2;
-        const bodyGeometry = new THREE.BoxGeometry(candleWidth, bodyHeight, candleWidth * 0.6);
-        const bodyMaterial = new THREE.MeshPhongMaterial({
-          color: newCandle.bullish ? 0x22c55e : 0xef4444,
-          emissive: newCandle.bullish ? 0x115522 : 0x551111,
-          emissiveIntensity: 0.4,
-          shininess: 100,
-          transparent: true,
-          opacity: opacity,
-        });
-        const body = new THREE.Mesh(bodyGeometry, bodyMaterial);
-        body.position.set(newX, bodyY, 0);
+      // Smooth brand hue shift between #65a8bf and #b7a27d
+      const hueT = (Math.sin(time * 0.55) + 1) / 2;
+      tmpColor.copy(hueA).lerp(hueB, hueT);
+      material.color.copy(tmpColor);
 
-        const wickHeight = newCandle.high - newCandle.low;
-        const wickY = (newCandle.high + newCandle.low) / 2;
-        const wickGeometry = new THREE.BoxGeometry(0.04, wickHeight, 0.04);
-        const wickMaterial = new THREE.MeshPhongMaterial({
-          color: newCandle.bullish ? 0x22c55e : 0xef4444,
-          emissive: newCandle.bullish ? 0x0a2210 : 0x220a0a,
-          emissiveIntensity: 0.3,
-          transparent: true,
-          opacity: opacity,
-        });
-        const wick = new THREE.Mesh(wickGeometry, wickMaterial);
-        wick.position.set(newX, wickY, 0);
+      // Keep emissive shifting too, but biased toward gold
+      tmpEmissive.copy(hueB).lerp(hueA, 0.35 * (1 - hueT));
+      material.emissive.copy(tmpEmissive);
 
-        candleGroup.add(body);
-        candleGroup.add(wick);
-        candleMeshesRef.current.push({ body, wick });
-        currentCandleIndex++;
-      }
-
-      // Very subtle camera movement
-      camera.position.y = 5 + Math.sin(time * 0.15) * 0.2;
-      camera.lookAt(0, 5, 0);
+      const shine = Math.random() * 0.1;
+      material.emissiveIntensity = 0.85 + shine;
 
       renderer.render(scene, camera);
     };
@@ -289,6 +211,8 @@ const CandlestickChart: React.FC = () => {
       window.removeEventListener("resize", handleResize);
       cancelAnimationFrame(animationRef.current);
       if (rendererRef.current && containerRef.current) {
+        geometry.dispose();
+        material.dispose();
         containerRef.current.removeChild(rendererRef.current.domElement);
         rendererRef.current.dispose();
       }
@@ -299,12 +223,14 @@ const CandlestickChart: React.FC = () => {
     <Box
       ref={containerRef}
       position="absolute"
-      top={0}
-      left={0}
-      right={0}
-      bottom={0}
+      top="50%"
+      right={{ base: "-20%", md: "5%" }}
+      transform="translateY(-50%)"
+      w={{ base: "400px", md: "500px", lg: "600px" }}
+      h={{ base: "400px", md: "500px", lg: "600px" }}
       zIndex={0}
-      opacity={0.33}
+      opacity={0.8}
+      pointerEvents="none"
     />
   );
 };
@@ -318,308 +244,180 @@ export default function GuestLanding({
   const { t } = useTranslation() as any;
   const navigate = useNavigate();
   const { mode } = useThemeMode();
-  const isDark = mode === "dark";
 
-  const [showSplash, setShowSplash] = React.useState(true);
-  const [splashComplete, setSplashComplete] = React.useState(true); // Always true to show content
-  
+  // Show spin button immediately - no delay
   React.useEffect(() => {
-    const timer = setTimeout(() => {
-      setShowSplash(false);
-    }, 2000);
-    return () => clearTimeout(timer);
-  }, []);
-
-  const handleAnimationComplete = () => setShowSpinButton(true);
+    setShowSpinButton(true);
+  }, [setShowSpinButton]);
 
   return (
-    <>
-      {!splashComplete && (
-        <Portal>
-          <Box
-            position="fixed"
-            top={0}
-            left={0}
-            right={0}
-            bottom={0}
-            zIndex={9999}
-            display="flex"
-            alignItems="center"
-            justifyContent="center"
-            backdropFilter="blur(30px)"
-            width="100vw"
-            height="100vh"
-            overflow="hidden"
-          >
-            <MotionBox
-              initial={{ scale: 0.8, opacity: 0 }}
-              animate={{ scale: 1, opacity: 1 }}
-              transition={{ duration: 0.5 }}
-            >
-              <Box
-                as="img"
-                src={process.env.PUBLIC_URL + "/logo.gif"}
-                alt="Loading"
-                width={{ base: "180px", md: "260px" }}
-                height="auto"
-                display="block"
-                filter="drop-shadow(0 0 40px rgba(101, 168, 191, 0.4))"
-              />
-            </MotionBox>
-          </Box>
-        </Portal>
-      )}
+    <Box position="relative" overflow="hidden" minH="100vh">
+      {/* 3D Globe Background */}
+      <GlobeAnimation />
 
-      <AnimatePresence>
-        {splashComplete && (
-          <Box position="relative" overflow="hidden" minH="100vh">
-            {/* Three.js Candlestick Background */}
-            <CandlestickChart />
+      {/* Gradient overlays for depth */}
+      <Box
+        position="absolute"
+        top={0}
+        left={0}
+        right={0}
+        bottom={0}
+        pointerEvents="none"
+        zIndex={1}
+      />
 
-            {/* Gradient overlay for text readability */}
-            <Box
-              position="absolute"
-              top={0}
-              left={0}
-              right={0}
-              bottom={0}
-              pointerEvents="none"
-              zIndex={1}
-            />
-
-            {/* Floating orbs */}
-            <Box
-              position="absolute"
-              top="10%"
-              right="10%"
-              width="300px"
-              height="300px"
-              borderRadius="full"
-              bg={`radial-gradient(circle, rgba(101, 168, 191, 0.15) 0%, transparent 70%)`}
-              filter="blur(60px)"
-              animation={`${float} 8s ease-in-out infinite`}
-              pointerEvents="none"
-              zIndex={1}
-            />
-            <Box
-              position="absolute"
-              bottom="20%"
-              left="5%"
-              width="400px"
-              height="400px"
-              borderRadius="full"
-              bg={`radial-gradient(circle, rgba(101, 168, 191, 0.1) 0%, transparent 70%)`}
-              filter="blur(80px)"
-              animation={`${float} 10s ease-in-out infinite reverse`}
-              pointerEvents="none"
-              zIndex={1}
-            />
-
-            <VStack
-              gap={8}
-              align="center"
-              textAlign="center"
-              w="100%"
-              px={4}
-              pt={{ base: 20, md: 32 }}
-              pb={{ base: 12, md: 20 }}
-              position="relative"
-              zIndex={2}
-            >
-              {/* Main headline */}
-              <MotionBox
-                initial={{ opacity: 0, y: 20 }}
-                animate={{ opacity: 1, y: 0 }}
-                transition={{ duration: 0.8, delay: 0.2, ease: "easeOut" }}
-                maxW="900px"
+      {/* Main Content */}
+      <Container maxW="container.xl" position="relative" zIndex={2}>
+        <Grid
+          templateColumns={{ base: "1fr", lg: "1fr 1fr" }}
+          gap={{ base: 8, lg: 16 }}
+          alignItems="center"
+          minH="100vh"
+          py={{ base: 20, md: 0 }}
+        >
+          {/* Left: Hero Content */}
+          <VStack align={{ base: "center", lg: "flex-start" }} spacing={8} textAlign={{ base: "center", lg: "left" }}>
+            {/* Main Headline */}
+            <Text
+                as="h1"
+                fontSize={{ base: "3rem", md: "4rem", lg: "4.5rem" }}
+                fontWeight="800"
+                lineHeight="1.1"
+                letterSpacing="-0.03em"
               >
-                <SplitText
-                  text={t("home.hero.title")}
-                  className="text-4xl md:text-6xl font-bold text-center leading-tight"
-                  delay={80}
-                  duration={0.5}
-                  splitType="chars"
-                  from={{ opacity: 0, y: 40 }}
-                  to={{ opacity: 1, y: 0 }}
-                  threshold={0.1}
-                  rootMargin="-100px"
-                  textAlign="center"
-                  onLetterAnimationComplete={handleAnimationComplete}
-                />
-              </MotionBox>
-
-              {/* Subheadline */}
-              <MotionBox
-                initial={{ opacity: 0 }}
-                animate={{ opacity: 1 }}
-                transition={{ duration: 0.8, delay: 0.6 }}
-                maxW="600px"
-              >
-                <Text fontSize={{ base: "md", md: "lg" }} color="gray.300" lineHeight="1.8">
-                  {t("home.hero.subtitle", {
-                    defaultValue:
-                      "Master the markets with professional-grade education and a community of elite traders.",
-                  })}
+                {t("home.hero.title_line1", { defaultValue: "Master Trading." })}
+                <br />
+                <Text as="span" bgGradient={UI.gradient} bgClip="text">
+                  {t("home.hero.title_line2", { defaultValue: "Build Wealth." })}
                 </Text>
-              </MotionBox>
+              </Text>
 
-              {/* CTA Buttons */}
-              <MotionBox
-                initial={{ opacity: 0, y: 20 }}
-                animate={{ opacity: 1, y: 0 }}
-                transition={{ duration: 0.6, delay: 0.8 }}
-              >
-                <HStack gap={4} justify="center" flexWrap="wrap">
-                  <Button
-                    size="lg"
-                    bg={BRAND}
-                    color="white"
-                    px={8}
-                    py={6}
-                    fontSize="md"
-                    fontWeight="600"
-                    borderRadius="xl"
-                    _hover={{
-                      transform: "translateY(-2px)",
-                      boxShadow: `0 20px 40px rgba(101, 168, 191, 0.3)`,
-                    }}
-                    _active={{ transform: "translateY(0)" }}
-                    onClick={() => navigate(expired ? "/contact" : "/products")}
-                    animation={`${glowPulse} 3s ease-in-out infinite`}
-                  >
-                    {expired
-                      ? t("home.urgency.waitlist")
-                      : t("home.hero.cta_primary", { defaultValue: "Start Learning" })}
-                  </Button>
+            {/* Subtitle */}
+            <Text fontSize={{ base: "md", md: "lg" }} lineHeight="1.8" maxW="500px">
+                {t("home.hero.subtitle", {
+                  defaultValue: "Professional trading education with AI-powered coaching, live signals, and a global community of elite traders.",
+                })}
+              </Text>
 
-                  <Button
-                    size="lg"
-                    variant="outline"
-                    borderColor="rgba(255,255,255,0.2)"
-                    color="white"
-                    px={8}
-                    py={6}
-                    fontSize="md"
-                    fontWeight="600"
-                    borderRadius="xl"
-                    _hover={{
-                      bg: "rgba(255,255,255,0.05)",
-                      borderColor: BRAND,
-                    }}
-                    onClick={() => navigate("/company/about")}
-                  >
-                    {t("footer.about", { defaultValue: "Learn More" })}
-                  </Button>
-                </HStack>
-              </MotionBox>
-
-              {/* Spin button - Gold glowing */}
-              {showSpinButton && (
-                <MotionBox
-                  initial={{ opacity: 0, scale: 0.9 }}
-                  animate={{ opacity: 1, scale: 1 }}
-                  transition={{ duration: 0.5, ease: "easeOut" }}
+            {/* CTA Buttons */}
+            <Box>
+              <HStack spacing={4} flexWrap="wrap" justify={{ base: "center", lg: "flex-start" }}>
+                <Button
+                  bg={UI.gradient}
+                  px={8}
+                  py={7}
+                  fontSize="md"
+                  fontWeight="700"
+                  borderRadius="16px"
+                  boxShadow={UI.glow}
+                  _hover={{
+                    transform: "translateY(-3px)",
+                    boxShadow: UI.glowStrong,
+                  }}
+                  _active={{ transform: "translateY(0)" }}
+                  transition="all 0.3s"
+                  onClick={() => navigate(expired ? "/contact" : "/products")}
+                  rightIcon={<Icon as={ChevronRight} boxSize={5} />}
                 >
-                  <Button
+                  {expired
+                    ? t("home.hero.cta_waitlist", { defaultValue: "Join Waitlist" })
+                    : t("home.hero.cta_primary", { defaultValue: "Start Learning" })}
+                </Button>
+              </HStack>
+            </Box>
+
+            {/* Spin Button */}
+            {showSpinButton && (
+              <Box>
+                <Button
                     size="lg"
                     onClick={onOpenSpin}
-                    bg="#b7a27d"
-                    color="#1a1a2e"
+                    bg={UI.secondary}
+                    color="#0a0f1a"
                     px={8}
                     py={6}
                     fontSize="md"
-                    fontWeight="bold"
-                    borderRadius="xl"
+                    fontWeight="700"
+                    borderRadius="16px"
                     _hover={{
                       transform: "translateY(-2px)",
-                      bg: "linear-gradient(135deg, #f4d03f 0%, #d4af37 50%, #f4d03f 100%)",
+                      boxShadow: "0 0 40px rgba(183, 162, 125, 0.4)",
                     }}
                     _active={{ transform: "translateY(0)" }}
-                    animation={`${goldGlow} 2s ease-in-out infinite`}
+                    animation={`${goldGlow} 2.5s ease-in-out infinite`}
                     leftIcon={<Icon as={Award} boxSize={5} />}
                   >
                     {t("home.spin_and_win", { defaultValue: "Spin & Win Prizes" })}
-                  </Button>
-                </MotionBox>
-              )}
+                </Button>
+              </Box>
+            )}
 
-              {/* Stats section */}
+            {/* Stats Row */}
+            <Box w="100%">
               <Grid
                 templateColumns={{ base: "repeat(2, 1fr)", md: "repeat(4, 1fr)" }}
-                gap={{ base: 4, md: 6 }}
-                w="100%"
-                maxW="800px"
-                mt={8}
+                gap={4}
+                maxW={{ base: "100%", lg: "600px" }}
               >
-                <StatCard icon={TrendingUp} value="50K+" label="Active Traders" delay={1.0} />
-                <StatCard icon={Users} value="10K+" label="Members" delay={1.1} />
-                <StatCard icon={Shield} value="24/7" label="Support" delay={1.2} />
-                <StatCard icon={CandlestickChartIcon} value="140k+" label="Learners" delay={1.3} />
+                <StatCard icon={TrendingUp} value={t("home.stats.traders", { defaultValue: "50K+" })} label={t("home.stats.traders_label", { defaultValue: "Active Traders" })} delay={0} />
+                <StatCard icon={Users} value={t("home.stats.members", { defaultValue: "12K+" })} label={t("home.stats.members_label", { defaultValue: "Members" })} delay={0} />
+                <StatCard icon={Shield} value={t("home.stats.support", { defaultValue: "24/7" })} label={t("home.stats.support_label", { defaultValue: "Support" })} delay={0} />
+                <StatCard icon={Zap} value={t("home.stats.signals", { defaultValue: "95%" })} label={t("home.stats.signals_label", { defaultValue: "Win Rate" })} delay={0} />
               </Grid>
+            </Box>
 
-              {/* Trust text */}
-              <MotionBox
-                initial={{ opacity: 0 }}
-                animate={{ opacity: 1 }}
-                transition={{ duration: 0.6, delay: 1.4 }}
-                mt={8}
-              >
-                <Text
-                  fontSize="sm"
-                  bgGradient="linear(135deg, #65a8bf 0%, #b7a27d 100%)"
-                  bgClip="text"
-                  letterSpacing="wide"
-                >
-                  {t("home.trust", { defaultValue: "Trusted by traders worldwide" })}
-                </Text>
-              </MotionBox>
-            </VStack>
+            {/* Trust Badge */}
+            <HStack spacing={3} color={UI.textMuted}>
+              <Icon as={Globe} boxSize={4} />
+              <Text fontSize="sm" fontWeight="500">
+                {t("home.trust", { defaultValue: "Trusted by traders in 50+ countries" })}
+              </Text>
+            </HStack>
+          </VStack>
 
-            {/* Bottom right spin reminder */}
-            {showSpinButton && (
-              <MotionBox
-                initial={{ opacity: 0, x: 100 }}
-                animate={{ opacity: 1, x: 0 }}
-                transition={{ duration: 0.6, delay: 2.0, ease: "easeOut" }}
-                position="fixed"
-                bottom={{ base: 4, md: 6 }}
-                right={{ base: 4, md: 6 }}
-                zIndex={100}
-              >
-                <Box
-                  as="button"
-                  onClick={onOpenSpin}
-                  bg="linear-gradient(135deg, #d4af37 0%, #f4d03f 50%, #d4af37 100%)"
-                  color="#1a1a2e"
-                  px={4}
-                  py={3}
-                  borderRadius="full"
-                  border="2px solid"
-                  borderColor="rgba(212, 175, 55, 0.6)"
-                  display="flex"
-                  alignItems="center"
-                  gap={2}
-                  fontWeight="bold"
-                  fontSize="sm"
-                  cursor="pointer"
-                  animation={`${goldGlow} 2s ease-in-out infinite, ${pulseScale} 3s ease-in-out infinite`}
-                  _hover={{
-                    transform: "scale(1.05)",
-                    bg: "linear-gradient(135deg, #f4d03f 0%, #d4af37 50%, #f4d03f 100%)",
-                  }}
-                  transition="transform 0.2s ease"
-                >
-                  <Icon as={Award} boxSize={5} />
-                  <Text display={{ base: "none", md: "block" }}>
-                    {t("home.spin_reminder", { defaultValue: "Spin & win!" })}
-                  </Text>
-                  <Text display={{ base: "block", md: "none" }}>Spin!</Text>
-                </Box>
-              </MotionBox>
-            )}
+          {/* Right: Empty space for globe (globe is positioned absolutely) */}
+          <Box display={{ base: "none", lg: "block" }} />
+        </Grid>
+      </Container>
+
+      {/* Floating Spin Reminder */}
+      {showSpinButton && (
+        <Box
+          position="fixed"
+          bottom={{ base: 4, md: 6 }}
+          right={{ base: 4, md: 6 }}
+          zIndex={100}
+        >
+          <Box
+            as="button"
+            onClick={onOpenSpin}
+            color="#0a0f1a"
+            bgGradient={UI.gradient}
+            px={5}
+            py={3}
+            borderRadius="full"
+            display="flex"
+            alignItems="center"
+            gap={2}
+            fontWeight="700"
+            fontSize="sm"
+            cursor="pointer"
+            boxShadow="0 10px 40px rgba(183, 162, 125, 0.3)"
+            _hover={{
+              transform: "scale(1.05)",
+              filter: "brightness(1.05)",
+              boxShadow: "0 15px 50px rgba(183, 162, 125, 0.4)",
+            }}
+            _active={{ transform: "scale(0.99)" }}
+            transition="all 0.3s"
+          >
+            <Icon as={Award} boxSize={5} />
+            <Text display={{ base: "none", md: "block" }}>
+              {t("home.spin_reminder", { defaultValue: "Spin & Win!" })}
+            </Text>
           </Box>
-        )}
-      </AnimatePresence>
-    </>
+        </Box>
+      )}
+    </Box>
   );
 }

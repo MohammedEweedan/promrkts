@@ -840,7 +840,71 @@ const resources = {
         enroll: 'Enroll',
         stats: {
           students: "Learners coached",
-          profitability: "Report improved consistency"
+          profitability: "Report improved consistency",
+          traders: "50K+",
+          traders_label: "Active Traders",
+          members: "12K+",
+          members_label: "Members",
+          support: "24/7",
+          support_label: "Support",
+          signals: "95%",
+          signals_label: "Win Rate"
+        },
+        trust: "Trusted by traders in 50+ countries",
+        spin_and_win: "Spin & Win Prizes",
+        spin_reminder: "Spin & Win!",
+        social: {
+          students: "Active Students",
+          success: "Success Rate",
+          profits: "Student Profits",
+          rating: "Average Rating"
+        },
+        urgency: {
+          title: "Limited Time Offer",
+          message: "Get 30% off all courses - Only 7 spots left at this price!",
+          kicker: "Course enrollment closes in",
+          enroll: "Enroll Now",
+          talk: "Talk to an Advisor"
+        },
+        value: {
+          title: "Why Traders Choose Us",
+          subtitle: "Everything you need to become a consistently profitable trader",
+          benefit1_title: "Proven Strategies",
+          benefit1_desc: "Battle-tested methods used by professional traders worldwide",
+          benefit2_title: "AI-Powered Learning",
+          benefit2_desc: "Personalized curriculum that adapts to your skill level",
+          benefit3_title: "24/7 Community",
+          benefit3_desc: "Never trade alone - get support from mentors and peers",
+          benefit4_title: "Live Trading Rooms",
+          benefit4_desc: "Watch experts trade in real-time and learn by doing",
+          benefit5_title: "Prop Firm Ready",
+          benefit5_desc: "Get funded and trade with capital up to $200,000",
+          benefit6_title: "Mobile Access",
+          benefit6_desc: "Learn and trade anywhere with our mobile-first platform"
+        },
+        stories: {
+          badge: "Real Results",
+          title: "Success Stories",
+          subtitle: "Join thousands of traders who transformed their financial future"
+        },
+        testimonial: {
+          role1: "Forex Trader",
+          quote1: "I went from losing money to consistent profits in just 3 months. The AI coaching changed everything.",
+          role2: "Crypto Investor",
+          quote2: "Best investment I've ever made. The community support is incredible and the strategies actually work.",
+          role3: "Day Trader",
+          quote3: "Finally quit my 9-5 after completing the advanced course. Trading full-time now with consistent income."
+        },
+        trust_signals: {
+          secure: "Secure Payment",
+          guarantee: "Money-Back Guarantee",
+          certified: "Certified Instructors",
+          global: "Global Community"
+        },
+        sticky: {
+          title: "Ready to start?",
+          subtitle: "Join 52,000+ traders",
+          cta: "Get Started"
         },
         class: 'Class',
         remove_segment: 'Remove',
@@ -852,11 +916,15 @@ const resources = {
         search: 'Search',
         hero: {
           title: 'Your partners in success.',
-          subtitle: 'Join +51,000 learners making real profit in around 4 weeks.',
-          cta_primary: 'Start Learning Now',
+          title_line1: 'Master Trading.',
+          title_line2: 'Build Wealth.',
+          badge: 'Join 52,000+ traders worldwide',
+          subtitle: 'Professional trading education with AI-powered coaching, live signals, and a global community of elite traders.',
+          cta_primary: 'Start Learning',
+          cta_secondary: 'Watch Demo',
+          cta_waitlist: 'Join Waitlist',
           welcome: 'Hello, {{name}}',
           welcome_sub: 'Pick up where you left off — your Guides, tools, and community await.',
-          cta_secondary: 'View Course Details',
           vip_title: 'VIP Telegram',
           days_remaining: 'Days remaining',
           days: 'days',
@@ -870,11 +938,6 @@ const resources = {
           hours_short: 'h',
           minutes_short: 'm',
           seconds_short: 's',
-        },
-        urgency: {
-          kicker: "Course enrollment closes in",
-          enroll: "Enroll Now",
-          talk: "Talk to an Advisor"
         },
         promo: {
           kicker: "Limited-time course promo:",
@@ -2307,15 +2370,70 @@ const resources = {
         error: "Une erreur s'est produite. Veuillez réessayer.",
       },
       home: {
-        spin_and_win: 'Spin & Win',
+        spin_and_win: 'Tournez & Gagnez',
+        spin_reminder: 'Tournez & Gagnez!',
+        trust: 'Approuvé par des traders dans plus de 50 pays',
+        stats: {
+          traders: "50K+",
+          traders_label: "Traders Actifs",
+          members: "12K+",
+          members_label: "Membres",
+          support: "24/7",
+          support_label: "Support",
+          signals: "95%",
+          signals_label: "Taux de Réussite"
+        },
+        social: {
+          students: "Étudiants Actifs",
+          success: "Taux de Réussite",
+          profits: "Profits des Étudiants",
+          rating: "Note Moyenne"
+        },
+        urgency: {
+          title: "Offre Limitée",
+          message: "Obtenez 30% de réduction - Seulement 7 places restantes!",
+          kicker: "L'inscription se termine dans",
+          enroll: "S'inscrire Maintenant",
+          talk: "Parler à un Conseiller"
+        },
+        value: {
+          title: "Pourquoi les Traders Nous Choisissent",
+          subtitle: "Tout ce dont vous avez besoin pour devenir un trader rentable",
+          benefit1_title: "Stratégies Éprouvées",
+          benefit1_desc: "Méthodes testées utilisées par des traders professionnels",
+          benefit2_title: "Apprentissage IA",
+          benefit2_desc: "Programme personnalisé qui s'adapte à votre niveau",
+          benefit3_title: "Communauté 24/7",
+          benefit3_desc: "Ne tradez jamais seul - obtenez du soutien",
+          benefit4_title: "Salles de Trading",
+          benefit4_desc: "Regardez les experts trader en temps réel",
+          benefit5_title: "Prêt pour Prop Firm",
+          benefit5_desc: "Obtenez un financement jusqu'à 200 000$",
+          benefit6_title: "Accès Mobile",
+          benefit6_desc: "Apprenez et tradez partout"
+        },
+        stories: {
+          badge: "Vrais Résultats",
+          title: "Histoires de Réussite",
+          subtitle: "Rejoignez des milliers de traders qui ont transformé leur avenir"
+        },
+        sticky: {
+          title: "Prêt à commencer?",
+          subtitle: "Rejoignez 12 000+ traders",
+          cta: "Commencer"
+        },
         hero: {
           title: 'Devenez un trader expert avec les meilleurs.',
-          subtitle: 'Rejoignez des +51,000 d\'apprenants.',
-          cta_primary: 'Commencer la formation',
+          title_line1: 'Maîtrisez le Trading.',
+          title_line2: 'Construisez Votre Richesse.',
+          badge: 'Rejoignez 12 000+ traders dans le monde',
+          subtitle: 'Formation professionnelle avec coaching IA, signaux en direct et une communauté mondiale de traders d\'élite.',
+          cta_primary: 'Commencer',
+          cta_secondary: 'Voir la Démo',
+          cta_waitlist: 'Rejoindre la Liste',
           welcome: 'Bienvenue, {{name}}',
           welcome_sub: 'Reprenez là où vous vous êtes arrêté — vos cours, outils et communauté vous attendent.',
           recent_courses: 'Vos cours récents',
-          cta_secondary: 'Voir',
           vip_title: 'VIP Telegram',
           days_remaining: 'Jours restants',
           days: 'jours',
@@ -3704,7 +3822,9 @@ const resources = {
       },
       home: {
         offers: 'عروض لوقت محدود',
-        spin_and_win: 'ادخل السحب',
+        spin_and_win: 'أدر العجلة واربح',
+        spin_reminder: 'أدر واربح!',
+        trust: 'موثوق من متداولين في أكثر من 50 دولة',
         searching: 'جارٍ البحث...',
         form_note: 'إلغاء مجاني على بعض الأسعار المختارة',
         search: 'بحث',
@@ -3713,6 +3833,38 @@ const resources = {
           learning: "تعلم شخصي و مساعدة",
           reasoning: "اصدار اشارات تداول لغرض التعليم",
           languages: "يدعم اللغة الفرنسية • العربية • الإنجليزية",
+        },
+        social: {
+          students: "طلاب نشطون",
+          success: "نسبة النجاح",
+          profits: "أرباح الطلاب",
+          rating: "متوسط التقييم"
+        },
+        value: {
+          title: "لماذا يختارنا المتداولون",
+          subtitle: "كل ما تحتاجه لتصبح متداولاً مربحاً باستمرار",
+          benefit1_title: "استراتيجيات مثبتة",
+          benefit1_desc: "طرق مجربة يستخدمها المتداولون المحترفون",
+          benefit2_title: "تعلم بالذكاء الاصطناعي",
+          benefit2_desc: "منهج مخصص يتكيف مع مستواك",
+          benefit3_title: "مجتمع 24/7",
+          benefit3_desc: "لا تتداول وحدك - احصل على الدعم",
+          benefit4_title: "غرف تداول حية",
+          benefit4_desc: "شاهد الخبراء يتداولون مباشرة",
+          benefit5_title: "جاهز لشركات التمويل",
+          benefit5_desc: "احصل على تمويل يصل إلى 200,000$",
+          benefit6_title: "وصول من الجوال",
+          benefit6_desc: "تعلم وتداول من أي مكان"
+        },
+        stories: {
+          badge: "نتائج حقيقية",
+          title: "قصص نجاح",
+          subtitle: "انضم إلى آلاف المتداولين الذين غيروا مستقبلهم المالي"
+        },
+        sticky: {
+          title: "مستعد للبدء؟",
+          subtitle: "انضم لـ 52,000+ متداول",
+          cta: "ابدأ الآن"
         },
         metrics: {
           active_programs_label: "البرامج النشطة",
@@ -3728,12 +3880,16 @@ const resources = {
         },
         hero: {
           title: 'أتقن التداول مع الخبراء.',
-          subtitle: 'انضم إلى +51,000 طالب يحققون أرباحًا حقيقية خلال حوالي 4 أسابيع فقط.',
-          cta_primary: 'ابدأ التعلم الآن',
+          title_line1: 'أتقن التداول.',
+          title_line2: 'ابنِ ثروتك.',
+          badge: 'انضم لـ 52,000+ متداول حول العالم',
+          subtitle: 'تعليم تداول احترافي مع تدريب بالذكاء الاصطناعي وإشارات مباشرة ومجتمع عالمي من المتداولين النخبة.',
+          cta_primary: 'ابدأ التعلم',
+          cta_secondary: 'شاهد العرض',
+          cta_waitlist: 'انضم لقائمة الانتظار',
           welcome: 'أهلاً {{name}}',
           welcome_sub: 'كمل ما تركته - كورساتك، أدواتك، ومجتمعك ينتظرك.',
           recent_courses: 'الكورسات الأخيرة',
-          cta_secondary: 'عرض تفاصيل الكورس',
           vip_title: 'VIP تيليجرام',
           days_remaining: 'الأيام المتبقية',
           days: 'أيام',
