@@ -89,11 +89,11 @@ const getWidgetTheme = (mode: "dark" | "light") => {
     surface: mode === "dark" ? "rgba(15, 23, 42, 0.9)" : "rgba(0, 0, 0, 0.04)",
 
     // text rules:
-    // ✅ light mode => green
-    // ✅ dark mode => keep your existing gray/white behavior
-    textPrimary: mode === "dark" ? "gray.100" : BRAND,
-    textMuted: mode === "dark" ? "gray.400" : "rgba(0, 191, 99, 0.75)",
-    textSoft: mode === "dark" ? "gray.500" : "rgba(0, 191, 99, 0.55)",
+    // ✅ light mode => black
+    // ✅ dark mode => white
+    textPrimary: mode === "dark" ? "white" : "black",
+    textMuted: mode === "dark" ? "gray.300" : "gray.600",
+    textSoft: mode === "dark" ? "gray.400" : "gray.500",
 
     divider: mode === "dark" ? "rgba(255,255,255,0.1)" : "rgba(0,0,0,0.08)",
   };

@@ -414,7 +414,20 @@ const WIDGETS: Record<TradingViewWidgetId, WidgetDef> = {
     buildDefaults: ({ theme, symbols, locale }) => ({
       symbols: (symbols?.length
         ? symbols
-        : ["NASDAQ:AAPL", "NASDAQ:NVDA", "FX:EURUSD", "BINANCE:BTCUSDT", "OANDA:GBPUSD", "OANDA:XAUUSD", "OANDA:EURJPY"]
+        : [
+            // Major Forex Pairs
+            "FX:EURUSD", "FX:GBPUSD", "FX:USDJPY", "FX:USDCHF", "FX:AUDUSD", "FX:USDCAD", "FX:NZDUSD",
+            "FX:EURGBP", "FX:EURJPY", "FX:GBPJPY", "FX:AUDJPY", "FX:EURAUD", "FX:EURCHF", "FX:GBPCHF",
+            // Major Cryptocurrencies
+            "BINANCE:BTCUSDT", "BINANCE:ETHUSDT", "BINANCE:BNBUSDT", "BINANCE:XRPUSDT", "BINANCE:SOLUSDT",
+            "BINANCE:ADAUSDT", "BINANCE:DOGEUSDT", "BINANCE:DOTUSDT", "BINANCE:MATICUSDT", "BINANCE:LTCUSDT",
+            // Major Indices
+            "FOREXCOM:SPXUSD", "FOREXCOM:NSXUSD", "FOREXCOM:DJI", "TVC:DAX", "TVC:UKX", "TVC:NI225",
+            "TVC:HSI", "FOREXCOM:EU50", "TVC:CAC40", "TVC:STOXX50E",
+            // Major Commodities
+            "TVC:GOLD", "TVC:SILVER", "TVC:USOIL", "TVC:UKOIL", "TVC:PLATINUM", "TVC:COPPER",
+            "NYMEX:NG1!", "CBOT:ZW1!", "CBOT:ZC1!", "CBOT:ZS1!"
+          ]
       ).map((s) => ({ proName: s, title: s.split(":")[1] || s })),
       showSymbolLogo: true,
       isTransparent: true,
