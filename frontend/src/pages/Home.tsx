@@ -61,137 +61,6 @@ import {
 // ===== Animation helpers =====
 const MotionBox = motion(Box);
 
-// Raindrop ripple effect - like drops of water on a puddle in corners
-const RaindropRipples: React.FC<{ mode: string }> = ({ mode }) => {
-  const [ripples, setRipples] = React.useState<Array<{
-    id: number;
-    x: number;
-    y: number;
-    size: number;
-    duration: number;
-  }>>([]);
-
-  React.useEffect(() => {
-    // Corner zones where ripples can appear (avoiding center)
-    const getRandomCornerPosition = () => {
-      const zones = [
-        { xMin: 2, xMax: 18, yMin: 5, yMax: 30 },   // top-left
-        { xMin: 82, xMax: 98, yMin: 5, yMax: 30 },  // top-right
-        { xMin: 2, xMax: 18, yMin: 65, yMax: 90 },  // bottom-left
-        { xMin: 82, xMax: 98, yMin: 65, yMax: 90 }, // bottom-right
-      ];
-      const zone = zones[Math.floor(Math.random() * zones.length)];
-      return {
-        x: zone.xMin + Math.random() * (zone.xMax - zone.xMin),
-        y: zone.yMin + Math.random() * (zone.yMax - zone.yMin),
-      };
-    };
-
-    const createRipple = () => {
-      const pos = getRandomCornerPosition();
-      const newRipple = {
-        id: Date.now() + Math.random(),
-        x: pos.x,
-        y: pos.y,
-        size: 8 + Math.random() * 12, // Small initial size (8-20px)
-        duration: 2 + Math.random() * 1.5, // 2-3.5s duration
-      };
-      setRipples(prev => [...prev.slice(-12), newRipple]); // Keep max 12 ripples
-    };
-
-    // Initial ripples
-    for (let i = 0; i < 4; i++) {
-      setTimeout(() => createRipple(), i * 400);
-    }
-
-    // Continuous ripples at random intervals
-    const interval = setInterval(() => {
-      createRipple();
-    }, 800 + Math.random() * 600);
-
-    return () => clearInterval(interval);
-  }, []);
-
-  const baseOpacity = mode === "dark" ? 0.12 : 0.08;
-
-  return (
-    <Box position="absolute" inset={0} zIndex={0} pointerEvents="none" overflow="hidden">
-      {ripples.map((ripple) => (
-        <React.Fragment key={ripple.id}>
-          {/* Primary ripple ring */}
-          <MotionBox
-            position="absolute"
-            left={`${ripple.x}%`}
-            top={`${ripple.y}%`}
-            width={`${ripple.size}px`}
-            height={`${ripple.size}px`}
-            borderRadius="50%"
-            border="1px solid"
-            borderColor={`rgba(101, 168, 191, ${baseOpacity * 2})`}
-            bg="transparent"
-            initial={{ scale: 0, opacity: baseOpacity * 3 }}
-            animate={{ 
-              scale: [0, 3, 5],
-              opacity: [baseOpacity * 3, baseOpacity, 0],
-            }}
-            transition={{
-              duration: ripple.duration,
-              ease: "easeOut",
-            }}
-            style={{ transform: "translate(-50%, -50%)" }}
-          />
-          {/* Secondary ripple ring (delayed) */}
-          <MotionBox
-            position="absolute"
-            left={`${ripple.x}%`}
-            top={`${ripple.y}%`}
-            width={`${ripple.size * 0.7}px`}
-            height={`${ripple.size * 0.7}px`}
-            borderRadius="50%"
-            border="1px solid"
-            borderColor={`rgba(101, 168, 191, ${baseOpacity * 1.5})`}
-            bg="transparent"
-            initial={{ scale: 0, opacity: baseOpacity * 2 }}
-            animate={{ 
-              scale: [0, 2.5, 4],
-              opacity: [baseOpacity * 2, baseOpacity * 0.5, 0],
-            }}
-            transition={{
-              duration: ripple.duration * 0.9,
-              delay: 0.1,
-              ease: "easeOut",
-            }}
-            style={{ transform: "translate(-50%, -50%)" }}
-          />
-          {/* Tertiary subtle ring */}
-          <MotionBox
-            position="absolute"
-            left={`${ripple.x}%`}
-            top={`${ripple.y}%`}
-            width={`${ripple.size * 0.5}px`}
-            height={`${ripple.size * 0.5}px`}
-            borderRadius="50%"
-            border="1px solid"
-            borderColor={`rgba(101, 168, 191, ${baseOpacity})`}
-            bg="transparent"
-            initial={{ scale: 0, opacity: baseOpacity * 1.5 }}
-            animate={{ 
-              scale: [0, 2, 3],
-              opacity: [baseOpacity * 1.5, baseOpacity * 0.3, 0],
-            }}
-            transition={{
-              duration: ripple.duration * 0.8,
-              delay: 0.2,
-              ease: "easeOut",
-            }}
-            style={{ transform: "translate(-50%, -50%)" }}
-          />
-        </React.Fragment>
-      ))}
-    </Box>
-  );
-};
-
 type AppleRevealOffset = NonNullable<Parameters<typeof useScroll>[0]>["offset"];
 const APPLE_REVEAL_DEFAULT_OFFSET: AppleRevealOffset = ["start 100%", "end 70%"]; 
 
@@ -269,7 +138,7 @@ const HomeSection: React.FC<{
       </Heading>
       {subtitle && (
         <Text 
-          color={UI.textSecondary} 
+          
           maxW="2xl" 
           fontSize={{ base: "md", md: "lg" }} 
           lineHeight="1.8"
@@ -1136,7 +1005,7 @@ const SocialProofBar: React.FC<{ t: any }> = ({ t }) => {
             >
               {stat.value}
             </Text>
-            <Text fontSize="sm" color={UI.textSecondary}>{stat.label}</Text>
+            <Text fontSize="sm">{stat.label}</Text>
           </MotionBox>
         ))}
       </SimpleGrid>
@@ -1201,7 +1070,7 @@ const UrgencyBanner: React.FC<{ t: any }> = ({ t }) => {
                   {String(unit.value).padStart(2, '0')}
                 </Text>
               </Box>
-              <Text fontSize="xs" color={UI.textSecondary} mt={1}>{unit.label}</Text>
+              <Text fontSize="xs" mt={1}>{unit.label}</Text>
             </VStack>
           ))}
         </HStack>
@@ -1241,7 +1110,7 @@ const TrustSignals: React.FC<{ t: any }> = ({ t }) => {
           >
             <Icon as={signal.icon} boxSize={6} color={UI.accent} />
             <Text fontWeight="600" fontSize="sm" textAlign="center">{signal.title}</Text>
-            <Text fontSize="xs" color={UI.textSecondary} textAlign="center">{signal.desc}</Text>
+            <Text fontSize="xs" textAlign="center">{signal.desc}</Text>
           </VStack>
         </MotionBox>
       ))}
@@ -1305,11 +1174,11 @@ const TestimonialCard: React.FC<{
           </Box>
           <VStack align="start" spacing={0}>
             <Text fontWeight="600">{name}</Text>
-            <Text fontSize="sm" color={UI.textSecondary}>{role}</Text>
+            <Text fontSize="sm">{role}</Text>
           </VStack>
         </HStack>
         
-        <Text color={UI.textSecondary} fontSize="sm" lineHeight="1.7" fontStyle="italic">
+        <Text fontSize="sm" lineHeight="1.7" fontStyle="italic">
           "{quote}"
         </Text>
         
@@ -1374,7 +1243,7 @@ const SuccessStories: React.FC<{ t: any }> = ({ t }) => {
         >
           {t("home.stories.title", { defaultValue: "Success Stories" })}
         </Heading>
-        <Text color={UI.textSecondary} maxW="xl" fontSize={{ base: "md", md: "lg" }}>
+        <Text maxW="xl" fontSize={{ base: "md", md: "lg" }}>
           {t("home.stories.subtitle", { defaultValue: "Join thousands of traders who transformed their financial future" })}
         </Text>
       </VStack>
@@ -1427,7 +1296,7 @@ const StickyCTA: React.FC<{ t: any; onNavigate: () => void }> = ({ t, onNavigate
           <Text fontSize="sm" fontWeight="600">
             {t("home.sticky.title", { defaultValue: "Ready to start?" })}
           </Text>
-          <Text fontSize="xs" color={UI.textSecondary}>
+          <Text fontSize="xs">
             {t("home.sticky.subtitle", { defaultValue: "Join 12,000+ traders" })}
           </Text>
         </VStack>
@@ -1494,7 +1363,7 @@ const ValueProposition: React.FC<{ t: any }> = ({ t }) => {
         >
           {t("home.value.title", { defaultValue: "Why Traders Choose Us" })}
         </Heading>
-        <Text color={UI.textSecondary} maxW="xl" fontSize={{ base: "md", md: "lg" }}>
+        <Text maxW="xl" fontSize={{ base: "md", md: "lg" }}>
           {t("home.value.subtitle", { defaultValue: "Everything you need to become a consistently profitable trader" })}
         </Text>
       </VStack>
@@ -1535,7 +1404,7 @@ const ValueProposition: React.FC<{ t: any }> = ({ t }) => {
               </Box>
               <VStack align="start" spacing={1}>
                 <Text fontWeight="600">{benefit.title}</Text>
-                <Text fontSize="sm" color={UI.textSecondary} lineHeight="1.6">{benefit.desc}</Text>
+                <Text fontSize="sm" lineHeight="1.6">{benefit.desc}</Text>
               </VStack>
             </HStack>
           </MotionBox>
@@ -1629,7 +1498,7 @@ const HowItWorks: React.FC<{ t: any }> = ({ t }) => (
               <Heading size="md" fontWeight="600">
                 {s.title}
               </Heading>
-              <Text color={UI.textSecondary} fontSize="sm" lineHeight="1.7">
+              <Text fontSize="sm" lineHeight="1.7">
                 {s.desc}
               </Text>
             </VStack>
@@ -1911,7 +1780,6 @@ const FaqRow: React.FC<{ q: string; a: string; index: number }> = ({ q, a, index
             justifyContent="center"
             fontSize="sm"
             fontWeight="700"
-            color={open ? "#0a0f1a" : UI.accent}
             transition="all 0.3s ease"
             flexShrink={0}
           >
@@ -1952,7 +1820,7 @@ const FaqRow: React.FC<{ q: string; a: string; index: number }> = ({ q, a, index
             pt={0}
             ml={{ base: 0, md: "48px" }}
           >
-            <Text fontSize={{ base: "sm", md: "md" }} lineHeight="1.8" color={UI.textSecondary}>
+            <Text fontSize={{ base: "sm", md: "md" }} lineHeight="1.8">
               {a}
             </Text>
           </Box>
@@ -4136,7 +4004,7 @@ const Home: React.FC = () => {
                         >
                           {t("home.faq.title") || "Frequently Asked Questions"}
                         </Heading>
-                        <Text color={UI.textSecondary} maxW="xl" fontSize={{ base: "md", md: "lg" }}>
+                        <Text maxW="xl" fontSize={{ base: "md", md: "lg" }}>
                           {t("home.faq.subtitle") ||
                             "Find quick answers below. Still stuck? Reach out — we're happy to help."}
                         </Text>
@@ -4233,7 +4101,7 @@ const Home: React.FC = () => {
                         >
                           {t("home.cta.title") || "Start Your Learning Journey Today"}
                         </Heading>
-                        <Text fontSize={{ base: "md", md: "lg" }} color={UI.textSecondary} maxW="xl" lineHeight="1.8">
+                        <Text fontSize={{ base: "md", md: "lg" }} maxW="xl" lineHeight="1.8">
                           {t("home.cta.subtitle") ||
                             "Join learners globally and access our premium course library."}
                         </Text>
@@ -4309,7 +4177,7 @@ const Home: React.FC = () => {
                             defaultValue: "Trade With Our Preferred Broker",
                           })}
                         </Heading>
-                        <Text color={UI.textSecondary} maxW="md" fontSize={{ base: "sm", md: "md" }}>
+                        <Text maxW="md" fontSize={{ base: "sm", md: "md" }}>
                           {t("home.enrolled.broker_sub", {
                             defaultValue: "Tight spreads, ECN execution, and fast withdrawals.",
                           })}
