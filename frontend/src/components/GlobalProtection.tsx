@@ -8,9 +8,105 @@ import { useEffect } from 'react';
  * - Ctrl+Shift+J (Console)
  * - Ctrl+Shift+C (Inspect Element)
  * - Ctrl+U (View Source)
+ * - Detects DevTools open and redirects
  */
+
+// Console warning message
+const showConsoleWarning = () => {
+  console.clear();
+  console.log(
+    '%c🛡️ Security Notice 🛡️',
+    'color: #65a8bf; font-size: 24px; font-weight: bold; text-shadow: 2px 2px 4px rgba(0,0,0,0.3);'
+  );
+  console.log(
+    '%cTo protect against cybersecurity threats, we have disabled browser inspection tools to keep your data safe. 😊',
+    'color: #b7a27d; font-size: 14px; padding: 10px;'
+  );
+  console.log(
+    '%c⚠️ If you are a developer, please contact our team for API access.',
+    'color: #ff6b6b; font-size: 12px;'
+  );
+};
+
+// DevTools detection using multiple methods
+const detectDevTools = (callback: () => void) => {
+  let devtoolsOpen = false;
+
+  // Method 1: Window size difference (works for docked DevTools)
+  const checkWindowSize = () => {
+    const widthThreshold = window.outerWidth - window.innerWidth > 160;
+    const heightThreshold = window.outerHeight - window.innerHeight > 160;
+    return widthThreshold || heightThreshold;
+  };
+
+  // Method 2: debugger statement timing
+  const checkDebugger = () => {
+    const start = performance.now();
+    // This will pause if DevTools is open with debugger enabled
+    // eslint-disable-next-line no-debugger
+    debugger;
+    const end = performance.now();
+    return end - start > 100;
+  };
+
+  // Method 3: Console.log timing detection
+  const checkConsoleTiming = () => {
+    const element = new Image();
+    let isOpen = false;
+    
+    Object.defineProperty(element, 'id', {
+      get: function() {
+        isOpen = true;
+        return '';
+      }
+    });
+    
+    console.log(element);
+    console.clear();
+    return isOpen;
+  };
+
+  // Combined check
+  const runChecks = () => {
+    const sizeCheck = checkWindowSize();
+    const consoleCheck = checkConsoleTiming();
+    
+    if ((sizeCheck || consoleCheck) && !devtoolsOpen) {
+      devtoolsOpen = true;
+      showConsoleWarning();
+      callback();
+    } else if (!sizeCheck && !consoleCheck) {
+      devtoolsOpen = false;
+    }
+  };
+
+  // Run checks periodically
+  const interval = setInterval(runChecks, 1000);
+  
+  // Also check on resize (DevTools docking/undocking)
+  window.addEventListener('resize', runChecks);
+
+  return () => {
+    clearInterval(interval);
+    window.removeEventListener('resize', runChecks);
+  };
+};
+
 export const GlobalProtection = () => {
   useEffect(() => {
+    // Show initial console warning
+    showConsoleWarning();
+
+    // DevTools detection - redirect when detected
+    const cleanupDevToolsDetection = detectDevTools(() => {
+      // Redirect to blank page or close
+      try {
+        window.location.href = 'about:blank';
+      } catch {
+        // Fallback: try to close or navigate away
+        window.location.replace('https://www.google.com');
+      }
+    });
     // Disable right-click globally
     const handleContextMenu = (e: MouseEvent) => {
       e.preventDefault();
@@ -118,6 +214,7 @@ export const GlobalProtection = () => {
 
     // Cleanup
     return () => {
+      cleanupDevToolsDetection();
       document.removeEventListener('contextmenu', handleContextMenu);
       document.removeEventListener('keydown', handleKeyDown);
       document.removeEventListener('selectstart', handleSelectStart);

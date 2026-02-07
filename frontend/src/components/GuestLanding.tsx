@@ -101,6 +101,8 @@ const StatCard = ({ icon, value, label, delay }: { icon: any; value: string; lab
 
 // ===== THREE.JS GLOBE COMPONENT =====
 const GlobeAnimation: React.FC = () => {
+  const { i18n } = useTranslation();
+  const isRTL = i18n.language === 'ar';
   const containerRef = useRef<HTMLDivElement>(null);
   const rendererRef = useRef<THREE.WebGLRenderer | null>(null);
   const animationRef = useRef<number>(0);
@@ -148,9 +150,9 @@ const GlobeAnimation: React.FC = () => {
       metalness: 0.5,
       roughness: 0.65,
       transparent: true,
-      opacity: 0.22,
+      opacity: 0.65,
       emissive: 0xb7a27d,
-      emissiveIntensity: 0.75,
+      emissiveIntensity: 1.2,
     });
 
     const sphere = new THREE.Mesh(geometry, material);
@@ -187,8 +189,8 @@ const GlobeAnimation: React.FC = () => {
       tmpEmissive.copy(hueB).lerp(hueA, 0.35 * (1 - hueT));
       material.emissive.copy(tmpEmissive);
 
-      const shine = Math.random() * 0.1;
-      material.emissiveIntensity = 0.85 + shine;
+      const shine = Math.random() * 0.15;
+      material.emissiveIntensity = 1.2 + shine;
 
       renderer.render(scene, camera);
     };
@@ -224,8 +226,8 @@ const GlobeAnimation: React.FC = () => {
       ref={containerRef}
       position="absolute"
       top="50%"
-      left={{ base: "50%", md: "auto" }}
-      right={{ base: "auto", md: "5%" }}
+      left={{ base: "50%", md: isRTL ? "5%" : "auto" }}
+      right={{ base: "auto", md: isRTL ? "auto" : "5%" }}
       transform={{ base: "translate(-50%, -50%)", md: "translateY(-50%)" }}
       w={{ base: "600px", md: "700px", lg: "800px" }}
       h={{ base: "600px", md: "700px", lg: "800px" }}
@@ -242,9 +244,10 @@ export default function GuestLanding({
   showSpinButton,
   setShowSpinButton,
 }: Props) {
-  const { t } = useTranslation() as any;
+  const { t, i18n } = useTranslation() as any;
   const navigate = useNavigate();
   const { mode } = useThemeMode();
+  const isRTL = i18n.language === 'ar';
 
   // Show spin button immediately - no delay
   React.useEffect(() => {
@@ -276,8 +279,14 @@ export default function GuestLanding({
           minH="100vh"
           py={{ base: 20, md: 0 }}
         >
-          {/* Left: Hero Content */}
-          <VStack align={{ base: "center", lg: "flex-start" }} spacing={8} textAlign={{ base: "center", lg: "left" }}>
+          {/* Hero Content - switches sides based on RTL */}
+          <VStack 
+            align={{ base: "center", lg: isRTL ? "flex-end" : "flex-start" }} 
+            spacing={8} 
+            textAlign={{ base: "center", lg: isRTL ? "right" : "left" }}
+            gridColumn={{ base: "1", lg: isRTL ? "2" : "1" }}
+            gridRow="1"
+          >
             {/* Main Headline */}
             <Text
                 as="h1"

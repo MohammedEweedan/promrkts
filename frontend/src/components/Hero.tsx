@@ -35,7 +35,6 @@ import { useThemeMode } from "../themeProvider";
 import { useCohortDeadline } from "../hooks/useCohortDeadline";
 import api from "../api/client";
 import TradingViewWidget, { TradingViewVariant } from "../components/TradingViewWidget";
-import SpotlightCard from "./SpotlightCard";
 import GridLayout, { Layout } from "react-grid-layout";
 import { Responsive, WidthProvider } from "react-grid-layout";
 
@@ -694,11 +693,27 @@ const AiTradingCard: React.FC<{
 
 // ---------- SMALL UI HELPERS ----------
 
-const DragHandle: React.FC<{ active: boolean }> = ({ active }) => (
+// Glass Card Component - replaces SpotlightCard with blurry glass thin bezel
+const GlassCard: React.FC<{ children: React.ReactNode; style?: React.CSSProperties }> = ({ children, style }) => (
+  <Box
+    w="100%"
+    h="100%"
+    bg="rgba(15, 23, 42, 0.4)"
+    backdropFilter="blur(20px)"
+    border="1px solid rgba(101, 168, 191, 0.2)"
+    borderRadius="16px"
+    overflow="hidden"
+    style={style}
+  >
+    {children}
+  </Box>
+);
+
+const DragHandle: React.FC<{ active: boolean; hideMobile?: boolean }> = ({ active, hideMobile = false }) => (
   <Box
     className="widget-drag-handle"
     cursor={active ? "grab" : "default"}
-    display="grid"
+    display={{ base: hideMobile ? "none" : "grid", md: "grid" }}
     gridTemplateColumns="repeat(3, 4px)"
     gridGap="2px"
     p={1}
@@ -2353,7 +2368,7 @@ export default function Hero(props: HeroProps) {
 
                 return (
                   <Box key={widget.id} h="100%" w="100%">
-                    <SpotlightCard style={{ width: "100%", height: "100%", margin: 0, padding: 0 }}>
+                    <GlassCard style={{ width: "100%", height: "100%", margin: 0, padding: 0 }}>
                       <Box
                         h="100%"
                         w="100%"
@@ -2370,7 +2385,7 @@ export default function Hero(props: HeroProps) {
                           spacing={2}
                         >
                           <HStack spacing={2} align="center">
-                            <DragHandle active={isEditingLayout} />
+                            <DragHandle active={isEditingLayout} hideMobile={true} />
                             <Text fontSize="xs" fontWeight="semibold" color="#65a8bf">
                               {WIDGET_TITLES[widget.kind]}
                             </Text>
@@ -2388,16 +2403,18 @@ export default function Hero(props: HeroProps) {
                                 aria-label="Edit widget"
                                 icon={<SettingsIcon boxSize={3} />}
                                 size="xs"
-                                variant="solid"
+                                bg="#65a8bf"
+                                color="black"
+                                _hover={{ bg: "#5a9bb0" }}
                                 onClick={() => setEditingWidgetId(widget.id)}
                               />
                               <IconButton
                                 aria-label="Remove widget"
                                 icon={<CloseIcon boxSize={3} />}
                                 size="xs"
-                                variant="solid"
                                 bg="red.500"
-                                color="#65a8bf"
+                                color="white"
+                                _hover={{ bg: "red.600" }}
                                 onClick={() => removeWidget(widget.id)}
                               />
                             </HStack>
@@ -2408,7 +2425,7 @@ export default function Hero(props: HeroProps) {
                           {renderWidgetContent(widget)}
                         </Box>
                       </Box>
-                    </SpotlightCard>
+                    </GlassCard>
                   </Box>
                 );
               })}
@@ -2564,7 +2581,7 @@ export default function Hero(props: HeroProps) {
 
                         return (
                           <Box key={widget.id} h="100%" w="100%">
-                            <SpotlightCard style={{ width: "100%", height: "100%", margin: 0, padding: 0 }}>
+                            <GlassCard style={{ width: "100%", height: "100%", margin: 0, padding: 0 }}>
                               <Box
                                 h="100%"
                                 w="100%"
@@ -2581,7 +2598,7 @@ export default function Hero(props: HeroProps) {
                                   spacing={2}
                                 >
                                   <HStack spacing={2} align="center">
-                                    <DragHandle active={isEditingLayout} />
+                                    <DragHandle active={isEditingLayout} hideMobile={true} />
                                     <Text
                                       fontSize="xs"
                                       fontWeight="semibold"
@@ -2611,16 +2628,18 @@ export default function Hero(props: HeroProps) {
                                         aria-label="Edit widget"
                                         icon={<SettingsIcon boxSize={3} />}
                                         size="xs"
-                                        variant="solid"
+                                        bg="#65a8bf"
+                                        color="black"
+                                        _hover={{ bg: "#5a9bb0" }}
                                         onClick={() => setEditingWidgetId(widget.id)}
                                       />
                                       <IconButton
                                         aria-label="Remove widget"
                                         icon={<CloseIcon boxSize={3} />}
                                         size="xs"
-                                        variant="solid"
                                         bg="red.500"
-                                        color="#65a8bf"
+                                        color="white"
+                                        _hover={{ bg: "red.600" }}
                                         onClick={() => removeWidget(widget.id)}
                                       />
                                     </HStack>
@@ -2631,7 +2650,7 @@ export default function Hero(props: HeroProps) {
                                   {renderWidgetContent(widget)}
                                 </Box>
                               </Box>
-                            </SpotlightCard>
+                            </GlassCard>
                           </Box>
                         );
                       })}

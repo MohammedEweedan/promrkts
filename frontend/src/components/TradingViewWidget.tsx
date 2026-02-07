@@ -409,18 +409,18 @@ const WIDGETS: Record<TradingViewWidgetId, WidgetDef> = {
 
   /** ------------------ Tickers ------------------ */
   "ticker-tape": {
-    kind: "web-component",
-    tagName: "tv-ticker-tape",
-    moduleSrc: (locale) => tvModule(locale, "tv-ticker-tape"),
-    buildAttrs: ({ theme, symbols, locale }) => ({
-      theme,
-      locale,
+    kind: "iframe",
+    scriptSrc: "https://s3.tradingview.com/external-embedding/embed-widget-ticker-tape.js",
+    buildDefaults: ({ theme, symbols, locale }) => ({
       symbols: (symbols?.length
         ? symbols
-        : ["NASDAQ:AAPL", "NASDAQ:NVDA", "FX:EURUSD", "BINANCE:BTCUSDT"]
-      ).join(","),
-      direction: "horizontal",
-      "item-size": "compact",
+        : ["NASDAQ:AAPL", "NASDAQ:NVDA", "FX:EURUSD", "BINANCE:BTCUSDT", "OANDA:GBPUSD", "OANDA:XAUUSD", "OANDA:EURJPY"]
+      ).map((s) => ({ proName: s, title: s.split(":")[1] || s })),
+      showSymbolLogo: true,
+      isTransparent: true,
+      displayMode: "adaptive",
+      colorTheme: theme,
+      locale,
     }),
   },
 
