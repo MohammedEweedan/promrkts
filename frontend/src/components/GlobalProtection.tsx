@@ -39,17 +39,7 @@ const detectDevTools = (callback: () => void) => {
     return widthThreshold || heightThreshold;
   };
 
-  // Method 2: debugger statement timing
-  const checkDebugger = () => {
-    const start = performance.now();
-    // This will pause if DevTools is open with debugger enabled
-    // eslint-disable-next-line no-debugger
-    debugger;
-    const end = performance.now();
-    return end - start > 100;
-  };
-
-  // Method 3: Console.log timing detection
+  // Method 2: Console.log timing detection
   const checkConsoleTiming = () => {
     const element = new Image();
     let isOpen = false;
