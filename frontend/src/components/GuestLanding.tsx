@@ -224,9 +224,9 @@ const GlobeAnimation: React.FC<{ isRTL: boolean }> = ({ isRTL }) => {
       ref={containerRef}
       position="absolute"
       top="50%"
-      left={{ base: "50%", md: isRTL ? "auto" : "55%" }}
-      right={{ base: "auto", md: isRTL ? "-5%" : "auto" }}
-      transform={{ base: "translate(-50%, -50%)", md: isRTL ? "translateY(-50%)" : "translate(-50%, -50%)" }}
+      left={{ base: "50%", md: isRTL ? "-5%" : "auto" }}
+      right={{ base: "auto", md: isRTL ? "auto" : "-5%" }}
+      transform={{ base: "translate(-50%, -50%)", md: "translateY(-50%)" }}
       w={{ base: "500px", md: "600px", lg: "700px" }}
       h={{ base: "500px", md: "600px", lg: "700px" }}
       zIndex={0}
@@ -277,12 +277,12 @@ export default function GuestLanding({
           minH="100vh"
           py={{ base: 20, md: 0 }}
         >
-          {/* Hero Content - switches sides based on RTL */}
+          {/* Hero Content - text on RIGHT in RTL, text on LEFT in LTR */}
           <VStack 
             align={{ base: "center", lg: isRTL ? "flex-end" : "flex-start" }} 
             spacing={8} 
             textAlign={{ base: "center", lg: isRTL ? "right" : "left" }}
-            gridColumn={{ base: "1", lg: "1" }}
+            gridColumn={{ base: "1", lg: isRTL ? "2" : "1" }}
             gridRow="1"
             dir={isRTL ? "rtl" : "ltr"}
           >

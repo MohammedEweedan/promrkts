@@ -28,120 +28,73 @@ const showConsoleWarning = () => {
   );
 };
 
-// DevTools detection using multiple methods
-const detectDevTools = (callback: () => void) => {
-  let devtoolsOpen = false;
-  let hasTriggered = false;
+// Track if DevTools is detected
+let isDevToolsOpen = false;
 
-  // Method 1: Window size difference (works for docked DevTools)
+// Store original fetch and XHR
+const originalFetch = window.fetch;
+const originalXHROpen = XMLHttpRequest.prototype.open;
+const originalXHRSend = XMLHttpRequest.prototype.send;
+
+// Block API calls when DevTools is open
+const blockAPIs = () => {
+  // Override fetch
+  window.fetch = function(...args) {
+    if (isDevToolsOpen) {
+      console.warn('%c⚠️ API calls blocked while DevTools is open', 'color: #ff6b6b; font-weight: bold;');
+      return Promise.reject(new Error('API blocked: DevTools detected'));
+    }
+    return originalFetch.apply(window, args);
+  };
+
+  // Override XHR
+  XMLHttpRequest.prototype.open = function(method: string, url: string | URL, async: boolean = true, username?: string | null, password?: string | null) {
+    (this as XMLHttpRequest & { _blocked?: boolean })._blocked = isDevToolsOpen;
+    return originalXHROpen.call(this, method, url, async, username, password);
+  };
+
+  XMLHttpRequest.prototype.send = function(body?: Document | XMLHttpRequestBodyInit | null) {
+    if ((this as XMLHttpRequest & { _blocked?: boolean })._blocked) {
+      console.warn('%c⚠️ API calls blocked while DevTools is open', 'color: #ff6b6b; font-weight: bold;');
+      return;
+    }
+    return originalXHRSend.call(this, body);
+  };
+};
+
+// DevTools detection - only using reliable window size method
+const detectDevTools = (onOpen: () => void, onClose: () => void) => {
+  // Method: Window size difference (most reliable for docked DevTools)
   const checkWindowSize = () => {
     const widthThreshold = window.outerWidth - window.innerWidth > 160;
     const heightThreshold = window.outerHeight - window.innerHeight > 160;
     return widthThreshold || heightThreshold;
   };
 
-  // Method 2: Console.log timing detection
-  const checkConsoleTiming = () => {
-    const element = new Image();
-    let isOpen = false;
+  const runCheck = () => {
+    const detected = checkWindowSize();
     
-    Object.defineProperty(element, 'id', {
-      get: function() {
-        isOpen = true;
-        return '';
-      }
-    });
-    
-    console.log(element);
-    console.clear();
-    return isOpen;
-  };
-
-  // Method 3: Debugger statement timing (detects DevTools open on page load)
-  const checkDebuggerTiming = () => {
-    const start = performance.now();
-    // This will pause if DevTools is open with debugger enabled
-    // eslint-disable-next-line no-debugger
-    debugger;
-    const end = performance.now();
-    // If debugger paused for more than 100ms, DevTools is likely open
-    return (end - start) > 100;
-  };
-
-  // Method 4: Function toString detection
-  const checkFunctionToString = () => {
-    let isOpen = false;
-    const fn = function() {};
-    fn.toString = function() {
-      isOpen = true;
-      return '';
-    };
-    console.log(fn);
-    console.clear();
-    return isOpen;
-  };
-
-  // Method 5: Performance timing detection (detects DevTools open before page load)
-  const checkPerformanceTiming = () => {
-    const t1 = performance.now();
-    for (let i = 0; i < 100; i++) {
-      console.log(i);
-      console.clear();
-    }
-    const t2 = performance.now();
-    // Console operations are significantly slower when DevTools is open
-    return (t2 - t1) > 200;
-  };
-
-  // Combined check
-  const runChecks = () => {
-    if (hasTriggered) return;
-    
-    const sizeCheck = checkWindowSize();
-    const consoleCheck = checkConsoleTiming();
-    const functionCheck = checkFunctionToString();
-    const performanceCheck = checkPerformanceTiming();
-    
-    const isDevToolsOpen = sizeCheck || consoleCheck || functionCheck || performanceCheck;
-    
-    if (isDevToolsOpen && !devtoolsOpen) {
-      devtoolsOpen = true;
-      hasTriggered = true;
-      showConsoleWarning();
-      callback();
-    } else if (!isDevToolsOpen) {
-      devtoolsOpen = false;
+    if (detected && !isDevToolsOpen) {
+      isDevToolsOpen = true;
+      onOpen();
+    } else if (!detected && isDevToolsOpen) {
+      isDevToolsOpen = false;
+      onClose();
     }
   };
 
-  // Run initial check immediately on page load
-  // Use setTimeout to ensure DOM is ready
-  setTimeout(() => {
-    runChecks();
-    // Also try debugger check separately (can be intrusive)
-    if (!hasTriggered) {
-      try {
-        const debuggerOpen = checkDebuggerTiming();
-        if (debuggerOpen) {
-          hasTriggered = true;
-          showConsoleWarning();
-          callback();
-        }
-      } catch {
-        // Ignore errors from debugger check
-      }
-    }
-  }, 0);
-
-  // Run checks periodically
-  const interval = setInterval(runChecks, 500);
+  // Check periodically
+  const interval = setInterval(runCheck, 1000);
   
-  // Also check on resize (DevTools docking/undocking)
-  window.addEventListener('resize', runChecks);
+  // Also check on resize
+  window.addEventListener('resize', runCheck);
+
+  // Initial check
+  runCheck();
 
   return () => {
     clearInterval(interval);
-    window.removeEventListener('resize', runChecks);
+    window.removeEventListener('resize', runCheck);
   };
 };
 
@@ -150,16 +103,21 @@ export const GlobalProtection = () => {
     // Show initial console warning
     showConsoleWarning();
 
-    // DevTools detection - redirect when detected
-    const cleanupDevToolsDetection = detectDevTools(() => {
-      // Redirect to blank page or close
-      try {
-        window.location.href = 'about:blank';
-      } catch {
-        // Fallback: try to close or navigate away
-        window.location.replace('https://www.google.com');
+    // Block APIs initially
+    blockAPIs();
+
+    // DevTools detection - block APIs and show warning (no redirect)
+    const cleanupDevToolsDetection = detectDevTools(
+      // On DevTools open
+      () => {
+        showConsoleWarning();
+        console.log('%c🔒 API calls are now blocked', 'color: #ff6b6b; font-size: 14px; font-weight: bold;');
+      },
+      // On DevTools close
+      () => {
+        console.log('%c✅ DevTools closed - API calls restored', 'color: #4ade80; font-size: 14px; font-weight: bold;');
       }
-    });
+    );
     // Disable right-click globally
     const handleContextMenu = (e: MouseEvent) => {
       e.preventDefault();
