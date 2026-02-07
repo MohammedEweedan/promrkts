@@ -36,9 +36,14 @@ const originalFetch = window.fetch;
 const originalXHROpen = XMLHttpRequest.prototype.open;
 const originalXHRSend = XMLHttpRequest.prototype.send;
 
-// Block API calls when DevTools is open
-const blockAPIs = () => {
-  // Override fetch
+// API interception is set up once, but only blocks when isDevToolsOpen is true
+let apisIntercepted = false;
+
+const setupAPIInterception = () => {
+  if (apisIntercepted) return;
+  apisIntercepted = true;
+
+  // Override fetch - only blocks when DevTools is actually open
   window.fetch = function(...args) {
     if (isDevToolsOpen) {
       console.warn('%c⚠️ API calls blocked while DevTools is open', 'color: #ff6b6b; font-weight: bold;');
@@ -47,7 +52,7 @@ const blockAPIs = () => {
     return originalFetch.apply(window, args);
   };
 
-  // Override XHR
+  // Override XHR - only blocks when DevTools is actually open
   XMLHttpRequest.prototype.open = function(method: string, url: string | URL, async: boolean = true, username?: string | null, password?: string | null) {
     (this as XMLHttpRequest & { _blocked?: boolean })._blocked = isDevToolsOpen;
     return originalXHROpen.call(this, method, url, async, username, password);
@@ -103,8 +108,8 @@ export const GlobalProtection = () => {
     // Show initial console warning
     showConsoleWarning();
 
-    // Block APIs initially
-    blockAPIs();
+    // Set up API interception (only blocks when DevTools is detected)
+    setupAPIInterception();
 
     // DevTools detection - block APIs and show warning (no redirect)
     const cleanupDevToolsDetection = detectDevTools(
