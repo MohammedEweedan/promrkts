@@ -111,8 +111,7 @@ function App() {
             </VStack>
           </Box>
         )}
-        {/* Router is already provided ABOVE in index.tsx */}
-        <GlobalProtection />
+        {/* <GlobalProtection /> */}
         <ScrollToTop />
         {!isChatPage && <Header />}
         <Box pb={isChatPage ? 0 : 16} flex="1" w="100%">

@@ -23,6 +23,7 @@ import {
   Image,
   Icon,
   Badge,
+  useBreakpointValue,
   useToast,
   Stack,
   Select,
@@ -1105,6 +1106,7 @@ const TrustSignals: React.FC<{ t: any }> = ({ t }) => {
             border="1px solid"
             borderColor={UI.border}
             spacing={2}
+            align="center"
             _hover={{ borderColor: UI.borderAccent }}
             transition="all 0.3s"
           >
@@ -1260,39 +1262,67 @@ const SuccessStories: React.FC<{ t: any }> = ({ t }) => {
 // Sticky CTA that appears on scroll
 const StickyCTA: React.FC<{ t: any; onNavigate: () => void }> = ({ t, onNavigate }) => {
   const [visible, setVisible] = React.useState(false);
-  
+  const [dismissed, setDismissed] = React.useState(false);
+
   React.useEffect(() => {
     const handleScroll = () => {
       setVisible(window.scrollY > 800);
     };
-    window.addEventListener('scroll', handleScroll, { passive: true });
-    return () => window.removeEventListener('scroll', handleScroll);
+    window.addEventListener("scroll", handleScroll);
+    return () => window.removeEventListener("scroll", handleScroll);
   }, []);
+
+  if (dismissed) return null;
 
   return (
     <MotionBox
       position="fixed"
-      bottom={6}
-      left="50%"
-      transform="translateX(-50%)"
+      bottom={{ base: 4, md: 6 }}
+      right={{ base: 4, md: "auto" }}
+      left={{ base: "auto", md: "50%" }}
+      transform={{ base: "none", md: "translateX(-50%)" }}
       zIndex={100}
       initial={{ opacity: 0, y: 100 }}
       animate={{ opacity: visible ? 1 : 0, y: visible ? 0 : 100 }}
       transition={{ duration: 0.3 }}
       pointerEvents={visible ? "auto" : "none"}
     >
-      <HStack
-        bg="rgba(10, 15, 26, 0.95)"
-        backdropFilter="blur(20px)"
-        border="1px solid"
-        borderColor={UI.borderAccent}
-        borderRadius="full"
-        p={2}
-        pl={6}
-        spacing={4}
-        boxShadow="0 20px 60px rgba(0,0,0,0.5)"
-      >
-        <VStack align="start" spacing={0}>
+      <Box position="relative">
+        <Button
+          position="absolute"
+          top={{ base: "-10px", md: "-10px" }}
+          left={{ base: "-10px", md: "auto" }}
+          right={{ base: "auto", md: "50%" }}
+          transform={{ base: "none", md: "translateX(50%)" }}
+          size="xs"
+          borderRadius="full"
+          bg="rgba(239, 68, 68, 0.9)"
+          color="white"
+          minW="20px"
+          h="20px"
+          p={0}
+          fontSize="10px"
+          zIndex={101}
+          onClick={() => setDismissed(true)}
+          _hover={{ 
+            bg: "rgba(239, 68, 68, 1)", 
+            transform: { base: "scale(1.1)", md: "translateX(50%) scale(1.1)" }
+          }}
+          _active={{ transform: { base: "scale(0.95)", md: "translateX(50%) scale(0.95)" } }}
+          transition="all 0.2s"
+        >
+          ✕
+        </Button>
+        <HStack
+          bg="rgba(10, 15, 26, 0.95)"
+          backdropFilter="blur(20px)"
+          borderRadius="full"
+          p={{ base: 2, md: 2 }}
+          pl={{ base: 2, md: 6 }}
+          spacing={{ base: 2, md: 4 }}
+          boxShadow="0 20px 60px rgba(0,0,0,0.5)"
+        >
+        <VStack align="start" spacing={0} display={{ base: "none", md: "flex" }}>
           <Text fontSize="sm" fontWeight="600">
             {t("home.sticky.title", { defaultValue: "Ready to start?" })}
           </Text>
@@ -1301,11 +1331,17 @@ const StickyCTA: React.FC<{ t: any; onNavigate: () => void }> = ({ t, onNavigate
           </Text>
         </VStack>
         <Button
-          bg={UI.gradient}
-          color="#0a0f1a"
+          bg={{ base: "transparent", md: UI.gradient }}
+          color={{ base: "transparent", md: "white" }}
+          bgGradient={{ base: UI.gradient, md: "none" }}
+          bgClip={{ base: "text", md: "border-box" }}
           fontWeight="700"
           borderRadius="full"
-          px={6}
+          px={{ base: 5, md: 6 }}
+          py={{ base: 2, md: "auto" }}
+          size={{ base: "sm", md: "md" }}
+          fontSize={{ base: "sm", md: "md" }}
+          ml={{ base: 3, md: 0 }}
           _hover={{ transform: "scale(1.05)" }}
           transition="all 0.2s"
           onClick={onNavigate}
@@ -1313,6 +1349,7 @@ const StickyCTA: React.FC<{ t: any; onNavigate: () => void }> = ({ t, onNavigate
           {t("home.sticky.cta", { defaultValue: "Get Started" })}
         </Button>
       </HStack>
+      </Box>
     </MotionBox>
   );
 };
@@ -1359,7 +1396,8 @@ const ValueProposition: React.FC<{ t: any }> = ({ t }) => {
           fontSize={{ base: "2.5rem", md: "3.5rem" }} 
           letterSpacing="-0.03em" 
           fontWeight="700"
-         
+          bgGradient="linear(to-r, #65a8bf, #b7a27d)" 
+          bgClip="text"
         >
           {t("home.value.title", { defaultValue: "Why Traders Choose Us" })}
         </Heading>
@@ -1774,7 +1812,6 @@ const FaqRow: React.FC<{ q: string; a: string; index: number }> = ({ q, a, index
             w="32px"
             h="32px"
             borderRadius="10px"
-            bg={open ? UI.gradient : "rgba(101, 168, 191, 0.1)"}
             display="flex"
             alignItems="center"
             justifyContent="center"
@@ -1785,7 +1822,7 @@ const FaqRow: React.FC<{ q: string; a: string; index: number }> = ({ q, a, index
           >
             {index + 1}
           </Box>
-          <Text textAlign="start" fontWeight="600" flex="1" fontSize={{ base: "sm", md: "md" }} lineHeight="1.5">
+          <Text textAlign="start" fontWeight="600" flex="1" fontSize={{ base: "sm", md: "md" }} lineHeight="1.5" color="#65a8bf">
             {q}
           </Text>
         </HStack>
@@ -1820,7 +1857,7 @@ const FaqRow: React.FC<{ q: string; a: string; index: number }> = ({ q, a, index
             pt={0}
             ml={{ base: 0, md: "48px" }}
           >
-            <Text fontSize={{ base: "sm", md: "md" }} lineHeight="1.8">
+            <Text fontSize={{ base: "sm", md: "md" }} lineHeight="1.8" color="inherit">
               {a}
             </Text>
           </Box>
@@ -1887,6 +1924,8 @@ const Home: React.FC = () => {
   const [showNews, setShowNews] = React.useState(true);
   const [showContinue, setShowContinue] = React.useState(true);
   const [showBadgesCard, setShowBadgesCard] = React.useState(true);
+
+  const reviewsCarouselDuration = useBreakpointValue({ base: 9, md: 15 }) ?? 15;
   const [showOffersCard, setShowOffersCard] = React.useState(true);
 
   const [badges, setBadges] = React.useState<any[] | null>(null);
@@ -3503,7 +3542,7 @@ const Home: React.FC = () => {
                           display="flex"
                           gap={4}
                           animate={{ x: ["0%", "-50%"] }}
-                          transition={{ duration: 15, ease: "linear", repeat: Infinity }}
+                          transition={{ duration: reviewsCarouselDuration, ease: "linear", repeat: Infinity }}
                           style={{ direction: "ltr", whiteSpace: "nowrap" }}
                         >
                           {[...reviewsToShow, ...reviewsToShow].map((r, i) => (
@@ -3655,6 +3694,7 @@ const Home: React.FC = () => {
                           whileInView={{ opacity: 1, x: 0 }}
                           transition={{ duration: 0.8 }}
                           viewport={{ once: true, amount: 0.3 }}
+                          textAlign={{ base: "center", lg: "left" }}
                         >
                           <Badge
                             bg="rgba(101, 168, 191, 0.15)"
@@ -3665,6 +3705,7 @@ const Home: React.FC = () => {
                             fontSize="sm"
                             fontWeight="600"
                             mb={4}
+                            mx={{ base: "auto", lg: 0 }}
                           >
                             {t("home.app.badge") || "Coming Soon"}
                           </Badge>
@@ -3684,7 +3725,7 @@ const Home: React.FC = () => {
                             {t("home.app.description") || "A revolutionary social platform built exclusively for traders. Connect, learn, and grow with our proprietary Fear & Greed Index, private chat rooms, and community-driven insights."}
                           </Text>
                           
-                          <VStack align="start" gap={4} mb={10}>
+                          <VStack align={{ base: "center", lg: "start" }} gap={4} mb={10}>
                             {[
                               { icon: BarChart3, key: "fearGreed", fallback: "Proprietary Fear & Greed Index — real-time market sentiment at your fingertips" },
                               { icon: MessageCircle, key: "chatRooms", fallback: "Private chat rooms & groups to discuss pairs and strategies" },
@@ -3698,7 +3739,7 @@ const Home: React.FC = () => {
                                 transition={{ duration: 0.5, delay: i * 0.1 }}
                                 viewport={{ once: true }}
                               >
-                                <HStack gap={4} align="flex-start">
+                                <HStack gap={4} align="flex-start" w="full" justify={{ base: "center", lg: "flex-start" }}>
                                   <Box
                                     w="50px"
                                     h="50px"
@@ -3711,7 +3752,7 @@ const Home: React.FC = () => {
                                   >
                                     <Icon as={feature.icon} boxSize={6} color={UI.accent} />
                                   </Box>
-                                  <Text fontSize={{ base: "sm", md: "md" }} pt={2}>
+                                  <Text fontSize={{ base: "sm", md: "md" }} pt={2} textAlign="start">
                                     {t(`home.app.features.${feature.key}`) || feature.fallback}
                                   </Text>
                                 </HStack>
@@ -3719,7 +3760,13 @@ const Home: React.FC = () => {
                             ))}
                           </VStack>
                           
-                          <HStack gap={3} w="100%" maxW={{ base: "100%", md: "400px" }} justify="space-between">
+                          <HStack
+                            gap={3}
+                            w="100%"
+                            maxW={{ base: "100%", md: "400px" }}
+                            justify={{ base: "center", md: "space-between" }}
+                            flexWrap="wrap"
+                          >
                             <MotionBox
                               whileHover={{ scale: 1.05 }}
                               whileTap={{ scale: 0.95 }}
@@ -3731,7 +3778,7 @@ const Home: React.FC = () => {
                                 display="block"
                               >
                                 <Box
-                                  w="180px"
+                                  w={{ base: "160px", md: "180px" }}
                                   h="60px"
                                   display="flex"
                                   alignItems="center"
@@ -3759,7 +3806,7 @@ const Home: React.FC = () => {
                                 display="block"
                               >
                                 <Box
-                                  w="180px"
+                                  w={{ base: "160px", md: "180px" }}
                                   h="60px"
                                   display="flex"
                                   alignItems="center"

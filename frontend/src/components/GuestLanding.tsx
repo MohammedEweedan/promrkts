@@ -142,7 +142,7 @@ const GlobeAnimation: React.FC = () => {
     }
     geometry.computeVertexNormals();
 
-    // Shiny, dim sun-like effect (adapted)
+    // Shiny, dim sun-like effect (adapted) with color shifting
     const material = new THREE.MeshStandardMaterial({
       color: 0x65a8bf,
       metalness: 0.5,
@@ -224,10 +224,11 @@ const GlobeAnimation: React.FC = () => {
       ref={containerRef}
       position="absolute"
       top="50%"
-      right={{ base: "-20%", md: "5%" }}
-      transform="translateY(-50%)"
-      w={{ base: "400px", md: "500px", lg: "600px" }}
-      h={{ base: "400px", md: "500px", lg: "600px" }}
+      left={{ base: "50%", md: "auto" }}
+      right={{ base: "auto", md: "5%" }}
+      transform={{ base: "translate(-50%, -50%)", md: "translateY(-50%)" }}
+      w={{ base: "600px", md: "700px", lg: "800px" }}
+      h={{ base: "600px", md: "700px", lg: "800px" }}
       zIndex={0}
       opacity={0.8}
       pointerEvents="none"
@@ -299,34 +300,7 @@ export default function GuestLanding({
                 })}
               </Text>
 
-            {/* CTA Buttons */}
-            <Box>
-              <HStack spacing={4} flexWrap="wrap" justify={{ base: "center", lg: "flex-start" }}>
-                <Button
-                  bg={UI.gradient}
-                  px={8}
-                  py={7}
-                  fontSize="md"
-                  fontWeight="700"
-                  borderRadius="16px"
-                  boxShadow={UI.glow}
-                  _hover={{
-                    transform: "translateY(-3px)",
-                    boxShadow: UI.glowStrong,
-                  }}
-                  _active={{ transform: "translateY(0)" }}
-                  transition="all 0.3s"
-                  onClick={() => navigate(expired ? "/contact" : "/products")}
-                  rightIcon={<Icon as={ChevronRight} boxSize={5} />}
-                >
-                  {expired
-                    ? t("home.hero.cta_waitlist", { defaultValue: "Join Waitlist" })
-                    : t("home.hero.cta_primary", { defaultValue: "Start Learning" })}
-                </Button>
-              </HStack>
-            </Box>
-
-            {/* Spin Button */}
+            {/* Unified CTA - Spin & Win */}
             {showSpinButton && (
               <Box>
                 <Button
@@ -380,44 +354,6 @@ export default function GuestLanding({
         </Grid>
       </Container>
 
-      {/* Floating Spin Reminder */}
-      {showSpinButton && (
-        <Box
-          position="fixed"
-          bottom={{ base: 4, md: 6 }}
-          right={{ base: 4, md: 6 }}
-          zIndex={100}
-        >
-          <Box
-            as="button"
-            onClick={onOpenSpin}
-            color="#0a0f1a"
-            bgGradient={UI.gradient}
-            px={5}
-            py={3}
-            borderRadius="full"
-            display="flex"
-            alignItems="center"
-            gap={2}
-            fontWeight="700"
-            fontSize="sm"
-            cursor="pointer"
-            boxShadow="0 10px 40px rgba(183, 162, 125, 0.3)"
-            _hover={{
-              transform: "scale(1.05)",
-              filter: "brightness(1.05)",
-              boxShadow: "0 15px 50px rgba(183, 162, 125, 0.4)",
-            }}
-            _active={{ transform: "scale(0.99)" }}
-            transition="all 0.3s"
-          >
-            <Icon as={Award} boxSize={5} />
-            <Text display={{ base: "none", md: "block" }}>
-              {t("home.spin_reminder", { defaultValue: "Spin & Win!" })}
-            </Text>
-          </Box>
-        </Box>
-      )}
     </Box>
   );
 }

@@ -1,6 +1,7 @@
 import React from "react";
 import { Box, Button, Heading, Text, VStack, HStack, useToast } from "@chakra-ui/react";
 import { useTranslation } from "react-i18next";
+import { useNavigate } from "react-router-dom";
 import api from "../api/client";
 
 const GOLD = "#65a8bf";
@@ -26,6 +27,7 @@ const segments = [
 
 export default function SpinningWheel({ isOpen, onClose }: { isOpen: boolean; onClose: () => void }) {
   const { t } = useTranslation();
+  const navigate = useNavigate();
   const [spinning, setSpinning] = React.useState(false);
   const [result, setResult] = React.useState<SpinResult | null>(null);
   const [rotation, setRotation] = React.useState(0);
@@ -109,6 +111,16 @@ export default function SpinningWheel({ isOpen, onClose }: { isOpen: boolean; on
     }
   }
 
+  const handleGoToProducts = () => {
+    if (result && result.type === "PROMO") {
+      // Store promo code in localStorage for auto-apply
+      localStorage.setItem("autoApplyPromo", result.code);
+      // Navigate to products page
+      navigate("/products");
+      onClose();
+    }
+  };
+
   function content() {
     if (!result && !spinning) {
       return (
@@ -133,6 +145,9 @@ export default function SpinningWheel({ isOpen, onClose }: { isOpen: boolean; on
               </Box>
             </HStack>
             <Text fontSize="sm" opacity={0.8}>{t("spin.valid", "Use it at checkout. Valid for 7 days.")}</Text>
+            <Text fontSize="sm" fontWeight="600" color="green.600" mt={2}>
+              {t("spin.auto_apply", "This code will be automatically applied at checkout!")}
+            </Text>
           </VStack>
         );
       }
@@ -316,9 +331,20 @@ export default function SpinningWheel({ isOpen, onClose }: { isOpen: boolean; on
         {/* Footer */}
         {result && (
           <Box mt={4} textAlign="center">
-            <Button onClick={onClose} bg={GOLD} color="black" _hover={{ opacity: 0.9 }}>
-              {t("spin.close", "Close")}
-            </Button>
+            {result.type === "PROMO" ? (
+              <HStack spacing={3} justify="center">
+                <Button onClick={handleGoToProducts} bg={GOLD} color="black" _hover={{ opacity: 0.9 }} size="lg">
+                  {t("spin.go_to_products", "Go to Products")}
+                </Button>
+                <Button onClick={onClose} variant="outline" colorScheme="gray">
+                  {t("spin.close", "Close")}
+                </Button>
+              </HStack>
+            ) : (
+              <Button onClick={onClose} bg={GOLD} color="black" _hover={{ opacity: 0.9 }}>
+                {t("spin.close", "Close")}
+              </Button>
+            )}
           </Box>
         )}
       </Box>
