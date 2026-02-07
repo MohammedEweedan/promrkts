@@ -31,6 +31,7 @@ const showConsoleWarning = () => {
 // DevTools detection using multiple methods
 const detectDevTools = (callback: () => void) => {
   let devtoolsOpen = false;
+  let hasTriggered = false;
 
   // Method 1: Window size difference (works for docked DevTools)
   const checkWindowSize = () => {
@@ -56,22 +57,84 @@ const detectDevTools = (callback: () => void) => {
     return isOpen;
   };
 
+  // Method 3: Debugger statement timing (detects DevTools open on page load)
+  const checkDebuggerTiming = () => {
+    const start = performance.now();
+    // This will pause if DevTools is open with debugger enabled
+    // eslint-disable-next-line no-debugger
+    debugger;
+    const end = performance.now();
+    // If debugger paused for more than 100ms, DevTools is likely open
+    return (end - start) > 100;
+  };
+
+  // Method 4: Function toString detection
+  const checkFunctionToString = () => {
+    let isOpen = false;
+    const fn = function() {};
+    fn.toString = function() {
+      isOpen = true;
+      return '';
+    };
+    console.log(fn);
+    console.clear();
+    return isOpen;
+  };
+
+  // Method 5: Performance timing detection (detects DevTools open before page load)
+  const checkPerformanceTiming = () => {
+    const t1 = performance.now();
+    for (let i = 0; i < 100; i++) {
+      console.log(i);
+      console.clear();
+    }
+    const t2 = performance.now();
+    // Console operations are significantly slower when DevTools is open
+    return (t2 - t1) > 200;
+  };
+
   // Combined check
   const runChecks = () => {
+    if (hasTriggered) return;
+    
     const sizeCheck = checkWindowSize();
     const consoleCheck = checkConsoleTiming();
+    const functionCheck = checkFunctionToString();
+    const performanceCheck = checkPerformanceTiming();
     
-    if ((sizeCheck || consoleCheck) && !devtoolsOpen) {
+    const isDevToolsOpen = sizeCheck || consoleCheck || functionCheck || performanceCheck;
+    
+    if (isDevToolsOpen && !devtoolsOpen) {
       devtoolsOpen = true;
+      hasTriggered = true;
       showConsoleWarning();
       callback();
-    } else if (!sizeCheck && !consoleCheck) {
+    } else if (!isDevToolsOpen) {
       devtoolsOpen = false;
     }
   };
 
+  // Run initial check immediately on page load
+  // Use setTimeout to ensure DOM is ready
+  setTimeout(() => {
+    runChecks();
+    // Also try debugger check separately (can be intrusive)
+    if (!hasTriggered) {
+      try {
+        const debuggerOpen = checkDebuggerTiming();
+        if (debuggerOpen) {
+          hasTriggered = true;
+          showConsoleWarning();
+          callback();
+        }
+      } catch {
+        // Ignore errors from debugger check
+      }
+    }
+  }, 0);
+
   // Run checks periodically
-  const interval = setInterval(runChecks, 1000);
+  const interval = setInterval(runChecks, 500);
   
   // Also check on resize (DevTools docking/undocking)
   window.addEventListener('resize', runChecks);

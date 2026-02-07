@@ -2417,6 +2417,20 @@ const resources = {
           title: "Histoires de Réussite",
           subtitle: "Rejoignez des milliers de traders qui ont transformé leur avenir"
         },
+        testimonial: {
+          role1: "Trader Forex",
+          quote1: "Je suis passé de pertes à des profits constants en seulement 3 mois. Le coaching IA a tout changé.",
+          role2: "Investisseur Crypto",
+          quote2: "Le meilleur investissement que j'ai jamais fait. Le soutien de la communauté est incroyable et les stratégies fonctionnent vraiment.",
+          role3: "Day Trader",
+          quote3: "J'ai enfin quitté mon emploi après avoir terminé le cours avancé. Je trade à plein temps maintenant avec des revenus constants."
+        },
+        trust_signals: {
+          secure: "Paiement Sécurisé",
+          guarantee: "Garantie Satisfait ou Remboursé",
+          certified: "Instructeurs Certifiés",
+          global: "Communauté Mondiale"
+        },
         sticky: {
           title: "Prêt à commencer?",
           subtitle: "Rejoignez 12 000+ traders",
@@ -3861,6 +3875,20 @@ const resources = {
           title: "قصص نجاح",
           subtitle: "انضم إلى آلاف المتداولين الذين غيروا مستقبلهم المالي"
         },
+        testimonial: {
+          role1: "متداول فوركس",
+          quote1: "انتقلت من خسارة المال إلى أرباح ثابتة في 3 أشهر فقط. التدريب بالذكاء الاصطناعي غيّر كل شيء.",
+          role2: "مستثمر كريبتو",
+          quote2: "أفضل استثمار قمت به على الإطلاق. دعم المجتمع مذهل والاستراتيجيات تعمل فعلاً.",
+          role3: "متداول يومي",
+          quote3: "أخيراً تركت وظيفتي بعد إكمال الدورة المتقدمة. أتداول بدوام كامل الآن بدخل ثابت."
+        },
+        trust_signals: {
+          secure: "دفع آمن",
+          guarantee: "ضمان استرداد المال",
+          certified: "مدربون معتمدون",
+          global: "مجتمع عالمي"
+        },
         sticky: {
           title: "مستعد للبدء؟",
           subtitle: "انضم لـ 52,000+ متداول",
@@ -4388,7 +4416,38 @@ const resources = {
       },
       common: { select: 'Выбрать', save: 'Сохранить', close: 'Закрыть', loading: 'Загрузка...', confirm: 'Подтвердить', delete: 'Удалить', create: 'Создать', upload: 'Загрузить', prev: 'Назад', next: 'Далее', products: 'Продукты', email: 'Email', phone: 'Телефон', name: 'Имя', copy: 'Копировать', copied: 'Скопировано' },
       checkout: { title: 'Оформление заказа', subtitle: 'Безопасная оплата', free: 'Бесплатно', no_tier: 'Курс не выбран', already_enrolled: 'Вы уже записаны на этот курс', customer: { details: 'Данные покупателя', full_name: 'Полное имя', email: 'Email', country: 'Страна', pref_lang: 'Язык курса' }, lang: { en: 'Английский', ar: 'Арабский', fr: 'Французский', ru: 'Русский' }, payment: { title: 'Способ оплаты', usdt: 'USDT (TRC20)', card: 'Карта (Visa/Mastercard)' }, actions: { complete: 'Завершить покупку', back: 'Назад' }, summary: { title: 'Итого', course: 'Курс', subtotal: 'Подытог', taxes: 'Налоги', total: 'Итого' }, promo: { label: 'Промокод', placeholder: 'Введите код', confirm: 'Применить', applied: 'Промокод применен', not_applied: 'Промокод не применен' } },
-      home: { hero: { title: 'Ваши партнеры в успехе', subtitle: 'Присоединяйтесь к 4200+ учеников', cta_primary: 'Начать обучение', cta_secondary: 'Подробнее о курсах' }, courses: { title: 'Наши услуги', cta: 'Записаться', view: 'Смотреть', no_courses: 'Нет доступных курсов' }, faq: { title: 'Часто задаваемые вопросы' }, benefits: { title: 'Уникальный опыт обучения' } },
+      home: {
+        spin_and_win: 'Крути и выигрывай',
+        trust: 'Нам доверяют трейдеры в 50+ странах',
+        stats: {
+          traders: "50K+",
+          traders_label: "Активных трейдеров",
+          members: "12K+",
+          members_label: "Участников",
+          support: "24/7",
+          support_label: "Поддержка",
+          signals: "95%",
+          signals_label: "Винрейт"
+        },
+        testimonial: {
+          role1: "Форекс трейдер",
+          quote1: "Я перешел от убытков к стабильной прибыли всего за 3 месяца. ИИ-коучинг изменил всё.",
+          role2: "Крипто инвестор",
+          quote2: "Лучшая инвестиция в моей жизни. Поддержка сообщества невероятная, и стратегии реально работают.",
+          role3: "Дейтрейдер",
+          quote3: "Наконец уволился с работы после прохождения продвинутого курса. Теперь торгую на полную ставку со стабильным доходом."
+        },
+        trust_signals: {
+          secure: "Безопасная оплата",
+          guarantee: "Гарантия возврата денег",
+          certified: "Сертифицированные инструкторы",
+          global: "Глобальное сообщество"
+        },
+        hero: { title: 'Ваши партнеры в успехе', title_line1: 'Освойте трейдинг.', title_line2: 'Создайте богатство.', subtitle: 'Профессиональное обучение трейдингу с ИИ-коучингом, живыми сигналами и глобальным сообществом элитных трейдеров.', cta_primary: 'Начать обучение', cta_secondary: 'Подробнее о курсах' },
+        courses: { title: 'Наши услуги', cta: 'Записаться', view: 'Смотреть', no_courses: 'Нет доступных курсов' },
+        faq: { title: 'Часто задаваемые вопросы', subtitle: 'Найдите быстрые ответы ниже. Остались вопросы? Свяжитесь с нами — мы рады помочь.' },
+        benefits: { title: 'Уникальный опыт обучения' }
+      },
       dashboard: { title: 'Панель управления', courses: 'Мои курсы', overview: 'Обзор', settings: 'Настройки', no_courses: 'У вас пока нет курсов', continue: 'Продолжить', empty: 'Нет курсов' },
       progress: { title: 'Мой прогресс', overview: 'Обзор', badges: 'Значки', leaderboard: 'Рейтинг', level: 'Уровень', xp: 'XP', streak: 'Серия', days: 'дней', completed: 'Завершено', in_progress: 'В процессе' },
       contact: { title: 'Связаться с нами', subtitle: 'Отправьте сообщение', name: 'Ваше имя', email: 'Email', message: 'Сообщение', send: 'Отправить', sent: 'Сообщение отправлено' },
@@ -4429,7 +4488,38 @@ const resources = {
       },
       common: { select: '选择', save: '保存', close: '关闭', loading: '加载中...', confirm: '确认', delete: '删除', create: '创建', upload: '上传', prev: '上一页', next: '下一页', products: '产品', email: '邮箱', phone: '电话', name: '姓名', copy: '复制', copied: '已复制' },
       checkout: { title: '结账', subtitle: '安全支付', free: '免费', no_tier: '未选择课程', already_enrolled: '您已注册此课程', customer: { details: '客户信息', full_name: '全名', email: '邮箱', country: '国家', pref_lang: '课程语言' }, lang: { en: '英语', ar: '阿拉伯语', fr: '法语', zh: '中文' }, payment: { title: '支付方式', usdt: 'USDT (TRC20)', card: '银行卡 (Visa/Mastercard)' }, actions: { complete: '完成购买', back: '返回' }, summary: { title: '订单摘要', course: '课程', subtotal: '小计', taxes: '税费', total: '总计' }, promo: { label: '优惠码', placeholder: '输入优惠码', confirm: '应用', applied: '优惠码已应用', not_applied: '优惠码无效' } },
-      home: { hero: { title: '您的成功伙伴', subtitle: '加入4200+学员', cta_primary: '开始学习', cta_secondary: '查看课程详情' }, courses: { title: '我们的服务', cta: '报名', view: '查看', no_courses: '暂无课程' }, faq: { title: '常见问题' }, benefits: { title: '独特的学习体验' } },
+      home: {
+        spin_and_win: '转盘抽奖',
+        trust: '受到50+国家交易者的信赖',
+        stats: {
+          traders: "50K+",
+          traders_label: "活跃交易者",
+          members: "12K+",
+          members_label: "会员",
+          support: "24/7",
+          support_label: "支持",
+          signals: "95%",
+          signals_label: "胜率"
+        },
+        testimonial: {
+          role1: "外汇交易者",
+          quote1: "我在短短3个月内从亏损变成了稳定盈利。AI教练改变了一切。",
+          role2: "加密货币投资者",
+          quote2: "这是我做过的最好的投资。社区支持令人难以置信，策略确实有效。",
+          role3: "日内交易者",
+          quote3: "完成高级课程后终于辞掉了工作。现在全职交易，收入稳定。"
+        },
+        trust_signals: {
+          secure: "安全支付",
+          guarantee: "退款保证",
+          certified: "认证讲师",
+          global: "全球社区"
+        },
+        hero: { title: '您的成功伙伴', title_line1: '掌握交易。', title_line2: '创造财富。', subtitle: '专业交易教育，配备AI教练、实时信号和精英交易者全球社区。', cta_primary: '开始学习', cta_secondary: '查看课程详情' },
+        courses: { title: '我们的服务', cta: '报名', view: '查看', no_courses: '暂无课程' },
+        faq: { title: '常见问题', subtitle: '在下方找到快速答案。还有疑问？联系我们——我们很乐意帮助。' },
+        benefits: { title: '独特的学习体验' }
+      },
       dashboard: { title: '仪表板', courses: '我的课程', overview: '概览', settings: '设置', no_courses: '您还没有课程', continue: '继续', empty: '暂无课程' },
       progress: { title: '我的进度', overview: '概览', badges: '徽章', leaderboard: '排行榜', level: '等级', xp: 'XP', streak: '连续', days: '天', completed: '已完成', in_progress: '进行中' },
       contact: { title: '联系我们', subtitle: '发送消息', name: '您的姓名', email: '邮箱', message: '消息', send: '发送', sent: '消息已发送' },
@@ -4470,7 +4560,38 @@ const resources = {
       },
       common: { select: 'Selecionar', save: 'Salvar', close: 'Fechar', loading: 'Carregando...', confirm: 'Confirmar', delete: 'Excluir', create: 'Criar', upload: 'Enviar', prev: 'Anterior', next: 'Próximo', products: 'Produtos', email: 'E-mail', phone: 'Telefone', name: 'Nome', copy: 'Copiar', copied: 'Copiado' },
       checkout: { title: 'Checkout', subtitle: 'Pagamento seguro', free: 'Grátis', no_tier: 'Nenhum curso selecionado', already_enrolled: 'Você já está inscrito', customer: { details: 'Dados do cliente', full_name: 'Nome completo', email: 'E-mail', country: 'País', pref_lang: 'Idioma do curso' }, lang: { en: 'Inglês', ar: 'Árabe', fr: 'Francês', pt: 'Português' }, payment: { title: 'Método de pagamento', usdt: 'USDT (TRC20)', card: 'Cartão (Visa/Mastercard)' }, actions: { complete: 'Finalizar compra', back: 'Voltar' }, summary: { title: 'Resumo', course: 'Curso', subtotal: 'Subtotal', taxes: 'Impostos', total: 'Total' }, promo: { label: 'Código promocional', placeholder: 'Digite o código', confirm: 'Aplicar', applied: 'Código aplicado', not_applied: 'Código inválido' } },
-      home: { hero: { title: 'Seus parceiros no sucesso', subtitle: 'Junte-se a 4200+ alunos', cta_primary: 'Começar a aprender', cta_secondary: 'Ver detalhes' }, courses: { title: 'Nossos serviços', cta: 'Inscrever-se', view: 'Ver', no_courses: 'Nenhum curso disponível' }, faq: { title: 'Perguntas frequentes' }, benefits: { title: 'Experiência única de aprendizado' } },
+      home: {
+        spin_and_win: 'Gire e Ganhe',
+        trust: 'Confiado por traders em mais de 50 países',
+        stats: {
+          traders: "50K+",
+          traders_label: "Traders Ativos",
+          members: "12K+",
+          members_label: "Membros",
+          support: "24/7",
+          support_label: "Suporte",
+          signals: "95%",
+          signals_label: "Taxa de Acerto"
+        },
+        testimonial: {
+          role1: "Trader de Forex",
+          quote1: "Passei de perder dinheiro para lucros consistentes em apenas 3 meses. O coaching com IA mudou tudo.",
+          role2: "Investidor de Cripto",
+          quote2: "O melhor investimento que já fiz. O suporte da comunidade é incrível e as estratégias realmente funcionam.",
+          role3: "Day Trader",
+          quote3: "Finalmente larguei meu emprego após completar o curso avançado. Agora faço trading em tempo integral com renda consistente."
+        },
+        trust_signals: {
+          secure: "Pagamento Seguro",
+          guarantee: "Garantia de Reembolso",
+          certified: "Instrutores Certificados",
+          global: "Comunidade Global"
+        },
+        hero: { title: 'Seus parceiros no sucesso', title_line1: 'Domine o Trading.', title_line2: 'Construa Riqueza.', subtitle: 'Educação profissional em trading com coaching de IA, sinais ao vivo e uma comunidade global de traders de elite.', cta_primary: 'Começar a aprender', cta_secondary: 'Ver detalhes' },
+        courses: { title: 'Nossos serviços', cta: 'Inscrever-se', view: 'Ver', no_courses: 'Nenhum curso disponível' },
+        faq: { title: 'Perguntas frequentes', subtitle: 'Encontre respostas rápidas abaixo. Ainda com dúvidas? Entre em contato — ficaremos felizes em ajudar.' },
+        benefits: { title: 'Experiência única de aprendizado' }
+      },
       dashboard: { title: 'Painel', courses: 'Meus cursos', overview: 'Visão geral', settings: 'Configurações', no_courses: 'Você ainda não tem cursos', continue: 'Continuar', empty: 'Sem cursos' },
       progress: { title: 'Meu progresso', overview: 'Visão geral', badges: 'Distintivos', leaderboard: 'Ranking', level: 'Nível', xp: 'XP', streak: 'Sequência', days: 'dias', completed: 'Concluído', in_progress: 'Em andamento' },
       contact: { title: 'Fale conosco', subtitle: 'Envie uma mensagem', name: 'Seu nome', email: 'E-mail', message: 'Mensagem', send: 'Enviar', sent: 'Mensagem enviada' },

@@ -100,9 +100,7 @@ const StatCard = ({ icon, value, label, delay }: { icon: any; value: string; lab
 );
 
 // ===== THREE.JS GLOBE COMPONENT =====
-const GlobeAnimation: React.FC = () => {
-  const { i18n } = useTranslation();
-  const isRTL = i18n.language === 'ar';
+const GlobeAnimation: React.FC<{ isRTL: boolean }> = ({ isRTL }) => {
   const containerRef = useRef<HTMLDivElement>(null);
   const rendererRef = useRef<THREE.WebGLRenderer | null>(null);
   const animationRef = useRef<number>(0);
@@ -226,11 +224,11 @@ const GlobeAnimation: React.FC = () => {
       ref={containerRef}
       position="absolute"
       top="50%"
-      left={{ base: "50%", md: isRTL ? "5%" : "auto" }}
-      right={{ base: "auto", md: isRTL ? "auto" : "5%" }}
-      transform={{ base: "translate(-50%, -50%)", md: "translateY(-50%)" }}
-      w={{ base: "600px", md: "700px", lg: "800px" }}
-      h={{ base: "600px", md: "700px", lg: "800px" }}
+      left={{ base: "50%", md: isRTL ? "auto" : "55%" }}
+      right={{ base: "auto", md: isRTL ? "-5%" : "auto" }}
+      transform={{ base: "translate(-50%, -50%)", md: isRTL ? "translateY(-50%)" : "translate(-50%, -50%)" }}
+      w={{ base: "500px", md: "600px", lg: "700px" }}
+      h={{ base: "500px", md: "600px", lg: "700px" }}
       zIndex={0}
       opacity={0.8}
       pointerEvents="none"
@@ -255,9 +253,9 @@ export default function GuestLanding({
   }, [setShowSpinButton]);
 
   return (
-    <Box position="relative" overflow="hidden" minH="100vh">
+    <Box position="relative" overflow="hidden" minH="100vh" dir="ltr">
       {/* 3D Globe Background */}
-      <GlobeAnimation />
+      <GlobeAnimation isRTL={isRTL} />
 
       {/* Gradient overlays for depth */}
       <Box
@@ -284,8 +282,9 @@ export default function GuestLanding({
             align={{ base: "center", lg: isRTL ? "flex-end" : "flex-start" }} 
             spacing={8} 
             textAlign={{ base: "center", lg: isRTL ? "right" : "left" }}
-            gridColumn={{ base: "1", lg: isRTL ? "2" : "1" }}
+            gridColumn={{ base: "1", lg: "1" }}
             gridRow="1"
+            dir={isRTL ? "rtl" : "ltr"}
           >
             {/* Main Headline */}
             <Text
