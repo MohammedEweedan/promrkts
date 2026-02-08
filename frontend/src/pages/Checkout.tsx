@@ -201,6 +201,7 @@ const Checkout: React.FC = () => {
         country,
         courseLanguage,
         vipTelegram: !!vipTelegram && !tier?.isVipProduct,
+        network: method === "usdt" ? network : undefined,
       };
       if (promoConfirmed && promoCode) payload.promoCode = promoCode.trim();
       if (refCode) payload.refCode = refCode.trim();
@@ -269,7 +270,7 @@ const Checkout: React.FC = () => {
     } finally {
       setLoading(false);
     }
-  }, [tierId, method, purchaseId, country, courseLanguage, promoConfirmed, promoCode, usdPrice, refCode, openPaymentModal, navigate, previewAmount, t, vipTelegram, tier?.isVipProduct]);
+  }, [tierId, method, network, purchaseId, country, courseLanguage, promoConfirmed, promoCode, usdPrice, refCode, openPaymentModal, navigate, previewAmount, t, vipTelegram, tier?.isVipProduct]);
 
   const confirmPromo = React.useCallback(async () => {
     setPreviewLoading(true);
@@ -930,9 +931,58 @@ const Checkout: React.FC = () => {
                         onChange={() => setMethod("usdt")}
                       />
                       <label htmlFor="usdt">
-                        {t("checkout.payment.usdt", { defaultValue: "USDT (TRC20)" })}
+                        {t("checkout.payment.usdt", { defaultValue: "USDT" })}
                       </label>
                     </HStack>
+                    
+                    {/* Network selection for USDT */}
+                    {method === "usdt" && (
+                      <Box pl={6} py={2}>
+                        <Text fontSize="sm" fontWeight="600" mb={2}>
+                          {t("checkout.payment.select_network", { defaultValue: "Select Network:" })}
+                        </Text>
+                        <HStack gap={4} flexWrap="wrap">
+                          <HStack gap={2}>
+                            <input
+                              type="radio"
+                              id="trc20"
+                              name="network"
+                              checked={network === "trc20"}
+                              onChange={() => setNetwork("trc20")}
+                            />
+                            <label htmlFor="trc20" style={{ cursor: 'pointer' }}>
+                              <Text as="span" fontWeight={network === "trc20" ? "600" : "400"}>
+                                TRC-20
+                              </Text>
+                              <Text as="span" fontSize="xs" color="green.500" ml={1}>
+                                ({t("checkout.payment.recommended", { defaultValue: "Recommended" })})
+                              </Text>
+                            </label>
+                          </HStack>
+                          <HStack gap={2}>
+                            <input
+                              type="radio"
+                              id="erc20"
+                              name="network"
+                              checked={network === "erc20"}
+                              onChange={() => setNetwork("erc20")}
+                            />
+                            <label htmlFor="erc20" style={{ cursor: 'pointer' }}>
+                              <Text as="span" fontWeight={network === "erc20" ? "600" : "400"}>
+                                ERC-20
+                              </Text>
+                            </label>
+                          </HStack>
+                        </HStack>
+                        <Text fontSize="xs" color={subtleText} mt={1}>
+                          {network === "trc20" 
+                            ? t("checkout.payment.trc20_hint", { defaultValue: "Lower fees, faster confirmation" })
+                            : t("checkout.payment.erc20_hint", { defaultValue: "Ethereum network - higher fees" })
+                          }
+                        </Text>
+                      </Box>
+                    )}
+                    
                     <HStack gap={3} flexWrap="wrap" align="center">
                       <input
                         type="radio"
@@ -1251,7 +1301,7 @@ const Checkout: React.FC = () => {
                   {address && (
                     <Box>
                       <Text fontSize="sm">
-                        {t("checkout.modal.send_to", { defaultValue: "Send USDT (TRC20) to:" })}
+                        {t("checkout.modal.send_to", { defaultValue: `Send USDT (${network.toUpperCase()}) to:` })}
                       </Text>
                       <HStack gap={2} align="stretch" mt={1} flexWrap="wrap">
                         <Code

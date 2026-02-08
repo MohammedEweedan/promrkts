@@ -185,29 +185,10 @@ const CoursesList: React.FC = () => {
         py={{ base: 12, md: 16 }}
         px={{ base: 4, md: 8 }}
         mb={8}
-        bg={isDark
-          ? 'linear-gradient(135deg, rgba(101, 168, 191, 0.08) 0%, rgba(183, 162, 125, 0.05) 50%, rgba(20, 20, 30, 0.9) 100%)'
-          : 'linear-gradient(135deg, rgba(101, 168, 191, 0.06) 0%, rgba(183, 162, 125, 0.03) 50%, rgba(255, 255, 255, 0.95) 100%)'
-        }
         borderRadius="2xl"
         mx={{ base: 4, md: 8 }}
       >
         <VStack spacing={{ base: 6, md: 8 }} textAlign="center" maxW="4xl" mx="auto">
-          {/* Badge */}
-          <HStack
-            bg={isDark ? 'whiteAlpha.100' : 'blackAlpha.50'}
-            border="1px solid"
-            borderColor={isDark ? 'whiteAlpha.200' : 'blackAlpha.100'}
-            borderRadius="full"
-            px={4}
-            py={2}
-            spacing={2}
-          >
-            <Icon as={Sparkles} boxSize={4} color={GOLD} />
-            <Text fontSize="sm" fontWeight="500">
-              {t("hero.badge", { defaultValue: "Premium Trading Education" })}
-            </Text>
-          </HStack>
 
           {/* Main headline */}
           <Heading
@@ -328,173 +309,223 @@ const CoursesList: React.FC = () => {
                         ADVANCED: '#b7a27d',
                       };
                       return (
-                      <MotionBox
-                        key={tier.id}
-                        initial={{ opacity: 0, y: 20 }}
-                        animate={{ opacity: 1, y: 0 }}
-                        transition={{ duration: 0.4, delay: idx * 0.1 }}
-                        whileHover={{ y: -8 }}
-                      >
-                        <Box
-                          position="relative"
-                          bg={isDark
-                            ? 'linear-gradient(135deg, rgba(20, 20, 30, 0.9) 0%, rgba(30, 30, 45, 0.9) 100%)'
-                            : 'linear-gradient(135deg, rgba(255, 255, 255, 0.95) 0%, rgba(250, 250, 255, 0.95) 100%)'
-                          }
-                          border="1px solid"
-                          borderColor={isFeatured ? '#b7a27d' : 'rgba(101, 168, 191, 0.3)'}
-                          borderRadius="2xl"
-                          overflow="hidden"
-                          boxShadow={isDark ? '0 8px 32px rgba(0,0,0,0.4)' : '0 8px 32px rgba(0,0,0,0.1)'}
-                          _hover={{
-                            borderColor: '#65a8bf',
-                            boxShadow: '0 12px 40px rgba(101, 168, 191, 0.3)',
-                          }}
-                          transition="all 0.3s ease"
+                        <MotionBox
+                          key={tier.id}
+                          initial={{ opacity: 0, y: 20 }}
+                          animate={{ opacity: 1, y: 0 }}
+                          transition={{ duration: 0.4, delay: idx * 0.1 }}
+                          whileHover={{ y: -8 }}
                         >
-                          {/* Featured badge */}
-                          {isFeatured && (
-                            <Box
-                              position="absolute"
-                              top={4}
-                              right={-8}
-                              bg="linear-gradient(135deg, #65a8bf, #b7a27d)"
-                              color="white"
-                              px={10}
-                              py={1}
-                              fontSize="xs"
-                              fontWeight="700"
-                              textTransform="uppercase"
-                              letterSpacing="wider"
-                              transform="rotate(45deg)"
-                              transformOrigin="center"
-                              boxShadow="0 2px 10px rgba(0,0,0,0.2)"
-                            >
-                              {t("products.popular", { defaultValue: "Popular" })}
-                            </Box>
-                          )}
+                          <Box
+                            position="relative"
+                            bg={
+                              isDark
+                                ? "linear-gradient(135deg, rgba(20, 20, 30, 0.9) 0%, rgba(30, 30, 45, 0.9) 100%)"
+                                : "linear-gradient(135deg, rgba(255, 255, 255, 0.95) 0%, rgba(250, 250, 255, 0.95) 100%)"
+                            }
+                            border="1px solid"
+                            borderColor={isFeatured ? "#b7a27d" : "rgba(101, 168, 191, 0.3)"}
+                            borderRadius="2xl"
+                            overflow="hidden"
+                            boxShadow={
+                              isDark ? "0 8px 32px rgba(0,0,0,0.4)" : "0 8px 32px rgba(0,0,0,0.1)"
+                            }
+                            _hover={{
+                              borderColor: "#65a8bf",
+                              boxShadow: "0 12px 40px rgba(101, 168, 191, 0.3)",
+                            }}
+                            transition="all 0.3s ease"
+                          >
+                            {/* Featured badge */}
+                            {isFeatured && (
+                              <Box
+                                position="absolute"
+                                top={4}
+                                right={-8}
+                                bg="linear-gradient(135deg, #65a8bf, #b7a27d)"
+                                color="white"
+                                px={10}
+                                py={1}
+                                fontSize="xs"
+                                fontWeight="700"
+                                textTransform="uppercase"
+                                letterSpacing="wider"
+                                transform="rotate(45deg)"
+                                transformOrigin="center"
+                                boxShadow="0 2px 10px rgba(0,0,0,0.2)"
+                              >
+                                {t("products.popular", { defaultValue: "Popular" })}
+                              </Box>
+                            )}
 
-                          <VStack align="stretch" spacing={4} p={6}>
-                            {/* Header */}
-                            <HStack justify="space-between" align="start">
-                              <VStack align="start" spacing={1} flex="1">
-                                <Heading
-                                  size="md"
-                                  noOfLines={2}
-                                  bgGradient={isFeatured ? 'linear(to-r, #65a8bf, #b7a27d)' : undefined}
-                                  bgClip={isFeatured ? 'text' : undefined}
-                                >
-                                  {tier.name}
-                                </Heading>
-                                <Badge
-                                  bg={levelColors[tier.level] || '#65a8bf'}
-                                  color="white"
-                                  px={2}
-                                  py={0.5}
-                                  borderRadius="full"
-                                  fontSize="xs"
-                                  fontWeight="600"
-                                >
-                                  {t(levelKey(tier.level as any))}
-                                </Badge>
-                              </VStack>
-                            </HStack>
-
-                            {/* Description */}
-                            <Text fontSize="sm" color={isDark ? 'whiteAlpha.700' : 'gray.600'} noOfLines={3}>
-                              {tier.description}
-                            </Text>
-
-                            {/* Social proof */}
-                            <HStack spacing={4}>
-                              {renderSnippetStyleStars(tier)}
-                              <HStack spacing={1} color={isDark ? 'whiteAlpha.600' : 'gray.500'}>
-                                <Icon as={Users} boxSize={4} color="#65a8bf" />
-                                <Text fontSize="sm" color={isDark ? 'whiteAlpha.700' : 'gray.600'}>{t("products.enrolled_count", { defaultValue: "{{count}}+ enrolled", count: Math.floor(Math.random() * 400) + 100 })}</Text>
+                            <VStack align="stretch" spacing={4} p={6}>
+                              {/* Header */}
+                              <HStack justify="space-between" align="start">
+                                <VStack align="start" spacing={1} flex="1">
+                                  <Heading
+                                    size="md"
+                                    noOfLines={2}
+                                    bgGradient={
+                                      isFeatured
+                                        ? "linear(to-r, #65a8bf, #b7a27d)"
+                                        : "linear(to-r, #65a8bf, #b7a27d)"
+                                    }
+                                    bgClip={isFeatured ? "text" : "text"}
+                                  >
+                                    {tier.name}
+                                  </Heading>
+                                  <Badge
+                                    bg={levelColors[tier.level] || "#65a8bf"}
+                                    color="white"
+                                    px={2}
+                                    py={0.5}
+                                    borderRadius="full"
+                                    fontSize="xs"
+                                    fontWeight="600"
+                                  >
+                                    {t(levelKey(tier.level as any))}
+                                  </Badge>
+                                </VStack>
                               </HStack>
-                            </HStack>
 
-                            {/* Value props */}
-                            <VStack align="start" spacing={1}>
-                              <HStack spacing={2}>
-                                <Icon as={CheckCircle} boxSize={4} color="green.500" />
-                                <Text fontSize="sm" color={isDark ? 'whiteAlpha.800' : 'gray.700'}>{t("products.lifetime_access", { defaultValue: "Lifetime access" })}</Text>
-                              </HStack>
-                              <HStack spacing={2}>
-                                <Icon as={CheckCircle} boxSize={4} color="green.500" />
-                                <Text fontSize="sm" color={isDark ? 'whiteAlpha.800' : 'gray.700'}>{t("products.certificate_included", { defaultValue: "Certificate included" })}</Text>
-                              </HStack>
-                            </VStack>
+                              {/* Description */}
+                              <Text
+                                fontSize="sm"
+                                color={isDark ? "whiteAlpha.700" : "gray.600"}
+                                noOfLines={3}
+                              >
+                                {tier.description}
+                              </Text>
 
-                            {/* Price section */}
-                            <HStack justify="space-between" align="center" pt={2}>
-                              <VStack align="start" spacing={0}>
-                                <HStack align="baseline" spacing={1}>
-                                  {isFree ? (
-                                    <Text fontSize="2xl" fontWeight="800" color="green.500">{t("products.free", { defaultValue: "FREE" })}</Text>
-                                  ) : (
-                                    <>
-                                      <Text fontSize="sm" color={isDark ? 'whiteAlpha.600' : 'gray.500'}>$</Text>
-                                      <Text
-                                        fontSize="2xl"
-                                        fontWeight="800"
-                                        bgGradient="linear(to-r, #65a8bf, #b7a27d)"
-                                        bgClip="text"
-                                      >
-                                        {tier.price_usdt}
-                                      </Text>
-                                    </>
-                                  )}
+                              {/* Social proof */}
+                              <HStack spacing={4}>
+                                {renderSnippetStyleStars(tier)}
+                                <HStack spacing={1} color={isDark ? "whiteAlpha.600" : "gray.500"}>
+                                  <Icon as={Users} boxSize={4} color="#65a8bf" />
+                                  <Text
+                                    fontSize="sm"
+                                    color={isDark ? "whiteAlpha.700" : "gray.600"}
+                                  >
+                                    {t("products.enrolled_count", {
+                                      defaultValue: "{{count}}+ enrolled",
+                                      count: Math.floor(Math.random() * 400) + 100,
+                                    })}
+                                  </Text>
+                                </HStack>
+                              </HStack>
+
+                              {/* Value props */}
+                              <VStack align="start" spacing={1}>
+                                <HStack spacing={2}>
+                                  <Icon as={CheckCircle} boxSize={4} color="green.500" />
+                                  <Text
+                                    fontSize="sm"
+                                    color={isDark ? "whiteAlpha.800" : "gray.700"}
+                                  >
+                                    {t("products.lifetime_access", {
+                                      defaultValue: "Lifetime access",
+                                    })}
+                                  </Text>
+                                </HStack>
+                                <HStack spacing={2}>
+                                  <Icon as={CheckCircle} boxSize={4} color="green.500" />
+                                  <Text
+                                    fontSize="sm"
+                                    color={isDark ? "whiteAlpha.800" : "gray.700"}
+                                  >
+                                    {t("products.certificate_included", {
+                                      defaultValue: "Certificate included",
+                                    })}
+                                  </Text>
                                 </HStack>
                               </VStack>
 
-                              <VStack spacing={2}>
-                                <Button
-                                  as={RouterLink}
-                                  to={isFree ? `/learn/${tier.id}` : `/checkout?tierId=${tier.id}`}
-                                  size="md"
-                                  bg="linear-gradient(135deg, #65a8bf, #b7a27d)"
-                                  color="white"
-                                  fontWeight="700"
-                                  px={6}
-                                  rightIcon={<ArrowRight size={16} />}
-                                  _hover={{
-                                    transform: 'translateY(-2px)',
-                                    boxShadow: '0 8px 25px rgba(101, 168, 191, 0.4)',
-                                  }}
-                                  _active={{ transform: 'translateY(0)' }}
-                                  transition="all 0.2s"
-                                >
-                                  {isFree ? t("actions.start_free", { defaultValue: "Start Free" }) : t("actions.enroll", { defaultValue: "Enroll Now" })}
-                                </Button>
-                                <Button
-                                  as={RouterLink}
-                                  to={`/products/${tier.id}`}
-                                  variant="ghost"
-                                  size="sm"
-                                  color="#65a8bf"
-                                  _hover={{ bg: 'transparent', textDecoration: 'underline' }}
-                                >
-                                  {t("actions.view_details", { defaultValue: "View Details" })}
-                                </Button>
-                              </VStack>
-                            </HStack>
+                              {/* Price section */}
+                              <HStack justify="space-between" align="center" pt={2}>
+                                <VStack align="start" spacing={0}>
+                                  <HStack align="baseline" spacing={1}>
+                                    {isFree ? (
+                                      <Text fontSize="2xl" fontWeight="800" color="green.500">
+                                        {t("products.free", { defaultValue: "FREE" })}
+                                      </Text>
+                                    ) : (
+                                      <>
+                                        <Text
+                                          fontSize="sm"
+                                          color={isDark ? "whiteAlpha.600" : "gray.500"}
+                                        >
+                                          $
+                                        </Text>
+                                        <Text
+                                          fontSize="2xl"
+                                          fontWeight="800"
+                                          bgGradient="linear(to-r, #65a8bf, #b7a27d)"
+                                          bgClip="text"
+                                        >
+                                          {tier.price_usdt}
+                                        </Text>
+                                      </>
+                                    )}
+                                  </HStack>
+                                </VStack>
 
-                            {/* Trust indicator */}
-                            <HStack justify="center" spacing={4} pt={2}>
-                              <HStack spacing={1} color={isDark ? 'whiteAlpha.500' : 'gray.400'}>
-                                <Icon as={Award} boxSize={3} />
-                                <Text fontSize="xs">{t("products.certificate", { defaultValue: "Certificate" })}</Text>
+                                <VStack spacing={2}>
+                                  <Button
+                                    as={RouterLink}
+                                    to={
+                                      isFree ? `/learn/${tier.id}` : `/checkout?tierId=${tier.id}`
+                                    }
+                                    size="md"
+                                    bg="linear-gradient(135deg, #65a8bf, #b7a27d)"
+                                    color="white"
+                                    fontWeight="700"
+                                    px={6}
+                                    rightIcon={<ArrowRight size={16} />}
+                                    _hover={{
+                                      transform: "translateY(-2px)",
+                                      boxShadow: "0 8px 25px rgba(101, 168, 191, 0.4)",
+                                    }}
+                                    _active={{ transform: "translateY(0)" }}
+                                    transition="all 0.2s"
+                                  >
+                                    {isFree
+                                      ? t("actions.start_free", { defaultValue: "Start Free" })
+                                      : t("actions.enroll", { defaultValue: "Enroll Now" })}
+                                  </Button>
+                                  <Button
+                                    as={RouterLink}
+                                    to={`/products/${tier.id}`}
+                                    variant="ghost"
+                                    size="sm"
+                                    color="#65a8bf"
+                                    _hover={{ bg: "transparent", textDecoration: "underline" }}
+                                  >
+                                    {t("actions.view_details", { defaultValue: "View Details" })}
+                                  </Button>
+                                </VStack>
                               </HStack>
-                              <HStack spacing={1} color={isDark ? 'whiteAlpha.500' : 'gray.400'}>
-                                <Icon as={Zap} boxSize={3} />
-                                <Text fontSize="xs">{t("products.lifetime_access", { defaultValue: "Lifetime Access" })}</Text>
+
+                              {/* Trust indicator */}
+                              <HStack justify="center" spacing={4} pt={2}>
+                                <HStack spacing={1} color={isDark ? "whiteAlpha.500" : "gray.400"}>
+                                  <Icon as={Award} boxSize={3} />
+                                  <Text fontSize="xs">
+                                    {t("products.certificate", { defaultValue: "Certificate" })}
+                                  </Text>
+                                </HStack>
+                                <HStack spacing={1} color={isDark ? "whiteAlpha.500" : "gray.400"}>
+                                  <Icon as={Zap} boxSize={3} />
+                                  <Text fontSize="xs">
+                                    {t("products.lifetime_access", {
+                                      defaultValue: "Lifetime Access",
+                                    })}
+                                  </Text>
+                                </HStack>
                               </HStack>
-                            </HStack>
-                          </VStack>
-                        </Box>
-                      </MotionBox>
-                    );
+                            </VStack>
+                          </Box>
+                        </MotionBox>
+                      );
                     })}
                     {guidesOnly.length === 0 && (
                       <Text>{t("guides.none", { defaultValue: "No guides available yet." })}</Text>

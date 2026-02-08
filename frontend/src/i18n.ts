@@ -1541,6 +1541,12 @@ const resources = {
         personal_account: 'Personal',
         business_account: 'Business / Agency',
 
+        // Registration step labels
+        step_account: 'Account',
+        step_verify: 'Verify',
+        step_contact: 'Contact',
+        step_complete: 'Complete',
+
         dob: 'Date of birth',
         gender: 'Gender',
         gender_male: 'Male',
@@ -2964,6 +2970,13 @@ const resources = {
         nationality: 'Nationalité',
         nationality_placeholder: 'e.g., Libya',
         business_account: 'Entreprise / Agence',
+
+        // Registration step labels
+        step_account: 'Compte',
+        step_verify: 'Vérifier',
+        step_contact: 'Contact',
+        step_complete: 'Terminer',
+
         dob: 'Date de naissance',
         dob_placeholder: 'Date de naissance',
         gender: 'Genre',
@@ -4409,6 +4422,13 @@ const resources = {
         nationality: 'الجنسية',
         nationality_placeholder: 'الرجاء اختيار الجنسية',
         business_account: 'وكالة / أعمال',
+
+        // Registration step labels
+        step_account: 'الحساب',
+        step_verify: 'التحقق',
+        step_contact: 'الاتصال',
+        step_complete: 'إكمال',
+
         dob: 'تاريخ الميلاد',
         dob_placeholder: 'اليوم/الشهر/السنة',
         gender: 'الجنس',

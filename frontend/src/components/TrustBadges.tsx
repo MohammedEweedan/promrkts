@@ -4,7 +4,7 @@
  * Displays payment security badges, guarantees, and social proof
  * to increase conversion confidence
  */
-import React from 'react';
+import React, { useEffect, useState } from 'react';
 import {
   HStack,
   VStack,
@@ -15,6 +15,7 @@ import {
   Tooltip,
 } from '@chakra-ui/react';
 import { Shield, Lock, CreditCard, RefreshCw, Award, CheckCircle } from 'lucide-react';
+import api from '../api/client';
 
 const BRAND = '#65a8bf';
 
@@ -128,11 +129,33 @@ const TrustBadges: React.FC<TrustBadgesProps> = ({
 export const SocialProofBanner: React.FC<{
   enrolledCount?: number;
   recentPurchases?: number;
-}> = ({ enrolledCount, recentPurchases }) => {
+  useLiveCount?: boolean;
+}> = ({ enrolledCount, recentPurchases, useLiveCount = true }) => {
   const { colorMode } = useColorMode();
   const isDark = colorMode === 'dark';
+  const [liveCount, setLiveCount] = useState<number | null>(null);
 
-  if (!enrolledCount && !recentPurchases) return null;
+  useEffect(() => {
+    if (!useLiveCount) return;
+    
+    const fetchStats = async () => {
+      try {
+        const res = await api.get('/stats/public');
+        if (res.data?.users) {
+          setLiveCount(res.data.users);
+        }
+      } catch {
+        // Silently fail - will use fallback enrolledCount
+      }
+    };
+    
+    fetchStats();
+  }, [useLiveCount]);
+
+  // Use live count if available, otherwise fallback to prop
+  const displayCount = liveCount ?? enrolledCount;
+
+  if (!displayCount && !recentPurchases) return null;
 
   return (
     <HStack
@@ -144,12 +167,12 @@ export const SocialProofBanner: React.FC<{
       borderRadius="full"
       flexWrap="wrap"
     >
-      {enrolledCount && enrolledCount > 0 && (
+      {displayCount && displayCount > 0 && (
         <HStack spacing={1}>
           <Icon as={Award} boxSize={4} color={BRAND} />
           <Text fontSize="sm" fontWeight="500">
             <Text as="span" fontWeight="700" color={BRAND}>
-              {enrolledCount.toLocaleString()}+
+              {displayCount.toLocaleString()}+
             </Text>{' '}
             students enrolled
           </Text>
