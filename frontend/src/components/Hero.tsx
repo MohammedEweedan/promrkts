@@ -34,8 +34,7 @@ import { motion } from "framer-motion";
 import { useThemeMode } from "../themeProvider";
 import { useCohortDeadline } from "../hooks/useCohortDeadline";
 import api from "../api/client";
-import LazyTradingViewWidget from "../components/LazyTradingViewWidget";
-import { TradingViewVariant } from "../components/TradingViewWidget";
+import TradingViewWidget, { TradingViewVariant } from "../components/TradingViewWidget";
 import OptimizedImage from "../components/OptimizedImage";
 import { Maximize2, Minimize2 } from "lucide-react";
 import GridLayout, { Layout } from "react-grid-layout";
@@ -1681,34 +1680,31 @@ export default function Hero(props: HeroProps) {
 
   const isDesktop = useBreakpointValue({ base: false, lg: true });
   const [gridWidth, setGridWidth] = React.useState<number>(1024);
-  const [isFullscreenActive, setIsFullscreenActive] = React.useState(false);
-
-  // Track fullscreen state for grid width calculation
-  React.useEffect(() => {
-    const handleFullscreenChange = () => {
-      setIsFullscreenActive(!!document.fullscreenElement);
-    };
-    document.addEventListener("fullscreenchange", handleFullscreenChange);
-    return () => document.removeEventListener("fullscreenchange", handleFullscreenChange);
-  }, []);
+  const gridWidthFullscreenRef = React.useRef(false);
 
   React.useEffect(() => {
     if (typeof window === "undefined") return;
 
     const updateWidth = () => {
       const vw = window.innerWidth || 0;
+      const isFs = !!document.fullscreenElement;
+      gridWidthFullscreenRef.current = isFs;
       // In fullscreen mode, use full width with minimal margins
       // Otherwise reserve space for the left-side dock
-      const leftDockOffset = isFullscreenActive ? 16 : 96; // px reserved for the vertical dock + gap
-      const rightMargin = isFullscreenActive ? 16 : 24; // breathing room on the right edge
+      const leftDockOffset = isFs ? 16 : 96;
+      const rightMargin = isFs ? 16 : 24;
       const next = Math.max(0, vw - leftDockOffset - rightMargin);
       setGridWidth(next);
     };
 
     updateWidth();
     window.addEventListener("resize", updateWidth);
-    return () => window.removeEventListener("resize", updateWidth);
-  }, [isFullscreenActive]);
+    document.addEventListener("fullscreenchange", updateWidth);
+    return () => {
+      window.removeEventListener("resize", updateWidth);
+      document.removeEventListener("fullscreenchange", updateWidth);
+    };
+  }, []);
 
   const [showTelegramWidget, setShowTelegramWidget] = React.useState(true);
   const [showDiscordWidget, setShowDiscordWidget] = React.useState(true);
@@ -2038,20 +2034,18 @@ export default function Hero(props: HeroProps) {
         // Enter fullscreen
         if (dashboardRef.current) {
           await dashboardRef.current.requestFullscreen();
-          setIsFullscreen(true);
         }
       } else {
         // Exit fullscreen
         await document.exitFullscreen();
-        setIsFullscreen(false);
       }
     } catch (err) {
       // Fallback for browsers that don't support fullscreen API
-      setIsFullscreen(!isFullscreen);
+      setIsFullscreen((prev) => !prev);
     }
-  }, [isFullscreen]);
+  }, []);
 
-  // Listen for fullscreen change events (e.g., user presses Escape)
+  // Single listener for fullscreen change events
   React.useEffect(() => {
     const handleFullscreenChange = () => {
       setIsFullscreen(!!document.fullscreenElement);
@@ -2071,7 +2065,7 @@ export default function Hero(props: HeroProps) {
       .filter(Boolean);
 
     const renderTradingView = (variant: TradingViewVariant, symbol?: string) => {
-      return <LazyTradingViewWidget variant={variant} symbol={symbol} minHeight="250px" />;
+      return <TradingViewWidget variant={variant} symbol={symbol} />;
     };
 
     const WelcomeWidget: React.FC = () => {
@@ -2348,15 +2342,15 @@ export default function Hero(props: HeroProps) {
       case "tvSymbolInfo":
         return renderTradingView("symbol-info", widget.symbols || "NASDAQ:AAPL");
       case "tvEconomic":
-        return <LazyTradingViewWidget variant="economic-calendar" minHeight="300px" />;
+        return <TradingViewWidget variant="economic-calendar" />;
       case "tvCryptoHeatmap":
-        return <LazyTradingViewWidget variant="crypto-heatmap" minHeight="300px" />;
+        return <TradingViewWidget variant="crypto-heatmap" />;
       case "tvStockHeatmap":
-        return <LazyTradingViewWidget variant="stock-heatmap" minHeight="300px" />;
+        return <TradingViewWidget variant="stock-heatmap" />;
       case "tvForexHeatmap":
-        return <LazyTradingViewWidget variant="forex-heatmap" minHeight="300px" />;
+        return <TradingViewWidget variant="forex-heatmap" />;
       case "tvTechnical":
-        return <LazyTradingViewWidget variant="technical-analysis" symbol={symbolsArray[0] || "NASDAQ:AAPL"} minHeight="300px" />;
+        return <TradingViewWidget variant="technical-analysis" symbol={symbolsArray[0] || "NASDAQ:AAPL"} />;
       default:
         return (
           <Text fontSize="xs" color="gray.500">
