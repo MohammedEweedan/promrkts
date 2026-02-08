@@ -1,16 +1,16 @@
 services:
   api:
     build:
-      context: ./backend
+      context: .
     env_file:
-      - ./backend/.env.production
+      - ./.env.production
     environment:
       - PORT=8080
     restart: unless-stopped
     ports:
       - "127.0.0.1:8080:8080"
     volumes:
-      - ./backend/uploads:/app/uploads
+      - ./uploads:/app/uploads
     healthcheck:
       test:
         [
