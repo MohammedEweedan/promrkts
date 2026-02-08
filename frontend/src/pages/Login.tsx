@@ -76,21 +76,6 @@ const Login: React.FC = () => {
           <VStack gap={6} align="center">
             {/* Premium Header */}
             <VStack gap={3} textAlign="center" mt={8}>
-              <HStack
-                bg={isDark ? 'whiteAlpha.100' : 'blackAlpha.50'}
-                border="1px solid"
-                borderColor={isDark ? 'whiteAlpha.200' : 'blackAlpha.100'}
-                borderRadius="full"
-                px={4}
-                py={2}
-                spacing={2}
-              >
-                <Icon as={Sparkles} boxSize={4} color="#b7a27d" />
-                <Text fontSize="sm" fontWeight="500">
-                  {t('auth.premium_access') || 'Premium Trading Access'}
-                </Text>
-              </HStack>
-              
               <Heading
                 size="xl"
                 bgGradient="linear(to-r, #65a8bf, #b7a27d)"
