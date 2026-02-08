@@ -1,12 +1,12 @@
 import React, { useState, useEffect } from 'react';
-import { Button, VStack, HStack, Text, Divider, Icon } from '@chakra-ui/react';
+import { Button, VStack, HStack, Text, Divider, useColorMode } from '@chakra-ui/react';
 import api from '../api/client';
 import { useAuth } from '../auth/AuthContext';
 import { useNavigate } from 'react-router-dom';
 
 // ===== SVG Icons =====
 const GoogleIcon = () => (
-  <svg width="18" height="18" viewBox="0 0 48 48">
+  <svg width="20" height="20" viewBox="0 0 48 48">
     <path fill="#EA4335" d="M24 9.5c3.54 0 6.71 1.22 9.21 3.6l6.85-6.85C35.9 2.38 30.47 0 24 0 14.62 0 6.51 5.38 2.56 13.22l7.98 6.19C12.43 13.72 17.74 9.5 24 9.5z"/>
     <path fill="#4285F4" d="M46.98 24.55c0-1.57-.15-3.09-.38-4.55H24v9.02h12.94c-.58 2.96-2.26 5.48-4.78 7.18l7.73 6c4.51-4.18 7.09-10.36 7.09-17.65z"/>
     <path fill="#FBBC05" d="M10.53 28.59c-.48-1.45-.76-2.99-.76-4.59s.27-3.14.76-4.59l-7.98-6.19C.92 16.46 0 20.12 0 24c0 3.88.92 7.54 2.56 10.78l7.97-6.19z"/>
@@ -14,14 +14,14 @@ const GoogleIcon = () => (
   </svg>
 );
 
-const GitHubIcon = () => (
-  <svg width="18" height="18" viewBox="0 0 24 24" fill="currentColor">
+const GitHubIcon = ({ color = 'currentColor' }: { color?: string }) => (
+  <svg width="20" height="20" viewBox="0 0 24 24" fill={color}>
     <path d="M12 0c-6.626 0-12 5.373-12 12 0 5.302 3.438 9.8 8.207 11.387.599.111.793-.261.793-.577v-2.234c-3.338.726-4.033-1.416-4.033-1.416-.546-1.387-1.333-1.756-1.333-1.756-1.089-.745.083-.729.083-.729 1.205.084 1.839 1.237 1.839 1.237 1.07 1.834 2.807 1.304 3.492.997.107-.775.418-1.305.762-1.604-2.665-.305-5.467-1.334-5.467-5.931 0-1.311.469-2.381 1.236-3.221-.124-.303-.535-1.524.117-3.176 0 0 1.008-.322 3.301 1.23.957-.266 1.983-.399 3.003-.404 1.02.005 2.047.138 3.006.404 2.291-1.552 3.297-1.23 3.297-1.23.653 1.653.242 2.874.118 3.176.77.84 1.235 1.911 1.235 3.221 0 4.609-2.807 5.624-5.479 5.921.43.372.823 1.102.823 2.222v3.293c0 .319.192.694.801.576 4.765-1.589 8.199-6.086 8.199-11.386 0-6.627-5.373-12-12-12z"/>
   </svg>
 );
 
-const AppleIcon = () => (
-  <svg width="18" height="18" viewBox="0 0 24 24" fill="currentColor">
+const AppleIcon = ({ color = 'currentColor' }: { color?: string }) => (
+  <svg width="20" height="20" viewBox="0 0 24 24" fill={color}>
     <path d="M18.71 19.5c-.83 1.24-1.71 2.45-3.05 2.47-1.34.03-1.77-.79-3.29-.79-1.53 0-2 .77-3.27.82-1.31.05-2.3-1.32-3.14-2.53C4.25 17 2.94 12.45 4.7 9.39c.87-1.52 2.43-2.48 4.12-2.51 1.28-.02 2.5.87 3.29.87.78 0 2.26-1.07 3.8-.91.65.03 2.47.26 3.64 1.98-.09.06-2.17 1.28-2.15 3.81.03 3.02 2.65 4.03 2.68 4.04-.03.07-.42 1.44-1.38 2.83M13 3.5c.73-.83 1.94-1.46 2.94-1.5.13 1.17-.34 2.35-1.04 3.19-.69.85-1.83 1.51-2.95 1.42-.15-1.15.41-2.35 1.05-3.11z"/>
   </svg>
 );
@@ -53,6 +53,8 @@ const GOOGLE_CLIENT_ID = process.env.REACT_APP_GOOGLE_CLIENT_ID || '';
 const OAuthButtons: React.FC<OAuthButtonsProps> = ({ mode = 'login', onSuccess, onError }) => {
   const { setUser, refresh } = useAuth();
   const navigate = useNavigate();
+  const { colorMode } = useColorMode();
+  const isDark = colorMode === 'dark';
   const [loading, setLoading] = useState<string | null>(null);
 
   // Load Google Identity Services script
@@ -84,7 +86,7 @@ const OAuthButtons: React.FC<OAuthButtonsProps> = ({ mode = 'login', onSuccess, 
   // ===== Google =====
   const handleGoogle = () => {
     if (!GOOGLE_CLIENT_ID) {
-      onError?.('Google sign-in is not configured');
+      onError?.('Google sign-in is not configured. Please set REACT_APP_GOOGLE_CLIENT_ID.');
       return;
     }
     setLoading('google');
@@ -115,12 +117,11 @@ const OAuthButtons: React.FC<OAuthButtonsProps> = ({ mode = 'login', onSuccess, 
   // ===== GitHub =====
   const handleGitHub = () => {
     if (!GITHUB_CLIENT_ID) {
-      onError?.('GitHub sign-in is not configured');
+      onError?.('GitHub sign-in is not configured. Please set REACT_APP_GITHUB_CLIENT_ID.');
       return;
     }
     setLoading('github');
 
-    // Open GitHub OAuth in a popup
     const redirectUri = `${window.location.origin}/auth/github/callback`;
     const scope = 'read:user user:email';
     const url = `https://github.com/login/oauth/authorize?client_id=${GITHUB_CLIENT_ID}&redirect_uri=${encodeURIComponent(redirectUri)}&scope=${encodeURIComponent(scope)}`;
@@ -131,7 +132,6 @@ const OAuthButtons: React.FC<OAuthButtonsProps> = ({ mode = 'login', onSuccess, 
     const top = window.screenY + (window.outerHeight - height) / 2;
     const popup = window.open(url, 'github-oauth', `width=${width},height=${height},left=${left},top=${top}`);
 
-    // Listen for the callback
     const interval = setInterval(async () => {
       try {
         if (!popup || popup.closed) {
@@ -167,63 +167,95 @@ const OAuthButtons: React.FC<OAuthButtonsProps> = ({ mode = 'login', onSuccess, 
     onError?.('Apple sign-in coming soon');
   };
 
-  const label = mode === 'register' ? 'Sign up' : 'Sign in';
+  const btnBase = {
+    h: '48px',
+    borderRadius: 'xl',
+    fontWeight: '600' as const,
+    fontSize: 'sm',
+    transition: 'all 0.2s ease',
+    flex: '1',
+    minW: '0',
+  };
 
   return (
-    <VStack spacing={3} w="100%">
-      <HStack w="100%" align="center" spacing={3}>
-        <Divider borderColor="rgba(101, 168, 191, 0.2)" />
-        <Text fontSize="xs" color="gray.500" whiteSpace="nowrap" px={2}>
+    <VStack spacing={4} w="100%" maxW="md" mx="auto">
+      <HStack w="100%" align="center" spacing={4}>
+        <Divider borderColor={isDark ? 'whiteAlpha.200' : 'gray.200'} />
+        <Text
+          fontSize="xs"
+          fontWeight="600"
+          color={isDark ? 'whiteAlpha.500' : 'gray.400'}
+          whiteSpace="nowrap"
+          textTransform="uppercase"
+          letterSpacing="wider"
+          px={1}
+        >
           or continue with
         </Text>
-        <Divider borderColor="rgba(101, 168, 191, 0.2)" />
+        <Divider borderColor={isDark ? 'whiteAlpha.200' : 'gray.200'} />
       </HStack>
 
       <HStack spacing={3} w="100%" justify="center">
-        {GOOGLE_CLIENT_ID && (
-          <Button
-            onClick={handleGoogle}
-            isLoading={loading === 'google'}
-            variant="outline"
-            borderColor="rgba(101, 168, 191, 0.3)"
-            borderRadius="xl"
-            size="lg"
-            flex="1"
-            _hover={{ bg: 'rgba(101, 168, 191, 0.05)', borderColor: 'rgba(101, 168, 191, 0.5)' }}
-            leftIcon={<GoogleIcon />}
-          >
-            <Text fontSize="sm">Google</Text>
-          </Button>
-        )}
+        {/* Google Button */}
+        <Button
+          onClick={handleGoogle}
+          isLoading={loading === 'google'}
+          {...btnBase}
+          bg={isDark ? 'white' : 'white'}
+          color="#333"
+          border="1px solid"
+          borderColor={isDark ? 'whiteAlpha.300' : 'gray.200'}
+          _hover={{
+            transform: 'translateY(-2px)',
+            boxShadow: '0 4px 15px rgba(0,0,0,0.1)',
+            borderColor: isDark ? 'whiteAlpha.400' : 'gray.300',
+          }}
+          _active={{ transform: 'translateY(0)' }}
+          leftIcon={<GoogleIcon />}
+        >
+          Google
+        </Button>
 
-        {GITHUB_CLIENT_ID && (
-          <Button
-            onClick={handleGitHub}
-            isLoading={loading === 'github'}
-            variant="outline"
-            borderColor="rgba(101, 168, 191, 0.3)"
-            borderRadius="xl"
-            size="lg"
-            flex="1"
-            _hover={{ bg: 'rgba(101, 168, 191, 0.05)', borderColor: 'rgba(101, 168, 191, 0.5)' }}
-            leftIcon={<GitHubIcon />}
-          >
-            <Text fontSize="sm">GitHub</Text>
-          </Button>
-        )}
+        {/* GitHub Button */}
+        <Button
+          onClick={handleGitHub}
+          isLoading={loading === 'github'}
+          {...btnBase}
+          bg={isDark ? '#171515' : '#24292e'}
+          color="white"
+          border="1px solid"
+          borderColor={isDark ? '#333' : '#24292e'}
+          _hover={{
+            transform: 'translateY(-2px)',
+            boxShadow: '0 4px 15px rgba(0,0,0,0.25)',
+            bg: isDark ? '#222' : '#333',
+          }}
+          _active={{ transform: 'translateY(0)' }}
+          leftIcon={<GitHubIcon color="white" />}
+        >
+          GitHub
+        </Button>
 
+        {/* Apple Button */}
         <Button
           onClick={handleApple}
           isLoading={loading === 'apple'}
-          variant="outline"
-          borderColor="rgba(101, 168, 191, 0.3)"
-          borderRadius="xl"
-          size="lg"
-          flex="1"
-          _hover={{ bg: 'rgba(101, 168, 191, 0.05)', borderColor: 'rgba(101, 168, 191, 0.5)' }}
-          leftIcon={<AppleIcon />}
+          {...btnBase}
+          bg={isDark ? 'white' : '#000'}
+          color={isDark ? '#000' : 'white'}
+          border="1px solid"
+          borderColor={isDark ? 'white' : '#000'}
+          _hover={{
+            transform: 'translateY(-2px)',
+            boxShadow: isDark
+              ? '0 4px 15px rgba(255,255,255,0.15)'
+              : '0 4px 15px rgba(0,0,0,0.25)',
+            bg: isDark ? 'gray.100' : '#222',
+          }}
+          _active={{ transform: 'translateY(0)' }}
+          leftIcon={<AppleIcon color={isDark ? '#000' : 'white'} />}
         >
-          <Text fontSize="sm">Apple</Text>
+          Apple
         </Button>
       </HStack>
     </VStack>

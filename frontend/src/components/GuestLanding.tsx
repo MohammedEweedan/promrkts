@@ -378,7 +378,7 @@ export default function GuestLanding({
                 <Button
                   onClick={() => navigate("/products")}
                   borderColor={UI.primary}
-                  bg="babyblue"
+                  bg={UI.gradientReverse}
                   color="white"
                   px={6}
                   py={6}

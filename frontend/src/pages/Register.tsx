@@ -4,41 +4,47 @@ import { useNavigate, Link, useSearchParams } from "react-router-dom";
 import { signupFunnel } from "../utils/tracking";
 import { useTranslation } from "react-i18next";
 import api from "../api/client";
-import {
-  Box,
-  Container,
-  Text,
-  VStack,
-  HStack,
-  Input,
-  Button,
-  chakra,
-  Heading,
-  SimpleGrid,
-  GridItem,
-  Divider,
-  useColorMode,
-  Modal,
-  ModalOverlay,
-  ModalContent,
-  ModalHeader,
-  ModalBody,
-  ModalFooter,
-  ModalCloseButton,
-  useDisclosure,
-  Checkbox,
-  FormControl,
-  FormHelperText,
+import { 
+  Box, 
+  Container, 
+  Text, 
+  VStack, 
+  HStack, 
+  Input, 
+  Button, 
+  chakra, 
+  Heading, 
+  SimpleGrid, 
+  GridItem, 
+  Divider, 
+  useColorMode, 
+  Modal, 
+  ModalOverlay, 
+  ModalContent, 
+  ModalHeader, 
+  ModalBody, 
+  ModalFooter, 
+  ModalCloseButton, 
+  useDisclosure, 
+  Checkbox, 
+  FormControl, 
+  FormHelperText, 
+  Icon, 
+  InputGroup, 
+  InputRightElement, 
+  IconButton 
 } from "@chakra-ui/react";
-import { ViewIcon, ViewOffIcon, ArrowBackIcon, ArrowForwardIcon, CheckCircleIcon } from "@chakra-ui/icons";
+import { CheckCircleIcon } from "@chakra-ui/icons";
 import SpotlightCard from "../components/SpotlightCard";
 import { motion, AnimatePresence } from "framer-motion";
 import PremiumStepIndicator from "../components/PremiumStepIndicator";
-import TrustBadges, { SocialProofBanner } from "../components/TrustBadges";
-import { User, Mail, Phone, FileCheck } from "lucide-react";
+import { SocialProofBanner } from "../components/TrustBadges";
+import { User, Mail, Phone, FileCheck, ArrowLeft, ArrowRight, Eye, EyeOff, Shield, Zap, CheckCircle, UserPlus } from "lucide-react";
 import OAuthButtons from "../components/OAuthButtons";
 
 const CSelect = chakra("select");
+const BRAND = '#65a8bf';
+const GOLD = '#b7a27d';
 
 type Role = "user";
 type Country = { name: string; cca2: string; iddRoots: string[]; iddSuffixes: string[] };
@@ -424,27 +430,81 @@ const Register: React.FC = () => {
     return Boolean(phoneVerified);
   };
 
+  const isDark = colorMode === 'dark';
+
+  const inputStyles = {
+    borderRadius: 'xl',
+    border: '1px solid',
+    borderColor: isDark ? 'whiteAlpha.200' : 'gray.200',
+    bg: isDark ? 'rgba(255,255,255,0.03)' : 'white',
+    _hover: { borderColor: isDark ? 'whiteAlpha.300' : 'gray.300' },
+    _focus: { borderColor: BRAND, boxShadow: `0 0 0 1px ${BRAND}` },
+    _placeholder: { color: isDark ? 'whiteAlpha.400' : 'gray.400' },
+  };
+
   return (
-    <Box color="text.primary" py={{ base: 8, md: 12 }}>
-      <Container px={{ base: 4, md: 8 }}>
-        <VStack align="center" gap={{ base: 6, md: 10 }}>
+    <Box
+      minH="100vh"
+      py={{ base: 6, md: 10 }}
+      px={{ base: 4, md: 0 }}
+      position="relative"
+      overflow="hidden"
+    >
+      {/* Background decoration */}
+      <Box
+        position="absolute"
+        top="-20%"
+        right="-10%"
+        w="600px"
+        h="600px"
+        borderRadius="full"
+        bg={`radial-gradient(circle, ${BRAND}08 0%, transparent 70%)`}
+        pointerEvents="none"
+      />
+      <Box
+        position="absolute"
+        bottom="-15%"
+        left="-10%"
+        w="500px"
+        h="500px"
+        borderRadius="full"
+        bg={`radial-gradient(circle, ${GOLD}06 0%, transparent 70%)`}
+        pointerEvents="none"
+      />
+
+      <Container maxW="580px" position="relative" zIndex={1}>
+        <VStack align="stretch" spacing={{ base: 5, md: 7 }}>
           {/* Premium Header */}
-          <VStack spacing={4} textAlign="center" marginTop={"2rem"}>
+          <VStack spacing={3} textAlign="center" pt={{ base: 2, md: 6 }}>
+            <Box
+              w={14}
+              h={14}
+              borderRadius="2xl"
+              bg={`linear-gradient(135deg, ${BRAND}, ${GOLD})`}
+              display="flex"
+              alignItems="center"
+              justifyContent="center"
+              boxShadow={`0 8px 32px ${BRAND}40`}
+              mx="auto"
+            >
+              <Icon as={UserPlus} boxSize={6} color="white" />
+            </Box>
             <Heading
               as="h1"
               size="xl"
-              bgGradient="linear(to-r, #65a8bf, #b7a27d)"
+              bgGradient={`linear(to-r, ${BRAND}, ${GOLD})`}
               bgClip="text"
               fontWeight="800"
             >
               {t("auth.create_account") || "Join the Trading Elite"}
             </Heading>
-            <Text color="#65a8bf" fontSize="lg" maxW="md">
+            <Text color={isDark ? 'whiteAlpha.600' : 'gray.500'} fontSize="md" maxW="md">
               {t("auth.create_account_sub") || "Start your journey to financial mastery in just 2 minutes"}
             </Text>
             <SocialProofBanner enrolledCount={100007} />
           </VStack>
 
+          {/* OAuth Buttons */}
           <OAuthButtons
             mode="register"
             onError={(msg) => setError(msg)}
@@ -463,9 +523,16 @@ const Register: React.FC = () => {
 
           <SpotlightCard>
             {error && (
-              <Text mb={4} color="red.500">
-                {error}
-              </Text>
+              <Box
+                mb={4}
+                p={3}
+                bg={isDark ? 'rgba(229, 62, 62, 0.15)' : 'red.50'}
+                borderRadius="xl"
+                border="1px solid"
+                borderColor={isDark ? 'rgba(229, 62, 62, 0.3)' : 'red.200'}
+              >
+                <Text color={isDark ? 'red.300' : 'red.600'} fontSize="sm" fontWeight="500">{error}</Text>
+              </Box>
             )}
 
             <form onSubmit={onSubmit} ref={formRef}>
@@ -479,8 +546,8 @@ const Register: React.FC = () => {
                           {t("auth.basic_info") || "Basic information"}
                         </Heading>
                         <SimpleGrid columns={{ base: 1, md: 2 }} spacing={{ base: 4, md: 6 }}>
-                          <GridItem borderRadius="md" px={3} py={2} >
-                            <Text fontSize="sm" mb={1} color="#65a8bf">
+                          <GridItem borderRadius="md" px={3} py={2}>
+                            <Text fontSize="sm" mb={1.5} fontWeight="600" color={isDark ? 'whiteAlpha.700' : 'gray.600'}>
                               {t("auth.name")}
                             </Text>
                             <Input
@@ -488,12 +555,12 @@ const Register: React.FC = () => {
                               onChange={(e) => setName(e.target.value)}
                               placeholder={(t("auth.name_placeholder") as string) || "John Doe"}
                               required
-                              color="#65a8bf"
+                              {...inputStyles}
                             />
                           </GridItem>
 
-                          <GridItem borderRadius="md" px={3} py={2} >
-                            <Text fontSize="sm" mb={1} color="#65a8bf">
+                          <GridItem borderRadius="md" px={3} py={2}>
+                            <Text fontSize="sm" mb={1.5} fontWeight="600" color={isDark ? 'whiteAlpha.700' : 'gray.600'}>
                               {t("auth.email")}
                             </Text>
                             <Input
@@ -502,38 +569,40 @@ const Register: React.FC = () => {
                               onChange={(e) => setEmail(e.target.value)}
                               placeholder={(t("auth.email_placeholder") as string) || "you@example.com"}
                               required
+                              {...inputStyles}
                             />
                           </GridItem>
 
                           <GridItem colSpan={{ base: 1, md: 2 }}>
-                            <Text fontSize="sm" mb={1} color="#65a8bf">
+                            <Text fontSize="sm" mb={1.5} fontWeight="600" color={isDark ? 'whiteAlpha.700' : 'gray.600'}>
                               {t("auth.password")}
                             </Text>
-                            <HStack align="stretch">
+                            <InputGroup>
                               <Input
                                 type={showPassword ? "text" : "password"}
                                 value={password}
                                 onChange={(e) => setPassword(e.target.value)}
-                                placeholder={(t("auth.password_placeholder") as string) || "••••••••"}
+                                placeholder={(t("auth.password_placeholder") as string) || "8+ characters"}
                                 required
-                                borderRadius="md"
-                                px={3}
-                                py={2}
-                                
+                                {...inputStyles}
+                                pr="3rem"
                               />
-                              <Button
-                                variant="solid"
-                                bg="#65a8bf"
-                                onClick={() => setShowPassword((v) => !v)}
-                                flexShrink={0}
-                              >
-                                {showPassword ? <ViewIcon /> : <ViewOffIcon />}
-                              </Button>
-                            </HStack>
+                              <InputRightElement h="full">
+                                <IconButton
+                                  aria-label={showPassword ? 'Hide password' : 'Show password'}
+                                  icon={showPassword ? <EyeOff size={16} /> : <Eye size={16} />}
+                                  variant="ghost"
+                                  size="sm"
+                                  color={isDark ? 'whiteAlpha.500' : 'gray.400'}
+                                  _hover={{ color: BRAND }}
+                                  onClick={() => setShowPassword((v) => !v)}
+                                />
+                              </InputRightElement>
+                            </InputGroup>
                           </GridItem>
 
                           <GridItem colSpan={{ base: 1, md: 2 }}>
-                            <Text fontSize="sm" mb={1} color="#65a8bf">
+                            <Text fontSize="sm" mb={1.5} fontWeight="600" color={isDark ? 'whiteAlpha.700' : 'gray.600'}>
                               {t("auth.password_confirm") || "Confirm password"}
                             </Text>
                             <Input
@@ -542,10 +611,7 @@ const Register: React.FC = () => {
                               onChange={(e) => setConfirmPassword(e.target.value)}
                               placeholder={(t("auth.password_confirm") as string) || "Confirm password"}
                               required
-                              borderRadius="md"
-                              px={3}
-                              py={2}
-                              
+                              {...inputStyles}
                             />
                           </GridItem>
                         </SimpleGrid>
@@ -817,18 +883,29 @@ const Register: React.FC = () => {
             {/* Bottom arrow navigation */}
             <HStack mt={6} justifyContent="space-between">
               <Button
-                leftIcon={<ArrowBackIcon />}
+                leftIcon={<ArrowLeft size={16} />}
                 variant="ghost"
-                color="#65a8bf"
+                color={BRAND}
                 onClick={() => setStep((s) => Math.max(1, s - 1))}
                 isDisabled={step === 1}
-                _hover={{ bg: "#65a8bf" }}
+                borderRadius="xl"
+                _hover={{ bg: isDark ? 'whiteAlpha.100' : 'gray.100' }}
               >
                 {t("checkout.actions.back") || "Back"}
               </Button>
               <Button
-                rightIcon={<ArrowForwardIcon />}
-                bg="#65a8bf"
+                rightIcon={<ArrowRight size={16} />}
+                bg={`linear-gradient(135deg, ${BRAND}, ${GOLD})`}
+                color="white"
+                fontWeight="700"
+                borderRadius="xl"
+                px={8}
+                _hover={{
+                  transform: 'translateY(-2px)',
+                  boxShadow: `0 8px 25px ${BRAND}40`,
+                }}
+                _active={{ transform: 'translateY(0)' }}
+                transition="all 0.2s"
                 onClick={async () => {
                   if (step === 1) {
                     if (!name.trim() || !email.trim()) {
@@ -871,16 +948,38 @@ const Register: React.FC = () => {
                 }}
                 isDisabled={(step === 1 && !canAdvanceFromBasic()) || (step === 3 && !canAdvanceFromContact())}
               >
-                {step === 4 ? (t("auth.create_account") || "Create account") : (t("common.next") || "Next")}
+                {step === 4 ? (t("auth.create_account") || "Create Account") : (t("common.next") || "Next")}
               </Button>
             </HStack>
           </SpotlightCard>
 
-          {/* Trust Badges */}
-          <TrustBadges variant="compact" showGuarantee={false} />
+          {/* Trust indicators */}
+          <HStack justify="center" spacing={6} flexWrap="wrap" py={2}>
+            <HStack spacing={1.5}>
+              <Icon as={Shield} boxSize={3.5} color="green.500" />
+              <Text fontSize="xs" color={isDark ? 'whiteAlpha.500' : 'gray.400'} fontWeight="500">
+                SSL Secured
+              </Text>
+            </HStack>
+            <HStack spacing={1.5}>
+              <Icon as={Zap} boxSize={3.5} color={BRAND} />
+              <Text fontSize="xs" color={isDark ? 'whiteAlpha.500' : 'gray.400'} fontWeight="500">
+                2 Min Setup
+              </Text>
+            </HStack>
+            <HStack spacing={1.5}>
+              <Icon as={CheckCircle} boxSize={3.5} color={GOLD} />
+              <Text fontSize="xs" color={isDark ? 'whiteAlpha.500' : 'gray.400'} fontWeight="500">
+                Free to Join
+              </Text>
+            </HStack>
+          </HStack>
 
-          <Text color="#65a8bf" textAlign="center">
-            {t("auth.already_have") || "Already have an account?"} <Link to="/login">{t("auth.login") || "Log in"}</Link>
+          <Text textAlign="center" fontSize="sm" color={isDark ? 'whiteAlpha.600' : 'gray.500'}>
+            {t("auth.already_have") || "Already have an account?"}{' '}
+            <Link to="/login">
+              <Text as="span" color={GOLD} fontWeight="700">{t("auth.login") || "Sign In"}</Text>
+            </Link>
           </Text>
         </VStack>
       </Container>
