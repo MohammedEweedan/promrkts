@@ -100,13 +100,22 @@ const StatCard = ({ icon, value, label, delay }: { icon: any; value: string; lab
 );
 
 // ===== THREE.JS GLOBE COMPONENT =====
+// Deferred initialization for better LCP - globe loads after main content
 const GlobeAnimation: React.FC<{ isRTL: boolean }> = ({ isRTL }) => {
   const containerRef = useRef<HTMLDivElement>(null);
   const rendererRef = useRef<THREE.WebGLRenderer | null>(null);
   const animationRef = useRef<number>(0);
+  const [isReady, setIsReady] = React.useState(false);
+
+  // Defer Three.js initialization until after first paint for better LCP
+  useEffect(() => {
+    // Delay globe initialization to prioritize main content rendering
+    const timeoutId = setTimeout(() => setIsReady(true), 500);
+    return () => clearTimeout(timeoutId);
+  }, []);
 
   useEffect(() => {
-    if (!containerRef.current) return;
+    if (!containerRef.current || !isReady) return;
 
     const container = containerRef.current;
     const width = container.clientWidth;
@@ -256,7 +265,7 @@ const GlobeAnimation: React.FC<{ isRTL: boolean }> = ({ isRTL }) => {
         rendererRef.current.dispose();
       }
     };
-  }, []);
+  }, [isReady]);
 
   return (
     <Box

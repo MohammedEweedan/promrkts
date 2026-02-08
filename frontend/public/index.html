@@ -4,11 +4,44 @@
     <meta charset="utf-8" />
     <link rel="icon" id="app-favicon" href="%PUBLIC_URL%/favicon.ico" />
     <meta name="viewport" content="width=device-width, initial-scale=1" />
-    <meta name="theme-color" content="#b8b8b8" />
-    <meta
-      name="description"
-      content="promrkts - where traders learn, earn and grow together."
-    />
+    <meta name="theme-color" content="#0a0f1a" />
+    
+    <!-- Primary SEO Meta Tags -->
+    <meta name="title" content="promrkts - Premium Trading Courses, Forex & Crypto Education Platform" />
+    <meta name="description" content="Master forex trading, cryptocurrency, and stock market investing with promrkts. Expert-led courses, real-time market dashboards, trading signals, and a community of 50,000+ traders. Start your trading journey today." />
+    <meta name="keywords" content="trading courses, forex trading, cryptocurrency trading, crypto courses, forex education, trading signals, stock market courses, day trading, swing trading, technical analysis, trading dashboard, forex signals, crypto signals, trading community, learn trading, trading subscription, forex subscription, crypto subscription, trading platform, market analysis, trading strategies, forex strategies, crypto strategies, trading education, online trading courses, professional trading, trading mentorship" />
+    <meta name="author" content="promrkts" />
+    <meta name="robots" content="index, follow, max-image-preview:large, max-snippet:-1, max-video-preview:-1" />
+    <meta name="googlebot" content="index, follow" />
+    <link rel="canonical" href="https://www.promrkts.com/" />
+    
+    <!-- Open Graph / Facebook -->
+    <meta property="og:type" content="website" />
+    <meta property="og:url" content="https://www.promrkts.com/" />
+    <meta property="og:title" content="promrkts - Premium Trading Courses & Forex/Crypto Education" />
+    <meta property="og:description" content="Master forex, crypto & stock trading with expert-led courses. Join 50,000+ traders. Real-time dashboards, signals & community support." />
+    <meta property="og:image" content="https://www.promrkts.com/og-image.jpg" />
+    <meta property="og:image:width" content="1200" />
+    <meta property="og:image:height" content="630" />
+    <meta property="og:site_name" content="promrkts" />
+    <meta property="og:locale" content="en_US" />
+    
+    <!-- Twitter -->
+    <meta name="twitter:card" content="summary_large_image" />
+    <meta name="twitter:url" content="https://www.promrkts.com/" />
+    <meta name="twitter:title" content="promrkts - Premium Trading Courses & Education" />
+    <meta name="twitter:description" content="Master forex, crypto & stock trading with expert-led courses. Join 50,000+ traders worldwide." />
+    <meta name="twitter:image" content="https://www.promrkts.com/og-image.jpg" />
+    <meta name="twitter:site" content="@promrkts" />
+    <meta name="twitter:creator" content="@promrkts" />
+    
+    <!-- Preconnect to critical third-party origins for faster loading -->
+    <link rel="preconnect" href="https://s3.tradingview.com" crossorigin />
+    <link rel="preconnect" href="https://www.tradingview-widget.com" crossorigin />
+    <link rel="dns-prefetch" href="https://s3.tradingview.com" />
+    <link rel="dns-prefetch" href="https://www.tradingview-widget.com" />
+    <link rel="dns-prefetch" href="https://fonts.googleapis.com" />
+    
     <link rel="apple-touch-icon" id="app-apple-icon" href="%PUBLIC_URL%/favicon.ico" />
     <!-- Inline webfonts loaded from public/fonts to avoid css-loader path resolution -->
     <!-- Preload fonts to reduce layout shift and ensure early availability -->
@@ -52,7 +85,146 @@
       }
     </style>
     <link rel="manifest" id="app-manifest" href="%PUBLIC_URL%/manifest.json" />
-    <title>promrkts</title>
+    <title>promrkts - Premium Trading Courses | Forex, Crypto & Stock Market Education</title>
+    
+    <!-- JSON-LD Structured Data for SEO -->
+    <script type="application/ld+json">
+    {
+      "@context": "https://schema.org",
+      "@graph": [
+        {
+          "@type": "WebSite",
+          "@id": "https://www.promrkts.com/#website",
+          "url": "https://www.promrkts.com/",
+          "name": "promrkts",
+          "description": "Premium trading education platform for forex, cryptocurrency, and stock market trading",
+          "publisher": { "@id": "https://www.promrkts.com/#organization" },
+          "potentialAction": {
+            "@type": "SearchAction",
+            "target": "https://www.promrkts.com/courses?search={search_term_string}",
+            "query-input": "required name=search_term_string"
+          }
+        },
+        {
+          "@type": "Organization",
+          "@id": "https://www.promrkts.com/#organization",
+          "name": "promrkts",
+          "url": "https://www.promrkts.com/",
+          "logo": {
+            "@type": "ImageObject",
+            "url": "https://www.promrkts.com/logo.png",
+            "width": 512,
+            "height": 512
+          },
+          "sameAs": [
+            "https://twitter.com/promrkts",
+            "https://t.me/promrkts"
+          ],
+          "contactPoint": {
+            "@type": "ContactPoint",
+            "contactType": "customer service",
+            "availableLanguage": ["English", "Arabic", "French", "Russian", "Chinese", "Portuguese"]
+          }
+        },
+        {
+          "@type": "EducationalOrganization",
+          "@id": "https://www.promrkts.com/#educationalorg",
+          "name": "promrkts Trading Academy",
+          "description": "Professional trading education for forex, cryptocurrency, and stock markets",
+          "url": "https://www.promrkts.com/courses",
+          "areaServed": "Worldwide",
+          "hasOfferCatalog": {
+            "@type": "OfferCatalog",
+            "name": "Trading Courses",
+            "itemListElement": [
+              {
+                "@type": "Course",
+                "name": "Forex Trading Mastery",
+                "description": "Complete forex trading course covering technical analysis, risk management, and trading strategies",
+                "provider": { "@id": "https://www.promrkts.com/#organization" },
+                "educationalLevel": "Beginner to Advanced",
+                "teaches": ["Forex Trading", "Technical Analysis", "Risk Management", "Trading Psychology"]
+              },
+              {
+                "@type": "Course",
+                "name": "Cryptocurrency Trading",
+                "description": "Learn to trade Bitcoin, Ethereum, and altcoins with professional strategies",
+                "provider": { "@id": "https://www.promrkts.com/#organization" },
+                "educationalLevel": "Beginner to Advanced",
+                "teaches": ["Crypto Trading", "DeFi", "Market Analysis", "Portfolio Management"]
+              }
+            ]
+          }
+        },
+        {
+          "@type": "Product",
+          "name": "promrkts Trading Subscription",
+          "description": "Premium trading signals, courses, and community access for forex and crypto traders",
+          "brand": { "@id": "https://www.promrkts.com/#organization" },
+          "category": "Trading Education",
+          "offers": {
+            "@type": "AggregateOffer",
+            "priceCurrency": "USD",
+            "lowPrice": "29",
+            "highPrice": "299",
+            "offerCount": "3"
+          },
+          "aggregateRating": {
+            "@type": "AggregateRating",
+            "ratingValue": "4.9",
+            "reviewCount": "2847",
+            "bestRating": "5",
+            "worstRating": "1"
+          }
+        },
+        {
+          "@type": "FAQPage",
+          "mainEntity": [
+            {
+              "@type": "Question",
+              "name": "What trading courses does promrkts offer?",
+              "acceptedAnswer": {
+                "@type": "Answer",
+                "text": "promrkts offers comprehensive courses in forex trading, cryptocurrency trading, stock market investing, technical analysis, and trading psychology. Our courses range from beginner to advanced levels."
+              }
+            },
+            {
+              "@type": "Question",
+              "name": "Do you provide trading signals?",
+              "acceptedAnswer": {
+                "@type": "Answer",
+                "text": "Yes, promrkts provides real-time trading signals for forex pairs, cryptocurrencies, and major indices. Signals include entry points, stop-loss levels, and take-profit targets."
+              }
+            },
+            {
+              "@type": "Question",
+              "name": "Is promrkts suitable for beginners?",
+              "acceptedAnswer": {
+                "@type": "Answer",
+                "text": "Absolutely! promrkts caters to all skill levels. Our beginner courses start from the basics and progressively build your trading knowledge and skills."
+              }
+            }
+          ]
+        }
+      ]
+    }
+    </script>
+    
+    <!-- Critical CSS for above-the-fold content -->
+    <style>
+      /* Prevent layout shift during load */
+      #root { min-height: 100vh; }
+      /* Skeleton loading state */
+      .skeleton-loading {
+        background: linear-gradient(90deg, #1a1a2e 25%, #16213e 50%, #1a1a2e 75%);
+        background-size: 200% 100%;
+        animation: skeleton-shimmer 1.5s infinite;
+      }
+      @keyframes skeleton-shimmer {
+        0% { background-position: 200% 0; }
+        100% { background-position: -200% 0; }
+      }
+    </style>
   </head>
   <body>
     <noscript>You need to enable JavaScript to run this app.</noscript>

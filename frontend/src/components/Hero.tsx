@@ -34,7 +34,10 @@ import { motion } from "framer-motion";
 import { useThemeMode } from "../themeProvider";
 import { useCohortDeadline } from "../hooks/useCohortDeadline";
 import api from "../api/client";
-import TradingViewWidget, { TradingViewVariant } from "../components/TradingViewWidget";
+import LazyTradingViewWidget from "../components/LazyTradingViewWidget";
+import { TradingViewVariant } from "../components/TradingViewWidget";
+import OptimizedImage from "../components/OptimizedImage";
+import { Maximize2, Minimize2 } from "lucide-react";
 import GridLayout, { Layout } from "react-grid-layout";
 import { Responsive, WidthProvider } from "react-grid-layout";
 
@@ -1678,16 +1681,26 @@ export default function Hero(props: HeroProps) {
 
   const isDesktop = useBreakpointValue({ base: false, lg: true });
   const [gridWidth, setGridWidth] = React.useState<number>(1024);
+  const [isFullscreenActive, setIsFullscreenActive] = React.useState(false);
+
+  // Track fullscreen state for grid width calculation
+  React.useEffect(() => {
+    const handleFullscreenChange = () => {
+      setIsFullscreenActive(!!document.fullscreenElement);
+    };
+    document.addEventListener("fullscreenchange", handleFullscreenChange);
+    return () => document.removeEventListener("fullscreenchange", handleFullscreenChange);
+  }, []);
 
   React.useEffect(() => {
     if (typeof window === "undefined") return;
 
     const updateWidth = () => {
       const vw = window.innerWidth || 0;
-      // Reserve space for the left-side dock and a small right margin so widgets
-      // never sit behind the dock and can still use the full remaining width.
-      const leftDockOffset = 96; // px reserved for the vertical dock + gap
-      const rightMargin = 24; // breathing room on the right edge
+      // In fullscreen mode, use full width with minimal margins
+      // Otherwise reserve space for the left-side dock
+      const leftDockOffset = isFullscreenActive ? 16 : 96; // px reserved for the vertical dock + gap
+      const rightMargin = isFullscreenActive ? 16 : 24; // breathing room on the right edge
       const next = Math.max(0, vw - leftDockOffset - rightMargin);
       setGridWidth(next);
     };
@@ -1695,7 +1708,7 @@ export default function Hero(props: HeroProps) {
     updateWidth();
     window.addEventListener("resize", updateWidth);
     return () => window.removeEventListener("resize", updateWidth);
-  }, []);
+  }, [isFullscreenActive]);
 
   const [showTelegramWidget, setShowTelegramWidget] = React.useState(true);
   const [showDiscordWidget, setShowDiscordWidget] = React.useState(true);
@@ -2013,6 +2026,39 @@ export default function Hero(props: HeroProps) {
   const [isEditingLayout, setIsEditingLayout] = React.useState(perms.canEditLayout);
   const [editingWidgetId, setEditingWidgetId] = React.useState<string | null>(null);
   const [isDashboardSettingsOpen, setIsDashboardSettingsOpen] = React.useState(false);
+  
+  // Fullscreen mode state - YouTube-style fullscreen that covers entire screen
+  const [isFullscreen, setIsFullscreen] = React.useState(false);
+  const dashboardRef = React.useRef<HTMLDivElement>(null);
+
+  // Handle fullscreen toggle using Fullscreen API
+  const toggleFullscreen = React.useCallback(async () => {
+    try {
+      if (!document.fullscreenElement) {
+        // Enter fullscreen
+        if (dashboardRef.current) {
+          await dashboardRef.current.requestFullscreen();
+          setIsFullscreen(true);
+        }
+      } else {
+        // Exit fullscreen
+        await document.exitFullscreen();
+        setIsFullscreen(false);
+      }
+    } catch (err) {
+      // Fallback for browsers that don't support fullscreen API
+      setIsFullscreen(!isFullscreen);
+    }
+  }, [isFullscreen]);
+
+  // Listen for fullscreen change events (e.g., user presses Escape)
+  React.useEffect(() => {
+    const handleFullscreenChange = () => {
+      setIsFullscreen(!!document.fullscreenElement);
+    };
+    document.addEventListener("fullscreenchange", handleFullscreenChange);
+    return () => document.removeEventListener("fullscreenchange", handleFullscreenChange);
+  }, []);
 
   React.useEffect(() => {
     setIsEditingLayout(perms.canEditLayout);
@@ -2025,7 +2071,7 @@ export default function Hero(props: HeroProps) {
       .filter(Boolean);
 
     const renderTradingView = (variant: TradingViewVariant, symbol?: string) => {
-      return <TradingViewWidget variant={variant} symbol={symbol} />;
+      return <LazyTradingViewWidget variant={variant} symbol={symbol} minHeight="250px" />;
     };
 
     const WelcomeWidget: React.FC = () => {
@@ -2302,15 +2348,15 @@ export default function Hero(props: HeroProps) {
       case "tvSymbolInfo":
         return renderTradingView("symbol-info", widget.symbols || "NASDAQ:AAPL");
       case "tvEconomic":
-        return <TradingViewWidget variant="economic-calendar" />;
+        return <LazyTradingViewWidget variant="economic-calendar" minHeight="300px" />;
       case "tvCryptoHeatmap":
-        return <TradingViewWidget variant="crypto-heatmap" />;
+        return <LazyTradingViewWidget variant="crypto-heatmap" minHeight="300px" />;
       case "tvStockHeatmap":
-        return <TradingViewWidget variant="stock-heatmap" />;
+        return <LazyTradingViewWidget variant="stock-heatmap" minHeight="300px" />;
       case "tvForexHeatmap":
-        return <TradingViewWidget variant="forex-heatmap" />;
+        return <LazyTradingViewWidget variant="forex-heatmap" minHeight="300px" />;
       case "tvTechnical":
-        return <TradingViewWidget variant="technical-analysis" symbol={symbolsArray[0] || "NASDAQ:AAPL"} />;
+        return <LazyTradingViewWidget variant="technical-analysis" symbol={symbolsArray[0] || "NASDAQ:AAPL"} minHeight="300px" />;
       default:
         return (
           <Text fontSize="xs" color="gray.500">
@@ -2464,13 +2510,16 @@ export default function Hero(props: HeroProps) {
           transition={{ duration: 0.5 }}
           pointerEvents={showSplash ? "auto" : "none"}
         >
-          <Box
-            as="img"
-            src={process.env.PUBLIC_URL + "/logo.gif"}
-            alt="Loading"
-            w={{ base: "160px", md: "220px" }}
-            h="auto"
-          />
+          <Box w={{ base: "160px", md: "220px" }} h="auto">
+            <OptimizedImage
+              src={process.env.PUBLIC_URL + "/logo.gif"}
+              alt="Loading"
+              width="100%"
+              height="auto"
+              priority
+              placeholder="none"
+            />
+          </Box>
         </MotionBox>
       )}
 
@@ -2551,10 +2600,139 @@ export default function Hero(props: HeroProps) {
                           onClick={resetDashboardLayout}
                         />
                       </Tooltip>
+                      <Tooltip label={isFullscreen ? "Exit fullscreen" : "Fullscreen mode"} placement="bottom" hasArrow>
+                        <IconButton
+                          aria-label={isFullscreen ? "Exit fullscreen" : "Enter fullscreen"}
+                          icon={isFullscreen ? <Minimize2 size={16} /> : <Maximize2 size={16} />}
+                          size="sm"
+                          variant="solid"
+                          color="white"
+                          bg={isFullscreen ? "green.500" : "purple.500"}
+                          _hover={{ bg: isFullscreen ? "green.600" : "purple.600" }}
+                          onClick={toggleFullscreen}
+                          borderRadius="full"
+                        />
+                      </Tooltip>
                     </HStack>
                   </Box>
 
-                  <Box pl={{ base: 2, lg: "50px" }} pr={{ base: 2, md: 4 }} overflow="hidden">
+                  <Box 
+                    ref={dashboardRef}
+                    pl={{ base: 2, lg: isFullscreen ? 4 : "50px" }} 
+                    pr={{ base: 2, md: 4 }} 
+                    overflow="hidden"
+                    {...(isFullscreen ? {
+                      position: "fixed",
+                      top: 0,
+                      left: 0,
+                      right: 0,
+                      bottom: 0,
+                      zIndex: 9999,
+                      bg: mode === "dark" ? "#0a0f1a" : "gray.50",
+                      pt: 16,
+                      pb: 4,
+                      overflowY: "auto",
+                    } : {})}
+                  >
+                    {/* Fullscreen header with logo and controls */}
+                    {isFullscreen && (
+                      <Box
+                        position="fixed"
+                        top={0}
+                        left={0}
+                        right={0}
+                        zIndex={10000}
+                        bg={mode === "dark" ? "rgba(10, 15, 26, 0.95)" : "rgba(255, 255, 255, 0.95)"}
+                        backdropFilter="blur(10px)"
+                        borderBottom="1px solid"
+                        borderColor={mode === "dark" ? "whiteAlpha.100" : "blackAlpha.100"}
+                        px={4}
+                        py={2}
+                      >
+                        <HStack justify="space-between" align="center">
+                          {/* Logo */}
+                          <HStack spacing={3}>
+                            <OptimizedImage
+                              src={process.env.PUBLIC_URL + "/logo.png"}
+                              alt="ProMrkts"
+                              width="32px"
+                              height="32px"
+                              priority
+                              placeholder="none"
+                            />
+                            <Text fontWeight="bold" fontSize="lg" color={mode === "dark" ? "white" : "black"}>
+                              ProMrkts
+                            </Text>
+                          </HStack>
+
+                          {/* Fullscreen controls */}
+                          <HStack spacing={2}>
+                            <Badge borderRadius="full" px={3} bg="blackAlpha.400" color={mode === "dark" ? "white" : "black"}>
+                              {activeLayoutName}
+                            </Badge>
+                            <Tooltip label="Previous layout" placement="bottom" hasArrow>
+                              <IconButton
+                                aria-label="Previous layout"
+                                icon={<Text fontSize="lg">{"←"}</Text>}
+                                variant="ghost"
+                                size="sm"
+                                color={mode === "dark" ? "white" : "black"}
+                                _hover={{ bg: "blackAlpha.300" }}
+                                onClick={goPrevLayout}
+                              />
+                            </Tooltip>
+                            <Tooltip label="Next layout" placement="bottom" hasArrow>
+                              <IconButton
+                                aria-label="Next layout"
+                                icon={<Text fontSize="lg">{"→"}</Text>}
+                                variant="ghost"
+                                size="sm"
+                                color={mode === "dark" ? "white" : "black"}
+                                _hover={{ bg: "blackAlpha.300" }}
+                                onClick={goNextLayout}
+                              />
+                            </Tooltip>
+                            <Tooltip label="Dashboard settings" placement="bottom" hasArrow>
+                              <IconButton
+                                aria-label="Open dashboard settings"
+                                icon={<SettingsIcon boxSize={3} />}
+                                size="sm"
+                                variant="solid"
+                                color="black"
+                                bg="#65a8bf"
+                                _hover={{ bg: "#5a9bb0" }}
+                                onClick={() => setIsDashboardSettingsOpen(true)}
+                                borderRadius="full"
+                              />
+                            </Tooltip>
+                            <Tooltip label="Reset dashboard layout" placement="bottom" hasArrow>
+                              <IconButton
+                                aria-label="Reset dashboard layout"
+                                icon={<RepeatIcon />}
+                                size="sm"
+                                variant="ghost"
+                                color="red.500"
+                                _hover={{ bg: "red.500", color: "white" }}
+                                onClick={resetDashboardLayout}
+                              />
+                            </Tooltip>
+                            <Tooltip label="Exit fullscreen" placement="bottom" hasArrow>
+                              <IconButton
+                                aria-label="Exit fullscreen"
+                                icon={<Minimize2 size={16} />}
+                                size="sm"
+                                variant="solid"
+                                color="white"
+                                bg="green.500"
+                                _hover={{ bg: "green.600" }}
+                                onClick={toggleFullscreen}
+                                borderRadius="full"
+                              />
+                            </Tooltip>
+                          </HStack>
+                        </HStack>
+                      </Box>
+                    )}
                     <GridLayout
                       className="layout"
                       layout={widgets.map((w, idx) => ({
@@ -2567,7 +2745,7 @@ export default function Hero(props: HeroProps) {
                         minH: w.layout?.minH ?? 3,
                       }))}
                       cols={12}
-                      rowHeight={38}
+                      rowHeight={isFullscreen ? 45 : 38}
                       width={gridWidth}
                       isDraggable={isEditingLayout}
                       isResizable={isEditingLayout}
