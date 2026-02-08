@@ -134,61 +134,100 @@ const GlobeAnimation: React.FC<{ isRTL: boolean }> = ({ isRTL }) => {
     const vertexCount = positionAttribute.count;
     const vertex = new THREE.Vector3();
 
+    // Track how much each vertex protrudes so we can shade spikes without changing their shape
+    const spikeMask = new Float32Array(vertexCount);
+    let maxSpike = 0;
+
     for (let i = 0; i < vertexCount; i++) {
       vertex.fromBufferAttribute(positionAttribute, i);
       const offset = (Math.random() - 0.5) * 0.55;
-      vertex.multiplyScalar(1 + offset * Math.sin(vertex.length() * 1.6));
+      const mult = 1 + offset * Math.sin(vertex.length() * 1.6);
+      vertex.multiplyScalar(mult);
       positionAttribute.setXYZ(i, vertex.x, vertex.y, vertex.z);
+
+      const spike = Math.max(0, mult - 1);
+      spikeMask[i] = spike;
+      if (spike > maxSpike) maxSpike = spike;
     }
+
+    // Normalize spike mask to [0..1]
+    if (maxSpike > 0) {
+      for (let i = 0; i < vertexCount; i++) spikeMask[i] = spikeMask[i] / maxSpike;
+    }
+
+    // Per-vertex colors: body uses base hue, spikes invert to the opposite hue
+    const colors = new Float32Array(vertexCount * 3);
+    const colorAttr = new THREE.BufferAttribute(colors, 3);
+    geometry.setAttribute("color", colorAttr);
     geometry.computeVertexNormals();
 
-    // Shiny, dim sun-like effect (adapted) with color shifting
-    const material = new THREE.MeshStandardMaterial({
-      color: 0x65a8bf,
-      metalness: 0.5,
-      roughness: 0.65,
-      transparent: true,
-      opacity: 0.65,
-      emissive: 0xb7a27d,
-      emissiveIntensity: 1.2,
+    // Specular material so spikes stay visible as 3D surface detail (not just silhouette)
+    const material = new THREE.MeshPhongMaterial({
+      color: 0xffffff,
+      emissive: 0x000000,
+      specular: 0xffffff,
+      shininess: 70,
+      side: THREE.DoubleSide,
+      transparent: false,
+      opacity: 1,
+      vertexColors: true,
     });
 
     const sphere = new THREE.Mesh(geometry, material);
     scene.add(sphere);
 
-    // Lighting Setup
-    const pointLight = new THREE.PointLight(0x404040, 5, 360);
-    pointLight.position.set(9, 9, 9);
-    scene.add(pointLight);
+    // Lighting Setup (stronger highlights + rim to reveal spikes in 3D)
+    const keyLight = new THREE.DirectionalLight(0xffffff, 2.2);
+    keyLight.position.set(10, 10, 12);
+    scene.add(keyLight);
 
-    const ambientLight = new THREE.AmbientLight(0x404040, 1.2);
+    const fillLight = new THREE.DirectionalLight(0xffffff, 1.2);
+    fillLight.position.set(-10, -6, 10);
+    scene.add(fillLight);
+
+    // Rim/back light to outline and add depth as it rotates
+    const rimLight = new THREE.DirectionalLight(0xffffff, 1.6);
+    rimLight.position.set(-12, 8, -12);
+    scene.add(rimLight);
+
+    const ambientLight = new THREE.AmbientLight(0xffffff, 0.55);
     scene.add(ambientLight);
 
     const hueA = new THREE.Color("#65a8bf");
     const hueB = new THREE.Color("#b7a27d");
     const tmpColor = new THREE.Color();
-    const tmpEmissive = new THREE.Color();
+    const baseColor = new THREE.Color();
+    const spikeColor = new THREE.Color();
 
     // Animate Sphere Rotation and Shine Effect
     let time = 0;
+    // Keep a consistent tilt so the edge is always visible
+    sphere.rotation.x = 0.35;
+    sphere.rotation.z = 0.15;
     const animate = () => {
       animationRef.current = requestAnimationFrame(animate);
 
       time += 0.01;
-      sphere.rotation.x += 0.004;
-      sphere.rotation.y += 0.008;
+      // Rotate on its axis (no tumbling)
+      sphere.rotation.y += 0.01;
 
-      // Smooth brand hue shift between #65a8bf and #b7a27d
-      const hueT = (Math.sin(time * 0.55) + 1) / 2;
-      tmpColor.copy(hueA).lerp(hueB, hueT);
-      material.color.copy(tmpColor);
+      // Strong brand hue shift between EXACT #65a8bf and #b7a27d
+      const hueT = (Math.sin(time * 0.8) + 1) / 2;
+      baseColor.copy(hueA).lerp(hueB, hueT);
+      spikeColor.copy(hueB).lerp(hueA, hueT); // inverted
 
-      // Keep emissive shifting too, but biased toward gold
-      tmpEmissive.copy(hueB).lerp(hueA, 0.35 * (1 - hueT));
-      material.emissive.copy(tmpEmissive);
+      // Shade spikes as the opposite hue to make protrusions pop
+      for (let i = 0; i < vertexCount; i++) {
+        const t = spikeMask[i];
+        tmpColor.copy(baseColor).lerp(spikeColor, t);
+        colors[i * 3 + 0] = tmpColor.r;
+        colors[i * 3 + 1] = tmpColor.g;
+        colors[i * 3 + 2] = tmpColor.b;
+      }
+      colorAttr.needsUpdate = true;
 
-      const shine = Math.random() * 0.15;
-      material.emissiveIntensity = 1.2 + shine;
+      // Keep emissive off so lighting/shading reveals the spike depth
+      material.emissive.set(0x000000);
 
       renderer.render(scene, camera);
     };
@@ -224,8 +263,8 @@ const GlobeAnimation: React.FC<{ isRTL: boolean }> = ({ isRTL }) => {
       ref={containerRef}
       position="absolute"
       top="50%"
-      left={{ base: "50%", md: isRTL ? "-5%" : "auto" }}
-      right={{ base: "auto", md: isRTL ? "auto" : "-5%" }}
+      left={{ base: "50%", md: isRTL ? "6%" : "auto", lg: isRTL ? "8%" : "auto" }}
+      right={{ base: "auto", md: isRTL ? "auto" : "6%", lg: isRTL ? "auto" : "8%" }}
       transform={{ base: "translate(-50%, -50%)", md: "translateY(-50%)" }}
       w={{ base: "500px", md: "600px", lg: "700px" }}
       h={{ base: "500px", md: "600px", lg: "700px" }}
