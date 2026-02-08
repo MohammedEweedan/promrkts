@@ -206,8 +206,8 @@ const BreakingNewsTicker: React.FC<Props> = ({ mode }) => {
       <Box
         display="flex"
         animation={{
-          base: `${scrollLeft} ${Math.max(12, items.length * 1.5)}s linear infinite`,
-          md: `${scrollLeft} ${Math.max(18, items.length * 2)}s linear infinite`,
+          base: `${scrollLeft} ${Math.max(8, items.length * 0.8)}s linear infinite`,
+          md: `${scrollLeft} ${Math.max(10, items.length * 1.2)}s linear infinite`,
         }}
         _hover={{ animationPlayState: "paused" }}
         pl="80px"
