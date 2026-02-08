@@ -3,7 +3,13 @@
 import { Resend } from 'resend';
 
 // Initialize Resend with API key
-const resend = new Resend(process.env.RESEND_API_KEY);
+const RESEND_KEY = process.env.RESEND_API_KEY;
+if (!RESEND_KEY) {
+  console.error('[Email Service] WARNING: RESEND_API_KEY is not set! Emails will fail.');
+} else {
+  console.log('[Email Service] Resend initialized with key: re_....' + RESEND_KEY.slice(-6));
+}
+const resend = new Resend(RESEND_KEY);
 
 // Brand colors and assets
 const BRAND = {
@@ -132,6 +138,11 @@ interface SendEmailOptions {
 // Send email using Resend
 export async function sendEmail(options: SendEmailOptions): Promise<{ success: boolean; id?: string; error?: string }> {
   try {
+    if (!RESEND_KEY) {
+      console.error('[Email Service] Cannot send email — RESEND_API_KEY is not set');
+      return { success: false, error: 'RESEND_API_KEY not configured' };
+    }
+
     const fromAlias = options.from || 'hello';
     const fromEmail = EMAIL_ALIASES[fromAlias];
     const fromName = fromAlias === 'invoice' ? 'promrkts Billing'
@@ -140,9 +151,12 @@ export async function sendEmail(options: SendEmailOptions): Promise<{ success: b
       : fromAlias === 'moe' ? 'Moe Ali'
       : 'promrkts';
 
+    const to = Array.isArray(options.to) ? options.to : [options.to];
+    console.log(`[Email Service] Sending email via Resend: to=${to.join(',')}, subject="${options.subject}", from=${fromName} <${fromEmail}>`);
+
     const { data, error } = await resend.emails.send({
       from: `${fromName} <${fromEmail}>`,
-      to: Array.isArray(options.to) ? options.to : [options.to],
+      to,
       subject: options.subject,
       html: options.html,
       text: options.text,
@@ -152,14 +166,14 @@ export async function sendEmail(options: SendEmailOptions): Promise<{ success: b
     });
 
     if (error) {
-      console.error('[Email Service] Error sending email:', error);
+      console.error('[Email Service] Resend API error:', JSON.stringify(error));
       return { success: false, error: error.message };
     }
 
-    console.log(`[Email Service] Email sent successfully: ${data?.id}`);
+    console.log(`[Email Service] Email sent successfully via Resend: ${data?.id}`);
     return { success: true, id: data?.id };
   } catch (error: any) {
-    console.error('[Email Service] Exception sending email:', error);
+    console.error('[Email Service] Exception sending email:', error?.message, error?.statusCode || '');
     return { success: false, error: error.message };
   }
 }

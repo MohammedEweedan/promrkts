@@ -11,6 +11,9 @@ services:
       - "127.0.0.1:8080:8080"
     volumes:
       - ./uploads:/app/uploads
+    dns:
+      - 8.8.8.8
+      - 1.1.1.1
     healthcheck:
       test:
         [

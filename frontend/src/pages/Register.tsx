@@ -35,10 +35,9 @@ import {
   IconButton 
 } from "@chakra-ui/react";
 import { CheckCircleIcon } from "@chakra-ui/icons";
-import SpotlightCard from "../components/SpotlightCard";
+// Glassmorphism card replaces SpotlightCard
 import { motion, AnimatePresence } from "framer-motion";
 import PremiumStepIndicator from "../components/PremiumStepIndicator";
-import { SocialProofBanner } from "../components/TrustBadges";
 import { User, Mail, Phone, FileCheck, ArrowLeft, ArrowRight, Eye, EyeOff, Shield, Zap, CheckCircle, UserPlus } from "lucide-react";
 import OAuthButtons from "../components/OAuthButtons";
 
@@ -473,7 +472,7 @@ const Register: React.FC = () => {
         pointerEvents="none"
       />
 
-      <Container maxW="580px" position="relative" zIndex={1}>
+      <Container maxW={{ base: '100%', sm: '95vw', md: '680px', lg: '720px' }} position="relative" zIndex={1}>
         <VStack align="stretch" spacing={{ base: 5, md: 7 }}>
           {/* Premium Header */}
           <VStack spacing={3} textAlign="center" pt={{ base: 2, md: 6 }}>
@@ -499,10 +498,6 @@ const Register: React.FC = () => {
             >
               {t("auth.create_account") || "Join the Trading Elite"}
             </Heading>
-            <Text color={isDark ? 'whiteAlpha.600' : 'gray.500'} fontSize="md" maxW="md">
-              {t("auth.create_account_sub") || "Start your journey to financial mastery in just 2 minutes"}
-            </Text>
-            <SocialProofBanner enrolledCount={100007} />
           </VStack>
 
           {/* OAuth Buttons */}
@@ -522,7 +517,23 @@ const Register: React.FC = () => {
             currentStep={step}
           />
 
-          <SpotlightCard>
+          <Box
+            borderRadius={{ base: '2xl', md: '3xl' }}
+            bg={isDark ? 'rgba(255,255,255,0.04)' : 'rgba(255,255,255,0.55)'}
+            backdropFilter="blur(24px)"
+            border="1px solid"
+            borderColor={isDark ? 'whiteAlpha.100' : 'rgba(255,255,255,0.6)'}
+            boxShadow={isDark
+              ? '0 8px 32px rgba(0,0,0,0.3), inset 0 1px 0 rgba(255,255,255,0.05)'
+              : '0 8px 32px rgba(0,0,0,0.08), inset 0 1px 0 rgba(255,255,255,0.8)'
+            }
+            px={{ base: 4, sm: 6, md: 8 }}
+            py={{ base: 5, md: 8 }}
+            w="100%"
+            minH={{ base: 'auto', md: '420px' }}
+            transition="all 0.3s ease"
+            sx={{ WebkitBackdropFilter: 'blur(24px)' }}
+          >
             {error && (
               <Box
                 mb={4}
@@ -537,13 +548,13 @@ const Register: React.FC = () => {
             )}
 
             <form onSubmit={onSubmit} ref={formRef}>
-              <VStack align="stretch" gap={{ base: 6, md: 8 }} w={{ base: "100%", md: "6xl" }} maxW={{ base: "100%", md: "8xl" }}>
+              <VStack align="stretch" gap={{ base: 6, md: 8 }} w="100%">
                 <AnimatePresence mode="wait">
                   {step === 1 && (
                     <Fade key="step1">
                       {/* ===== Section: Basic info ===== */}
                       <Box textAlign="center">
-                        <Heading as="h2" size="sm" mb={3} color="#65a8bf" fontWeight="bold">
+                        <Heading as="h2" size="sm" mb={3} fontWeight="bold">
                           {t("auth.basic_info") || "Basic information"}
                         </Heading>
                         <SimpleGrid columns={{ base: 1, md: 2 }} spacing={{ base: 4, md: 6 }}>
@@ -801,7 +812,7 @@ const Register: React.FC = () => {
                             </HStack>
 
                             {otpSent && !phoneVerified && (
-                              <Text fontSize="xs" color="#65a8bf" mt={1}>
+                              <Text fontSize="xs"  mt={1}>
                                 {t("auth.otp_sent") || "OTP sent. Please check your phone."}
                               </Text>
                             )}
@@ -810,10 +821,10 @@ const Register: React.FC = () => {
                                 {t("auth.phone_verified") || "Phone verified."}
                               </Text>
                             )}
-                            <Text fontSize="xs" color="#65a8bf" mt={1}>
+                            <Text fontSize="xs"  mt={1}>
                               {t("auth.otp_via_whatsapp") || "OTP will be delivered via WhatsApp, not SMS."}
                             </Text>
-                            <Text fontSize="xs" color="#65a8bf" mt={1}>
+                            <Text fontSize="xs"  mt={1}>
                               {t("auth.whatsapp_required") || "Your phone must be linked to WhatsApp to receive the OTP."}
                             </Text>
                           </GridItem>
@@ -833,13 +844,13 @@ const Register: React.FC = () => {
                         </Heading>
                         <SimpleGrid columns={{ base: 1, md: 2 }} spacing={{ base: 4, md: 6 }}>
                           <GridItem borderRadius="md" px={3} py={2}>
-                            <Text fontSize="sm" mb={1} color="#65a8bf">
+                            <Text fontSize="sm" mb={1} >
                               {t("auth.dob") || "Date of birth"}
                             </Text>
                             <Input type="date" value={dob} onChange={(e) => setDob(e.target.value)} placeholder={t("auth.dob_placeholder") || "Date of birth"} />
                           </GridItem>
                           <GridItem borderRadius="md" px={3} py={2} >
-                            <Text fontSize="sm" mb={1} color="#65a8bf">
+                            <Text fontSize="sm" mb={1} >
                               {t("auth.gender", { defaultValue: "Gender" })} <Text as="span" color="whiteAlpha.500" fontSize="xs">({t("common.optional", { defaultValue: "optional" })})</Text>
                             </Text>
                             <CSelect value={gender} onChange={(e) => setGender(e.target.value)} borderRadius="md" px={3} py={2} bg={colorMode === "dark" ? "black" : "white"} color={colorMode === "dark" ? "white" : "black"} >
@@ -886,7 +897,7 @@ const Register: React.FC = () => {
               <Button
                 leftIcon={<ArrowLeft size={16} />}
                 variant="ghost"
-                color={BRAND}
+                
                 onClick={() => setStep((s) => Math.max(1, s - 1))}
                 isDisabled={step === 1}
                 borderRadius="xl"
@@ -952,7 +963,7 @@ const Register: React.FC = () => {
                 {step === 4 ? (t("auth.create_account") || "Create Account") : (t("common.next") || "Next")}
               </Button>
             </HStack>
-          </SpotlightCard>
+          </Box>
 
           {/* Trust indicators */}
           <HStack justify="center" spacing={6} flexWrap="wrap" py={2}>
@@ -963,7 +974,7 @@ const Register: React.FC = () => {
               </Text>
             </HStack>
             <HStack spacing={1.5}>
-              <Icon as={Zap} boxSize={3.5} color={BRAND} />
+              <Icon as={Zap} boxSize={3.5}  />
               <Text fontSize="xs" color={isDark ? 'whiteAlpha.500' : 'gray.400'} fontWeight="500">
                 2 Min Setup
               </Text>
