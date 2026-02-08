@@ -14,6 +14,9 @@ const pool = connectionString
       idleTimeoutMillis: 30000, // Close idle clients after 30s
       connectionTimeoutMillis: 10000, // Timeout for new connections
       allowExitOnIdle: false, // Keep pool alive
+      ssl: {
+        rejectUnauthorized: false, // Accept self-signed certificates from managed databases
+      },
     })
   : new Pool({
       host: process.env.DB_HOST,
@@ -25,6 +28,9 @@ const pool = connectionString
       idleTimeoutMillis: 30000,
       connectionTimeoutMillis: 10000,
       allowExitOnIdle: false,
+      ssl: {
+        rejectUnauthorized: false,
+      },
     });
 
 // Connection health state
