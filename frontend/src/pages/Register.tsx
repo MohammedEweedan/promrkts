@@ -435,10 +435,11 @@ const Register: React.FC = () => {
   const inputStyles = {
     borderRadius: 'xl',
     border: '1px solid',
-    borderColor: isDark ? 'whiteAlpha.200' : 'gray.200',
-    bg: isDark ? 'rgba(255,255,255,0.03)' : 'white',
-    _hover: { borderColor: isDark ? 'whiteAlpha.300' : 'gray.300' },
-    _focus: { borderColor: BRAND, boxShadow: `0 0 0 1px ${BRAND}` },
+    borderColor: isDark ? 'whiteAlpha.200' : 'gray.300',
+    bg: isDark ? 'rgba(255,255,255,0.05)' : 'gray.50',
+    color: isDark ? 'white' : 'gray.900',
+    _hover: { borderColor: isDark ? 'whiteAlpha.300' : 'gray.400' },
+    _focus: { borderColor: BRAND, boxShadow: `0 0 0 1px ${BRAND}`, bg: isDark ? 'rgba(255,255,255,0.07)' : 'white' },
     _placeholder: { color: isDark ? 'whiteAlpha.400' : 'gray.400' },
   };
 

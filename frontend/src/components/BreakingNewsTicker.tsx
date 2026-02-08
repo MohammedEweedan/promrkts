@@ -205,7 +205,10 @@ const BreakingNewsTicker: React.FC<Props> = ({ mode }) => {
       {/* Scrolling content */}
       <Box
         display="flex"
-        animation={`${scrollLeft} ${Math.max(30, items.length * 4)}s linear infinite`}
+        animation={{
+          base: `${scrollLeft} ${Math.max(12, items.length * 1.5)}s linear infinite`,
+          md: `${scrollLeft} ${Math.max(18, items.length * 2)}s linear infinite`,
+        }}
         _hover={{ animationPlayState: "paused" }}
         pl="80px"
       >
