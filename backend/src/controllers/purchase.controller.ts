@@ -8,7 +8,7 @@ import Stripe from 'stripe';
 import { markCourseEngagement, markEvaluating } from '../services/journey.service';
 import { refreshEntitlements } from '../services/entitlements.service';
 import pushNotificationService from '../services/pushNotification.service';
-import { sendUpsellEmail, sendInvoiceEmail, InvoiceData } from '../services/email.service';
+import { sendUpsellEmail, sendInvoiceEmail, sendPostPurchaseCongratulationsEmail, InvoiceData } from '../services/email.service';
 
 const __adminCache: Record<string, { expiresAt: number; value: any }> = {};
 function getCached<T>(key: string): T | null {
@@ -168,6 +168,12 @@ export async function handlePurchaseConfirmed(purchaseId: string) {
           transactionId: (purchase as any).txnHash || (purchase as any).stripeId || undefined,
         };
         await sendInvoiceEmail({ email: user.email, name: user.name }, invoiceData);
+
+        // Send post-purchase congratulations email with broker IB link (for paid purchases)
+        const isPaid = Number((purchase as any).finalPriceUsd || tier.price_usdt || 0) > 0;
+        if (isPaid) {
+          await sendPostPurchaseCongratulationsEmail({ email: user.email, name: user.name }, tier.name || 'Product');
+        }
       }
     } catch (e) {
       logger.warn('Failed to send invoice email:', e as any);

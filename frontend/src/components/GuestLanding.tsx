@@ -337,51 +337,50 @@ export default function GuestLanding({
             {/* Main Headline */}
             <Text
                 as="h1"
-                fontSize={{ base: "3rem", md: "4rem", lg: "4.5rem" }}
+                fontSize={{ base: "2rem", md: "2.8rem", lg: "3.2rem" }}
                 fontWeight="800"
-                lineHeight="1.1"
+                lineHeight="1.15"
                 letterSpacing="-0.03em"
               >
-                {t("home.hero.title_line1", { defaultValue: "Master Trading." })}
-                <br />
+                {t("home.hero.title_line1", { defaultValue: "Master Trading." })}{" "}
                 <Text as="span" bgGradient={UI.gradient} bgClip="text">
                   {t("home.hero.title_line2", { defaultValue: "Build Wealth." })}
                 </Text>
               </Text>
             {/* Primary CTAs */}
             <VStack spacing={3} align={{ base: "center", lg: isRTL ? "flex-end" : "flex-start" }} w="100%">
-              <HStack spacing={4} flexWrap="wrap" justify={{ base: "center", lg: isRTL ? "flex-end" : "flex-start" }}>
+              <HStack spacing={3} flexWrap="wrap" justify={{ base: "center", lg: isRTL ? "flex-end" : "flex-start" }}>
                 <Button
-                  size="lg"
+                  size="md"
                   onClick={() => navigate("/register")}
                   bg={UI.gradient}
                   color="white"
-                  px={8}
-                  py={7}
-                  fontSize="md"
+                  px={6}
+                  py={6}
+                  fontSize="sm"
                   fontWeight="700"
-                  borderRadius="16px"
+                  borderRadius="14px"
                   _hover={{
                     transform: "translateY(-3px)",
                     boxShadow: "0 12px 35px rgba(101, 168, 191, 0.4)",
                   }}
                   _active={{ transform: "translateY(0)" }}
                   transition="all 0.2s"
-                  rightIcon={<ChevronRight size={20} />}
+                  rightIcon={<ChevronRight size={18} />}
                 >
                   {t("home.cta.signup", { defaultValue: "Start Free" })}
                 </Button>
                 <Button
-                  size="lg"
+                  size="md"
                   onClick={() => navigate("/products")}
                   variant="outline"
                   borderColor={UI.primary}
                   color={UI.primary}
-                  px={8}
-                  py={7}
-                  fontSize="md"
+                  px={6}
+                  py={6}
+                  fontSize="sm"
                   fontWeight="700"
-                  borderRadius="16px"
+                  borderRadius="14px"
                   _hover={{
                     transform: "translateY(-2px)",
                     bg: "rgba(101, 168, 191, 0.1)",
@@ -391,30 +390,31 @@ export default function GuestLanding({
                 >
                   {t("home.cta.explore", { defaultValue: "Explore Courses" })}
                 </Button>
-                
-                {showSpinButton && (
-                  <Button
-                    size="lg"
-                    onClick={onOpenSpin}
-                    bg={UI.secondary}
-                    color="#0a0f1a"
-                    px={8}
-                    py={7}
-                    fontSize="md"
-                    fontWeight="700"
-                    borderRadius="16px"
-                    _hover={{
-                      transform: "translateY(-2px)",
-                      boxShadow: "0 0 40px rgba(183, 162, 125, 0.4)",
-                    }}
-                    _active={{ transform: "translateY(0)" }}
-                    animation={`${goldGlow} 2.5s ease-in-out infinite`}
-                    leftIcon={<Icon as={Award} boxSize={5} />}
-                  >
-                    {t("home.spin_and_win", { defaultValue: "🎁 Spin & Win" })}
-                  </Button>
-                )}
               </HStack>
+              {showSpinButton && (
+                <Button
+                  size="md"
+                  w="100%"
+                  maxW={{ base: "100%", lg: "400px" }}
+                  onClick={onOpenSpin}
+                  bg={UI.secondary}
+                  color="#0a0f1a"
+                  px={6}
+                  py={6}
+                  fontSize="sm"
+                  fontWeight="700"
+                  borderRadius="14px"
+                  _hover={{
+                    transform: "translateY(-2px)",
+                    boxShadow: "0 0 40px rgba(183, 162, 125, 0.4)",
+                  }}
+                  _active={{ transform: "translateY(0)" }}
+                  animation={`${goldGlow} 2.5s ease-in-out infinite`}
+                  leftIcon={<Icon as={Award} boxSize={5} />}
+                >
+                  {t("home.spin_and_win", { defaultValue: "🎁 Spin & Win" })}
+                </Button>
+              )}
               <HStack spacing={4} flexWrap="wrap" justify={{ base: "center", lg: isRTL ? "flex-end" : "flex-start" }}>
                 <HStack spacing={1}>
                   <Icon as={CheckCircle} boxSize={3} color="green.400" />
@@ -422,25 +422,10 @@ export default function GuestLanding({
                 </HStack>
                 <HStack spacing={1}>
                   <Icon as={Clock} boxSize={3} color={UI.primary} />
-                  <Text fontSize="xs" color={UI.textMuted}>{t("home.cta.setup_time", { defaultValue: "Setup in 2 minutes" })}</Text>
+                  <Text fontSize="xs" color={UI.textMuted}>{t("home.cta.setup_time", { defaultValue: "Sign up in 2 minutes" })}</Text>
                 </HStack>
               </HStack>
             </VStack>
-
-            {/* Stats Row */}
-            <Box w="100%">
-              <Grid
-                templateColumns={{ base: "repeat(2, 1fr)", md: "repeat(4, 1fr)" }}
-                gap={4}
-                maxW={{ base: "100%", lg: "600px" }}
-              >
-                <StatCard icon={TrendingUp} value={t("home.stats.traders", { defaultValue: "50K+" })} label={t("home.stats.traders_label", { defaultValue: "Active Traders" })} delay={0} />
-                <StatCard icon={Users} value={t("home.stats.members", { defaultValue: "12K+" })} label={t("home.stats.members_label", { defaultValue: "Members" })} delay={0} />
-                <StatCard icon={Shield} value={t("home.stats.support", { defaultValue: "24/7" })} label={t("home.stats.support_label", { defaultValue: "Support" })} delay={0} />
-                <StatCard icon={Zap} value={t("home.stats.signals", { defaultValue: "95%" })} label={t("home.stats.signals_label", { defaultValue: "Win Rate" })} delay={0} />
-              </Grid>
-            </Box>
-
             {/* Trust Badge */}
             <HStack spacing={3} color={UI.textMuted}>
               <Icon as={Globe} boxSize={4} />
@@ -448,27 +433,6 @@ export default function GuestLanding({
                 {t("home.trust", { defaultValue: "Trusted by traders in 50+ countries" })}
               </Text>
             </HStack>
-
-            {/* Social Proof Testimonial */}
-            <Box
-              bg={UI.surfaceLight}
-              backdropFilter="blur(20px)"
-              border="1px solid"
-              borderColor={UI.border}
-              borderRadius="16px"
-              p={4}
-              maxW="500px"
-              w="100%"
-            >
-              <HStack spacing={1} mb={2}>
-                {[1, 2, 3, 4, 5].map((i) => (
-                  <Icon key={i} as={Star} boxSize={3} color="yellow.400" fill="currentColor" />
-                ))}
-              </HStack>
-              <Text fontSize="sm" fontStyle="italic" color={UI.textSecondary} mb={2}>
-                {t("home.testimonial.quote", { defaultValue: '"This platform completely changed how I approach the markets. The AI coaching alone is worth 10x the price."' })}
-              </Text>
-            </Box>
           </VStack>
 
           {/* Right: Empty space for globe (globe is positioned absolutely) */}

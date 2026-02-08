@@ -3134,6 +3134,248 @@ const Home: React.FC = () => {
                   </ParallaxSection>
                 )}
 
+                {/* Featured Courses & Subscriptions — always shown for non-enrolled */}
+                <ParallaxSection speed={0.3}>
+                  <Box py={{ base: 12, md: 25 }} position="relative">
+                    <MotionBox
+                      initial={{ opacity: 0, y: 30 }}
+                      whileInView={{ opacity: 1, y: 0 }}
+                      transition={{ duration: 0.8 }}
+                      viewport={{ once: true, amount: 0.3 }}
+                    >
+                      <Heading
+                        textAlign="center"
+                        bgGradient="linear(to-r, #65a8bf, #b7a27d)"
+                        bgClip="text"
+                        mb={6}
+                        fontSize={{ base: "3xl", md: "4xl" }}
+                      >
+                        {t("home.courses.title") || "The Prop Desk Playbooks"}
+                      </Heading>
+                    </MotionBox>
+
+                    <MotionBox
+                      initial={{ opacity: 0, scale: 0.95 }}
+                      whileInView={{ opacity: 1, scale: 1 }}
+                      transition={{ duration: 0.6, delay: 0.2 }}
+                      viewport={{ once: true, amount: 0.3 }}
+                    >
+                      <Box maxW="400px" mx="auto" mb={8}>
+                        <Tabs
+                          index={featuredTab}
+                          onChange={setFeaturedTab}
+                          isFitted
+                          variant="unstyled"
+                          w="full"
+                        >
+                          <TabList w="full" bg={accentColor} borderRadius="xl" p="2" gap="2">
+                            <Tab
+                              borderRadius="md"
+                              fontWeight="semibold"
+                              _hover={{ bg: "rgba(0,0,0,0.08)" }}
+                              _selected={{
+                                bg: mode === "dark" ? "black" : "white",
+                                color: accentColor,
+                              }}
+                            >
+                              {t("courses.tab", { defaultValue: BRAND.guidesLabel })}
+                            </Tab>
+                            <Tab
+                              borderRadius="md"
+                              fontWeight="semibold"
+                              _hover={{ bg: "rgba(0,0,0,0.08)" }}
+                              _selected={{
+                                bg: mode === "dark" ? "black" : "white",
+                                color: accentColor,
+                              }}
+                            >
+                              {t("subscriptions.tab", { defaultValue: BRAND.communitiesLabel })}
+                            </Tab>
+                          </TabList>
+                        </Tabs>
+                      </Box>
+                    </MotionBox>
+
+                    {/* Desktop product cards */}
+                    <Box display={{ base: "none", md: "block" }}>
+                      {displayTiers.length === 0 ? (
+                        <Text textAlign="center" opacity={0.7} py={8}>
+                          {featuredTab === 0
+                            ? t("home.courses.no_courses", { defaultValue: "No guides available" })
+                            : t("home.courses.no_subscriptions", {
+                                defaultValue: "No communities available",
+                              })}
+                        </Text>
+                      ) : (
+                        <SimpleGrid columns={{ base: 1, md: featuredTab === 0 ? 4 : 2 }} gap={8}>
+                          {displayTiers.map((tier, idx) => (
+                            <MotionBox
+                              key={tier.id || idx}
+                              initial={{ opacity: 0, y: 50 }}
+                              whileInView={{ opacity: 1, y: 0 }}
+                              transition={{ duration: 0.6, delay: idx * 0.1 }}
+                              viewport={{ once: true, amount: 0.2 }}
+                            >
+                              <SpotlightCard>
+                                <Box p={8} textAlign="center">
+                                  <VStack gap={4}>
+                                    <Heading size="lg" color="#65a8bf">
+                                      {tier.name}
+                                    </Heading>
+                                    <Text fontSize="sm" color="#65a8bf">
+                                      {tier.description}
+                                    </Text>
+                                    {(() => {
+                                      const { avg, count } = getAvgRating(tier);
+                                      if (!avg) return null;
+                                      const rounded = Math.round(avg);
+                                      return (
+                                        <VStack gap={1}>
+                                          <HStack justify="center" gap={1}>
+                                            {Array.from({ length: 5 }).map((_, k) => (
+                                              <Icon
+                                                key={k}
+                                                as={Star}
+                                                boxSize={4}
+                                                color={k < rounded ? accentColor : "gray.400"}
+                                                fill={k < rounded ? accentColor : "none"}
+                                              />
+                                            ))}
+                                          </HStack>
+                                          <Text fontSize="xs" opacity={0.8}>
+                                            {fmtAvg(avg)} • {count || 0}{" "}
+                                            {t("common.reviews") || "reviews"}
+                                          </Text>
+                                        </VStack>
+                                      );
+                                    })()}
+                                  </VStack>
+                                </Box>
+                                <Box p={8} pt={0}>
+                                  <Button
+                                    w="full"
+                                    size="lg"
+                                    bg={accentColor}
+                                    boxShadow={UI.glow}
+                                    _hover={{ transform: "scale(1.05)" }}
+                                    transition="all 0.3s"
+                                    onClick={() => navigate(`/products/${tier.id}`)}
+                                  >
+                                    {featuredTab === 0 ? "Open Guide" : "View Community"}
+                                  </Button>
+                                </Box>
+                              </SpotlightCard>
+                            </MotionBox>
+                          ))}
+                        </SimpleGrid>
+                      )}
+                    </Box>
+
+                    {/* Mobile product cards */}
+                    <Box display={{ base: "block", md: "none" }}>
+                      <SimpleGrid columns={2} gap={4}>
+                        {displayTiers.map((tier, idx) => (
+                          <MotionBox
+                            key={tier.id || idx}
+                            initial={{ opacity: 0, y: 40 }}
+                            whileInView={{ opacity: 1, y: 0 }}
+                            transition={{ duration: 0.5, delay: idx * 0.1 }}
+                            viewport={{ once: true, amount: 0.2 }}
+                          >
+                            <SpotlightCard>
+                              <Box p={4} textAlign="center">
+                                <VStack gap={3}>
+                                  <Heading size="md" color="#65a8bf">
+                                    {tier.name}
+                                  </Heading>
+                                  <Text fontSize="sm" color="#65a8bf">
+                                    {tier.description}
+                                  </Text>
+                                </VStack>
+                              </Box>
+                              <Box p={4} pt={0}>
+                                <Button
+                                  w="full"
+                                  size="md"
+                                  bg={accentColor}
+                                  boxShadow={UI.glow}
+                                  _hover={{ transform: "scale(1.05)" }}
+                                  transition="all 0.3s"
+                                  onClick={() => navigate(`/products/${tier.id}`)}
+                                >
+                                  {t("home.courses.view") || "View Curriculum"}
+                                </Button>
+                              </Box>
+                            </SpotlightCard>
+                          </MotionBox>
+                        ))}
+                      </SimpleGrid>
+                    </Box>
+                  </Box>
+                </ParallaxSection>
+
+                {/* Broker CTA — always shown for non-enrolled */}
+                <GradualFooter>
+                  <Box my={{ base: 12, md: 20 }} px={{ base: 4, md: 0 }}>
+                    <Box 
+                      textAlign="center" 
+                      p={{ base: 8, md: 12 }}
+                      borderRadius="28px"
+                      bg={UI.surfaceLight}
+                      border="1px solid"
+                      borderColor={UI.border}
+                      position="relative"
+                      overflow="hidden"
+                    >
+                      <Box
+                        position="absolute"
+                        top="-50%"
+                        left="50%"
+                        transform="translateX(-50%)"
+                        w="120%"
+                        h="100%"
+                        bgGradient="radial(ellipse at center, rgba(101, 168, 191, 0.08), transparent 60%)"
+                        pointerEvents="none"
+                      />
+                      <VStack spacing={4} position="relative">
+                        <Heading 
+                          size="lg" 
+                          bgGradient="linear(to-r, #65a8bf, #b7a27d)" 
+                          bgClip="text"
+                          fontWeight="700"
+                        >
+                          {t("home.enrolled.broker_title", {
+                            defaultValue: "Trade With Our Preferred Broker",
+                          })}
+                        </Heading>
+                        <Text maxW="md" fontSize={{ base: "sm", md: "md" }}>
+                          {t("home.enrolled.broker_sub", {
+                            defaultValue: "Tight spreads, ECN execution, and fast withdrawals.",
+                          })}
+                        </Text>
+                        <Button
+                          size="lg"
+                          bg={UI.gradient}
+                          color="#0a0f1a"
+                          fontWeight="700"
+                          px={10}
+                          borderRadius="14px"
+                          boxShadow={UI.glow}
+                          _hover={{ transform: "translateY(-2px)", boxShadow: UI.glowStrong }}
+                          transition="all 0.3s"
+                          onClick={() => window.open("/broker", "_self")}
+                        >
+                          {t("home.enrolled.broker_cta", {
+                            defaultValue: "Join Our Broker",
+                          })}
+                        </Button>
+                      </VStack>
+                    </Box>
+                  </Box>
+                </GradualFooter>
+
+                {/* Full funnel — only for guests (not logged in) */}
+                {!isLoggedIn && (<>
                 <ParallaxSection speed={0.5}>
                   <SpotlightCard>
                     <Box p={6}>
@@ -3281,265 +3523,6 @@ const Home: React.FC = () => {
                   >
                     <BannerCarousel />
                   </MotionBox>
-                </ParallaxSection>
-
-                {/* Featured Courses & Subscriptions */}
-                <ParallaxSection speed={0.3}>
-                  <Box py={{ base: 12, md: 25 }} position="relative">
-                    <MotionBox
-                      initial={{ opacity: 0, y: 30 }}
-                      whileInView={{ opacity: 1, y: 0 }}
-                      transition={{ duration: 0.8 }}
-                      viewport={{ once: true, amount: 0.3 }}
-                    >
-                      <Heading
-                        textAlign="center"
-                        bgGradient="linear(to-r, #65a8bf, #b7a27d)"
-                        bgClip="text"
-                        mb={6}
-                        fontSize={{ base: "3xl", md: "4xl" }}
-                      >
-                        {t("home.courses.title") || "The Prop Desk Playbooks"}
-                      </Heading>
-                    </MotionBox>
-
-                    <MotionBox
-                      initial={{ opacity: 0, scale: 0.95 }}
-                      whileInView={{ opacity: 1, scale: 1 }}
-                      transition={{ duration: 0.6, delay: 0.2 }}
-                      viewport={{ once: true, amount: 0.3 }}
-                    >
-                      <Box maxW="400px" mx="auto" mb={8}>
-                        <Tabs
-                          index={featuredTab}
-                          onChange={setFeaturedTab}
-                          isFitted
-                          variant="unstyled"
-                          w="full"
-                        >
-                          <TabList w="full" bg={accentColor} borderRadius="xl" p="2" gap="2">
-                            <Tab
-                              borderRadius="md"
-                              fontWeight="semibold"
-                              _hover={{ bg: "rgba(0,0,0,0.08)" }}
-                              _selected={{
-                                bg: mode === "dark" ? "black" : "white",
-                                color: accentColor,
-                              }}
-                            >
-                              {t("courses.tab", { defaultValue: BRAND.guidesLabel })}
-                            </Tab>
-                            <Tab
-                              borderRadius="md"
-                              fontWeight="semibold"
-                              _hover={{ bg: "rgba(0,0,0,0.08)" }}
-                              _selected={{
-                                bg: mode === "dark" ? "black" : "white",
-                                color: accentColor,
-                              }}
-                            >
-                              {t("subscriptions.tab", { defaultValue: BRAND.communitiesLabel })}
-                            </Tab>
-                          </TabList>
-                        </Tabs>
-                      </Box>
-                    </MotionBox>
-
-                    <Box display={{ base: "none", md: "block" }}>
-                      {displayTiers.length === 0 ? (
-                        <Text textAlign="center" opacity={0.7} py={8}>
-                          {featuredTab === 0
-                            ? t("home.courses.no_courses", { defaultValue: "No guides available" })
-                            : t("home.courses.no_subscriptions", {
-                                defaultValue: "No communities available",
-                              })}
-                        </Text>
-                      ) : (
-                        <SimpleGrid columns={{ base: 1, md: featuredTab === 0 ? 4 : 2 }} gap={8}>
-                          {displayTiers.map((tier, idx) => (
-                            <MotionBox
-                              key={tier.id || idx}
-                              initial={{ opacity: 0, y: 50 }}
-                              whileInView={{ opacity: 1, y: 0 }}
-                              transition={{ duration: 0.6, delay: idx * 0.1 }}
-                              viewport={{ once: true, amount: 0.2 }}
-                            >
-                              <SpotlightCard>
-                                <Box p={8} textAlign="center">
-                                  <VStack gap={4}>
-                                    <Heading size="lg" color="#65a8bf">
-                                      {tier.name}
-                                    </Heading>
-                                    <Text fontSize="sm" color="#65a8bf">
-                                      {tier.description}
-                                    </Text>
-                                    {(() => {
-                                      const { avg, count } = getAvgRating(tier);
-                                      if (!avg) return null;
-                                      const rounded = Math.round(avg);
-                                      return (
-                                        <VStack gap={1}>
-                                          <HStack justify="center" gap={1}>
-                                            {Array.from({ length: 5 }).map((_, k) => (
-                                              <Icon
-                                                key={k}
-                                                as={Star}
-                                                boxSize={4}
-                                                color={k < rounded ? accentColor : "gray.400"}
-                                                fill={k < rounded ? accentColor : "none"}
-                                              />
-                                            ))}
-                                          </HStack>
-                                          <Text fontSize="xs" opacity={0.8}>
-                                            {fmtAvg(avg)} • {count || 0}{" "}
-                                            {t("common.reviews") || "reviews"}
-                                          </Text>
-                                        </VStack>
-                                      );
-                                    })()}
-                                  </VStack>
-                                </Box>
-                                {(() => {
-                                  const positives = getPositiveComments(tier, 3);
-                                  if (positives.length === 0) return null;
-                                  return (
-                                    <Box px={8} pt={0} pb={4}>
-                                      <VStack align="stretch" gap={3}>
-                                        {positives.map((r: any, i: number) => (
-                                          <Box key={r.id || i} p={3}>
-                                            <HStack justify="space-between" mb={1}>
-                                              <HStack gap={1}>
-                                                {Array.from({ length: 5 }).map((_, k) => (
-                                                  <Icon
-                                                    key={k}
-                                                    as={Star}
-                                                    boxSize={3.5}
-                                                    color={
-                                                      k < (Number(r.rating) || 0)
-                                                        ? accentColor
-                                                        : "gray.400"
-                                                    }
-                                                    fill={
-                                                      k < (Number(r.rating) || 0)
-                                                        ? accentColor
-                                                        : "none"
-                                                    }
-                                                  />
-                                                ))}
-                                              </HStack>
-                                              <Text fontSize="xs" opacity={0.7} color="#65a8bf">
-                                                {r?.user?.name ||
-                                                  t("common.anonymous") ||
-                                                  "Student"}{" "}
-                                                •{" "}
-                                                {r?.created_at
-                                                  ? new Date(r.created_at).toLocaleDateString()
-                                                  : ""}
-                                              </Text>
-                                            </HStack>
-                                            <Text
-                                              fontSize="sm"
-                                              style={{
-                                                display: "-webkit-box",
-                                                WebkitLineClamp: "3",
-                                                WebkitBoxOrient: "vertical",
-                                                overflow: "hidden",
-                                              }}
-                                            >
-                                              {String(r.comment).slice(0, 240) +
-                                                (String(r.comment).length > 240 ? "..." : "")}
-                                            </Text>
-                                          </Box>
-                                        ))}
-                                      </VStack>
-                                    </Box>
-                                  );
-                                })()}
-                                <Box p={8} pt={0}>
-                                  <Button
-                                    w="full"
-                                    size="lg"
-                                    bg={accentColor}
-                                    boxShadow={UI.glow}
-                                    _hover={{ transform: "scale(1.05)" }}
-                                    transition="all 0.3s"
-                                    onClick={() => navigate(`/products/${tier.id}`)}
-                                  >
-                                    {featuredTab === 0 ? "Open Guide" : "View Community"}
-                                  </Button>
-                                </Box>
-                              </SpotlightCard>
-                            </MotionBox>
-                          ))}
-                        </SimpleGrid>
-                      )}
-                    </Box>
-
-                    {/* Mobile 2x2 grid */}
-                    <Box display={{ base: "block", md: "none" }}>
-                      <SimpleGrid columns={2} gap={4}>
-                        {displayTiers.map((tier, idx) => (
-                          <MotionBox
-                            key={tier.id || idx}
-                            initial={{ opacity: 0, y: 40 }}
-                            whileInView={{ opacity: 1, y: 0 }}
-                            transition={{ duration: 0.5, delay: idx * 0.1 }}
-                            viewport={{ once: true, amount: 0.2 }}
-                          >
-                            <SpotlightCard>
-                              <Box p={4} textAlign="center">
-                                <VStack gap={3}>
-                                  <Heading size="md" color="#65a8bf">
-                                    {tier.name}
-                                  </Heading>
-                                  <Text fontSize="sm" color="#65a8bf">
-                                    {tier.description}
-                                  </Text>
-                                  {(() => {
-                                    const { avg, count } = getAvgRating(tier);
-                                    if (!avg) return null;
-                                    const full = Math.round(avg);
-                                    return (
-                                      <VStack gap={1}>
-                                        <HStack justify="center" gap={1}>
-                                          {Array.from({ length: 5 }).map((_, k) => (
-                                            <Icon
-                                              key={k}
-                                              as={Star}
-                                              boxSize={3.5}
-                                              color={k < full ? accentColor : "gray.400"}
-                                              fill={k < full ? accentColor : "none"}
-                                            />
-                                          ))}
-                                        </HStack>
-                                        <Text fontSize="xs" opacity={0.8} color="#65a8bf">
-                                          {fmtAvg(avg)} • {count || 0}{" "}
-                                          {t("common.reviews") || "reviews"}
-                                        </Text>
-                                      </VStack>
-                                    );
-                                  })()}
-                                </VStack>
-                              </Box>
-                              <Box p={4} pt={0}>
-                                <Button
-                                  w="full"
-                                  size="md"
-                                  bg={accentColor}
-                                  boxShadow={UI.glow}
-                                  _hover={{ transform: "scale(1.05)" }}
-                                  transition="all 0.3s"
-                                  onClick={() => navigate(`/products/${tier.id}`)}
-                                >
-                                  {t("home.courses.view") || "View Curriculum"}
-                                </Button>
-                              </Box>
-                            </SpotlightCard>
-                          </MotionBox>
-                        ))}
-                      </SimpleGrid>
-                    </Box>
-                  </Box>
                 </ParallaxSection>
 
                 {/* Leaderboard */}
@@ -4279,67 +4262,7 @@ const Home: React.FC = () => {
                   </Box>
                 </ParallaxSection>
 
-                {/* Lead Magnet - Premium */}
-                <GradualFooter>
-                  <Box my={{ base: 12, md: 20 }} px={{ base: 4, md: 0 }}>
-                    {/* Broker CTA */}
-                    <Box 
-                      textAlign="center" 
-                      p={{ base: 8, md: 12 }}
-                      borderRadius="28px"
-                      bg={UI.surfaceLight}
-                      border="1px solid"
-                      borderColor={UI.border}
-                      position="relative"
-                      overflow="hidden"
-                    >
-                      {/* Background gradient accent */}
-                      <Box
-                        position="absolute"
-                        top="-50%"
-                        left="50%"
-                        transform="translateX(-50%)"
-                        w="120%"
-                        h="100%"
-                        bgGradient="radial(ellipse at center, rgba(101, 168, 191, 0.08), transparent 60%)"
-                        pointerEvents="none"
-                      />
-                      <VStack spacing={4} position="relative">
-                        <Heading 
-                          size="lg" 
-                          bgGradient="linear(to-r, #65a8bf, #b7a27d)" 
-                          bgClip="text"
-                          fontWeight="700"
-                        >
-                          {t("home.enrolled.broker_title", {
-                            defaultValue: "Trade With Our Preferred Broker",
-                          })}
-                        </Heading>
-                        <Text maxW="md" fontSize={{ base: "sm", md: "md" }}>
-                          {t("home.enrolled.broker_sub", {
-                            defaultValue: "Tight spreads, ECN execution, and fast withdrawals.",
-                          })}
-                        </Text>
-                        <Button
-                          size="lg"
-                          bg={UI.gradient}
-                          color="#0a0f1a"
-                          fontWeight="700"
-                          px={10}
-                          borderRadius="14px"
-                          boxShadow={UI.glow}
-                          _hover={{ transform: "translateY(-2px)", boxShadow: UI.glowStrong }}
-                          transition="all 0.3s"
-                          onClick={() => window.open("/broker", "_self")}
-                        >
-                          {t("home.enrolled.broker_cta", {
-                            defaultValue: "Join Our Broker",
-                          })}
-                        </Button>
-                      </VStack>
-                    </Box>
-                  </Box>
-                </GradualFooter>
+                </>)}
               </>
             )}
           </Container>

@@ -204,13 +204,6 @@ export const register = async (req: Request, res: Response) => {
       }
     }
 
-    // Send welcome email via Resend (async, non-blocking)
-    try {
-      await sendWelcomeEmail({ email, name: name || email });
-    } catch (e) {
-      logger.warn('Failed to send welcome email:', e);
-    }
-
     // Send code via WhatsApp if phone is provided (use sendWhatsAppText)
     try {
       if (phone) {
@@ -565,6 +558,14 @@ export const confirmAccount = async (req: Request, res: Response) => {
     // Mark used and confirm user
     await db.query('UPDATE account_confirm_codes SET used = true WHERE id = $1', [codeRes.rows[0].id]);
     await db.query('UPDATE users SET email_confirmed = true WHERE id = $1', [user.id]);
+
+    // Send welcome email NOW — only after account is verified
+    try {
+      await sendWelcomeEmail({ email: user.email, name: user.name || user.email });
+    } catch (e) {
+      logger.warn('Failed to send welcome email after verification:', e);
+    }
+
     return res.json({ status: 'success', message: 'Account confirmed' });
   } catch (e) {
     logger.error('Confirm account error:', e);

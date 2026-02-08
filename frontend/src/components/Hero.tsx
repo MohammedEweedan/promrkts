@@ -2603,9 +2603,21 @@ export default function Hero(props: HeroProps) {
             {isLoggedIn ? (
               isDesktop ? (
                 <>
+                  {/* Breaking news ticker at the very top */}
                   <Box
                     position="absolute"
-                    top={{ base: 4, md: 4 }}
+                    top={0}
+                    left={0}
+                    right={0}
+                    zIndex={4}
+                    borderRadius="xl"
+                    overflow="hidden"
+                  >
+                    <BreakingNewsTicker mode={mode as "dark" | "light"} />
+                  </Box>
+                  <Box
+                    position="absolute"
+                    top={{ base: "40px", md: "40px" }}
                     right={{ base: 4, md: 8 }}
                     zIndex={3}
                   >
@@ -2787,10 +2799,6 @@ export default function Hero(props: HeroProps) {
                         </HStack>
                       </Box>
                     )}
-                    {/* Breaking news ticker tape */}
-                    <Box mb={2} borderRadius="xl" overflow="hidden">
-                      <BreakingNewsTicker mode={mode as "dark" | "light"} />
-                    </Box>
                     <GridLayout
                       className="layout"
                       layout={widgets.map((w, idx) => ({

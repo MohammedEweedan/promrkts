@@ -30,7 +30,7 @@ function tvTimelineUrl(theme: "light" | "dark", market?: string) {
   const query = `?locale=en`;
   const config: any = {
     colorTheme: theme,
-    isTransparent: true,
+    isTransparent: false,
     displayMode: "adaptive",
   };
   if (market) config.market = market;
@@ -38,19 +38,19 @@ function tvTimelineUrl(theme: "light" | "dark", market?: string) {
   return `${base}${query}#${cfg}`;
 }
 
-// ===== RSS Feed Sources =====
+// ===== RSS Feed Sources (reliable feeds that work with rss2json) =====
 const RSS_SOURCES = [
   {
-    name: "Investing.com",
-    url: "https://www.investing.com/rss/news.rss",
-    tag: "Markets",
-    color: "blue",
+    name: "CNBC Markets",
+    url: "https://search.cnbc.com/rs/search/combinedcms/view.xml?partnerId=wrss01&id=20910258",
+    tag: "Finance",
+    color: "orange",
   },
   {
-    name: "FX Street",
-    url: "https://www.fxstreet.com/rss",
-    tag: "Forex",
-    color: "green",
+    name: "MarketWatch",
+    url: "https://feeds.marketwatch.com/marketwatch/topstories/",
+    tag: "Markets",
+    color: "blue",
   },
   {
     name: "CoinDesk",
@@ -59,16 +59,10 @@ const RSS_SOURCES = [
     color: "purple",
   },
   {
-    name: "CNBC Markets",
-    url: "https://search.cnbc.com/rs/search/combinedcms/view.xml?partnerId=wrss01&id=20910258",
-    tag: "Finance",
-    color: "orange",
-  },
-  {
-    name: "Yahoo Finance",
-    url: "https://finance.yahoo.com/news/rssindex",
-    tag: "Markets",
-    color: "cyan",
+    name: "Reuters Business",
+    url: "https://feeds.reuters.com/reuters/businessNews",
+    tag: "Business",
+    color: "teal",
   },
 ];
 
@@ -122,7 +116,7 @@ function timeAgo(dateStr: string): string {
 // ===== News Item Component =====
 const NewsItem: React.FC<{ item: RssItem; mode: string }> = ({ item, mode }) => {
   const isDark = mode === "dark";
-  const isRecent = Date.now() - new Date(item.pubDate).getTime() < 3600000; // < 1 hour
+  const isRecent = Date.now() - new Date(item.pubDate).getTime() < 3600000;
 
   return (
     <Link
@@ -135,9 +129,9 @@ const NewsItem: React.FC<{ item: RssItem; mode: string }> = ({ item, mode }) => 
         px={4}
         py={3}
         borderBottom="1px solid"
-        borderColor={isDark ? "whiteAlpha.100" : "blackAlpha.100"}
+        borderColor={isDark ? "whiteAlpha.100" : "gray.200"}
         _hover={{
-          bg: isDark ? "whiteAlpha.50" : "blackAlpha.50",
+          bg: isDark ? "whiteAlpha.50" : "gray.50",
         }}
         transition="background 0.15s"
         position="relative"
@@ -160,13 +154,13 @@ const NewsItem: React.FC<{ item: RssItem; mode: string }> = ({ item, mode }) => 
               fontWeight={isRecent ? "bold" : "semibold"}
               noOfLines={2}
               lineHeight="1.4"
-              color={isDark ? "white" : "gray.800"}
+              color={isDark ? "white" : "gray.900"}
             >
               {isRecent && <Icon as={Zap} boxSize={3} color="red.400" mr={1} />}
               {item.title}
             </Text>
             {item.description && (
-              <Text fontSize="xs" noOfLines={1} opacity={0.6}>
+              <Text fontSize="xs" noOfLines={1} color={isDark ? "gray.400" : "gray.600"}>
                 {item.description}
               </Text>
             )}
@@ -181,16 +175,16 @@ const NewsItem: React.FC<{ item: RssItem; mode: string }> = ({ item, mode }) => 
             >
               {item.tag}
             </Badge>
-            <Text fontSize="0.65rem" opacity={0.5} whiteSpace="nowrap">
+            <Text fontSize="0.65rem" color={isDark ? "gray.500" : "gray.500"} whiteSpace="nowrap">
               {timeAgo(item.pubDate)}
             </Text>
           </VStack>
         </HStack>
         <HStack mt={1} spacing={2}>
-          <Text fontSize="0.6rem" opacity={0.4} fontWeight="500">
+          <Text fontSize="0.6rem" color={isDark ? "gray.500" : "gray.500"} fontWeight="500">
             {item.source}
           </Text>
-          <Icon as={ExternalLink} boxSize={2.5} opacity={0.3} />
+          <Icon as={ExternalLink} boxSize={2.5} color={isDark ? "gray.600" : "gray.400"} />
         </HStack>
       </Box>
     </Link>
@@ -203,6 +197,7 @@ const RssFeedPanel: React.FC<{ mode: string; height: number; sources?: typeof RS
   height,
   sources = RSS_SOURCES,
 }) => {
+  const isDark = mode === "dark";
   const [items, setItems] = React.useState<RssItem[]>([]);
   const [loading, setLoading] = React.useState(true);
 
@@ -218,7 +213,6 @@ const RssFeedPanel: React.FC<{ mode: string; height: number; sources?: typeof RS
       for (const r of results) {
         if (r.status === "fulfilled") all.push(...r.value);
       }
-      // Sort by date descending
       all.sort((a, b) => new Date(b.pubDate).getTime() - new Date(a.pubDate).getTime());
       setItems(all);
       setLoading(false);
@@ -231,7 +225,13 @@ const RssFeedPanel: React.FC<{ mode: string; height: number; sources?: typeof RS
     return (
       <VStack spacing={3} p={4} align="stretch">
         {Array.from({ length: 8 }).map((_, i) => (
-          <Skeleton key={i} height="60px" borderRadius="md" startColor="gray.700" endColor="gray.600" />
+          <Skeleton
+            key={i}
+            height="60px"
+            borderRadius="md"
+            startColor={isDark ? "gray.700" : "gray.200"}
+            endColor={isDark ? "gray.600" : "gray.300"}
+          />
         ))}
       </VStack>
     );
@@ -240,7 +240,9 @@ const RssFeedPanel: React.FC<{ mode: string; height: number; sources?: typeof RS
   if (items.length === 0) {
     return (
       <Box p={6} textAlign="center">
-        <Text opacity={0.5} fontSize="sm">No news available at the moment.</Text>
+        <Text color={isDark ? "gray.400" : "gray.600"} fontSize="sm">
+          No news available at the moment.
+        </Text>
       </Box>
     );
   }
@@ -252,7 +254,10 @@ const RssFeedPanel: React.FC<{ mode: string; height: number; sources?: typeof RS
       sx={{
         "&::-webkit-scrollbar": { width: "4px" },
         "&::-webkit-scrollbar-track": { bg: "transparent" },
-        "&::-webkit-scrollbar-thumb": { bg: "whiteAlpha.200", borderRadius: "full" },
+        "&::-webkit-scrollbar-thumb": {
+          bg: isDark ? "whiteAlpha.200" : "blackAlpha.200",
+          borderRadius: "full",
+        },
       }}
     >
       {items.map((item, idx) => (
@@ -271,11 +276,11 @@ const TimelineNewsTabs: React.FC<Props> = ({ mode, accentColor = "#65a8bf", heig
 
   return (
     <Box borderRadius="xl" overflow="hidden">
-      <Tabs variant="unstyled" isLazy>
+      <Tabs variant="unstyled" isLazy defaultIndex={0}>
         <TabList
-          bg={isDark ? "rgba(15, 23, 42, 0.8)" : "gray.50"}
+          bg={isDark ? "rgba(15, 23, 42, 0.8)" : "white"}
           borderBottom="1px solid"
-          borderColor={isDark ? "whiteAlpha.100" : "blackAlpha.100"}
+          borderColor={isDark ? "whiteAlpha.100" : "gray.200"}
           px={2}
           pt={2}
           gap={1}
@@ -285,11 +290,11 @@ const TimelineNewsTabs: React.FC<Props> = ({ mode, accentColor = "#65a8bf", heig
           }}
         >
           {[
-            { label: "All News", icon: Newspaper },
             { label: "TradingView", icon: TrendingUp },
+            { label: "All News", icon: Newspaper },
             { label: "Forex", icon: TrendingUp },
             { label: "Crypto", icon: Radio },
-          ].map((tab, idx) => (
+          ].map((tab) => (
             <Tab
               key={tab.label}
               fontSize="xs"
@@ -297,14 +302,14 @@ const TimelineNewsTabs: React.FC<Props> = ({ mode, accentColor = "#65a8bf", heig
               px={4}
               py={2}
               borderRadius="lg"
-              color={isDark ? "gray.400" : "gray.500"}
+              color={isDark ? "gray.400" : "gray.600"}
               _selected={{
                 bg: accentColor,
                 color: "white",
                 boxShadow: `0 0 12px ${accentColor}40`,
               }}
               _hover={{
-                bg: isDark ? "whiteAlpha.100" : "blackAlpha.50",
+                bg: isDark ? "whiteAlpha.100" : "gray.100",
               }}
               transition="all 0.2s"
               whiteSpace="nowrap"
@@ -318,12 +323,7 @@ const TimelineNewsTabs: React.FC<Props> = ({ mode, accentColor = "#65a8bf", heig
         </TabList>
 
         <TabPanels>
-          {/* All News — Combined RSS feeds */}
-          <TabPanel p={0}>
-            <RssFeedPanel mode={mode} height={height} />
-          </TabPanel>
-
-          {/* TradingView General Timeline */}
+          {/* TradingView General Timeline (default) */}
           <TabPanel p={0}>
             <iframe
               key={`tv-all-${mode}`}
@@ -334,6 +334,11 @@ const TimelineNewsTabs: React.FC<Props> = ({ mode, accentColor = "#65a8bf", heig
               referrerPolicy="no-referrer-when-downgrade"
               allow="clipboard-write; fullscreen"
             />
+          </TabPanel>
+
+          {/* All News — Combined RSS feeds */}
+          <TabPanel p={0}>
+            <RssFeedPanel mode={mode} height={height} />
           </TabPanel>
 
           {/* TradingView Forex Timeline */}

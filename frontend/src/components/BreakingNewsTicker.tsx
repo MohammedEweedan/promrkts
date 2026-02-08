@@ -17,6 +17,7 @@ type TickerItem = {
   impact: "high" | "medium" | "low";
   source: string;
   time: string;
+  link: string;
 };
 
 type Props = {
@@ -28,16 +29,16 @@ const RSS2JSON_API = "https://api.rss2json.com/v1/api.json";
 
 const TICKER_SOURCES = [
   {
-    url: "https://www.forexfactory.com/rss",
-    name: "ForexFactory",
-  },
-  {
     url: "https://search.cnbc.com/rs/search/combinedcms/view.xml?partnerId=wrss01&id=100003114",
     name: "CNBC",
   },
   {
-    url: "https://www.investing.com/rss/news_14.rss",
-    name: "Investing.com",
+    url: "https://feeds.marketwatch.com/marketwatch/topstories/",
+    name: "MarketWatch",
+  },
+  {
+    url: "https://feeds.reuters.com/reuters/businessNews",
+    name: "Reuters",
   },
 ];
 
@@ -56,7 +57,7 @@ async function fetchTickerItems(): Promise<TickerItem[]> {
         return data.items.map((item: any) => {
           const title = (item.title || "").trim();
           const pubDate = item.pubDate || "";
-          // Detect high-impact keywords
+          const link = item.link || "";
           const highImpact = /breaking|urgent|flash|alert|crash|surge|plunge|emergency|war|rate.*(decision|cut|hike)|nfp|fomc|cpi|gdp/i.test(title);
           const medImpact = /report|data|release|update|forecast|expect/i.test(title);
           return {
@@ -64,6 +65,7 @@ async function fetchTickerItems(): Promise<TickerItem[]> {
             impact: highImpact ? "high" : medImpact ? "medium" : "low",
             source: source.name,
             time: pubDate,
+            link,
           } as TickerItem;
         });
       } catch {
@@ -89,9 +91,9 @@ async function fetchTickerItems(): Promise<TickerItem[]> {
 
 // Fallback headlines when RSS fails
 const FALLBACK_ITEMS: TickerItem[] = [
-  { text: "Markets open — Track live prices on your dashboard", impact: "low", source: "promrkts", time: "" },
-  { text: "Gold, Forex, Crypto & Indices — All in one terminal", impact: "low", source: "promrkts", time: "" },
-  { text: "Upgrade to unlock full market data & AI news", impact: "medium", source: "promrkts", time: "" },
+  { text: "Markets open — Track live prices on your dashboard", impact: "low", source: "promrkts", time: "", link: "" },
+  { text: "Gold, Forex, Crypto & Indices — All in one terminal", impact: "low", source: "promrkts", time: "", link: "" },
+  { text: "Upgrade to unlock full market data & AI news", impact: "medium", source: "promrkts", time: "", link: "" },
 ];
 
 const impactIcon = (impact: string) => {
@@ -210,10 +212,14 @@ const BreakingNewsTicker: React.FC<Props> = ({ mode }) => {
         {doubled.map((item, idx) => (
           <HStack
             key={`${item.text}-${idx}`}
+            as={item.link ? "a" : "div"}
+            {...(item.link ? { href: item.link, target: "_blank", rel: "noopener noreferrer" } : {})}
             spacing={1.5}
             flexShrink={0}
             px={4}
-            cursor="default"
+            cursor={item.link ? "pointer" : "default"}
+            _hover={item.link ? { opacity: 0.8 } : {}}
+            transition="opacity 0.15s"
           >
             <Icon
               as={impactIcon(item.impact)}
@@ -231,6 +237,7 @@ const BreakingNewsTicker: React.FC<Props> = ({ mode }) => {
                     : "gray.700"
               }
               whiteSpace="nowrap"
+              textDecoration="none"
             >
               {item.text}
             </Text>
