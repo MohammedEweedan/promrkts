@@ -6,6 +6,10 @@ dotenv.config();
 // Prefer a single source of truth via DATABASE_URL to avoid env drift
 const connectionString = process.env.DATABASE_URL;
 
+// Force Node.js to accept self-signed certificates for this connection
+// This is required for DigitalOcean managed databases
+process.env.NODE_TLS_REJECT_UNAUTHORIZED = '0';
+
 // Connection pool with retry and stability settings
 const pool = connectionString
   ? new Pool({
@@ -15,7 +19,7 @@ const pool = connectionString
       connectionTimeoutMillis: 10000, // Timeout for new connections
       allowExitOnIdle: false, // Keep pool alive
       ssl: {
-        rejectUnauthorized: false, // Accept self-signed certificates from managed databases
+        rejectUnauthorized: false,
       },
     })
   : new Pool({
