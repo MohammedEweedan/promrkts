@@ -5,7 +5,7 @@ import { Box, VStack, HStack, Text, Button, keyframes, Icon, Grid, Container } f
 import { useNavigate } from "react-router-dom";
 import { useTranslation } from "react-i18next";
 import { useThemeMode } from "../themeProvider";
-import { Award, TrendingUp, Users, Shield, Zap, Globe, ChevronRight, Play } from "lucide-react";
+import { Award, TrendingUp, Users, Shield, Zap, Globe, ChevronRight, Play, Star, Clock, CheckCircle } from "lucide-react";
 import * as THREE from "three";
 
 // ===== DESIGN SYSTEM =====
@@ -348,43 +348,35 @@ export default function GuestLanding({
                   {t("home.hero.title_line2", { defaultValue: "Build Wealth." })}
                 </Text>
               </Text>
-
-            {/* Subtitle */}
-            <Text fontSize={{ base: "md", md: "lg" }} lineHeight="1.8" maxW="500px">
-                {t("home.hero.subtitle", {
-                  defaultValue: "Professional trading education with AI-powered coaching, live signals, and a global community of elite traders.",
-                })}
-              </Text>
-
             {/* Primary CTAs */}
-            <HStack spacing={4} flexWrap="wrap" justify={{ base: "center", lg: isRTL ? "flex-end" : "flex-start" }}>
-              <Button
-                size="lg"
-                onClick={() => navigate("/products")}
-                bg={UI.gradient}
-                color="white"
-                px={8}
-                py={7}
-                fontSize="md"
-                fontWeight="700"
-                borderRadius="16px"
-                _hover={{
-                  transform: "translateY(-3px)",
-                  boxShadow: "0 12px 35px rgba(101, 168, 191, 0.4)",
-                }}
-                _active={{ transform: "translateY(0)" }}
-                transition="all 0.2s"
-                rightIcon={<ChevronRight size={20} />}
-              >
-                {t("home.cta.explore", { defaultValue: "Explore Courses" })}
-              </Button>
-              
-              {showSpinButton && (
+            <VStack spacing={3} align={{ base: "center", lg: isRTL ? "flex-end" : "flex-start" }} w="100%">
+              <HStack spacing={4} flexWrap="wrap" justify={{ base: "center", lg: isRTL ? "flex-end" : "flex-start" }}>
                 <Button
                   size="lg"
-                  onClick={onOpenSpin}
-                  bg={UI.secondary}
-                  color="#0a0f1a"
+                  onClick={() => navigate("/register")}
+                  bg={UI.gradient}
+                  color="white"
+                  px={8}
+                  py={7}
+                  fontSize="md"
+                  fontWeight="700"
+                  borderRadius="16px"
+                  _hover={{
+                    transform: "translateY(-3px)",
+                    boxShadow: "0 12px 35px rgba(101, 168, 191, 0.4)",
+                  }}
+                  _active={{ transform: "translateY(0)" }}
+                  transition="all 0.2s"
+                  rightIcon={<ChevronRight size={20} />}
+                >
+                  {t("home.cta.signup", { defaultValue: "Start Free" })}
+                </Button>
+                <Button
+                  size="lg"
+                  onClick={() => navigate("/products")}
+                  variant="outline"
+                  borderColor={UI.primary}
+                  color={UI.primary}
                   px={8}
                   py={7}
                   fontSize="md"
@@ -392,16 +384,48 @@ export default function GuestLanding({
                   borderRadius="16px"
                   _hover={{
                     transform: "translateY(-2px)",
-                    boxShadow: "0 0 40px rgba(183, 162, 125, 0.4)",
+                    bg: "rgba(101, 168, 191, 0.1)",
                   }}
                   _active={{ transform: "translateY(0)" }}
-                  animation={`${goldGlow} 2.5s ease-in-out infinite`}
-                  leftIcon={<Icon as={Award} boxSize={5} />}
+                  transition="all 0.2s"
                 >
-                  {t("home.spin_and_win", { defaultValue: "🎁 Spin & Win" })}
+                  {t("home.cta.explore", { defaultValue: "Explore Courses" })}
                 </Button>
-              )}
-            </HStack>
+                
+                {showSpinButton && (
+                  <Button
+                    size="lg"
+                    onClick={onOpenSpin}
+                    bg={UI.secondary}
+                    color="#0a0f1a"
+                    px={8}
+                    py={7}
+                    fontSize="md"
+                    fontWeight="700"
+                    borderRadius="16px"
+                    _hover={{
+                      transform: "translateY(-2px)",
+                      boxShadow: "0 0 40px rgba(183, 162, 125, 0.4)",
+                    }}
+                    _active={{ transform: "translateY(0)" }}
+                    animation={`${goldGlow} 2.5s ease-in-out infinite`}
+                    leftIcon={<Icon as={Award} boxSize={5} />}
+                  >
+                    {t("home.spin_and_win", { defaultValue: "🎁 Spin & Win" })}
+                  </Button>
+                )}
+              </HStack>
+              <HStack spacing={4} flexWrap="wrap" justify={{ base: "center", lg: isRTL ? "flex-end" : "flex-start" }}>
+                <HStack spacing={1}>
+                  <Icon as={CheckCircle} boxSize={3} color="green.400" />
+                  <Text fontSize="xs" color={UI.textMuted}>{t("home.cta.no_card", { defaultValue: "No credit card required" })}</Text>
+                </HStack>
+                <HStack spacing={1}>
+                  <Icon as={Clock} boxSize={3} color={UI.primary} />
+                  <Text fontSize="xs" color={UI.textMuted}>{t("home.cta.setup_time", { defaultValue: "Setup in 2 minutes" })}</Text>
+                </HStack>
+              </HStack>
+            </VStack>
 
             {/* Stats Row */}
             <Box w="100%">
@@ -424,6 +448,27 @@ export default function GuestLanding({
                 {t("home.trust", { defaultValue: "Trusted by traders in 50+ countries" })}
               </Text>
             </HStack>
+
+            {/* Social Proof Testimonial */}
+            <Box
+              bg={UI.surfaceLight}
+              backdropFilter="blur(20px)"
+              border="1px solid"
+              borderColor={UI.border}
+              borderRadius="16px"
+              p={4}
+              maxW="500px"
+              w="100%"
+            >
+              <HStack spacing={1} mb={2}>
+                {[1, 2, 3, 4, 5].map((i) => (
+                  <Icon key={i} as={Star} boxSize={3} color="yellow.400" fill="currentColor" />
+                ))}
+              </HStack>
+              <Text fontSize="sm" fontStyle="italic" color={UI.textSecondary} mb={2}>
+                {t("home.testimonial.quote", { defaultValue: '"This platform completely changed how I approach the markets. The AI coaching alone is worth 10x the price."' })}
+              </Text>
+            </Box>
           </VStack>
 
           {/* Right: Empty space for globe (globe is positioned absolutely) */}

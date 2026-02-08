@@ -2687,6 +2687,7 @@ const Home: React.FC = () => {
               readinessPercent={readinessPercent}
               allowMarketsBoard={allowMarketsBoard}
               allowNews={allowNews}
+              isEnrolled={isEnrolled}
               onOpenPath={() => navigate("/path")}
               onOpenProgress={() => navigate("/progress")}
               onOpenDashboard={() => navigate("/")}
@@ -3043,6 +3044,96 @@ const Home: React.FC = () => {
               </>
             ) : (
               <>
+                {/* Upgrade upsell for logged-in free users */}
+                {isLoggedIn && (
+                  <ParallaxSection speed={0.3}>
+                    <Box
+                      mt={{ base: 4, md: 6 }}
+                      p={{ base: 6, md: 10 }}
+                      borderRadius="28px"
+                      position="relative"
+                      overflow="hidden"
+                      bg="linear-gradient(135deg, rgba(101, 168, 191, 0.08) 0%, rgba(183, 162, 125, 0.08) 100%)"
+                      border="1px solid"
+                      borderColor="rgba(101, 168, 191, 0.25)"
+                      boxShadow="0 0 60px rgba(101, 168, 191, 0.08)"
+                    >
+                      <Box
+                        position="absolute"
+                        top="-30%"
+                        right="-10%"
+                        w="300px"
+                        h="300px"
+                        borderRadius="full"
+                        bgGradient="radial(circle, rgba(101, 168, 191, 0.12), transparent 70%)"
+                        pointerEvents="none"
+                      />
+                      <VStack spacing={4} align="center" textAlign="center" position="relative">
+                        <Badge
+                          bg="rgba(101, 168, 191, 0.15)"
+                          color="#65a8bf"
+                          px={4}
+                          py={1.5}
+                          borderRadius="full"
+                          fontSize="xs"
+                          fontWeight="700"
+                          textTransform="uppercase"
+                          letterSpacing="0.1em"
+                        >
+                          {t("home.upgrade.badge", { defaultValue: "Unlock Full Access" })}
+                        </Badge>
+                        <Heading
+                          fontSize={{ base: "2xl", md: "3xl" }}
+                          bgGradient="linear(to-r, #65a8bf, #b7a27d)"
+                          bgClip="text"
+                          fontWeight="800"
+                        >
+                          {t("home.upgrade.title", { defaultValue: "Upgrade to Your Full Trading Terminal" })}
+                        </Heading>
+                        <Text maxW="lg" fontSize={{ base: "sm", md: "md" }} opacity={0.85}>
+                          {t("home.upgrade.subtitle", { defaultValue: "Get live market charts, AI news feeds, advanced screeners, heatmaps, and the complete trading workspace. Everything you need to trade like a pro." })}
+                        </Text>
+                        <SimpleGrid columns={{ base: 2, md: 4 }} gap={4} maxW="700px" w="100%" mt={2}>
+                          {[
+                            { label: "Live Charts", icon: "📊" },
+                            { label: "AI News", icon: "🤖" },
+                            { label: "Screeners", icon: "🔍" },
+                            { label: "Heatmaps", icon: "🗺️" },
+                          ].map((f) => (
+                            <Box
+                              key={f.label}
+                              p={3}
+                              borderRadius="xl"
+                              bg="rgba(101, 168, 191, 0.06)"
+                              border="1px solid rgba(101, 168, 191, 0.15)"
+                              textAlign="center"
+                            >
+                              <Text fontSize="xl" mb={1}>{f.icon}</Text>
+                              <Text fontSize="xs" fontWeight="600" color="#65a8bf">{f.label}</Text>
+                            </Box>
+                          ))}
+                        </SimpleGrid>
+                        <HStack spacing={4} pt={2}>
+                          <Button
+                            size="lg"
+                            bg={UI.gradient}
+                            color="#0a0f1a"
+                            fontWeight="700"
+                            px={8}
+                            borderRadius="14px"
+                            boxShadow={UI.glowStrong}
+                            _hover={{ transform: "translateY(-2px)", boxShadow: "0 0 80px rgba(101, 168, 191, 0.35)" }}
+                            transition="all 0.3s"
+                            onClick={() => navigate("/products")}
+                          >
+                            {t("home.upgrade.cta", { defaultValue: "Browse Plans" })}
+                          </Button>
+                        </HStack>
+                      </VStack>
+                    </Box>
+                  </ParallaxSection>
+                )}
+
                 <ParallaxSection speed={0.5}>
                   <SpotlightCard>
                     <Box p={6}>

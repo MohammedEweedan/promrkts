@@ -37,6 +37,7 @@ import api from "../api/client";
 import TradingViewWidget, { TradingViewVariant } from "../components/TradingViewWidget";
 import OptimizedImage from "../components/OptimizedImage";
 import { Maximize2, Minimize2 } from "lucide-react";
+import BreakingNewsTicker from "./BreakingNewsTicker";
 import GridLayout, { Layout } from "react-grid-layout";
 import { Responsive, WidthProvider } from "react-grid-layout";
 import SpinningWheel from "./SpinningWheel";
@@ -339,6 +340,15 @@ const ADDABLE_WIDGETS: DesktopWidgetKind[] = [
   "tvMarketQuotes",
   "tvTimeline",
   "tvSymbolInfo",
+];
+
+// Free users only get basic widgets — no TradingView market data
+const FREE_WIDGETS: DesktopWidgetKind[] = [
+  "welcome",
+  "snapshot",
+  "courses",
+  "telegram",
+  "discord",
 ];
 
 type DashboardPreset = "standard" | "markets" | "ai" | "community" | "minimal";
@@ -1051,6 +1061,8 @@ type DashboardSettingsModalProps = {
   canAddTelegram: boolean;
   canAddDiscord: boolean;
 
+  isEnrolled: boolean;
+
   layouts: NamedDashboardLayout[];
   activeLayoutName: string;
   setActiveLayoutName: (name: string) => void;
@@ -1069,6 +1081,7 @@ const DashboardSettingsModal: React.FC<DashboardSettingsModalProps> = ({
   resetToStandard,
   canAddTelegram,
   canAddDiscord,
+  isEnrolled,
   layouts,
   activeLayoutName,
   setActiveLayoutName,
@@ -1086,12 +1099,13 @@ const DashboardSettingsModal: React.FC<DashboardSettingsModalProps> = ({
   };
 
   const gatedAddables = React.useMemo(() => {
-    return ADDABLE_WIDGETS.filter((k) => {
+    const allowed = isEnrolled ? ADDABLE_WIDGETS : FREE_WIDGETS;
+    return allowed.filter((k) => {
       if (k === "telegram") return canAddTelegram;
       if (k === "discord") return canAddDiscord;
       return true;
     });
-  }, [canAddTelegram, canAddDiscord]);
+  }, [canAddTelegram, canAddDiscord, isEnrolled]);
 
   return (
     <Modal isOpen={isOpen} onClose={onClose} size="sm">
@@ -1239,8 +1253,9 @@ const DashboardSettingsModal: React.FC<DashboardSettingsModalProps> = ({
 // ---------- HERO COMPONENT ----------
 
 export default function Hero(props: HeroProps) {
-  const { loading, journey, entitlements, readiness, stageProgress, onOpenContact, ...rest } =
+  const { loading, journey, entitlements, readiness, stageProgress, onOpenContact, isEnrolled: _isEnrolled, ...rest } =
     props;
+  const isEnrolled = Boolean(_isEnrolled);
   const { t, i18n } = useTranslation() as any;
   const navigate = useNavigate();
   // Force dashboard layout to stay LTR regardless of language
@@ -1350,7 +1365,50 @@ export default function Hero(props: HeroProps) {
     }));
   };
 
+  // Free-user layout: no TradingView widgets, just basic info + community
+  const makeFreeUserLayout = (): DesktopWidgetConfig[] => {
+    const base: DesktopWidgetConfig[] = [
+      {
+        id: "welcome",
+        kind: "welcome",
+        symbols: "",
+        accentColor: "#65a8bf",
+        layout: { i: "welcome", x: 0, y: 0, w: 4, h: 4, minW: 3, minH: 3 },
+      },
+      {
+        id: "snapshot",
+        kind: "snapshot",
+        symbols: "",
+        accentColor: "#65a8bf",
+        layout: { i: "snapshot", x: 4, y: 0, w: 4, h: 4, minW: 3, minH: 3 },
+      },
+      {
+        id: "courses",
+        kind: "courses",
+        symbols: "",
+        accentColor: "#65a8bf",
+        layout: { i: "courses", x: 8, y: 0, w: 4, h: 4, minW: 3, minH: 3 },
+      },
+      {
+        id: "telegram",
+        kind: "telegram",
+        symbols: "",
+        accentColor: "#65a8bf",
+        layout: { i: "telegram", x: 0, y: 4, w: 6, h: 6, minW: 4, minH: 4 },
+      },
+      {
+        id: "discord",
+        kind: "discord",
+        symbols: "",
+        accentColor: "#65a8bf",
+        layout: { i: "discord", x: 6, y: 4, w: 6, h: 6, minW: 4, minH: 4 },
+      },
+    ];
+    return base.map((w) => ({ ...w, layout: { ...w.layout, i: w.id } }));
+  };
+
   const makePresetLayout = (preset: DashboardPreset): DesktopWidgetConfig[] => {
+    if (!isEnrolled) return makeFreeUserLayout();
     if (preset === "standard") return makeStandardDesktopLayout();
     if (preset === "minimal") {
       const base: DesktopWidgetConfig[] = [
@@ -1409,7 +1467,7 @@ export default function Hero(props: HeroProps) {
   };
 
   function makeDefaultDesktopLayout(): DesktopWidgetConfig[] {
-    return makeStandardDesktopLayout();
+    return isEnrolled ? makeStandardDesktopLayout() : makeFreeUserLayout();
   }
 
   const loadNamedLayouts = React.useCallback((): { layouts: NamedDashboardLayout[]; activeName: string } => {
@@ -2392,6 +2450,9 @@ export default function Hero(props: HeroProps) {
         w="100%"
       >
         <VStack w="100%" spacing={3} align="stretch">
+          <Box borderRadius="lg" overflow="hidden">
+            <BreakingNewsTicker mode={mode as "dark" | "light"} />
+          </Box>
           <Box w="100%" pt={4}>
             <ResponsiveGridLayout
               className="mobile-layout"
@@ -2726,6 +2787,10 @@ export default function Hero(props: HeroProps) {
                         </HStack>
                       </Box>
                     )}
+                    {/* Breaking news ticker tape */}
+                    <Box mb={2} borderRadius="xl" overflow="hidden">
+                      <BreakingNewsTicker mode={mode as "dark" | "light"} />
+                    </Box>
                     <GridLayout
                       className="layout"
                       layout={widgets.map((w, idx) => ({
@@ -2847,6 +2912,7 @@ export default function Hero(props: HeroProps) {
                     resetToStandard={resetDashboardLayout}
                     canAddTelegram={perms.canAddTelegram}
                     canAddDiscord={perms.canAddDiscord}
+                    isEnrolled={isEnrolled}
                     layouts={namedLayouts}
                     activeLayoutName={activeLayoutName}
                     setActiveLayoutName={setActiveLayoutName}
