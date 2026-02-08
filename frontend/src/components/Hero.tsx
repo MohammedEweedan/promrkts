@@ -2647,16 +2647,13 @@ export default function Hero(props: HeroProps) {
                           {/* Logo */}
                           <HStack spacing={3}>
                             <OptimizedImage
-                              src={process.env.PUBLIC_URL + "/logo.png"}
-                              alt="ProMrkts"
+                              src={process.env.PUBLIC_URL + "/text-logo.png"}
+                              alt="promrkts"
                               width="32px"
                               height="32px"
                               priority
                               placeholder="none"
                             />
-                            <Text fontWeight="bold" fontSize="lg" color={mode === "dark" ? "white" : "black"}>
-                              ProMrkts
-                            </Text>
                           </HStack>
 
                           {/* Fullscreen controls */}
