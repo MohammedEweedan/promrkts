@@ -1,50 +1,55 @@
-import React from 'react';
+import React, { Suspense, lazy } from 'react';
 import { Routes, Route, useLocation } from 'react-router-dom';
 import { Box, Image, Spinner, VStack } from '@chakra-ui/react';
 import './App.css';
-import Home from './pages/Home';
-import CoursesList from './pages/Courses/List'; 
-import CourseDetail from './pages/Courses/Detail';
-import Checkout from './pages/Checkout';
-import Enrolled from './pages/Enrolled';
-import Learn from './pages/Learn';
-import Login from './pages/Login';
-import ForgotPassword from './pages/ForgotPassword';
-import ResetPassword from './pages/ResetPassword';
-import Register from './pages/Register';
-import Dashboard from './pages/Dashboard';
-import AdminIndex from './pages/admin/Index';
-import Verifications from './pages/admin/Verifications';
-import ContentAdmin from './pages/admin/Content';
-import RequireAdmin from './components/RequireAdmin';
-import Account from './pages/Account';
+
+// Eagerly loaded (critical path)
 import Header from './components/Header';
-import Broker from "./pages/Broker";
 import Footer from './components/Footer';
 import RouteTracker from './components/RouteTracker';
 import DocumentTitle from "./components/DocumentTitle";
-import Contact from './pages/Contact';
-import About from './pages/Company/About';
-import Careers from './pages/Company/Careers';
-import Terms from './pages/Legal/Terms';
-import Policy from './pages/Legal/Policy';
-import Resources from './pages/Learn/Resources';
-import FAQ from './pages/Learn/FAQ';
-import Apply from './pages/Apply';
-import NotFound from "./pages/404";
 import ScrollToTop from "./components/ScrollToTop";
-import Crypto from './pages/Guide/Crypto';
+// import GlobalProtection from './components/GlobalProtection';
 import EnrollmentCelebration from './components/EnrollmentCelebration';
-import AdminProgress from './pages/admin/Progress';
-import TokenPage from './pages/Token';
+import PixelSnow from './components/PixelSnow';
+import RequireAdmin from './components/RequireAdmin';
+import PageSkeleton from './components/PageSkeleton';
 import { Analytics } from "@vercel/analytics/react";
 import { SpeedInsights } from "@vercel/speed-insights/react";
-import Discord from './pages/Discord';
-import GlobalProtection from './components/GlobalProtection';
-import TokenCheckout from './pages/TokenCheckout';
-import Hub from './pages/Hub';
 import { useAuth } from './auth/AuthContext';
-import PixelSnow from './components/PixelSnow';
+
+// Lazy-loaded pages (code splitting for faster initial load)
+const Home = lazy(() => import('./pages/Home'));
+const CoursesList = lazy(() => import('./pages/Courses/List'));
+const CourseDetail = lazy(() => import('./pages/Courses/Detail'));
+const Checkout = lazy(() => import('./pages/Checkout'));
+const Enrolled = lazy(() => import('./pages/Enrolled'));
+const Learn = lazy(() => import('./pages/Learn'));
+const Login = lazy(() => import('./pages/Login'));
+const ForgotPassword = lazy(() => import('./pages/ForgotPassword'));
+const ResetPassword = lazy(() => import('./pages/ResetPassword'));
+const Register = lazy(() => import('./pages/Register'));
+const Dashboard = lazy(() => import('./pages/Dashboard'));
+const AdminIndex = lazy(() => import('./pages/admin/Index'));
+const Verifications = lazy(() => import('./pages/admin/Verifications'));
+const ContentAdmin = lazy(() => import('./pages/admin/Content'));
+const AdminProgress = lazy(() => import('./pages/admin/Progress'));
+const Account = lazy(() => import('./pages/Account'));
+const Broker = lazy(() => import('./pages/Broker'));
+const Contact = lazy(() => import('./pages/Contact'));
+const About = lazy(() => import('./pages/Company/About'));
+const Careers = lazy(() => import('./pages/Company/Careers'));
+const Terms = lazy(() => import('./pages/Legal/Terms'));
+const Policy = lazy(() => import('./pages/Legal/Policy'));
+const Resources = lazy(() => import('./pages/Learn/Resources'));
+const FAQ = lazy(() => import('./pages/Learn/FAQ'));
+const Apply = lazy(() => import('./pages/Apply'));
+const NotFound = lazy(() => import('./pages/404'));
+const Crypto = lazy(() => import('./pages/Guide/Crypto'));
+const TokenPage = lazy(() => import('./pages/Token'));
+const Discord = lazy(() => import('./pages/Discord'));
+const TokenCheckout = lazy(() => import('./pages/TokenCheckout'));
+const Hub = lazy(() => import('./pages/Hub'));
 
 function App() {
   const location = useLocation();
@@ -111,75 +116,77 @@ function App() {
             </VStack>
           </Box>
         )}
-        <GlobalProtection />
+        {/* <GlobalProtection /> */}
         <ScrollToTop />
         {!isChatPage && <Header />}
         <Box pb={isChatPage ? 0 : 16} flex="1" w="100%">
           <RouteTracker />
           <DocumentTitle />
-          <Routes>
-            <Route path="/" element={<Home />} />
-            <Route path="/products" element={<CoursesList />} />
-            <Route path="/products/:id" element={<CourseDetail />} />
-            <Route path="/checkout" element={<Checkout />} />
-            <Route path="/learn/:id" element={<Learn />} />
-            <Route path="/enrolled" element={<Enrolled />} />
-            <Route path="/contact" element={<Contact />} />
-            <Route path="/login" element={<Login />} />
-            <Route path="/forgot-password" element={<ForgotPassword />} />
-            <Route path="/reset-password/:token" element={<ResetPassword />} />
-            <Route path="/register" element={<Register />} />
-            <Route path="/dashboard" element={<Dashboard />} />
-            <Route path="/path" element={<Hub />} />
-            <Route path="/progress" element={<Hub />} />
-            <Route path="/hub" element={<Hub />} />
-            <Route path="/account" element={<Account />} />
-            <Route
-              path="/admin"
-              element={
-                <RequireAdmin>
-                  <AdminIndex />
-                </RequireAdmin>
-              }
-            />
-            <Route
-              path="/admin/verifications"
-              element={
-                <RequireAdmin>
-                  <Verifications />
-                </RequireAdmin>
-              }
-            />
-            <Route
-              path="/admin/content"
-              element={
-                <RequireAdmin>
-                  <ContentAdmin />
-                </RequireAdmin>
-              }
-            />
-            <Route
-              path="/admin/progress"
-              element={
-                <RequireAdmin>
-                  <AdminProgress />
-                </RequireAdmin>
-              }
-            />
-            <Route path="/learn/resources" element={<Resources />} />
-            <Route path="/learn/faq" element={<FAQ />} />
-            <Route path="/legal/policy" element={<Policy />} />
-            <Route path="/legal/terms" element={<Terms />} />
-            <Route path="/company/about" element={<About />} />
-            <Route path="/company/careers" element={<Careers />} />
-            <Route path="/guide/crypto" element={<Crypto />} />
-            <Route path="/token" element={<TokenPage />} />
-            <Route path="/token/checkout" element={<TokenCheckout />} />
-            <Route path="/discord" element={<Discord />} />
-            <Route path="/apply/:id" element={<Apply />} />
-            <Route path="/broker" element={<Broker />} />
-            <Route path="*" element={<NotFound />} />
-          </Routes>
+          <Suspense fallback={<PageSkeleton />}>
+            <Routes>
+              <Route path="/" element={<Home />} />
+              <Route path="/products" element={<Suspense fallback={<PageSkeleton variant="course" />}><CoursesList /></Suspense>} />
+              <Route path="/products/:id" element={<Suspense fallback={<PageSkeleton variant="course" />}><CourseDetail /></Suspense>} />
+              <Route path="/checkout" element={<Suspense fallback={<PageSkeleton variant="checkout" />}><Checkout /></Suspense>} />
+              <Route path="/learn/:id" element={<Learn />} />
+              <Route path="/enrolled" element={<Enrolled />} />
+              <Route path="/contact" element={<Contact />} />
+              <Route path="/login" element={<Suspense fallback={<PageSkeleton variant="auth" />}><Login /></Suspense>} />
+              <Route path="/forgot-password" element={<Suspense fallback={<PageSkeleton variant="auth" />}><ForgotPassword /></Suspense>} />
+              <Route path="/reset-password/:token" element={<Suspense fallback={<PageSkeleton variant="auth" />}><ResetPassword /></Suspense>} />
+              <Route path="/register" element={<Suspense fallback={<PageSkeleton variant="auth" />}><Register /></Suspense>} />
+              <Route path="/dashboard" element={<Suspense fallback={<PageSkeleton variant="dashboard" />}><Dashboard /></Suspense>} />
+              <Route path="/path" element={<Hub />} />
+              <Route path="/progress" element={<Hub />} />
+              <Route path="/hub" element={<Hub />} />
+              <Route path="/account" element={<Account />} />
+              <Route
+                path="/admin"
+                element={
+                  <RequireAdmin>
+                    <Suspense fallback={<PageSkeleton variant="dashboard" />}><AdminIndex /></Suspense>
+                  </RequireAdmin>
+                }
+              />
+              <Route
+                path="/admin/verifications"
+                element={
+                  <RequireAdmin>
+                    <Suspense fallback={<PageSkeleton variant="dashboard" />}><Verifications /></Suspense>
+                  </RequireAdmin>
+                }
+              />
+              <Route
+                path="/admin/content"
+                element={
+                  <RequireAdmin>
+                    <Suspense fallback={<PageSkeleton variant="dashboard" />}><ContentAdmin /></Suspense>
+                  </RequireAdmin>
+                }
+              />
+              <Route
+                path="/admin/progress"
+                element={
+                  <RequireAdmin>
+                    <Suspense fallback={<PageSkeleton variant="dashboard" />}><AdminProgress /></Suspense>
+                  </RequireAdmin>
+                }
+              />
+              <Route path="/learn/resources" element={<Resources />} />
+              <Route path="/learn/faq" element={<FAQ />} />
+              <Route path="/legal/policy" element={<Policy />} />
+              <Route path="/legal/terms" element={<Terms />} />
+              <Route path="/company/about" element={<About />} />
+              <Route path="/company/careers" element={<Careers />} />
+              <Route path="/guide/crypto" element={<Crypto />} />
+              <Route path="/token" element={<TokenPage />} />
+              <Route path="/token/checkout" element={<Suspense fallback={<PageSkeleton variant="checkout" />}><TokenCheckout /></Suspense>} />
+              <Route path="/discord" element={<Discord />} />
+              <Route path="/apply/:id" element={<Apply />} />
+              <Route path="/broker" element={<Broker />} />
+              <Route path="*" element={<NotFound />} />
+            </Routes>
+          </Suspense>
         </Box>
         <EnrollmentCelebration />
         {!isChatPage && <Footer />}

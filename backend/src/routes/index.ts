@@ -31,6 +31,7 @@ import uploadsRoutes from './uploads.routes';
 import quizRoutes from './quiz.routes';
 import notificationsRoutes from './notifications.routes';
 import messagesRoutes from './messages.routes';
+import configRoutes from './config.routes';
 
 const router = Router();
 
@@ -70,5 +71,6 @@ router.use('/groups', groupsRoutes);
 router.use('/upload', uploadsRoutes);
 router.use('/notifications', notificationsRoutes);
 router.use('/messages', messagesRoutes);
+router.use('/config', configRoutes);
 
 export default router;

@@ -19,9 +19,13 @@ import {
 import { useTranslation } from "react-i18next";
 import { useLocation } from "react-router-dom";
 import api from "../api/client";
-import { MessageSquare, Send, PhoneCall } from "lucide-react";
+import { MessageSquare, Send, PhoneCall, Sparkles, CheckCircle, Shield, Clock } from "lucide-react";
 import { chakra } from "@chakra-ui/system";
 import SpotlightCard from "../components/SpotlightCard";
+import { motion } from "framer-motion";
+import { SocialProofBanner } from "../components/TrustBadges";
+
+const MotionBox = motion(Box);
 
 type CourseTier = { id: string; name: string };
 type MyTicket = {
@@ -410,6 +414,47 @@ const Contact: React.FC = () => {
       <Container maxW="6xl">
         <VStack align="stretch" gap={{ base: 6, md: 10 }} marginTop={"2rem"}>
 
+          {/* Premium Header */}
+          <MotionBox
+            initial={{ opacity: 0, y: 20 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.5 }}
+            textAlign="center"
+          >
+            <VStack spacing={4}>
+              <Icon as={Sparkles} boxSize={8} color="#b7a27d" />
+              <Heading
+                as="h1"
+                size="xl"
+                bgGradient="linear(to-r, #65a8bf, #b7a27d)"
+                bgClip="text"
+                fontWeight="800"
+              >
+                {t("contact.title", { defaultValue: "Get in Touch" })}
+              </Heading>
+              <Text color="#65a8bf" fontSize="lg" maxW="md">
+                {t("contact.subtitle", { defaultValue: "We're here to help you succeed in your trading journey" })}
+              </Text>
+              <SocialProofBanner enrolledCount={2847} />
+              
+              {/* Trust indicators */}
+              <HStack spacing={6} flexWrap="wrap" justify="center" pt={2}>
+                <HStack spacing={2}>
+                  <Icon as={Clock} boxSize={4} color="green.500" />
+                  <Text fontSize="sm" color="whiteAlpha.700">{t("contact.response_time", { defaultValue: "< 24h response" })}</Text>
+                </HStack>
+                <HStack spacing={2}>
+                  <Icon as={Shield} boxSize={4} color="green.500" />
+                  <Text fontSize="sm" color="whiteAlpha.700">{t("contact.secure", { defaultValue: "Secure & private" })}</Text>
+                </HStack>
+                <HStack spacing={2}>
+                  <Icon as={CheckCircle} boxSize={4} color="green.500" />
+                  <Text fontSize="sm" color="whiteAlpha.700">{t("contact.expert_support", { defaultValue: "Expert support" })}</Text>
+                </HStack>
+              </HStack>
+            </VStack>
+          </MotionBox>
+
           {/* ===== Contact form ===== */}
           <SpotlightCard>
           <Box
@@ -417,14 +462,14 @@ const Contact: React.FC = () => {
             onSubmit={submit}
             borderWidth={1}
             borderColor={brand}
-            borderRadius="lg"
-            p={{ base: 4, md: 6 }}
+            borderRadius="2xl"
+            p={{ base: 5, md: 8 }}
             bg="bg.surface"
           >
             <VStack align="stretch" gap={{ base: 6, md: 8 }}>
               {/* Section: Basic info */}
               <Box>
-                <Heading as="h2" size="sm" mb={3}>
+                <Heading as="h2" size="sm" mb={3} color="#65a8bf">
                   {t("contact.basic_info", { defaultValue: "Basic information" })}
                 </Heading>
                 <SimpleGrid columns={{ base: 1, md: 2 }} spacing={{ base: 4, md: 6 }}>
@@ -679,9 +724,18 @@ const Contact: React.FC = () => {
                 <HStack justify="flex-start" pt={3}>
                   <Button
                     onClick={submitSchedule}
-                    bg={brand}
-                    color="black"
-                    _hover={{ opacity: 0.9 }}
+                    size="lg"
+                    bg="linear-gradient(135deg, #65a8bf, #b7a27d)"
+                    color="white"
+                    fontWeight="700"
+                    borderRadius="xl"
+                    px={6}
+                    _hover={{
+                      transform: "translateY(-2px)",
+                      boxShadow: "0 8px 25px rgba(101, 168, 191, 0.4)",
+                    }}
+                    _active={{ transform: "translateY(0)" }}
+                    transition="all 0.2s"
                     isLoading={booking}
                     isDisabled={!schedDate || !selectedIso || booking}
                   >
@@ -707,9 +761,18 @@ const Contact: React.FC = () => {
               <HStack>
                 <Button
                   type="submit"
-                  bg={brand}
-                  color="black"
-                  _hover={{ opacity: 0.9 }}
+                  size="lg"
+                  bg="linear-gradient(135deg, #65a8bf, #b7a27d)"
+                  color="white"
+                  fontWeight="700"
+                  borderRadius="xl"
+                  px={8}
+                  _hover={{
+                    transform: "translateY(-2px)",
+                    boxShadow: "0 8px 25px rgba(101, 168, 191, 0.4)",
+                  }}
+                  _active={{ transform: "translateY(0)" }}
+                  transition="all 0.2s"
                   isLoading={isLoading}
                 >
                   <Icon as={Send} style={{ marginRight: 8 }} />

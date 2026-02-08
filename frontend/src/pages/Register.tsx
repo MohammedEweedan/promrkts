@@ -1,6 +1,7 @@
 /* eslint-disable @typescript-eslint/no-unused-vars */
 import React, { useEffect, useRef, useState } from "react";
-import { useNavigate, Link } from "react-router-dom";
+import { useNavigate, Link, useSearchParams } from "react-router-dom";
+import { signupFunnel } from "../utils/tracking";
 import { useTranslation } from "react-i18next";
 import api from "../api/client";
 import {
@@ -32,6 +33,9 @@ import {
 import { ViewIcon, ViewOffIcon, ArrowBackIcon, ArrowForwardIcon, CheckCircleIcon } from "@chakra-ui/icons";
 import SpotlightCard from "../components/SpotlightCard";
 import { motion, AnimatePresence } from "framer-motion";
+import PremiumStepIndicator from "../components/PremiumStepIndicator";
+import TrustBadges, { SocialProofBanner } from "../components/TrustBadges";
+import { User, Mail, Phone, FileCheck } from "lucide-react";
 
 const CSelect = chakra("select");
 
@@ -54,6 +58,8 @@ const Register: React.FC = () => {
   const { t } = useTranslation() as any;
   const { colorMode } = useColorMode();
   const formRef = useRef<HTMLFormElement>(null);
+  const [searchParams] = useSearchParams();
+  const hasTrackedStart = useRef(false);
 
   // Step state (1: basic, 2: contact, 3: additional)
   const [step, setStep] = useState<number>(1);
@@ -102,6 +108,15 @@ const Register: React.FC = () => {
   const [checkedDisclaimer, setCheckedDisclaimer] = useState(false);
   const { isOpen: termsOpen, onOpen: openTerms, onClose: closeTerms } = useDisclosure();
   const { isOpen: discOpen, onOpen: openDisc, onClose: closeDisc } = useDisclosure();
+
+  // Track signup started on mount
+  useEffect(() => {
+    if (!hasTrackedStart.current) {
+      hasTrackedStart.current = true;
+      const source = searchParams.get('ref') || searchParams.get('utm_source') || 'direct';
+      signupFunnel.started(source);
+    }
+  }, [searchParams]);
 
   // Load countries
   useEffect(() => {
@@ -376,6 +391,10 @@ const Register: React.FC = () => {
         }
       }
 
+      // Track signup completion
+      const userId = localStorage.getItem('user_id') || email;
+      signupFunnel.completed(userId);
+      
       try { sessionStorage.setItem('auth_splash_once', '1'); } catch {}
       navigate("/products");
     } catch (e: any) {
@@ -399,7 +418,8 @@ const Register: React.FC = () => {
     confirmPassword === password
   );
   const canAdvanceFromContact = () => {
-    if (!phone) return true;
+    // Phone is optional - if provided, must be verified; if empty, allow to continue
+    if (!phone || phone.trim() === '') return true;
     return Boolean(phoneVerified);
   };
 
@@ -407,12 +427,33 @@ const Register: React.FC = () => {
     <Box color="text.primary" py={{ base: 8, md: 12 }}>
       <Container px={{ base: 4, md: 8 }}>
         <VStack align="center" gap={{ base: 6, md: 10 }}>
-          <Box textAlign="center" marginTop={"2rem"}>
-            <Heading as="h1" size="lg" mb={2}>
-              {t("auth.create_account") || "Create account"}
+          {/* Premium Header */}
+          <VStack spacing={4} textAlign="center" marginTop={"2rem"}>
+            <Heading
+              as="h1"
+              size="xl"
+              bgGradient="linear(to-r, #65a8bf, #b7a27d)"
+              bgClip="text"
+              fontWeight="800"
+            >
+              {t("auth.create_account") || "Join the Trading Elite"}
             </Heading>
-            <Text color="#65a8bf">{t("auth.create_account_sub") || "Join in a few quick steps."}</Text>
-          </Box>
+            <Text color="#65a8bf" fontSize="lg" maxW="md">
+              {t("auth.create_account_sub") || "Start your journey to financial mastery in just 2 minutes"}
+            </Text>
+            <SocialProofBanner enrolledCount={2847} />
+          </VStack>
+
+          {/* Step Indicator */}
+          <PremiumStepIndicator
+            steps={[
+              { label: t("auth.step_account") || "Account", icon: User },
+              { label: t("auth.step_verify") || "Verify", icon: Mail },
+              { label: t("auth.step_contact") || "Contact", icon: Phone },
+              { label: t("auth.step_complete") || "Complete", icon: FileCheck },
+            ]}
+            currentStep={step}
+          />
 
           <SpotlightCard>
             {error && (
@@ -514,7 +555,6 @@ const Register: React.FC = () => {
                         textAlign="center"
                         p={{ base: 6, md: 8 }}
                         borderRadius="xl"
-                        bg={colorMode === "dark" ? "whiteAlpha.100" : "gray.50"}
                         border="1px solid"
                         borderColor={colorMode === "dark" ? "whiteAlpha.200" : "gray.200"}
                       >
@@ -524,7 +564,6 @@ const Register: React.FC = () => {
                           mx="auto"
                           mb={4}
                           borderRadius="full"
-                          bg={colorMode === "dark" ? "blue.900" : "blue.50"}
                           display="flex"
                           alignItems="center"
                           justifyContent="center"
@@ -534,10 +573,10 @@ const Register: React.FC = () => {
                         <Heading as="h2" size="md" mb={2} fontWeight="bold">
                           {t("auth.verify_email_title")}
                         </Heading>
-                        <Text mb={1} fontSize="sm" color={colorMode === "dark" ? "gray.300" : "gray.600"}>
+                        <Text mb={1} fontSize="sm">
                           {t("auth.verify_email_instructions")}
                         </Text>
-                        <Text mb={5} fontSize="sm" fontWeight="medium" color={colorMode === "dark" ? "blue.300" : "blue.600"}>
+                        <Text mb={5} fontSize="sm" fontWeight="medium">
                           {email}
                         </Text>
                         <VStack spacing={4} align="center">
@@ -552,7 +591,6 @@ const Register: React.FC = () => {
                             fontWeight="bold"
                             py={6}
                             borderRadius="lg"
-                            bg={colorMode === "dark" ? "whiteAlpha.100" : "white"}
                             _focus={{ borderColor: "blue.500", boxShadow: "0 0 0 1px var(--chakra-colors-blue-500)" }}
                           />
                           <HStack spacing={3} justify="center" flexWrap="wrap">
@@ -601,7 +639,7 @@ const Register: React.FC = () => {
                         <SimpleGrid columns={{ base: 2, md: 2 }} spacing={{ base: 4, md: 6 }}>
                           <GridItem borderRadius="md" px={3} py={2} >
                             <Text fontSize="sm" mb={1}>
-                              {t("auth.nationality") || "Nationality"}
+                              {t("auth.nationality", { defaultValue: "Nationality" })} <Text as="span" color="whiteAlpha.500" fontSize="xs">({t("common.optional", { defaultValue: "optional" })})</Text>
                             </Text>
                             <CSelect
                               value={selectedCountry}
@@ -627,7 +665,7 @@ const Register: React.FC = () => {
 
                           <GridItem borderRadius="md" px={3} py={2} >
                             <Text fontSize="sm" mb={1}>
-                              {t("auth.phone") || "Phone"}
+                              {t("auth.phone", { defaultValue: "Phone" })} <Text as="span" color="whiteAlpha.500" fontSize="xs">({t("common.optional", { defaultValue: "optional" })})</Text>
                             </Text>
                             <HStack>
                               <CSelect
@@ -729,7 +767,7 @@ const Register: React.FC = () => {
                           </GridItem>
                           <GridItem borderRadius="md" px={3} py={2} >
                             <Text fontSize="sm" mb={1} color="#65a8bf">
-                              {t("auth.gender") || "Gender"}
+                              {t("auth.gender", { defaultValue: "Gender" })} <Text as="span" color="whiteAlpha.500" fontSize="xs">({t("common.optional", { defaultValue: "optional" })})</Text>
                             </Text>
                             <CSelect value={gender} onChange={(e) => setGender(e.target.value)} borderRadius="md" px={3} py={2} bg={colorMode === "dark" ? "black" : "white"} color={colorMode === "dark" ? "white" : "black"} >
                               <option value="">{t("common.select") || "Select"}</option>
@@ -801,11 +839,15 @@ const Register: React.FC = () => {
                     }
                     const ok = await sendEmailConfirmation();
                     if (!ok) return;
+                    signupFunnel.step1Completed(email);
+                    signupFunnel.emailSent();
                     setError(null);
                     setStep(2);
                   } else if (step === 2) {
                     const ok = await verifyEmail();
                     if (!ok) return;
+                    signupFunnel.step2Completed();
+                    signupFunnel.emailVerified();
                     setError(null);
                     setStep(3);
                   } else if (step === 3) {
@@ -813,6 +855,7 @@ const Register: React.FC = () => {
                       setError(t("auth.phone_verify_required") || "Please verify your WhatsApp/phone OTP to continue.");
                       return;
                     }
+                    signupFunnel.step3Completed();
                     setError(null);
                     setStep(4);
                   } else if (step === 4) {
@@ -827,8 +870,11 @@ const Register: React.FC = () => {
             </HStack>
           </SpotlightCard>
 
+          {/* Trust Badges */}
+          <TrustBadges variant="compact" showGuarantee={false} />
+
           <Text color="#65a8bf" textAlign="center">
-            {t("auth.already_have") || "Already have an account?"} <Link to="/auth/login">{t("auth.login") || "Log in"}</Link>
+            {t("auth.already_have") || "Already have an account?"} <Link to="/login">{t("auth.login") || "Log in"}</Link>
           </Text>
         </VStack>
       </Container>

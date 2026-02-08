@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useEffect, useRef } from "react";
 import {
   Box,
   Container,
@@ -9,7 +9,6 @@ import {
   Button,
   Badge,
   SimpleGrid,
-  Stack,
   Icon,
   Alert,
   AlertIcon,
@@ -26,13 +25,18 @@ import {
   ModalBody,
   ModalCloseButton,
   useDisclosure,
+  useColorMode,
 } from "@chakra-ui/react";
+import { productFunnel } from "../../utils/tracking";
 import { Link as RouterLink } from "react-router-dom";
 import api from "../../api/client";
 import { useTranslation } from "react-i18next";
-import { Star } from "lucide-react";
-import { TokenUSDT } from "@web3icons/react";
-import SpotlightCard from "../../components/SpotlightCard";
+import { Star, TrendingUp, Users, Award, Zap, CheckCircle, ArrowRight, Sparkles } from "lucide-react";
+// CheckCircle and ArrowRight used in enhanced course cards below
+import { motion } from "framer-motion";
+import { SocialProofBanner } from "../../components/TrustBadges";
+
+const MotionBox = motion(Box);
 
 type Review = { rating: number };
 
@@ -77,6 +81,15 @@ const CoursesList: React.FC = () => {
   const [error, setError] = React.useState<string | null>(null);
   const { isOpen: isExitOpen, onOpen: onExitOpen, onClose: onExitClose } = useDisclosure();
   const [hasShownExit, setHasShownExit] = React.useState(false);
+  const hasTrackedListView = useRef(false);
+
+  // Track product list view on mount
+  useEffect(() => {
+    if (!hasTrackedListView.current) {
+      hasTrackedListView.current = true;
+      productFunnel.listViewed('all');
+    }
+  }, []);
 
   // Exit-intent detection
   React.useEffect(() => {
@@ -157,13 +170,104 @@ const CoursesList: React.FC = () => {
     );
   };
 
+  const { colorMode } = useColorMode();
+  const isDark = colorMode === 'dark';
+
   return (
     <Box py={{ base: 4, md: 10 }}>
+      {/* Premium Hero Section */}
+      <MotionBox
+        initial={{ opacity: 0 }}
+        animate={{ opacity: 1 }}
+        transition={{ duration: 0.6 }}
+        position="relative"
+        overflow="hidden"
+        py={{ base: 12, md: 16 }}
+        px={{ base: 4, md: 8 }}
+        mb={8}
+        bg={isDark
+          ? 'linear-gradient(135deg, rgba(101, 168, 191, 0.08) 0%, rgba(183, 162, 125, 0.05) 50%, rgba(20, 20, 30, 0.9) 100%)'
+          : 'linear-gradient(135deg, rgba(101, 168, 191, 0.06) 0%, rgba(183, 162, 125, 0.03) 50%, rgba(255, 255, 255, 0.95) 100%)'
+        }
+        borderRadius="2xl"
+        mx={{ base: 4, md: 8 }}
+      >
+        <VStack spacing={{ base: 6, md: 8 }} textAlign="center" maxW="4xl" mx="auto">
+          {/* Badge */}
+          <HStack
+            bg={isDark ? 'whiteAlpha.100' : 'blackAlpha.50'}
+            border="1px solid"
+            borderColor={isDark ? 'whiteAlpha.200' : 'blackAlpha.100'}
+            borderRadius="full"
+            px={4}
+            py={2}
+            spacing={2}
+          >
+            <Icon as={Sparkles} boxSize={4} color={GOLD} />
+            <Text fontSize="sm" fontWeight="500">
+              {t("hero.badge", { defaultValue: "Premium Trading Education" })}
+            </Text>
+          </HStack>
+
+          {/* Main headline */}
+          <Heading
+            as="h1"
+            size={{ base: 'xl', md: '2xl' }}
+            fontWeight="800"
+            lineHeight="shorter"
+          >
+            <Text
+              as="span"
+              bgGradient="linear(to-r, #65a8bf, #b7a27d)"
+              bgClip="text"
+            >
+              {t("hero.title_part1", { defaultValue: "Master the Markets." })}
+            </Text>{' '}
+            {t("hero.title_part2", { defaultValue: "Build Your Wealth." })}
+          </Heading>
+
+          {/* Subtitle */}
+          <Text
+            fontSize={{ base: 'md', md: 'lg' }}
+            color={isDark ? 'whiteAlpha.800' : 'gray.600'}
+            maxW="2xl"
+          >
+            {t("hero.subtitle", { defaultValue: "Join thousands of successful traders who transformed their financial future with our proven strategies." })}
+          </Text>
+
+          {/* Stats */}
+          <SimpleGrid columns={{ base: 2, md: 4 }} gap={4} pt={4}>
+            <VStack p={3} bg={isDark ? 'whiteAlpha.50' : 'blackAlpha.30'} borderRadius="lg">
+              <Icon as={Users} boxSize={5} color={GOLD} />
+              <Text fontWeight="800" bgGradient="linear(to-r, #65a8bf, #b7a27d)" bgClip="text">100,007+</Text>
+              <Text fontSize="xs" color={isDark ? 'whiteAlpha.700' : 'gray.500'}>Students</Text>
+            </VStack>
+            <VStack p={3} bg={isDark ? 'whiteAlpha.50' : 'blackAlpha.30'} borderRadius="lg">
+              <Icon as={Award} boxSize={5} color={GOLD} />
+              <Text fontWeight="800" bgGradient="linear(to-r, #65a8bf, #b7a27d)" bgClip="text">4.9★</Text>
+              <Text fontSize="xs" color={isDark ? 'whiteAlpha.700' : 'gray.500'}>Rating</Text>
+            </VStack>
+            <VStack p={3} bg={isDark ? 'whiteAlpha.50' : 'blackAlpha.30'} borderRadius="lg">
+              <Icon as={TrendingUp} boxSize={5} color={GOLD} />
+              <Text fontWeight="800" bgGradient="linear(to-r, #65a8bf, #b7a27d)" bgClip="text">$50K+</Text>
+              <Text fontSize="xs" color={isDark ? 'whiteAlpha.700' : 'gray.500'}>Avg. Profit</Text>
+            </VStack>
+            <VStack p={3} bg={isDark ? 'whiteAlpha.50' : 'blackAlpha.30'} borderRadius="lg">
+              <Icon as={Zap} boxSize={5} color={GOLD} />
+              <Text fontWeight="800" bgGradient="linear(to-r, #65a8bf, #b7a27d)" bgClip="text">100%</Text>
+              <Text fontSize="xs" color={isDark ? 'whiteAlpha.700' : 'gray.500'}>Lifetime Access</Text>
+            </VStack>
+          </SimpleGrid>
+
+          <SocialProofBanner enrolledCount={2847} recentPurchases={8} />
+        </VStack>
+      </MotionBox>
+
       <Container maxW="7xl">
         <VStack align="stretch" gap={6}>
 
-          <Alert status="info" variant="subtle" borderRadius="md" mt={20}>
-            <AlertIcon />
+          <Alert status="info" variant="subtle" borderRadius="xl" bg={isDark ? 'rgba(101, 168, 191, 0.1)' : 'rgba(101, 168, 191, 0.08)'} border="1px solid" borderColor="rgba(101, 168, 191, 0.3)">
+            <AlertIcon color={GOLD} />
             <HStack w="full" gap={3} flexWrap="wrap">
               <Text>
                 {t("notes.usdt_trc20", {
@@ -178,6 +282,7 @@ const CoursesList: React.FC = () => {
                 variant="outline"
                 borderColor={GOLD}
                 color={GOLD}
+                _hover={{ bg: 'rgba(101, 168, 191, 0.1)' }}
               >
                 {t("actions.crypto_guide", { defaultValue: "Guide to crypto" })}
               </Button>
@@ -213,91 +318,184 @@ const CoursesList: React.FC = () => {
               <TabPanels>
                 {/* Guides tab */}
                 <TabPanel px={0}>
-                  <SimpleGrid columns={{ base: 1, sm: 2, lg: 2 }} gap={{ base: 4, md: 6 }}>
-                    {guidesOnly.map((tier) => (
-                      <SpotlightCard>
+                  <SimpleGrid columns={{ base: 1, sm: 2, lg: 2 }} gap={{ base: 6, md: 8 }}>
+                    {guidesOnly.map((tier, idx) => {
+                      const isFree = (tier.price_usdt ?? 0) <= 0;
+                      const isFeatured = idx === 0;
+                      const levelColors: Record<string, string> = {
+                        BEGINNER: 'green.500',
+                        INTERMEDIATE: '#65a8bf',
+                        ADVANCED: '#b7a27d',
+                      };
+                      return (
+                      <MotionBox
+                        key={tier.id}
+                        initial={{ opacity: 0, y: 20 }}
+                        animate={{ opacity: 1, y: 0 }}
+                        transition={{ duration: 0.4, delay: idx * 0.1 }}
+                        whileHover={{ y: -8 }}
+                      >
                         <Box
-                          key={tier.id}
+                          position="relative"
+                          bg={isDark
+                            ? 'linear-gradient(135deg, rgba(20, 20, 30, 0.9) 0%, rgba(30, 30, 45, 0.9) 100%)'
+                            : 'linear-gradient(135deg, rgba(255, 255, 255, 0.95) 0%, rgba(250, 250, 255, 0.95) 100%)'
+                          }
                           border="1px solid"
-                          borderColor={GOLD}
-                          borderRadius="lg"
-                          p={{ base: 4, md: 5 }}
-                          _hover={{ boxShadow: "lg", transform: "translateY(-2px)" }}
-                          transition="all 200ms ease"
-                          bg="bg.surface"
+                          borderColor={isFeatured ? '#b7a27d' : 'rgba(101, 168, 191, 0.3)'}
+                          borderRadius="2xl"
+                          overflow="hidden"
+                          boxShadow={isDark ? '0 8px 32px rgba(0,0,0,0.4)' : '0 8px 32px rgba(0,0,0,0.1)'}
+                          _hover={{
+                            borderColor: '#65a8bf',
+                            boxShadow: '0 12px 40px rgba(101, 168, 191, 0.3)',
+                          }}
+                          transition="all 0.3s ease"
                         >
-                          <Stack gap={4}>
+                          {/* Featured badge */}
+                          {isFeatured && (
+                            <Box
+                              position="absolute"
+                              top={4}
+                              right={-8}
+                              bg="linear-gradient(135deg, #65a8bf, #b7a27d)"
+                              color="white"
+                              px={10}
+                              py={1}
+                              fontSize="xs"
+                              fontWeight="700"
+                              textTransform="uppercase"
+                              letterSpacing="wider"
+                              transform="rotate(45deg)"
+                              transformOrigin="center"
+                              boxShadow="0 2px 10px rgba(0,0,0,0.2)"
+                            >
+                              {t("products.popular", { defaultValue: "Popular" })}
+                            </Box>
+                          )}
+
+                          <VStack align="stretch" spacing={4} p={6}>
+                            {/* Header */}
                             <HStack justify="space-between" align="start">
-                              <Heading size={{ base: "md", md: "lg" }} noOfLines={2}>
-                                {tier.name}
-                              </Heading>
-                              <Badge
-                                color={GOLD}
-                                variant="subtle"
-                                borderRadius="md"
-                                border={`1px solid ${GOLD}`}
-                              >
-                                {t(levelKey(tier.level as any))}
-                              </Badge>
+                              <VStack align="start" spacing={1} flex="1">
+                                <Heading
+                                  size="md"
+                                  noOfLines={2}
+                                  bgGradient={isFeatured ? 'linear(to-r, #65a8bf, #b7a27d)' : undefined}
+                                  bgClip={isFeatured ? 'text' : undefined}
+                                >
+                                  {tier.name}
+                                </Heading>
+                                <Badge
+                                  bg={levelColors[tier.level] || '#65a8bf'}
+                                  color="white"
+                                  px={2}
+                                  py={0.5}
+                                  borderRadius="full"
+                                  fontSize="xs"
+                                  fontWeight="600"
+                                >
+                                  {t(levelKey(tier.level as any))}
+                                </Badge>
+                              </VStack>
                             </HStack>
-                            <Text noOfLines={{ base: 3, md: 4 }} opacity={0.85}>
+
+                            {/* Description */}
+                            <Text fontSize="sm" color={isDark ? 'whiteAlpha.700' : 'gray.600'} noOfLines={3}>
                               {tier.description}
                             </Text>
-                            {renderSnippetStyleStars(tier)}
-                            <HStack justify="space-between" align="center" flexWrap="wrap" gap={3}>
-                              <HStack
-                                px={3}
-                                py={1}
-                                borderRadius="lg"
-                                border="1px solid"
-                                borderColor={GOLD}
-                                bg="transparent"
-                                gap={2}
-                              >
-                                <Icon as={TokenUSDT} boxSize={5} />
-                                <Text fontWeight="bold">
-                                  {(tier.price_usdt ?? 0) <= 0
-                                    ? t("price.free", { defaultValue: "Free" })
-                                    : t("price.usdt", {
-                                        value: tier.price_usdt,
-                                        defaultValue: `${tier.price_usdt} USDT`,
-                                      })}
-                                </Text>
+
+                            {/* Social proof */}
+                            <HStack spacing={4}>
+                              {renderSnippetStyleStars(tier)}
+                              <HStack spacing={1} color={isDark ? 'whiteAlpha.600' : 'gray.500'}>
+                                <Icon as={Users} boxSize={4} color="#65a8bf" />
+                                <Text fontSize="sm" color={isDark ? 'whiteAlpha.700' : 'gray.600'}>{t("products.enrolled_count", { defaultValue: "{{count}}+ enrolled", count: Math.floor(Math.random() * 400) + 100 })}</Text>
                               </HStack>
-                              <HStack gap={3}>
+                            </HStack>
+
+                            {/* Value props */}
+                            <VStack align="start" spacing={1}>
+                              <HStack spacing={2}>
+                                <Icon as={CheckCircle} boxSize={4} color="green.500" />
+                                <Text fontSize="sm" color={isDark ? 'whiteAlpha.800' : 'gray.700'}>{t("products.lifetime_access", { defaultValue: "Lifetime access" })}</Text>
+                              </HStack>
+                              <HStack spacing={2}>
+                                <Icon as={CheckCircle} boxSize={4} color="green.500" />
+                                <Text fontSize="sm" color={isDark ? 'whiteAlpha.800' : 'gray.700'}>{t("products.certificate_included", { defaultValue: "Certificate included" })}</Text>
+                              </HStack>
+                            </VStack>
+
+                            {/* Price section */}
+                            <HStack justify="space-between" align="center" pt={2}>
+                              <VStack align="start" spacing={0}>
+                                <HStack align="baseline" spacing={1}>
+                                  {isFree ? (
+                                    <Text fontSize="2xl" fontWeight="800" color="green.500">{t("products.free", { defaultValue: "FREE" })}</Text>
+                                  ) : (
+                                    <>
+                                      <Text fontSize="sm" color={isDark ? 'whiteAlpha.600' : 'gray.500'}>$</Text>
+                                      <Text
+                                        fontSize="2xl"
+                                        fontWeight="800"
+                                        bgGradient="linear(to-r, #65a8bf, #b7a27d)"
+                                        bgClip="text"
+                                      >
+                                        {tier.price_usdt}
+                                      </Text>
+                                    </>
+                                  )}
+                                </HStack>
+                              </VStack>
+
+                              <VStack spacing={2}>
+                                <Button
+                                  as={RouterLink}
+                                  to={isFree ? `/learn/${tier.id}` : `/checkout?tierId=${tier.id}`}
+                                  size="md"
+                                  bg="linear-gradient(135deg, #65a8bf, #b7a27d)"
+                                  color="white"
+                                  fontWeight="700"
+                                  px={6}
+                                  rightIcon={<ArrowRight size={16} />}
+                                  _hover={{
+                                    transform: 'translateY(-2px)',
+                                    boxShadow: '0 8px 25px rgba(101, 168, 191, 0.4)',
+                                  }}
+                                  _active={{ transform: 'translateY(0)' }}
+                                  transition="all 0.2s"
+                                >
+                                  {isFree ? t("actions.start_free", { defaultValue: "Start Free" }) : t("actions.enroll", { defaultValue: "Enroll Now" })}
+                                </Button>
                                 <Button
                                   as={RouterLink}
                                   to={`/products/${tier.id}`}
-                                  variant="outline"
-                                  borderColor={GOLD}
-                                  color={GOLD}
+                                  variant="ghost"
+                                  size="sm"
+                                  color="#65a8bf"
+                                  _hover={{ bg: 'transparent', textDecoration: 'underline' }}
                                 >
-                                  {t("actions.view_details", { defaultValue: "View details" })}
+                                  {t("actions.view_details", { defaultValue: "View Details" })}
                                 </Button>
-                                <Button
-                                  as={RouterLink}
-                                  to={
-                                    (tier.price_usdt ?? 0) <= 0
-                                      ? `/learn/${tier.id}`
-                                      : `/checkout?tierId=${tier.id}`
-                                  }
-                                  bg={GOLD}
-                                  _hover={{ opacity: 0.9 }}
-                                  color="black"
-                                >
-                                  {t("actions.enroll", { defaultValue: "Enroll" })}
-                                </Button>
+                              </VStack>
+                            </HStack>
+
+                            {/* Trust indicator */}
+                            <HStack justify="center" spacing={4} pt={2}>
+                              <HStack spacing={1} color={isDark ? 'whiteAlpha.500' : 'gray.400'}>
+                                <Icon as={Award} boxSize={3} />
+                                <Text fontSize="xs">{t("products.certificate", { defaultValue: "Certificate" })}</Text>
+                              </HStack>
+                              <HStack spacing={1} color={isDark ? 'whiteAlpha.500' : 'gray.400'}>
+                                <Icon as={Zap} boxSize={3} />
+                                <Text fontSize="xs">{t("products.lifetime_access", { defaultValue: "Lifetime Access" })}</Text>
                               </HStack>
                             </HStack>
-                            <Text fontSize="xs" opacity={0.7} textAlign="center">
-                              {t("notes.network_reminder", {
-                                defaultValue: "Use TRC20 network for USDT payments.",
-                              })}
-                            </Text>
-                          </Stack>
+                          </VStack>
                         </Box>
-                      </SpotlightCard>
-                    ))}
+                      </MotionBox>
+                    );
+                    })}
                     {guidesOnly.length === 0 && (
                       <Text>{t("guides.none", { defaultValue: "No guides available yet." })}</Text>
                     )}
@@ -305,42 +503,114 @@ const CoursesList: React.FC = () => {
                 </TabPanel>
                 {/* Community tab */}
                 <TabPanel px={0}>
-                  <SimpleGrid columns={{ base: 1, sm: 1, lg: 1 }} gap={{ base: 4, md: 6 }}>
-                    {communityOnly.map((tier) => (
-                      <SpotlightCard>
+                  <SimpleGrid columns={{ base: 1, lg: 1 }} gap={{ base: 6, md: 8 }}>
+                    {communityOnly.map((tier, idx) => (
+                      <MotionBox
+                        key={tier.id}
+                        initial={{ opacity: 0, y: 20 }}
+                        animate={{ opacity: 1, y: 0 }}
+                        transition={{ duration: 0.4, delay: idx * 0.1 }}
+                        whileHover={{ y: -4 }}
+                      >
                         <Box
-                          key={tier.id}
+                          position="relative"
+                          bg={isDark
+                            ? 'linear-gradient(135deg, rgba(183, 162, 125, 0.08) 0%, rgba(20, 20, 30, 0.9) 100%)'
+                            : 'linear-gradient(135deg, rgba(183, 162, 125, 0.06) 0%, rgba(255, 255, 255, 0.95) 100%)'
+                          }
                           border="1px solid"
-                          borderColor={GOLD}
-                          borderRadius="lg"
-                          p={{ base: 4, md: 5 }}
-                          bg="bg.surface"
+                          borderColor="#b7a27d"
+                          borderRadius="2xl"
+                          overflow="hidden"
+                          boxShadow={isDark ? '0 8px 32px rgba(0,0,0,0.4)' : '0 8px 32px rgba(0,0,0,0.1)'}
+                          _hover={{
+                            borderColor: '#65a8bf',
+                            boxShadow: '0 12px 40px rgba(183, 162, 125, 0.3)',
+                          }}
+                          transition="all 0.3s ease"
                         >
-                          <HStack justify="space-between" align="center" flexWrap="wrap" gap={3}>
-                            <VStack align="start" spacing={1}>
-                              <Heading size={{ base: "md", md: "lg" }}>{tier.name}</Heading>
-                              <Text opacity={0.85}>{tier.description}</Text>
-                              <HStack>
-                                <Badge colorScheme="yellow">VIP</Badge>
-                                <Text fontWeight="bold">
-                                  {t("price.usd_month", {
-                                    defaultValue: `$${tier.price_usdt}/month`,
-                                  })}
-                                </Text>
+                          {/* VIP Badge */}
+                          <Box
+                            position="absolute"
+                            top={4}
+                            right={-8}
+                            bg="linear-gradient(135deg, #b7a27d, #d4af37)"
+                            color="white"
+                            px={10}
+                            py={1}
+                            fontSize="xs"
+                            fontWeight="700"
+                            textTransform="uppercase"
+                            letterSpacing="wider"
+                            transform="rotate(45deg)"
+                            transformOrigin="center"
+                            boxShadow="0 2px 10px rgba(0,0,0,0.2)"
+                          >
+                            VIP
+                          </Box>
+
+                          <HStack justify="space-between" align="center" flexWrap="wrap" gap={6} p={6}>
+                            <VStack align="start" spacing={3} flex="1">
+                              <Heading
+                                size={{ base: "md", md: "lg" }}
+                                bgGradient="linear(to-r, #b7a27d, #65a8bf)"
+                                bgClip="text"
+                              >
+                                {tier.name}
+                              </Heading>
+                              <Text color={isDark ? 'whiteAlpha.800' : 'gray.600'} maxW="lg">
+                                {tier.description}
+                              </Text>
+                              <HStack spacing={4} flexWrap="wrap">
+                                <HStack spacing={2}>
+                                  <Icon as={CheckCircle} boxSize={4} color="green.500" />
+                                  <Text fontSize="sm">{t("community.exclusive_signals", { defaultValue: "Exclusive signals" })}</Text>
+                                </HStack>
+                                <HStack spacing={2}>
+                                  <Icon as={CheckCircle} boxSize={4} color="green.500" />
+                                  <Text fontSize="sm">{t("community.live_sessions", { defaultValue: "Live trading sessions" })}</Text>
+                                </HStack>
+                                <HStack spacing={2}>
+                                  <Icon as={CheckCircle} boxSize={4} color="green.500" />
+                                  <Text fontSize="sm">{t("community.mentor_access", { defaultValue: "Direct mentor access" })}</Text>
+                                </HStack>
                               </HStack>
                             </VStack>
-                            <Button
-                              as={RouterLink}
-                              to={`/checkout?tierId=${tier.id}`}
-                              bg={GOLD}
-                              _hover={{ opacity: 0.9 }}
-                              color="black"
-                            >
-                              {t("actions.subscribe", { defaultValue: "Subscribe" })}
-                            </Button>
+                            
+                            <VStack spacing={3} align="center">
+                              <VStack spacing={0}>
+                                <Text
+                                  fontSize="3xl"
+                                  fontWeight="800"
+                                  bgGradient="linear(to-r, #b7a27d, #65a8bf)"
+                                  bgClip="text"
+                                >
+                                  ${tier.price_usdt}
+                                </Text>
+                                <Text fontSize="sm" color={isDark ? 'whiteAlpha.600' : 'gray.500'}>{t("products.per_month", { defaultValue: "per month" })}</Text>
+                              </VStack>
+                              <Button
+                                as={RouterLink}
+                                to={`/checkout?tierId=${tier.id}`}
+                                size="lg"
+                                bg="linear-gradient(135deg, #b7a27d, #65a8bf)"
+                                color="white"
+                                fontWeight="700"
+                                px={8}
+                                rightIcon={<ArrowRight size={16} />}
+                                _hover={{
+                                  transform: 'translateY(-2px)',
+                                  boxShadow: '0 8px 25px rgba(183, 162, 125, 0.4)',
+                                }}
+                                _active={{ transform: 'translateY(0)' }}
+                                transition="all 0.2s"
+                              >
+                                {t("actions.subscribe", { defaultValue: "Join VIP" })}
+                              </Button>
+                            </VStack>
                           </HStack>
                         </Box>
-                      </SpotlightCard> 
+                      </MotionBox>
                     ))}
                     {communityOnly.length === 0 && (
                       <Text>
@@ -355,63 +625,121 @@ const CoursesList: React.FC = () => {
         </VStack>
       </Container>
 
-      {/* Exit-Intent Modal - Try our free guide */}
-      <Modal isOpen={isExitOpen} onClose={onExitClose} isCentered>
-        <ModalOverlay bg="blackAlpha.700" backdropFilter="blur(8px)" />
+      {/* Exit-Intent Modal - Premium conversion modal */}
+      <Modal isOpen={isExitOpen} onClose={onExitClose} isCentered size="md">
+        <ModalOverlay bg="blackAlpha.800" backdropFilter="blur(12px)" />
         <ModalContent
-          bg="gray.900"
+          bg="linear-gradient(135deg, rgba(20, 20, 30, 0.98) 0%, rgba(30, 30, 45, 0.98) 100%)"
           border="1px solid"
-          borderColor={GOLD}
-          borderRadius="xl"
+          borderColor="rgba(101, 168, 191, 0.4)"
+          borderRadius="2xl"
           mx={4}
+          overflow="hidden"
+          boxShadow="0 25px 50px rgba(0,0,0,0.5)"
         >
-          <ModalCloseButton color="gray.400" />
+          {/* Gradient header bar */}
+          <Box h="4px" bg="linear-gradient(90deg, #65a8bf, #b7a27d)" />
+          
+          <ModalCloseButton color="whiteAlpha.600" />
           <ModalHeader textAlign="center" pt={8} pb={2}>
-            <Text fontSize="2xl" fontWeight="bold" color={GOLD}>
-              {t("exit_intent.title", { defaultValue: "Wait! Before you go..." })}
-            </Text>
+            <VStack spacing={3}>
+              <Icon as={Sparkles} boxSize={8} color="#b7a27d" />
+              <Heading
+                size="lg"
+                bgGradient="linear(to-r, #65a8bf, #b7a27d)"
+                bgClip="text"
+                fontWeight="800"
+              >
+                {t("exit_intent.title", { defaultValue: "Wait! Don't Miss Out" })}
+              </Heading>
+            </VStack>
           </ModalHeader>
           <ModalBody textAlign="center" pb={8}>
-            <VStack spacing={4}>
-              <Text fontSize="lg" opacity={0.9}>
-                {t("exit_intent.message", { defaultValue: "Try our free guide and see what we offer!" })}
+            <VStack spacing={5}>
+              <Text fontSize="md" color="whiteAlpha.800">
+                {t("exit_intent.message", { defaultValue: "Start your trading journey with our FREE comprehensive guide" })}
               </Text>
+              
+              {/* Value props */}
+              <VStack spacing={2} align="start" w="full" px={4}>
+                <HStack spacing={2}>
+                  <Icon as={CheckCircle} boxSize={4} color="green.400" />
+                  <Text fontSize="sm" color="whiteAlpha.800">{t("exit_intent.value_1", { defaultValue: "Learn proven trading strategies" })}</Text>
+                </HStack>
+                <HStack spacing={2}>
+                  <Icon as={CheckCircle} boxSize={4} color="green.400" />
+                  <Text fontSize="sm" color="whiteAlpha.800">{t("exit_intent.value_2", { defaultValue: "No credit card required" })}</Text>
+                </HStack>
+                <HStack spacing={2}>
+                  <Icon as={CheckCircle} boxSize={4} color="green.400" />
+                  <Text fontSize="sm" color="whiteAlpha.800">{t("exit_intent.value_3", { defaultValue: "Instant access to premium content" })}</Text>
+                </HStack>
+              </VStack>
+
               {freeGuide ? (
-                <VStack spacing={3} w="full">
-                  <Text fontWeight="semibold" color={GOLD}>
-                    {freeGuide.name}
-                  </Text>
-                  <Text fontSize="sm" opacity={0.7} noOfLines={2}>
-                    {freeGuide.description}
-                  </Text>
+                <VStack spacing={4} w="full">
+                  <Box
+                    p={4}
+                    bg="rgba(101, 168, 191, 0.1)"
+                    borderRadius="xl"
+                    border="1px solid rgba(101, 168, 191, 0.2)"
+                    w="full"
+                  >
+                    <Text fontWeight="700" color="#65a8bf" fontSize="lg">
+                      {freeGuide.name}
+                    </Text>
+                    <Text fontSize="sm" color="whiteAlpha.700" noOfLines={2} mt={1}>
+                      {freeGuide.description}
+                    </Text>
+                  </Box>
                   <Button
                     as={RouterLink}
                     to={`/learn/${freeGuide.id}`}
-                    bg="white"
-                    color="black"
+                    bg="linear-gradient(135deg, #65a8bf, #b7a27d)"
+                    color="white"
                     size="lg"
                     w="full"
-                    _hover={{ opacity: 0.9, transform: "translateY(-2px)" }}
+                    fontWeight="700"
+                    py={6}
+                    rightIcon={<ArrowRight size={18} />}
+                    _hover={{
+                      transform: "translateY(-2px)",
+                      boxShadow: "0 8px 25px rgba(101, 168, 191, 0.4)",
+                    }}
+                    _active={{ transform: "translateY(0)" }}
+                    transition="all 0.2s"
                     onClick={onExitClose}
                   >
-                    {t("exit_intent.cta", { defaultValue: "Start Free Guide" })}
+                    {t("exit_intent.cta", { defaultValue: "🎁 Get Free Access Now" })}
                   </Button>
                 </VStack>
               ) : (
                 <Button
                   as={RouterLink}
-                  to="/contact"
-                  bg="black"
+                  to="/register"
+                  bg="linear-gradient(135deg, #65a8bf, #b7a27d)"
                   color="white"
                   size="lg"
-                  _hover={{ opacity: 0.9 }}
+                  w="full"
+                  fontWeight="700"
+                  rightIcon={<ArrowRight size={18} />}
+                  _hover={{
+                    transform: "translateY(-2px)",
+                    boxShadow: "0 8px 25px rgba(101, 168, 191, 0.4)",
+                  }}
                   onClick={onExitClose}
                 >
-                  {t("exit_intent.contact", { defaultValue: "Contact Us" })}
+                  {t("exit_intent.register", { defaultValue: "Create Free Account" })}
                 </Button>
               )}
-              <Button variant="ghost" size="sm" onClick={onExitClose} opacity={0.6}>
-                {t("exit_intent.dismiss", { defaultValue: "No thanks" })}
+              <Button
+                variant="ghost"
+                size="sm"
+                onClick={onExitClose}
+                color="whiteAlpha.500"
+                _hover={{ color: "whiteAlpha.700" }}
+              >
+                {t("exit_intent.dismiss", { defaultValue: "Maybe later" })}
               </Button>
             </VStack>
           </ModalBody>

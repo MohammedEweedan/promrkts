@@ -72,6 +72,9 @@ import { RefreshCw, ChevronDown, Shield, BarChart3, FileCheck, FileText, Tag, Gi
 import SpotlightCard from "../components/SpotlightCard";
 import TokenomicsAdminPanel from "../components/admin/TokenomicsAdminPanel";
 import { getTokenInfo, getMyWallet } from "../api/tokens";
+import OnboardingChecklist from "../components/OnboardingChecklist";
+import { useFeatureFlag } from "../utils/featureFlags";
+import { dashboardTracking } from "../utils/tracking";
 
 // ------------ Types
 type Purchase = {
@@ -171,6 +174,17 @@ type AdminAnalytics = {
 const Dashboard: React.FC = () => {
   const { t } = useTranslation() as unknown as { t: (key: string, options?: any) => string };
   const { user } = useAuth() as any;
+  const showOnboarding = useFeatureFlag('onboarding_checklist');
+  const hasTrackedView = React.useRef(false);
+
+  // Track dashboard view
+  React.useEffect(() => {
+    if (!hasTrackedView.current) {
+      hasTrackedView.current = true;
+      dashboardTracking.viewed(!localStorage.getItem('dashboard_visited'));
+      localStorage.setItem('dashboard_visited', 'true');
+    }
+  }, []);
 
   const [activeTab, setActiveTab] = React.useState<
     "overview" | "courses" | "account" | "purchases" | "admin" | "progress"
@@ -815,7 +829,7 @@ const Dashboard: React.FC = () => {
     if (!u) return "";
     const url = String(u);
     if (/^https?:\/\//i.test(url)) return url;
-    const apiBase = process.env.REACT_APP_BACKEND_URL || "https://api.promrkts.com/api";
+    const apiBase = process.env.REACT_APP_BACKEND_URL || "http://localhost:4000/api";
     const origin = apiBase.replace(/\/?api\/?$/, "");
     if (url.startsWith("/api/")) return `${origin}${url}`;
     if (url.startsWith("/uploads/")) return `${origin}${url.replace(/^\/uploads\//, "/api/uploads/")}`;
@@ -878,6 +892,9 @@ const Dashboard: React.FC = () => {
     <Box bg="transparent" py={10} marginTop={"2rem"}>
       <Container maxW="7xl">
         <VStack align="stretch" gap={6}>
+          {/* Onboarding Checklist for new users */}
+          {showOnboarding && !isAdmin && <OnboardingChecklist />}
+
           {/* Header */}
           <VStack align="center" gap={1}>
             <Heading size="xl">

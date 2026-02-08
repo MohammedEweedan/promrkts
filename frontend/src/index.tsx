@@ -13,7 +13,7 @@ import * as Sentry from '@sentry/react';
 const sentryTunnel =
   process.env.REACT_APP_SENTRY_TUNNEL ||
   (process.env.NODE_ENV === "development"
-    ? `${process.env.REACT_APP_BACKEND_URL || "https://api.promrkts.com/api"}/monitoring`
+    ? `${process.env.REACT_APP_BACKEND_URL || "http://localhost:4000/api"}/monitoring`
     : "");
 
 Sentry.init({

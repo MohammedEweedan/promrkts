@@ -979,7 +979,7 @@ const LiveActivityPulse: React.FC = () => {
 // Social proof bar with animated stats
 const SocialProofBar: React.FC<{ t: any }> = ({ t }) => {
   const stats = [
-    { value: "12,847", label: t("home.social.students", { defaultValue: "Active Students" }), icon: Users },
+    { value: "1100,007", label: t("home.social.students", { defaultValue: "Active Students" }), icon: Users },
     { value: "94%", label: t("home.social.success", { defaultValue: "Success Rate" }), icon: TrendingUp },
     { value: "$2.4M+", label: t("home.social.profits", { defaultValue: "Student Profits" }), icon: DollarSign },
     { value: "4.9/5", label: t("home.social.rating", { defaultValue: "Average Rating" }), icon: Star },

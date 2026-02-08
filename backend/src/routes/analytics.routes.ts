@@ -1,11 +1,12 @@
 import { Router } from 'express';
-import { getTraffic, getRevenue, getCoursesAgg, trackEvent, getAdminExtras, getAiMovers, getAiMomentum, getAiNews, getAiLiveQuotes, getAiFearGreed, getAiMomentumIndex } from '../controllers/analytics.controller';
+import { getTraffic, getRevenue, getCoursesAgg, trackEvent, identifyUser, getFeatureFlags, getAdminExtras, getAiMovers, getAiMomentum, getAiNews, getAiLiveQuotes, getAiFearGreed, getAiMomentumIndex } from '../controllers/analytics.controller';
 import { authenticate, authorize } from '../middleware/auth';
 
 const router = Router();
 
-// public tracking endpoint
+// public tracking endpoints
 router.post('/track', trackEvent);
+router.post('/identify', identifyUser);
 
 // public AI analytics endpoints
 router.get('/ai/movers', getAiMovers as any);

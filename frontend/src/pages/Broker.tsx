@@ -1,6 +1,7 @@
 // src/pages/Broker.tsx
 /* eslint-disable @typescript-eslint/no-unused-vars */
-import React from "react";
+import React, { useEffect, useRef } from "react";
+import { brokerFunnel } from "../utils/tracking";
 import {
   Box,
   Container,
@@ -76,11 +77,23 @@ const anaxDisclaimerKeys = createKeyMap([
 
 const Broker: React.FC = () => {
   const { t } = useTranslation() as any;
+  const hasTrackedPageView = useRef(false);
 
   const IB_LINK = process.env.REACT_APP_BROKER_IB_LINK || "https://anaxcapital.ae";
 
+  // Track page view on mount
+  useEffect(() => {
+    if (!hasTrackedPageView.current) {
+      hasTrackedPageView.current = true;
+      brokerFunnel.pageViewed('anax', 'ANAX Capital');
+    }
+  }, []);
+
   const handleJoin = () => {
     if (!IB_LINK || IB_LINK === "#") return;
+    // Track CTA click and link open
+    brokerFunnel.ctaClicked('primary_cta');
+    brokerFunnel.linkOpened('anax', 'register');
     window.open(IB_LINK, "_blank", "noopener,noreferrer");
   };
 
@@ -250,10 +263,18 @@ const Broker: React.FC = () => {
 
                           <Button
                             w="100%"
-                            bg={brand}
-                            color="black"
+                            bg="linear-gradient(135deg, #65a8bf, #b7a27d)"
+                            color="white"
+                            fontWeight="700"
                             borderRadius="xl"
+                            py={6}
                             onClick={handleJoin}
+                            _hover={{
+                              transform: "translateY(-2px)",
+                              boxShadow: "0 8px 25px rgba(101, 168, 191, 0.4)",
+                            }}
+                            _active={{ transform: "translateY(0)" }}
+                            transition="all 0.2s"
                           >
                             {t("broker.cta_primary", { defaultValue: "Open via IB Link" })}
                           </Button>
@@ -365,10 +386,17 @@ const Broker: React.FC = () => {
                   target="_blank"
                   rel="noopener noreferrer"
                   size="lg"
-                  bg={brand}
-                  color="black"
+                  bg="linear-gradient(135deg, #65a8bf, #b7a27d)"
+                  color="white"
+                  fontWeight="700"
                   borderRadius="xl"
-                  _hover={{ bg: "rgba(104,165,191,0.9)" }}
+                  px={8}
+                  _hover={{
+                    transform: "translateY(-2px)",
+                    boxShadow: "0 8px 25px rgba(101, 168, 191, 0.4)",
+                  }}
+                  _active={{ transform: "translateY(0)" }}
+                  transition="all 0.2s"
                 >
                   {t(`${ANAX_NAMESPACE}.cta_primary`, { defaultValue: "Client Portal" })}
                 </Button>
@@ -380,10 +408,11 @@ const Broker: React.FC = () => {
                   rel="noopener noreferrer"
                   size="lg"
                   variant="outline"
-                  borderColor="rgba(255,255,255,0.2)"
+                  borderColor="#65a8bf"
                   color="#65a8bf"
                   borderRadius="xl"
-                  _hover={{ bg: "rgba(255,255,255,0.04)" }}
+                  px={8}
+                  _hover={{ bg: "rgba(101, 168, 191, 0.1)" }}
                 >
                   {t(`${ANAX_NAMESPACE}.cta_secondary`, { defaultValue: "Open Demo / Register" })}
                 </Button>

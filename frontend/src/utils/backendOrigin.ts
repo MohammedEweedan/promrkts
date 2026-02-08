@@ -22,7 +22,7 @@ export const resolveBackendOrigin = (): string => {
     }
   }
 
-  return "https://api.promrkts.com/api";
+  return "http://localhost:4000/api";
 };
 
 export const resolveBackendAsset = (path: string): string => {

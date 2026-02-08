@@ -1271,3 +1271,62 @@ enum GroupRole {
   MODERATOR
   MEMBER
 }
+
+// =====================
+// Analytics Events (Funnel Tracking)
+// =====================
+model AnalyticsEvent {
+  id           String   @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  eventName    String   @map("event_name")
+  sessionId    String?  @map("session_id")
+  persistentId String?  @map("persistent_id")
+  userId       String?  @map("user_id") @db.Uuid
+  properties   Json?
+  timestamp    DateTime @default(now()) @db.Timestamp(6)
+  createdAt    DateTime @default(now()) @map("created_at") @db.Timestamp(6)
+
+  @@index([eventName], map: "idx_analytics_event_name")
+  @@index([sessionId], map: "idx_analytics_event_session")
+  @@index([userId], map: "idx_analytics_event_user")
+  @@index([timestamp], map: "idx_analytics_event_timestamp")
+  @@map("analytics_events")
+}
+
+model AnalyticsIdentity {
+  id           String   @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  userId       String   @map("user_id")
+  sessionId    String?  @map("session_id")
+  persistentId String?  @map("persistent_id")
+  traits       Json?
+  createdAt    DateTime @default(now()) @map("created_at") @db.Timestamp(6)
+
+  @@index([userId], map: "idx_analytics_identity_user")
+  @@index([sessionId], map: "idx_analytics_identity_session")
+  @@map("analytics_identities")
+}
+
+model FeatureFlagConfig {
+  id        String   @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  flags     Json     @default("{}")
+  updatedAt DateTime @updatedAt @map("updated_at") @db.Timestamp(6)
+  createdAt DateTime @default(now()) @map("created_at") @db.Timestamp(6)
+
+  @@map("feature_flag_config")
+}
+
+model UserOnboarding {
+  id                  String    @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  userId              String    @unique @map("user_id") @db.Uuid
+  profileCompleted    Boolean   @default(false) @map("profile_completed")
+  firstWidgetAdded    Boolean   @default(false) @map("first_widget_added")
+  layoutSaved         Boolean   @default(false) @map("layout_saved")
+  courseViewed        Boolean   @default(false) @map("course_viewed")
+  completedAt         DateTime? @map("completed_at")
+  skippedAt           DateTime? @map("skipped_at")
+  currentStep         Int       @default(0) @map("current_step")
+  createdAt           DateTime  @default(now()) @map("created_at") @db.Timestamp(6)
+  updatedAt           DateTime  @updatedAt @map("updated_at") @db.Timestamp(6)
+
+  @@index([userId], map: "idx_user_onboarding_user")
+  @@map("user_onboarding")
+}

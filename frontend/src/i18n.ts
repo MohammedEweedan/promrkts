@@ -422,6 +422,7 @@ const resources = {
       common: {
         select: 'Select',
         save: 'Save',
+        optional: 'optional',
         // aliases used in admin communications panel
         showAll: 'Show all',
         refresh: 'Refresh',
@@ -679,6 +680,31 @@ const resources = {
         beginner: "Beginner",
         intermediate: "Intermediate",
         advanced: "Advanced"
+      },
+      products: {
+        popular: "Popular",
+        enrolled_count: "{{count}}+ enrolled",
+        lifetime_access: "Lifetime access",
+        certificate: "Certificate",
+        certificate_included: "Certificate included",
+        free: "FREE",
+        per_month: "per month"
+      },
+      community: {
+        exclusive_signals: "Exclusive signals",
+        live_sessions: "Live trading sessions",
+        mentor_access: "Direct mentor access",
+        none: "No community subscriptions available."
+      },
+      exit_intent: {
+        title: "Wait! Don't Miss Out",
+        message: "Start your trading journey with our FREE comprehensive guide",
+        value_1: "Learn proven trading strategies",
+        value_2: "No credit card required",
+        value_3: "Instant access to premium content",
+        cta: "🎁 Get Free Access Now",
+        register: "Create Free Account",
+        dismiss: "Maybe later"
       },
       price: {
         usd: "USD {{value}}",
@@ -1277,8 +1303,7 @@ const resources = {
           "Join our broker through our official IB link to align your trading conditions with the way we actually trade: tight spreads, fast execution and institutional-level support.",
         hero_point_1: "Regulated & trusted partner",
         hero_point_2: "Built for active traders",
-        cta_primary: "Open Live Account via IB",
-        cta_secondary: "Start with Demo",
+        cta_primary: "Open Live Account",
         disclaimer_short:
           "Trading CFDs/FX is high risk. Only trade capital you can afford to lose.",
         metric_spreads: "Spreads from",
@@ -1321,7 +1346,6 @@ const resources = {
           hero_intro_secondary:
             "The firm’s infrastructure, liquidity partners, and compliance discipline create institutional-grade execution for UAE-based and international traders.",
           cta_primary: "Start Trading",
-          cta_secondary: "Try Free Demo",
           why_title: "Why Choose ANAX Capital in the UAE",
           why_intro:
             "ANAX delivers multi-asset access under one regulated umbrella.",
@@ -1935,6 +1959,7 @@ const resources = {
       common: {
         select: "Sélectionner",
         save: "Enregistrer",
+        optional: "optionnel",
         delete: "Supprimer",
         anonymous: "Apprenant",
         // aliases used in admin communications panel
@@ -2594,7 +2619,7 @@ const resources = {
           "Rejoignez notre courtier via notre lien IB officiel pour aligner vos conditions de trading sur notre façon réelle de trader : spreads serrés, exécution rapide et support de niveau institutionnel.",
         hero_point_1: "Partenaire régulé et de confiance",
         hero_point_2: "Conçu pour les traders actifs",
-        cta_primary: "Ouvrir un compte réel via l’IB",
+        cta_primary: "Ouvrir un compte réel",
         cta_secondary: "Commencer avec un compte démo",
         disclaimer_short:
           "Le trading de CFDs/Forex est très risqué. Ne tradez que de l’argent que vous pouvez vous permettre de perdre.",
@@ -2638,7 +2663,6 @@ const resources = {
           hero_intro_secondary:
             "Son infrastructure, ses partenaires de liquidité et sa discipline de conformité offrent une exécution de niveau institutionnel pour les traders basés aux Émirats et à l’international.",
           cta_primary: "Commencer à trader",
-          cta_secondary: "Essayer un compte démo",
           why_title: "Pourquoi choisir ANAX Capital aux Émirats",
           why_intro:
             "ANAX offre un accès multi-actifs sous un seul cadre réglementé.",
@@ -2732,6 +2756,31 @@ const resources = {
         beginner: "Débutant",
         intermediate: "Intermédiaire",
         advanced: "Avancé"
+      },
+      products: {
+        popular: "Populaire",
+        enrolled_count: "{{count}}+ inscrits",
+        lifetime_access: "Accès à vie",
+        certificate: "Certificat",
+        certificate_included: "Certificat inclus",
+        free: "GRATUIT",
+        per_month: "par mois"
+      },
+      community: {
+        exclusive_signals: "Signaux exclusifs",
+        live_sessions: "Sessions de trading en direct",
+        mentor_access: "Accès direct au mentor",
+        none: "Aucun abonnement communautaire disponible."
+      },
+      exit_intent: {
+        title: "Attendez ! Ne ratez pas ça",
+        message: "Commencez votre parcours de trading avec notre guide GRATUIT",
+        value_1: "Apprenez des stratégies de trading éprouvées",
+        value_2: "Aucune carte de crédit requise",
+        value_3: "Accès instantané au contenu premium",
+        cta: "🎁 Obtenir l'accès gratuit",
+        register: "Créer un compte gratuit",
+        dismiss: "Peut-être plus tard"
       },
       price: {
         usd: "USD {{value}}",
@@ -3329,6 +3378,7 @@ const resources = {
       common: {
         select: 'اختر',
         save: 'حفظ',
+        optional: 'اختياري',
         upload: 'رفع',
         anonymous: 'طالب',
         loading: 'جارٍ التحميل...',
@@ -4092,8 +4142,7 @@ const resources = {
           "انضم إلى الوسيط عبر رابط IB الرسمي الخاص بنا لتحصل على ظروف تداول قريبة من طريقتنا الفعلية في التداول: سبريد منخفض، تنفيذ سريع ودعم بمستوى مؤسسي.",
         hero_point_1: "وسيط مرخّص وموثوق",
         hero_point_2: "مصمم للمتداولين النشطين",
-        cta_primary: "افتح حساب حقيقي عبر رابط IB",
-        cta_secondary: "ابدأ بحساب تجريبي",
+        cta_primary: "افتح حساب حقيقي",
         disclaimer_short:
           "تداول CFDs/الفوركس عالي المخاطر. لا تخاطر إلا برأس مال يمكنك تحمّل خسارته.",
         metric_spreads: "السبريد يبدأ من",
@@ -4232,6 +4281,31 @@ const resources = {
         beginner: "مبتدئ",
         intermediate: "متوسط",
         advanced: "متقدم"
+      },
+      products: {
+        popular: "شائع",
+        enrolled_count: "{{count}}+ مسجل",
+        lifetime_access: "وصول مدى الحياة",
+        certificate: "شهادة",
+        certificate_included: "شهادة متضمنة",
+        free: "مجاني",
+        per_month: "شهرياً"
+      },
+      community: {
+        exclusive_signals: "إشارات حصرية",
+        live_sessions: "جلسات تداول مباشرة",
+        mentor_access: "وصول مباشر للمرشد",
+        none: "لا توجد اشتراكات مجتمعية متاحة."
+      },
+      exit_intent: {
+        title: "انتظر! لا تفوّت الفرصة",
+        message: "ابدأ رحلتك في التداول مع دليلنا المجاني الشامل",
+        value_1: "تعلم استراتيجيات تداول مثبتة",
+        value_2: "لا حاجة لبطاقة ائتمان",
+        value_3: "وصول فوري للمحتوى المميز",
+        cta: "🎁 احصل على الوصول المجاني الآن",
+        register: "أنشئ حساباً مجانياً",
+        dismiss: "ربما لاحقاً"
       },
       price: {
         usd: "دولار أمريكي {{value}}",

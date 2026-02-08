@@ -6,8 +6,14 @@ import {
   markLessonCompleted,
   getLeaderboard,
 } from '../controllers/progress.controller';
+import { getOnboardingState, updateOnboardingState } from '../controllers/onboarding.controller';
+import { authenticate } from '../middleware/auth';
 
 const router = Router();
+
+// Onboarding endpoints
+router.get('/onboarding', authenticate, getOnboardingState);
+router.post('/onboarding', authenticate, updateOnboardingState);
 
 // Get progress for a specific course
 router.get('/course/:tierId', ...getCourseProgress);

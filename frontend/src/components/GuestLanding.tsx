@@ -308,31 +308,52 @@ export default function GuestLanding({
                 })}
               </Text>
 
-            {/* Unified CTA - Spin & Win */}
-            {showSpinButton && (
-              <Box>
+            {/* Primary CTAs */}
+            <HStack spacing={4} flexWrap="wrap" justify={{ base: "center", lg: isRTL ? "flex-end" : "flex-start" }}>
+              <Button
+                size="lg"
+                onClick={() => navigate("/products")}
+                bg={UI.gradient}
+                color="white"
+                px={8}
+                py={7}
+                fontSize="md"
+                fontWeight="700"
+                borderRadius="16px"
+                _hover={{
+                  transform: "translateY(-3px)",
+                  boxShadow: "0 12px 35px rgba(101, 168, 191, 0.4)",
+                }}
+                _active={{ transform: "translateY(0)" }}
+                transition="all 0.2s"
+                rightIcon={<ChevronRight size={20} />}
+              >
+                {t("home.cta.explore", { defaultValue: "Explore Courses" })}
+              </Button>
+              
+              {showSpinButton && (
                 <Button
-                    size="lg"
-                    onClick={onOpenSpin}
-                    bg={UI.secondary}
-                    color="#0a0f1a"
-                    px={8}
-                    py={6}
-                    fontSize="md"
-                    fontWeight="700"
-                    borderRadius="16px"
-                    _hover={{
-                      transform: "translateY(-2px)",
-                      boxShadow: "0 0 40px rgba(183, 162, 125, 0.4)",
-                    }}
-                    _active={{ transform: "translateY(0)" }}
-                    animation={`${goldGlow} 2.5s ease-in-out infinite`}
-                    leftIcon={<Icon as={Award} boxSize={5} />}
-                  >
-                    {t("home.spin_and_win", { defaultValue: "Spin & Win Prizes" })}
+                  size="lg"
+                  onClick={onOpenSpin}
+                  bg={UI.secondary}
+                  color="#0a0f1a"
+                  px={8}
+                  py={7}
+                  fontSize="md"
+                  fontWeight="700"
+                  borderRadius="16px"
+                  _hover={{
+                    transform: "translateY(-2px)",
+                    boxShadow: "0 0 40px rgba(183, 162, 125, 0.4)",
+                  }}
+                  _active={{ transform: "translateY(0)" }}
+                  animation={`${goldGlow} 2.5s ease-in-out infinite`}
+                  leftIcon={<Icon as={Award} boxSize={5} />}
+                >
+                  {t("home.spin_and_win", { defaultValue: "🎁 Spin & Win" })}
                 </Button>
-              </Box>
-            )}
+              )}
+            </HStack>
 
             {/* Stats Row */}
             <Box w="100%">

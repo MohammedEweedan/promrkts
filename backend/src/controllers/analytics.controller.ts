@@ -39,9 +39,34 @@ async function ensureAnalyticsTables() {
 }
 
 // Public tracking endpoint (no auth). Body: { sessionId, path, referrer, userAgent, source, utm_* }
+// Also handles new event tracking format: { event, properties, timestamp }
 export const trackEvent = async (req: Request, res: Response) => {
   try {
-    const { sessionId, path, referrer, userAgent, source, utm_source, utm_medium, utm_campaign, userId } = req.body || {};
+    const body = req.body || {};
+    
+    // New event tracking format (from frontend tracking.ts)
+    if (body.event && body.properties) {
+      const { event, properties, timestamp } = body;
+      const { sessionId, persistentId, userId } = properties || {};
+      
+      // Store in analytics_events table
+      await prisma.$executeRaw`
+        INSERT INTO analytics_events (event_name, session_id, persistent_id, user_id, properties, timestamp)
+        VALUES (
+          ${event},
+          ${sessionId || null},
+          ${persistentId || null},
+          ${userId ? userId : null}::uuid,
+          ${JSON.stringify(properties)}::jsonb,
+          ${timestamp ? new Date(timestamp) : new Date()}
+        )
+      `;
+      
+      return res.json({ ok: true });
+    }
+    
+    // Legacy pageview tracking format
+    const { sessionId, path, referrer, userAgent, source, utm_source, utm_medium, utm_campaign, userId } = body;
     if (!sessionId || !path) return res.status(400).json({ message: 'sessionId and path are required' });
     await ensureAnalyticsTables();
     // upsert session
@@ -58,7 +83,79 @@ export const trackEvent = async (req: Request, res: Response) => {
     );
     return res.json({ ok: true });
   } catch (e) {
+    console.error('[Analytics] trackEvent error:', e);
     return res.status(500).json({ message: 'Internal server error' });
+  }
+};
+
+// POST /analytics/identify - Identify a user for analytics
+export const identifyUser = async (req: Request, res: Response) => {
+  try {
+    const { userId, sessionId, persistentId, traits } = req.body || {};
+    
+    if (!userId) {
+      return res.status(400).json({ message: 'userId is required' });
+    }
+    
+    await prisma.$executeRaw`
+      INSERT INTO analytics_identities (user_id, session_id, persistent_id, traits)
+      VALUES (
+        ${userId},
+        ${sessionId || null},
+        ${persistentId || null},
+        ${traits ? JSON.stringify(traits) : null}::jsonb
+      )
+    `;
+    
+    return res.json({ ok: true });
+  } catch (e) {
+    console.error('[Analytics] identifyUser error:', e);
+    return res.status(500).json({ message: 'Internal server error' });
+  }
+};
+
+// GET /config/feature-flags - Get feature flag configuration
+export const getFeatureFlags = async (_req: Request, res: Response) => {
+  try {
+    // Try to get from database first
+    const config = await prisma.$queryRaw<Array<{ flags: any }>>`
+      SELECT flags FROM feature_flag_config ORDER BY created_at DESC LIMIT 1
+    `;
+    
+    if (config && config.length > 0 && config[0].flags) {
+      return res.json({ flags: config[0].flags });
+    }
+    
+    // Return default flags if none configured
+    const defaultFlags = {
+      usdt_trc20_enabled: true,
+      usdt_erc20_enabled: true,
+      stripe_enabled: true,
+      onboarding_checklist: true,
+      dashboard_presets: true,
+      guided_tour: false,
+      exit_intent_popup: true,
+      spin_wheel_enabled: true,
+      urgency_countdown: false,
+      social_proof_notifications: false,
+      broker_hub_v2: false,
+      broker_progress_tracking: false,
+      vip_preview_enabled: false,
+      vip_trial_enabled: false,
+      enhanced_tracking: true,
+      session_replay: false,
+      pricing_page_v2: false,
+      simplified_registration: false,
+      dark_mode_default: true,
+      lazy_load_tradingview: true,
+      code_splitting: true,
+    };
+    
+    return res.json({ flags: defaultFlags });
+  } catch (e) {
+    console.error('[Config] getFeatureFlags error:', e);
+    // Return defaults on error
+    return res.json({ flags: {} });
   }
 };
 
