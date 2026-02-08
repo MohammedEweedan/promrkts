@@ -86,18 +86,6 @@ const OptimizedImage: React.FC<OptimizedImageProps> = ({
     onError?.();
   };
 
-  // Generate WebP source if the original is jpg/png
-  const getWebPSrc = (originalSrc: string): string | null => {
-    if (originalSrc.startsWith("data:")) return null;
-    const ext = originalSrc.split(".").pop()?.toLowerCase();
-    if (ext === "jpg" || ext === "jpeg" || ext === "png") {
-      return originalSrc.replace(/\.(jpg|jpeg|png)$/i, ".webp");
-    }
-    return null;
-  };
-
-  const webpSrc = getWebPSrc(src);
-
   return (
     <Box
       ref={imgRef}
@@ -142,22 +130,19 @@ const OptimizedImage: React.FC<OptimizedImageProps> = ({
 
       {/* Actual Image */}
       {isVisible && !hasError && (
-        <picture>
-          {webpSrc && <source srcSet={webpSrc} type="image/webp" />}
-          <Image
-            src={src}
-            alt={alt}
-            width="100%"
-            height="100%"
-            objectFit={objectFit}
-            loading={priority ? "eager" : "lazy"}
-            decoding="async"
-            onLoad={handleLoad}
-            onError={handleError}
-            opacity={isLoaded ? 1 : 0}
-            transition="opacity 0.3s ease-in-out"
-          />
-        </picture>
+        <Image
+          src={src}
+          alt={alt}
+          width="100%"
+          height="100%"
+          objectFit={objectFit}
+          loading={priority ? "eager" : "lazy"}
+          decoding="async"
+          onLoad={handleLoad}
+          onError={handleError}
+          opacity={isLoaded ? 1 : 0}
+          transition="opacity 0.3s ease-in-out"
+        />
       )}
 
       {/* Error state */}

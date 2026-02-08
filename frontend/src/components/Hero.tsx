@@ -2648,7 +2648,7 @@ export default function Hero(props: HeroProps) {
                           {/* Logo */}
                           <HStack spacing={3}>
                             <OptimizedImage
-                              src={"text-logo.png"}
+                              src={process.env.PUBLIC_URL + "/text-logo.png"}
                               alt="promrkts"
                               width="120px"
                               height="32px"
