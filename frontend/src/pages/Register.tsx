@@ -36,6 +36,7 @@ import { motion, AnimatePresence } from "framer-motion";
 import PremiumStepIndicator from "../components/PremiumStepIndicator";
 import TrustBadges, { SocialProofBanner } from "../components/TrustBadges";
 import { User, Mail, Phone, FileCheck } from "lucide-react";
+import OAuthButtons from "../components/OAuthButtons";
 
 const CSelect = chakra("select");
 
@@ -443,6 +444,11 @@ const Register: React.FC = () => {
             </Text>
             <SocialProofBanner enrolledCount={100007} />
           </VStack>
+
+          <OAuthButtons
+            mode="register"
+            onError={(msg) => setError(msg)}
+          />
 
           {/* Step Indicator */}
           <PremiumStepIndicator

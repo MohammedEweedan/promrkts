@@ -9,6 +9,7 @@ import SpotlightCard from '../components/SpotlightCard';
 import { motion } from 'framer-motion';
 import { Lock, ArrowRight } from 'lucide-react';
 import TrustBadges, { SocialProofBanner } from '../components/TrustBadges';
+import OAuthButtons from '../components/OAuthButtons';
 
 const MotionBox = motion(Box);
 const CCheckbox = chakra('input');
@@ -174,6 +175,11 @@ const Login: React.FC = () => {
                 </VStack>
               </form>
             </SpotlightCard>
+
+            <OAuthButtons
+              mode="login"
+              onError={(msg) => setError(msg)}
+            />
 
             {/* Trust Badges */}
             <TrustBadges variant="compact" showGuarantee={false} />

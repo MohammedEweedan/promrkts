@@ -1,8 +1,5 @@
 import { Request, Response } from 'express';
 import bcrypt from 'bcryptjs';
-// fs and path used previously for attachments; no-logo request means we don't need attachments
-import fs from 'fs/promises';
-import path from 'path';
 import jwt from 'jsonwebtoken';
 import { randomUUID } from 'crypto';
 import db from '../config/database';
@@ -11,7 +8,7 @@ import logger from '../utils/logger';
 import { sendWhatsAppText } from '../utils/whatsapp';
 import { ensureJourney } from '../services/journey.service';
 import { ensureEntitlements } from '../services/entitlements.service';
-import { sendWelcomeEmail, sendConfirmationCodeEmail } from '../services/email.service';
+import { sendWelcomeEmail, sendConfirmationCodeEmail, sendPasswordResetEmail } from '../services/email.service';
 
 const JWT_SECRET = (process.env.JWT_SECRET || 'your_jwt_secret_key') as jwt.Secret;
 const JWT_EXPIRES_IN = process.env.JWT_EXPIRES_IN || '30d';
@@ -181,27 +178,11 @@ export const register = async (req: Request, res: Response) => {
     // Save code to DB (add a new table or reuse existing, here as example)
     await db.query('INSERT INTO account_confirm_codes (user_id, code, expires_at, used) VALUES ($1, $2, $3, $4)', [newUser.rows[0].id, confirmCode, new Date(Date.now() + 15 * 60 * 1000), false]);
 
-    // Send confirmation email via Resend (async, non-blocking)
+    // Send confirmation email via Resend
     try {
       await sendConfirmationCodeEmail({ email, name: name || email }, confirmCode);
     } catch (e) {
       logger.warn('Failed to send confirmation email via Resend:', e);
-      // Fallback to legacy mailer
-      try {
-        const { sendMail } = await import('../utils/mailer');
-        const subject = 'Confirm your promrkts account';
-        const attachments = await getLogoAttachment();
-        const baseHtml = await fs.readFile(path.resolve(__dirname, '../../templates/emailBase.html'), 'utf8');
-        const confirmHtml = await fs.readFile(path.resolve(__dirname, '../../templates/emailConfirm.html'), 'utf8');
-        const htmlBody = confirmHtml.replace(/{{code}}/g, confirmCode).replace(/{{name}}/g, String(name || email));
-        const logoUrl = `${(process.env.FRONTEND_URL || 'http://localhost:3003').replace(/\/$/, '')}/logo.png`;
-        const logoSrc = attachments && attachments.length ? 'cid:promrkts.logo' : logoUrl;
-        const html = baseHtml.replace(/{{subject}}/g, subject).replace(/{{body}}/g, htmlBody).replace(/{{logoSrc}}/g, logoSrc);
-        const text = `Your confirmation code: ${confirmCode}`;
-        await sendMail({ to: email, subject, html, text, attachments });
-      } catch (fallbackErr) {
-        logger.warn('Fallback mailer also failed:', fallbackErr);
-      }
     }
 
     // Send code via WhatsApp if phone is provided (use sendWhatsAppText)
@@ -409,32 +390,6 @@ export const logout = async (req: Request, res: Response) => {
   }
 };
 
-// helper: find logo and build attachments
-// Logo-attachment helper removed: emails will not embed images as requested
-// helper: find logo file for inline attachment
-async function getLogoAttachment(): Promise<any[] | undefined> {
-  const envPath = process.env.BRAND_LOGO_PATH;
-  const candidates = [
-    envPath,
-    path.resolve(process.cwd(), 'frontend/public/logo.png'),
-    path.resolve(process.cwd(), 'frontend/build/logo.png'),
-    path.resolve(__dirname, '../../../frontend/public/logo.png'),
-    path.resolve(__dirname, '../../../frontend/build/logo.png'),
-    path.resolve(__dirname, '../../templates/logo.png'),
-  ].filter(Boolean) as string[];
-  for (const p of candidates) {
-    if (!p) continue;
-      try {
-      await fs.stat(p);
-      logger.info('Found logo for inline attach: %s', p);
-      return [{ filename: 'logo.png', path: p, cid: 'promrkts.logo' }];
-    } catch (e) {
-      continue;
-    }
-  }
-  return undefined;
-}
-
 // Forgot password
 export const forgotPassword = async (req: Request, res: Response) => {
   try {
@@ -461,27 +416,14 @@ export const forgotPassword = async (req: Request, res: Response) => {
       [user.rows[0].id, resetToken, expiresAt]
     );
 
-    // Send email with reset link using structured template
+    // Send password reset email via Resend
     try {
-      const frontendUrl = (process.env.FRONTEND_URL || 'http://localhost:3003').replace(/\/$/, '');
-      const resetLink = `${frontendUrl}/reset-password/${resetToken}`;
-      const subject = '[promrkts] Password reset request';
-      const fs = await import('fs/promises');
-      const path = await import('path');
-      const baseHtml = await fs.readFile(path.resolve(__dirname, '../../templates/emailBase.html'), 'utf8');
-      const resetHtml = await fs.readFile(path.resolve(__dirname, '../../templates/emailReset.html'), 'utf8');
-      const htmlBody = resetHtml.replace(/{{resetLink}}/g, resetLink).replace(/{{name}}/g, String(user.rows[0].name || user.rows[0].email));
-      const logoUrl = `${(process.env.FRONTEND_URL || 'http://localhost:3003').replace(/\/$/, '')}/logo.png`;
-      const attachments = await getLogoAttachment();
-        const logoSrc = attachments && attachments.length ? 'cid:promrkts.logo' : logoUrl;
-        const html = baseHtml.replace(/{{subject}}/g, subject).replace(/{{body}}/g, htmlBody).replace(/{{logoSrc}}/g, logoSrc);
-        logger.info('Sending reset email to %s with inline attachments: %s', user.rows[0].email, attachments?.length ? attachments.map(a => a.path).join(',') : 'none');
-      const text = `Reset your password: ${resetLink}`;
-      const { sendMail } = await import('../utils/mailer');
-      await sendMail({ to: user.rows[0].email, subject, html, text, attachments });
+      await sendPasswordResetEmail(
+        { email: user.rows[0].email, name: user.rows[0].name || user.rows[0].email },
+        resetToken
+      );
     } catch (e: any) {
-      logger.warn('Mail send failed for password reset, falling back to console log: %s', e?.message || e);
-      logger.debug(e);
+      logger.warn('Failed to send password reset email via Resend: %s', e?.message || e);
       console.log(`Password reset link: /reset-password/${resetToken}`);
     }
 
@@ -582,24 +524,13 @@ export const resendConfirmation = async (req: Request, res: Response) => {
     const user = userRes.rows[0];
     const code = Math.floor(100000 + Math.random() * 900000).toString();
     await db.query('INSERT INTO account_confirm_codes (user_id, code, expires_at, used) VALUES ($1, $2, $3, $4)', [user.id, code, new Date(Date.now() + 15 * 60 * 1000), false]);
-    // Send email and WA
+    // Send via Resend
     try {
-      const { sendMail } = await import('../utils/mailer');
-      const fs = await import('fs/promises');
-      const path = await import('path');
-      const baseHtml = await fs.readFile(path.resolve(__dirname, '../../templates/emailBase.html'), 'utf8');
-      const confirmHtml = await fs.readFile(path.resolve(__dirname, '../../templates/emailConfirm.html'), 'utf8');
-      const htmlBody = confirmHtml.replace(/{{code}}/g, code).replace(/{{name}}/g, String(user.name || user.email));
-      const logoUrl = `${(process.env.FRONTEND_URL || 'http://localhost:3003').replace(/\/$/, '')}/logo.png`;
-      const attachments = await getLogoAttachment();
-      const logoSrc = attachments && attachments.length ? 'cid:promrkts.logo' : logoUrl;
-      const html = baseHtml.replace(/{{subject}}/g, 'Confirm your promrkts account').replace(/{{body}}/g, htmlBody).replace(/{{logoSrc}}/g, logoSrc);
-      const text = `Your confirmation code: ${code}`;
-      logger.info('Sending resend-confirmation email to %s with attachments: %s', user.email, attachments?.length ? attachments.map(a=>a.path).join(',') : 'none');
-      await sendMail({ to: user.email, subject: 'Confirm your promrkts account', html, text, attachments });
+      await sendConfirmationCodeEmail({ email: user.email, name: user.name || user.email }, code);
     } catch (e) {
-      logger.warn('Failed to send confirmation email:', e);
+      logger.warn('Failed to send confirmation email via Resend:', e);
     }
+    // WhatsApp fallback
     try {
       if (user.phone) await sendWhatsAppText(user.phone.startsWith('+') ? user.phone : `+${user.phone}`, `Your promrkts verification code is ${code}`);
     } catch (e) {
@@ -611,5 +542,3 @@ export const resendConfirmation = async (req: Request, res: Response) => {
     return res.status(500).json({ status: 'error', message: 'Internal server error' });
   }
 };
-// getLogoAttachment removed — emails no longer include inline attachments.
-

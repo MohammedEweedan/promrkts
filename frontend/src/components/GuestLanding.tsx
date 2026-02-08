@@ -323,7 +323,7 @@ export default function GuestLanding({
           gap={{ base: 8, lg: 16 }}
           alignItems="center"
           minH="100vh"
-          py={{ base: 20, md: 0 }}
+          py={{ base: 12, md: 0 }}
         >
           {/* Hero Content - text on RIGHT in RTL, text on LEFT in LTR */}
           <VStack 
@@ -333,6 +333,12 @@ export default function GuestLanding({
             gridColumn={{ base: "1", lg: isRTL ? "2" : "1" }}
             gridRow="1"
             dir={isRTL ? "rtl" : "ltr"}
+            bg={{ base: "rgba(10, 15, 26, 0.55)", lg: "transparent" }}
+            backdropFilter={{ base: "blur(16px)", lg: "none" }}
+            borderRadius={{ base: "24px", lg: "0" }}
+            border={{ base: "1px solid rgba(255, 255, 255, 0.08)", lg: "none" }}
+            p={{ base: 6, lg: 0 }}
+            boxShadow={{ base: "0 8px 32px rgba(0, 0, 0, 0.3)", lg: "none" }}
           >
             {/* Main Headline */}
             <Text
@@ -351,7 +357,6 @@ export default function GuestLanding({
             <VStack spacing={3} align={{ base: "center", lg: isRTL ? "flex-end" : "flex-start" }} w="100%">
               <HStack spacing={3} flexWrap="wrap" justify={{ base: "center", lg: isRTL ? "flex-end" : "flex-start" }}>
                 <Button
-                  size="md"
                   onClick={() => navigate("/register")}
                   bg={UI.gradient}
                   color="white"
@@ -371,11 +376,10 @@ export default function GuestLanding({
                   {t("home.cta.signup", { defaultValue: "Start Free" })}
                 </Button>
                 <Button
-                  size="md"
                   onClick={() => navigate("/products")}
-                  variant="outline"
                   borderColor={UI.primary}
-                  color={UI.primary}
+                  bg="babyblue"
+                  color="white"
                   px={6}
                   py={6}
                   fontSize="sm"
@@ -418,16 +422,16 @@ export default function GuestLanding({
               <HStack spacing={4} flexWrap="wrap" justify={{ base: "center", lg: isRTL ? "flex-end" : "flex-start" }}>
                 <HStack spacing={1}>
                   <Icon as={CheckCircle} boxSize={3} color="green.400" />
-                  <Text fontSize="xs" color={UI.textMuted}>{t("home.cta.no_card", { defaultValue: "No credit card required" })}</Text>
+                  <Text fontSize="xs" >{t("home.cta.no_card", { defaultValue: "No credit card required" })}</Text>
                 </HStack>
                 <HStack spacing={1}>
                   <Icon as={Clock} boxSize={3} color={UI.primary} />
-                  <Text fontSize="xs" color={UI.textMuted}>{t("home.cta.setup_time", { defaultValue: "Sign up in 2 minutes" })}</Text>
+                  <Text fontSize="xs" >{t("home.cta.setup_time", { defaultValue: "Sign up in 2 minutes" })}</Text>
                 </HStack>
               </HStack>
             </VStack>
             {/* Trust Badge */}
-            <HStack spacing={3} color={UI.textMuted}>
+            <HStack spacing={3} >
               <Icon as={Globe} boxSize={4} />
               <Text fontSize="sm" fontWeight="500">
                 {t("home.trust", { defaultValue: "Trusted by traders in 50+ countries" })}

@@ -1,5 +1,6 @@
 import { Router } from 'express';
 import { login, register, refreshToken, forgotPassword, resetPassword, revoke, sendOtp, verifyOtp, confirmAccount, resendConfirmation } from '../controllers/auth.controller';
+import { googleOAuth, githubOAuth, appleOAuth } from '../controllers/oauth.controller';
 import { validate } from '../middleware/validate';
 import { loginSchema, registerSchema, forgotPasswordSchema, resetPasswordSchema, confirmAccountSchema, resendConfirmationSchema } from '../validations/auth.validation';
 
@@ -18,5 +19,9 @@ router.post('/revoke', revoke);
 // Phone OTP
 router.post('/otp/send', sendOtp);
 router.post('/otp/verify', verifyOtp);
+// OAuth providers
+router.post('/oauth/google', googleOAuth);
+router.post('/oauth/github', githubOAuth);
+router.post('/oauth/apple', appleOAuth);
 
 export default router;

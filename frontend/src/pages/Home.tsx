@@ -3374,6 +3374,124 @@ const Home: React.FC = () => {
                   </Box>
                 </GradualFooter>
 
+                {/* Services Stacking Cards — visible for ALL non-enrolled users */}
+                <Box position="relative" py={{ base: 10, md: 20 }}>
+                  <MotionBox
+                    initial={{ opacity: 0, y: 30 }}
+                    whileInView={{ opacity: 1, y: 0 }}
+                    transition={{ duration: 0.8 }}
+                    viewport={{ once: true, amount: 0.2 }}
+                    mb={{ base: 8, md: 12 }}
+                  >
+                    <Heading
+                      textAlign="center"
+                      fontSize={{ base: "3xl", md: "5xl" }}
+                      bgGradient="linear(to-r, #65a8bf, #b7a27d)"
+                      bgClip="text"
+                      mb={4}
+                    >
+                      {t("home.services.title") || "How We Help Traders Succeed"}
+                    </Heading>
+                    <Text textAlign="center" maxW="600px" mx="auto" fontSize={{ base: "md", md: "lg" }}>
+                      {t("home.services.subtitle") || "Our proven strategies have helped thousands of traders trade smarter and earn more."}
+                    </Text>
+                  </MotionBox>
+
+                  <Container maxW="1000px" px={{ base: 4, md: 8 }}>
+                    {[
+                      { key: "education", icon: BookOpen },
+                      { key: "strategies", icon: BarChart3 },
+                      { key: "community", icon: Users },
+                      { key: "support", icon: Target },
+                    ].map((card, idx) => (
+                      <Box
+                        key={card.key}
+                        position="sticky"
+                        top={`${80 + idx * 30}px`}
+                        zIndex={10 + idx}
+                        mb={{ base: 6, md: 8 }}
+                        transform={`scale(${1 - idx * 0.02})`}
+                        transformOrigin="top center"
+                      >
+                        <MotionBox
+                          initial={{ opacity: 0, y: 80 }}
+                          whileInView={{ opacity: 1, y: 0 }}
+                          transition={{ duration: 0.7, delay: idx * 0.1 }}
+                          viewport={{ once: true, amount: 0.2 }}
+                        >
+                          <Box
+                            position="relative"
+                            borderRadius="40px"
+                            p="3px"
+                            bgGradient="linear(135deg, #65a8bf 0%, #b7a27d 50%, #65a8bf 100%)"
+                            boxShadow="0 30px 60px -15px rgba(0, 0, 0, 0.6), 0 0 40px rgba(101, 168, 191, 0.15)"
+                          >
+                            <Box
+                              bg="linear-gradient(135deg, #0a0f1a 0%, #111827 100%)"
+                              borderRadius="38px"
+                              p={{ base: 6, md: 10 }}
+                              minH={{ base: "auto", md: "320px" }}
+                            >
+                              <VStack align="start" gap={{ base: 4, md: 5 }} w="100%">
+                                <Box
+                                  w={{ base: "60px", md: "80px" }}
+                                  h={{ base: "60px", md: "80px" }}
+                                  borderRadius="20px"
+                                  bgGradient="linear(135deg, rgba(101, 168, 191, 0.2) 0%, rgba(183, 162, 125, 0.2) 100%)"
+                                  border="2px solid"
+                                  borderColor="rgba(101, 168, 191, 0.3)"
+                                  display="flex"
+                                  alignItems="center"
+                                  justifyContent="center"
+                                  flexShrink={0}
+                                  boxShadow="0 0 30px rgba(101, 168, 191, 0.2)"
+                                >
+                                  <Icon as={card.icon} boxSize={{ base: 8, md: 10 }} color={UI.accent} />
+                                </Box>
+                                <VStack align="start" gap={{ base: 3, md: 4 }} w="100%">
+                                  <Heading
+                                    fontSize={{ base: "xl", md: "3xl" }}
+                                    fontWeight="bold"
+                                    bgGradient="linear(to-r, #ffffff, #e2e8f0)"
+                                    bgClip="text"
+                                  >
+                                    {t(`home.services.${card.key}.title`) || card.key}
+                                  </Heading>
+                                  <Text
+                                    fontSize={{ base: "sm", md: "lg" }}
+                                    color="gray.400"
+                                    lineHeight="1.8"
+                                  >
+                                    {t(`home.services.${card.key}.description`) || ""}
+                                  </Text>
+                                  <HStack gap={2} mt={2} flexWrap="wrap">
+                                    {(t(`home.services.${card.key}.tags`, { returnObjects: true }) as string[] || []).map((tag: string, i: number) => (
+                                      <Badge
+                                        key={i}
+                                        bg="rgba(101, 168, 191, 0.1)"
+                                        color="#65a8bf"
+                                        px={{ base: 3, md: 4 }}
+                                        py={{ base: 1, md: 2 }}
+                                        borderRadius="full"
+                                        fontSize={{ base: "xs", md: "sm" }}
+                                        fontWeight="500"
+                                        border="1px solid"
+                                        borderColor="rgba(101, 168, 191, 0.3)"
+                                      >
+                                        {tag}
+                                      </Badge>
+                                    ))}
+                                  </HStack>
+                                </VStack>
+                              </VStack>
+                            </Box>
+                          </Box>
+                        </MotionBox>
+                      </Box>
+                    ))}
+                  </Container>
+                </Box>
+
                 {/* Full funnel — only for guests (not logged in) */}
                 {!isLoggedIn && (<>
                 <ParallaxSection speed={0.5}>
@@ -3629,124 +3747,6 @@ const Home: React.FC = () => {
                     </MotionBox>
                   </Box>
                 </ParallaxSection>
-
-                {/* Services Stacking Cards with Overlap Effect */}
-                <Box position="relative" py={{ base: 10, md: 20 }}>
-                  <MotionBox
-                    initial={{ opacity: 0, y: 30 }}
-                    whileInView={{ opacity: 1, y: 0 }}
-                    transition={{ duration: 0.8 }}
-                    viewport={{ once: true, amount: 0.2 }}
-                    mb={{ base: 8, md: 12 }}
-                  >
-                    <Heading
-                      textAlign="center"
-                      fontSize={{ base: "3xl", md: "5xl" }}
-                      bgGradient="linear(to-r, #65a8bf, #b7a27d)"
-                      bgClip="text"
-                      mb={4}
-                    >
-                      {t("home.services.title") || "How We Help Traders Succeed"}
-                    </Heading>
-                    <Text textAlign="center" color="gray.400" maxW="600px" mx="auto" fontSize={{ base: "md", md: "lg" }}>
-                      {t("home.services.subtitle") || "Our proven strategies have helped thousands of traders trade smarter and earn more."}
-                    </Text>
-                  </MotionBox>
-
-                  <Container maxW="1000px" px={{ base: 4, md: 8 }}>
-                    {[
-                      { key: "education", icon: BookOpen },
-                      { key: "strategies", icon: BarChart3 },
-                      { key: "community", icon: Users },
-                      { key: "support", icon: Target },
-                    ].map((card, idx) => (
-                      <Box
-                        key={card.key}
-                        position="sticky"
-                        top={`${80 + idx * 30}px`}
-                        zIndex={10 + idx}
-                        mb={{ base: 6, md: 8 }}
-                        transform={`scale(${1 - idx * 0.02})`}
-                        transformOrigin="top center"
-                      >
-                        <MotionBox
-                          initial={{ opacity: 0, y: 80 }}
-                          whileInView={{ opacity: 1, y: 0 }}
-                          transition={{ duration: 0.7, delay: idx * 0.1 }}
-                          viewport={{ once: true, amount: 0.2 }}
-                        >
-                          <Box
-                            position="relative"
-                            borderRadius="40px"
-                            p="3px"
-                            bgGradient="linear(135deg, #65a8bf 0%, #b7a27d 50%, #65a8bf 100%)"
-                            boxShadow="0 30px 60px -15px rgba(0, 0, 0, 0.6), 0 0 40px rgba(101, 168, 191, 0.15)"
-                          >
-                            <Box
-                              bg="linear-gradient(135deg, #0a0f1a 0%, #111827 100%)"
-                              borderRadius="38px"
-                              p={{ base: 6, md: 10 }}
-                              minH={{ base: "auto", md: "320px" }}
-                            >
-                              <VStack align="start" gap={{ base: 4, md: 5 }} w="100%">
-                                <Box
-                                  w={{ base: "60px", md: "80px" }}
-                                  h={{ base: "60px", md: "80px" }}
-                                  borderRadius="20px"
-                                  bgGradient="linear(135deg, rgba(101, 168, 191, 0.2) 0%, rgba(183, 162, 125, 0.2) 100%)"
-                                  border="2px solid"
-                                  borderColor="rgba(101, 168, 191, 0.3)"
-                                  display="flex"
-                                  alignItems="center"
-                                  justifyContent="center"
-                                  flexShrink={0}
-                                  boxShadow="0 0 30px rgba(101, 168, 191, 0.2)"
-                                >
-                                  <Icon as={card.icon} boxSize={{ base: 8, md: 10 }} color={UI.accent} />
-                                </Box>
-                                <VStack align="start" gap={{ base: 3, md: 4 }} w="100%">
-                                  <Heading
-                                    fontSize={{ base: "xl", md: "3xl" }}
-                                    fontWeight="bold"
-                                    bgGradient="linear(to-r, #ffffff, #e2e8f0)"
-                                    bgClip="text"
-                                  >
-                                    {t(`home.services.${card.key}.title`) || card.key}
-                                  </Heading>
-                                  <Text
-                                    fontSize={{ base: "sm", md: "lg" }}
-                                    color="gray.400"
-                                    lineHeight="1.8"
-                                  >
-                                    {t(`home.services.${card.key}.description`) || ""}
-                                  </Text>
-                                  <HStack gap={2} mt={2} flexWrap="wrap">
-                                    {(t(`home.services.${card.key}.tags`, { returnObjects: true }) as string[] || []).map((tag: string, i: number) => (
-                                      <Badge
-                                        key={i}
-                                        bg="rgba(101, 168, 191, 0.1)"
-                                        color="#65a8bf"
-                                        px={{ base: 3, md: 4 }}
-                                        py={{ base: 1, md: 2 }}
-                                        borderRadius="full"
-                                        fontSize={{ base: "xs", md: "sm" }}
-                                        fontWeight="500"
-                                        border="1px solid"
-                                        borderColor="rgba(101, 168, 191, 0.3)"
-                                      >
-                                        {tag}
-                                      </Badge>
-                                    ))}
-                                  </HStack>
-                                </VStack>
-                              </VStack>
-                            </Box>
-                          </Box>
-                        </MotionBox>
-                      </Box>
-                    ))}
-                  </Container>
-                </Box>
 
                 {/* App Showcase Section */}
                 <ParallaxSection speed={0.4}>

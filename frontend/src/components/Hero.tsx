@@ -2615,74 +2615,55 @@ export default function Hero(props: HeroProps) {
                   >
                     <BreakingNewsTicker mode={mode as "dark" | "light"} />
                   </Box>
-                  <Box
+                  {/* Compact controls — single line, upper-right, never pushed by ticker */}
+                  <HStack
                     position="absolute"
-                    top={{ base: "40px", md: "40px" }}
+                    top="6px"
                     right={{ base: 4, md: 8 }}
-                    zIndex={3}
+                    zIndex={5}
+                    spacing={1}
                   >
-                    <HStack spacing={2}>
-                      <Badge borderRadius="full" px={3} bg="blackAlpha.400" color={mode === "dark" ? "white" : "black"}>
-                        {activeLayoutName}
-                      </Badge>
-                      <Tooltip label="Previous layout" placement="bottom" hasArrow>
-                        <IconButton
-                          aria-label="Previous layout"
-                          icon={<Text fontSize="lg">{"←"}</Text>}
-                          variant="ghost"
-                          color={mode === "dark" ? "white" : "black"}
-                          _hover={{ bg: "blackAlpha.300" }}
-                          onClick={goPrevLayout}
-                        />
-                      </Tooltip>
-                      <Tooltip label="Next layout" placement="bottom" hasArrow>
-                        <IconButton
-                          aria-label="Next layout"
-                          icon={<Text fontSize="lg">{"→"}</Text>}
-                          variant="ghost"
-                          color={mode === "dark" ? "white" : "black"}
-                          _hover={{ bg: "blackAlpha.300" }}
-                          onClick={goNextLayout}
-                        />
-                      </Tooltip>
-                      <Tooltip label="Dashboard settings" placement="bottom" hasArrow>
-                        <IconButton
-                          aria-label="Open dashboard settings"
-                          icon={<SettingsIcon boxSize={3} />}
-                          size="sm"
-                          variant="solid"
-                          color="black"
-                          bg="#65a8bf"
-                          _hover={{ bg: "#65a8bf" }}
-                          onClick={() => setIsDashboardSettingsOpen(true)}
-                          borderRadius="full"
-                        />
-                      </Tooltip>
-                      <Tooltip label="Reset dashboard layout" placement="bottom" hasArrow>
-                        <IconButton
-                          aria-label="Reset dashboard layout"
-                          icon={<RepeatIcon />}
-                          variant="ghost"
-                          color="red.500"
-                          _hover={{ bg: "red.500", color: "white" }}
-                          onClick={resetDashboardLayout}
-                        />
-                      </Tooltip>
-                      <Tooltip label={isFullscreen ? "Exit fullscreen" : "Fullscreen mode"} placement="bottom" hasArrow>
-                        <IconButton
-                          aria-label={isFullscreen ? "Exit fullscreen" : "Enter fullscreen"}
-                          icon={isFullscreen ? <Minimize2 size={16} /> : <Maximize2 size={16} />}
-                          size="sm"
-                          variant="solid"
-                          color="white"
-                          bg={isFullscreen ? "green.500" : "purple.500"}
-                          _hover={{ bg: isFullscreen ? "green.600" : "purple.600" }}
-                          onClick={toggleFullscreen}
-                          borderRadius="full"
-                        />
-                      </Tooltip>
-                    </HStack>
-                  </Box>
+                    <Badge
+                      borderRadius="full"
+                      px={2}
+                      py={0.5}
+                      fontSize="2xs"
+                      bg="blackAlpha.500"
+                      color={mode === "dark" ? "white" : "black"}
+                      cursor="pointer"
+                      onClick={goNextLayout}
+                      _hover={{ bg: "blackAlpha.600" }}
+                      title={`Layout: ${activeLayoutName} (click to cycle)`}
+                    >
+                      {activeLayoutName}
+                    </Badge>
+                    <Tooltip label="Dashboard settings" placement="bottom" hasArrow>
+                      <IconButton
+                        aria-label="Open dashboard settings"
+                        icon={<SettingsIcon boxSize={3} />}
+                        size="xs"
+                        variant="solid"
+                        color="black"
+                        bg="#65a8bf"
+                        _hover={{ bg: "#5a9bb0" }}
+                        onClick={() => setIsDashboardSettingsOpen(true)}
+                        borderRadius="full"
+                      />
+                    </Tooltip>
+                    <Tooltip label={isFullscreen ? "Exit fullscreen" : "Fullscreen"} placement="bottom" hasArrow>
+                      <IconButton
+                        aria-label={isFullscreen ? "Exit fullscreen" : "Enter fullscreen"}
+                        icon={isFullscreen ? <Minimize2 size={14} /> : <Maximize2 size={14} />}
+                        size="xs"
+                        variant="solid"
+                        color="white"
+                        bg={isFullscreen ? "green.500" : "purple.500"}
+                        _hover={{ bg: isFullscreen ? "green.600" : "purple.600" }}
+                        onClick={toggleFullscreen}
+                        borderRadius="full"
+                      />
+                    </Tooltip>
+                  </HStack>
 
                   <Box 
                     ref={dashboardRef}
