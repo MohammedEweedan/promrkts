@@ -39,6 +39,7 @@ import OptimizedImage from "../components/OptimizedImage";
 import { Maximize2, Minimize2 } from "lucide-react";
 import GridLayout, { Layout } from "react-grid-layout";
 import { Responsive, WidthProvider } from "react-grid-layout";
+import SpinningWheel from "./SpinningWheel";
 
 import "react-grid-layout/css/styles.css";
 import "react-resizable/css/styles.css";
@@ -2868,6 +2869,8 @@ export default function Hero(props: HeroProps) {
           </Box>
         </Container>
       </Box>
+
+      <SpinningWheel isOpen={spinOpen} onClose={() => setSpinOpen(false)} />
     </>
   );
 }

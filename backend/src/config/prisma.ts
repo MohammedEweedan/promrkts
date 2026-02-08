@@ -23,30 +23,21 @@ function createClient() {
       : ['error'],
   });
 
-  // Add middleware for query timing and error tracking
-  base.$use(async (params: any, next: (params: any) => Promise<any>) => {
-    const start = Date.now();
+  if (process.env.NODE_ENV === "development") {
     try {
-      const result = await next(params);
-      const duration = Date.now() - start;
-      
-      // Log slow queries (> 1 second)
-      if (duration > 1000) {
-        console.warn(`Slow Prisma query: ${params.model}.${params.action} took ${duration}ms`);
-      }
-      
-      prismaHealth.isConnected = true;
-      prismaHealth.lastError = null;
-      prismaHealth.lastCheck = Date.now();
-      
-      return result;
-    } catch (error: any) {
-      prismaHealth.isConnected = false;
-      prismaHealth.lastError = error?.message || 'Unknown error';
-      prismaHealth.lastCheck = Date.now();
-      throw error;
+      (base as any).$on?.("query", (e: any) => {
+        const duration = Number(e?.duration ?? 0);
+        if (duration > 1000) {
+          console.warn(`Slow Prisma query: ${duration}ms`, {
+            query: e?.query,
+            params: e?.params,
+          });
+        }
+      });
+    } catch {
+      // ignore
     }
-  });
+  }
 
   try {
     const useAccelerate =
