@@ -192,13 +192,14 @@ export async function handlePurchaseConfirmed(purchaseId: string) {
 }
 
 export const createPurchase = [requireAuth, async (req: Request & { user?: any }, res: Response) => {
-  const { tierId, method, promoCode: rawPromoCode, refCode: rawRefCode, preview, vipTelegram } = req.body as {
+  const { tierId, method, promoCode: rawPromoCode, refCode: rawRefCode, preview, vipTelegram, network } = req.body as {
     tierId: string;
     method: 'usdt' | 'free' | 'card';
     promoCode?: string;
     refCode?: string;
     preview?: boolean;
     vipTelegram?: boolean;
+    network?: 'trc20' | 'erc20';
   };
   const tier = await prisma.courseTier.findUnique({ where: { id: tierId } });
   if (!tier) return res.status(404).json({ error: 'Tier not found' });
@@ -370,10 +371,14 @@ export const createPurchase = [requireAuth, async (req: Request & { user?: any }
     return res.json({ provider: 'card', purchaseId: purchase.id, checkoutUrl: session.url, status: 'pending' });
   }
 
-  // Only USDT (TRC20)
+  // USDT payment - select wallet based on network (TRC20 or ERC20)
   const provider = 'usdt';
   const amount = finalPrice + vipAddon;
-  return res.json({ provider, network: 'TRC20', purchaseId: purchase.id, address: process.env.USDT_WALLET_ADDRESS || 'address', amount, status: 'pending' });
+  const selectedNetwork = network === 'erc20' ? 'ERC20' : 'TRC20';
+  const walletAddress = selectedNetwork === 'ERC20'
+    ? (process.env.USDT_ERC20 || process.env.USDT_WALLET_ADDRESS || '')
+    : (process.env.USDT_TRC20 || process.env.USDT_WALLET_ADDRESS || '');
+  return res.json({ provider, network: selectedNetwork, purchaseId: purchase.id, address: walletAddress, amount, status: 'pending' });
 }];
 
 // Admin-only: metrics (counts and revenue)

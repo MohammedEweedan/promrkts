@@ -9,8 +9,10 @@ import dotenv from "dotenv";
 import cookieParser from "cookie-parser";
 import rateLimit from "express-rate-limit";
 import { errorHandler } from "./middleware/errorHandler";
+import { requestTimeout, slowRequestLogger } from "./middleware/timeout";
 import apiRoutes from "./routes/index";
-import prisma from "./config/prisma";
+import prisma, { getPrismaHealth } from "./config/prisma";
+import db from "./config/database";
 
 dotenv.config();
 
@@ -94,16 +96,54 @@ app.use(
   })
 );
 
-// Rate limiting disabled for development
-// if (process.env.NODE_ENV !== "test" && process.env.DISABLE_RATE_LIMIT !== "1") {
-//   const limiter = rateLimit({ windowMs: 15 * 60 * 1000, limit: 300 });
-//   app.use((req, res, next) => {
-//     // Skip limiting for monitoring/analytics, spin wheel, and preflight
-//     if (req.method === "OPTIONS") return next();
-//     if (req.path === "/monitoring" || req.path === "/analytics/track" || req.path === "/spin") return next();
-//     return limiter(req, res, next);
-//   });
-// }
+// Rate limiting for production security
+if (process.env.NODE_ENV !== "test" && process.env.DISABLE_RATE_LIMIT !== "1") {
+  // General API rate limit: 300 requests per 15 minutes
+  const generalLimiter = rateLimit({
+    windowMs: 15 * 60 * 1000,
+    limit: 300,
+    standardHeaders: true,
+    legacyHeaders: false,
+    message: { error: "Too many requests, please try again later." },
+    skip: (req) => {
+      // Skip limiting for monitoring/analytics, spin wheel, health checks, and preflight
+      if (req.method === "OPTIONS") return true;
+      if (req.path === "/monitoring" || req.path === "/analytics/track" || req.path === "/spin") return true;
+      if (req.path === "/health" || req.path === "/db-check") return true;
+      return false;
+    },
+  });
+
+  // Stricter limit for auth endpoints: 10 requests per 15 minutes
+  const authLimiter = rateLimit({
+    windowMs: 15 * 60 * 1000,
+    limit: 10,
+    standardHeaders: true,
+    legacyHeaders: false,
+    message: { error: "Too many authentication attempts, please try again later." },
+  });
+
+  // Stricter limit for purchase endpoints: 20 requests per 15 minutes
+  const purchaseLimiter = rateLimit({
+    windowMs: 15 * 60 * 1000,
+    limit: 20,
+    standardHeaders: true,
+    legacyHeaders: false,
+    message: { error: "Too many purchase attempts, please try again later." },
+  });
+
+  // Apply auth limiter to sensitive endpoints
+  app.use("/api/auth/login", authLimiter);
+  app.use("/api/auth/register", authLimiter);
+  app.use("/api/auth/forgot-password", authLimiter);
+  app.use("/api/auth/reset-password", authLimiter);
+
+  // Apply purchase limiter
+  app.use("/api/purchase", purchaseLimiter);
+
+  // Apply general limiter to all other routes
+  app.use(generalLimiter);
+}
 
 /* ---------------- CORS (permissive to unblock) ---------------- */
 // Reflect any Origin and allow credentials; tighten later if needed
@@ -142,6 +182,10 @@ app.use((req, res, next) => {
   }
   return next();
 });
+
+/* ---------------- Request timeout and slow request logging ---------------- */
+app.use(requestTimeout());
+app.use(slowRequestLogger(3000)); // Log requests taking > 3 seconds
 
 /* ---------------- Body/cookies/logs ---------------- */
 app.use(
@@ -211,17 +255,49 @@ try {
   // Bot not available in production builds; ignore
 }
 
-app.get("/health", (_req, res) => {
-  res.status(200).json({ status: "ok" });
+app.get("/health", async (_req, res) => {
+  const prismaHealth = getPrismaHealth();
+  const pgHealth = db.getHealth();
+  
+  const isHealthy = prismaHealth.isConnected || pgHealth.isConnected;
+  
+  res.status(isHealthy ? 200 : 503).json({
+    status: isHealthy ? "ok" : "degraded",
+    timestamp: new Date().toISOString(),
+    uptime: process.uptime(),
+    memory: {
+      used: Math.round(process.memoryUsage().heapUsed / 1024 / 1024),
+      total: Math.round(process.memoryUsage().heapTotal / 1024 / 1024),
+    },
+    database: {
+      prisma: prismaHealth,
+      pg: pgHealth,
+    },
+  });
 });
 
 app.get("/db-check", async (_req, res) => {
   try {
+    const start = Date.now();
     const nowRows = await prisma.$queryRaw<any[]>`SELECT now() as now`;
     const dbRows = await prisma.$queryRaw<any[]>`SELECT current_database() as db`;
-    res.json({ ok: true, now: nowRows?.[0]?.now ?? null, database: dbRows?.[0]?.db ?? null });
+    const latency = Date.now() - start;
+    
+    res.json({
+      ok: true,
+      now: nowRows?.[0]?.now ?? null,
+      database: dbRows?.[0]?.db ?? null,
+      latencyMs: latency,
+      prismaHealth: getPrismaHealth(),
+      pgHealth: db.getHealth(),
+    });
   } catch (e: any) {
-    res.status(500).json({ ok: false, error: e?.message || "db error" });
+    res.status(500).json({
+      ok: false,
+      error: e?.message || "db error",
+      prismaHealth: getPrismaHealth(),
+      pgHealth: db.getHealth(),
+    });
   }
 });
 
