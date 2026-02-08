@@ -441,7 +441,7 @@ const Register: React.FC = () => {
             <Text color="#65a8bf" fontSize="lg" maxW="md">
               {t("auth.create_account_sub") || "Start your journey to financial mastery in just 2 minutes"}
             </Text>
-            <SocialProofBanner enrolledCount={2847} />
+            <SocialProofBanner enrolledCount={100007} />
           </VStack>
 
           {/* Step Indicator */}

@@ -19,7 +19,7 @@ const { width } = Dimensions.get('window');
 
 const TELEGRAM_URL = 'https://t.me/promrkts';
 const DISCORD_INVITE_URL = 'https://discord.gg/promrkts';
-const DISCORD_WIDGET_SERVER_ID = '1447879971946102847';
+const DISCORD_WIDGET_SERVER_ID = '144787997194610100007';
 
 type TabType = 'telegram' | 'discord';
 

@@ -240,7 +240,7 @@ const CoursesList: React.FC = () => {
             </VStack>
           </SimpleGrid>
 
-          <SocialProofBanner enrolledCount={2847} recentPurchases={8} />
+          <SocialProofBanner enrolledCount={100007} recentPurchases={8} />
         </VStack>
       </MotionBox>
 

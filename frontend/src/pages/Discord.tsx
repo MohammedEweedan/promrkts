@@ -30,7 +30,7 @@ const GOLD = "#65a8bf";
 const DISCORD_PURPLE = "#5865F2";
 
 // Use your server id (same one in Hero widget)
-const DISCORD_WIDGET_SERVER_ID = "1447879971946102847";
+const DISCORD_WIDGET_SERVER_ID = "144787997194610100007";
 
 const DiscordServerWidget: React.FC<{ inviteUrl?: string }> = ({ inviteUrl }) => {
   const widgetSrc = React.useMemo(() => {

@@ -711,7 +711,7 @@ const Checkout: React.FC = () => {
                   )}
                 </HStack>
               </HStack>
-              <SocialProofBanner enrolledCount={2847} recentPurchases={12} />
+              <SocialProofBanner enrolledCount={100007} recentPurchases={12} />
             </VStack>
           </Box>
         </MotionBox>

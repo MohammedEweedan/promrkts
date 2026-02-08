@@ -502,7 +502,7 @@ type DiscordWidgetProps = {
   inviteUrl?: string;
 };
 
-const DISCORD_WIDGET_SERVER_ID = "1447879971946102847";
+const DISCORD_WIDGET_SERVER_ID = "144787997194610100007";
 
 const DiscordServerWidget: React.FC<DiscordWidgetProps> = ({ inviteUrl }) => {
   const { mode } = useThemeMode();

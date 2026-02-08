@@ -3,11 +3,11 @@ import { useNavigate, Link as RouterLink } from 'react-router-dom';
 import { useTranslation } from 'react-i18next';
 import api from '../api/client';
 import { loginFunnel, identify } from '../utils/tracking';
-import { Box, Container, Heading, Text, VStack, HStack, Input, Button, chakra, Icon, useColorMode } from '@chakra-ui/react';
+import { Box, Container, Heading, Text, VStack, HStack, Input, Button, chakra, Icon } from '@chakra-ui/react';
 import { useAuth } from '../auth/AuthContext';
 import SpotlightCard from '../components/SpotlightCard';
 import { motion } from 'framer-motion';
-import { Lock, Sparkles, ArrowRight } from 'lucide-react';
+import { Lock, ArrowRight } from 'lucide-react';
 import TrustBadges, { SocialProofBanner } from '../components/TrustBadges';
 
 const MotionBox = motion(Box);
@@ -62,9 +62,6 @@ const Login: React.FC = () => {
     }
   };
 
-  const { colorMode } = useColorMode();
-  const isDark = colorMode === 'dark';
-
   return (
     <Box bg="transparent" color="text.primary" minH="60vh" display="flex" alignItems="center" justifyContent="center" py={{ base: 8, md: 12 }}>
       <Container maxW="md">
@@ -87,7 +84,7 @@ const Login: React.FC = () => {
               <Text color="text.muted" fontSize="md">
                 {t('auth.login_subtitle') || 'Continue your journey to financial mastery'}
               </Text>
-              <SocialProofBanner enrolledCount={2847} />
+              <SocialProofBanner enrolledCount={100007} />
             </VStack>
 
             <SpotlightCard>

@@ -435,7 +435,7 @@ const Contact: React.FC = () => {
               <Text color="#65a8bf" fontSize="lg" maxW="md">
                 {t("contact.subtitle", { defaultValue: "We're here to help you succeed in your trading journey" })}
               </Text>
-              <SocialProofBanner enrolledCount={2847} />
+              <SocialProofBanner enrolledCount={100007} />
               
               {/* Trust indicators */}
               <HStack spacing={6} flexWrap="wrap" justify="center" pt={2}>
