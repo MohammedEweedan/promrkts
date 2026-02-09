@@ -235,6 +235,7 @@ export async function sendWelcomeEmailAfterVerification(user: { email: string; n
     <p style="color: #333333; font-size: 15px; line-height: 1.7; margin: 0 0 4px;">
       Welcome aboard,
     </p>
+    <img src="data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHdpZHRoPSIxODAiIGhlaWdodD0iNjAiIHZpZXdCb3g9IjAgMCAxODAgNjAiPjxwYXRoIGQ9Ik0xMCA0NUMxNSAyMCAyNSAxMiAzNSAyMEM0MCAyNSAzMCA0MCAzNSA0NUM0MCA1MCA1MCAyMCA1NSAxNUM2MCAxMCA2NSAzMCA2MCAzNUM1NSA0MCA2NSA0NSA3MCAzNSIgZmlsbD0ibm9uZSIgc3Ryb2tlPSIjMWExYTFhIiBzdHJva2Utd2lkdGg9IjEuOCIgc3Ryb2tlLWxpbmVjYXA9InJvdW5kIiBzdHJva2UtbGluZWpvaW49InJvdW5kIi8+PHBhdGggZD0iTTc1IDQwQzgwIDI1IDg1IDE1IDkwIDIwQzk1IDI1IDg1IDQwIDkwIDQ1Qzk1IDUwIDEwMCAxNSAxMDUgMjBDMTEwIDI1IDEwNSA0MCAxMTAgMzUiIGZpbGw9Im5vbmUiIHN0cm9rZT0iIzFhMWExYSIgc3Ryb2tlLXdpZHRoPSIxLjgiIHN0cm9rZS1saW5lY2FwPSJyb3VuZCIgc3Ryb2tlLWxpbmVqb2luPSJyb3VuZCIvPjxwYXRoIGQ9Ik0xMTUgNDBDMTIwIDIwIDEzMCAxNSAxMzUgMjVDMTQwIDM1IDEyNSA0NSAxMzUgNDVDMTQ1IDQ1IDE1MCAyMCAxNTUgMjVDMTYwIDMwIDE1NSA0MCAxNjUgMzUiIGZpbGw9Im5vbmUiIHN0cm9rZT0iIzFhMWExYSIgc3Ryb2tlLXdpZHRoPSIxLjgiIHN0cm9rZS1saW5lY2FwPSJyb3VuZCIgc3Ryb2tlLWxpbmVqb2luPSJyb3VuZCIvPjwvc3ZnPg==" alt="Moe Ali signature" width="140" height="48" style="display: block; margin: 8px 0 4px; opacity: 0.85;" />
     <p style="color: #1a1a1a; font-size: 15px; font-weight: 600; margin: 0 0 2px;">
       Moe Ali
     </p>
