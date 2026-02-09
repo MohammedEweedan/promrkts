@@ -31,24 +31,34 @@ const GridMotion: FC<GridMotionProps> = ({
   useEffect(() => {
     gsap.ticker.lagSmoothing(0);
 
+    const hasPointer = window.matchMedia('(hover: hover)').matches;
+    let startTime = Date.now();
+
     const handleMouseMove = (e: MouseEvent): void => {
       mouseXRef.current = e.clientX;
     };
 
     const updateMotion = (): void => {
-      const maxMoveAmount = 300;
+      const elapsed = (Date.now() - startTime) / 1000;
       const baseDuration = 0.8;
       const inertiaFactors = [0.6, 0.4, 0.3, 0.2];
 
       rowRefs.current.forEach((row, index) => {
         if (row) {
           const direction = index % 2 === 0 ? 1 : -1;
-          const moveAmount =
-            ((mouseXRef.current / window.innerWidth) * maxMoveAmount - maxMoveAmount / 2) *
-            direction;
+
+          // Auto-drift: continuous sine-wave oscillation per row
+          const autoSpeed = 0.15 + index * 0.05;
+          const autoAmplitude = hasPointer ? 120 : 180;
+          const autoDrift = Math.sin(elapsed * autoSpeed + index * 1.8) * autoAmplitude * direction;
+
+          // Mouse-follow (desktop only)
+          const mouseMove = hasPointer
+            ? ((mouseXRef.current / window.innerWidth) * 200 - 100) * direction
+            : 0;
 
           gsap.to(row, {
-            x: moveAmount,
+            x: autoDrift + mouseMove,
             duration: baseDuration + inertiaFactors[index % inertiaFactors.length],
             ease: 'power3.out',
             overwrite: 'auto',
@@ -58,10 +68,14 @@ const GridMotion: FC<GridMotionProps> = ({
     };
 
     const removeAnimationLoop = gsap.ticker.add(updateMotion);
-    window.addEventListener('mousemove', handleMouseMove);
+    if (hasPointer) {
+      window.addEventListener('mousemove', handleMouseMove);
+    }
 
     return () => {
-      window.removeEventListener('mousemove', handleMouseMove);
+      if (hasPointer) {
+        window.removeEventListener('mousemove', handleMouseMove);
+      }
       removeAnimationLoop();
     };
   }, []);
