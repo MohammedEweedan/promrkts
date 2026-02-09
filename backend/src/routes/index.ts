@@ -33,6 +33,7 @@ import notificationsRoutes from './notifications.routes';
 import messagesRoutes from './messages.routes';
 import configRoutes from './config.routes';
 import statsRoutes from './stats.routes';
+import inboundEmailRoutes from './inbound-email.routes';
 
 const router = Router();
 
@@ -74,5 +75,6 @@ router.use('/notifications', notificationsRoutes);
 router.use('/messages', messagesRoutes);
 router.use('/config', configRoutes);
 router.use('/stats', statsRoutes);
+router.use('/resend', inboundEmailRoutes);
 
 export default router;

@@ -38,7 +38,7 @@ import { CheckCircleIcon } from "@chakra-ui/icons";
 // Glassmorphism card replaces SpotlightCard
 import { motion, AnimatePresence } from "framer-motion";
 import PremiumStepIndicator from "../components/PremiumStepIndicator";
-import { User, Mail, Phone, FileCheck, ArrowLeft, ArrowRight, Eye, EyeOff, Shield, Zap, CheckCircle, UserPlus } from "lucide-react";
+import { User, Mail, FileCheck, ArrowLeft, ArrowRight, Eye, EyeOff, Shield, Zap, CheckCircle, UserPlus } from "lucide-react";
 import OAuthButtons from "../components/OAuthButtons";
 
 const CSelect = chakra("select");
@@ -67,7 +67,7 @@ const Register: React.FC = () => {
   const [searchParams] = useSearchParams();
   const hasTrackedStart = useRef(false);
 
-  // Step state (1: basic, 2: contact, 3: additional)
+  // Step state (1: basic, 2: verify email, 3: complete)
   const [step, setStep] = useState<number>(1);
 
   // Common fields
@@ -79,27 +79,17 @@ const Register: React.FC = () => {
   const [accountCreated, setAccountCreated] = useState(false);
   const [password, setPassword] = useState("");
   const [confirmPassword, setConfirmPassword] = useState("");
-  const [phone, setPhone] = useState("");
 
   // Extra fields
   const [dob, setDob] = useState("");
-  const [gender, setGender] = useState("");
   const [showPassword, setShowPassword] = useState(false);
 
   const [error, setError] = useState<string | null>(null);
   const [, setLoading] = useState(false);
 
-  // Countries and phone
+  // Countries
   const [countries, setCountries] = useState<Country[]>([]);
   const [selectedCountry, setSelectedCountry] = useState<string>(""); // cca2 code
-  const [dialCode, setDialCode] = useState<string>("");
-
-  // OTP verification state (phone)
-  const [otpSending, setOtpSending] = useState(false);
-  const [otpVerifying, setOtpVerifying] = useState(false);
-  const [otpSent, setOtpSent] = useState(false);
-  const [otpCode, setOtpCode] = useState("");
-  const [phoneVerified, setPhoneVerified] = useState(false);
 
   // Email confirmation flow
   const [emailSending, setEmailSending] = useState(false);
@@ -149,17 +139,6 @@ const Register: React.FC = () => {
       }
     })();
   }, []);
-
-  // Update dial code when nationality changes
-  useEffect(() => {
-    if (!selectedCountry) return;
-    const c = countries.find((x) => x.cca2 === selectedCountry);
-    if (!c) return;
-    const root = c.iddRoots[0] || "";
-    const firstSuffix = c.iddSuffixes[0] || "";
-    const code = `${root}${firstSuffix}` || "";
-    setDialCode(code);
-  }, [selectedCountry, countries]);
 
   useEffect(() => {
     return () => {
@@ -269,63 +248,30 @@ const Register: React.FC = () => {
     }
   }, [step, emailVerified]);
 
-  const sendOtp = async () => {
-    setError(null);
-    setOtpSent(false);
-    setPhoneVerified(false);
-    try {
-      if (!dialCode || !phone) {
-        setError(t("auth.phone_required") || "Please enter your phone number.");
-        return;
-      }
-      setOtpSending(true);
-      await api.post("/auth/otp/send", { phone: `${dialCode}${phone}` });
-      setOtpSent(true);
-    } catch (e: any) {
-      setError(e?.response?.data?.message || t("auth.otp_send_failed") || "Failed to send OTP");
-    } finally {
-      setOtpSending(false);
-    }
-  };
-
-  const verifyOtp = async () => {
-    setError(null);
-    try {
-      if (!otpCode) {
-        setError(t("auth.otp_required") || "Enter the OTP code.");
-        return;
-      }
-      setOtpVerifying(true);
-      await api.post("/auth/otp/verify", { phone: `${dialCode}${phone}`, code: otpCode });
-      setPhoneVerified(true);
-    } catch (e: any) {
-      setError(e?.response?.data?.message || t("auth.otp_verify_failed") || "Failed to verify OTP");
-    } finally {
-      setOtpVerifying(false);
-    }
-  };
-
   const onSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     setLoading(true);
     setError(null);
     try {
-      // DOB validation
-      if (dob) {
-        const birth = new Date(dob);
-        const now = new Date();
-        const ageMs = now.getTime() - birth.getTime();
-        const ageYears = ageMs / (1000 * 60 * 60 * 24 * 365.25);
-        if (ageYears < 18) {
-          setError(t("auth.error_underage") || "You must be at least 18 years old.");
-          setLoading(false);
-          return;
-        }
-        if (ageYears > 100) {
-          setError(t("auth.error_overage") || "Please enter a valid date of birth.");
-          setLoading(false);
-          return;
-        }
+      // DOB is required
+      if (!dob) {
+        setError(t("auth.dob_required") || "Date of birth is required.");
+        setLoading(false);
+        return;
+      }
+      const birth = new Date(dob);
+      const now = new Date();
+      const ageMs = now.getTime() - birth.getTime();
+      const ageYears = ageMs / (1000 * 60 * 60 * 24 * 365.25);
+      if (ageYears < 18) {
+        setError(t("auth.error_underage") || "You must be at least 18 years old.");
+        setLoading(false);
+        return;
+      }
+      if (ageYears > 100) {
+        setError(t("auth.error_overage") || "Please enter a valid date of birth.");
+        setLoading(false);
+        return;
       }
 
       // Password validations
@@ -340,23 +286,14 @@ const Register: React.FC = () => {
         return;
       }
 
-      // require phone verification when provided (email can be verified after register)
-      if (phone && !phoneVerified) {
-        setError(t("auth.phone_verify_required") || "Please verify your phone via OTP.");
-        setLoading(false);
-        return;
-      }
-
       if (!checkedTerms || !checkedDisclaimer) {
         setError(t("auth.agree_required") || "You must accept the terms and disclaimer.");
         setLoading(false);
         return;
       }
 
-      const fullPhone = phone ? `${dialCode || ""}${phone}` : undefined;
       const payload: any = { name, email, password, role };
       if (selectedCountry) payload.nationality = selectedCountry;
-      if (fullPhone) payload.phone = fullPhone;
 
       if (!accountCreated) {
         const { data } = await api.post("/auth/register", payload);
@@ -368,14 +305,9 @@ const Register: React.FC = () => {
         setAccountCreated(true);
       }
 
-      // Ensure both email and phone are verified before finalizing
+      // Ensure email is verified before finalizing
       if (!emailVerified) {
         setError(t("auth.email_verify_required") || "Please verify your email.");
-        setLoading(false);
-        return;
-      }
-      if (phone && !phoneVerified) {
-        setError(t("auth.phone_verify_required") || "Please verify your phone via OTP.");
         setLoading(false);
         return;
       }
@@ -423,11 +355,6 @@ const Register: React.FC = () => {
     password.length >= 8 &&
     confirmPassword === password
   );
-  const canAdvanceFromContact = () => {
-    // Phone is optional - if provided, must be verified; if empty, allow to continue
-    if (!phone || phone.trim() === '') return true;
-    return Boolean(phoneVerified);
-  };
 
   const isDark = colorMode === 'dark';
 
@@ -500,9 +427,10 @@ const Register: React.FC = () => {
             </Heading>
           </VStack>
 
-          {/* OAuth Buttons */}
+          {/* OAuth Buttons — hidden once user proceeds past step 1 */}
           <OAuthButtons
             mode="register"
+            hidden={step > 1}
             onError={(msg) => setError(msg)}
           />
 
@@ -511,7 +439,6 @@ const Register: React.FC = () => {
             steps={[
               { label: t("auth.step_account") || "Account", icon: User },
               { label: t("auth.step_verify") || "Verify", icon: Mail },
-              { label: t("auth.step_contact") || "Contact", icon: Phone },
               { label: t("auth.step_complete") || "Complete", icon: FileCheck },
             ]}
             currentStep={step}
@@ -714,29 +641,34 @@ const Register: React.FC = () => {
 
                   {step === 3 && (
                     <Fade key="step3">
-                      {/* ===== Section: Nationality & Phone (with OTP) ===== */}
+                      {/* ===== Section: Final details ===== */}
                       <Box>
                         <Heading as="h2" size="sm" mb={3}>
-                          {t("auth.contact_info") || "Contact information"}
+                          {t("auth.additional_info") || "Complete your profile"}
                         </Heading>
-
-                        <SimpleGrid columns={{ base: 2, md: 2 }} spacing={{ base: 4, md: 6 }}>
-                          <GridItem borderRadius="md" px={3} py={2} >
-                            <Text fontSize="sm" mb={1}>
-                              {t("auth.nationality", { defaultValue: "Nationality" })} <Text as="span" color="whiteAlpha.500" fontSize="xs">({t("common.optional", { defaultValue: "optional" })})</Text>
+                        <SimpleGrid columns={{ base: 1, md: 2 }} spacing={{ base: 4, md: 6 }}>
+                          <GridItem borderRadius="md" px={3} py={2}>
+                            <Text fontSize="sm" mb={1.5} fontWeight="600" color={isDark ? 'whiteAlpha.700' : 'gray.600'}>
+                              {t("auth.dob") || "Date of birth"} <Text as="span" color="red.400" fontSize="xs">*</Text>
+                            </Text>
+                            <Input
+                              type="date"
+                              value={dob}
+                              onChange={(e) => setDob(e.target.value)}
+                              required
+                              {...inputStyles}
+                            />
+                          </GridItem>
+                          <GridItem borderRadius="md" px={3} py={2}>
+                            <Text fontSize="sm" mb={1.5} fontWeight="600" color={isDark ? 'whiteAlpha.700' : 'gray.600'}>
+                              {t("auth.nationality", { defaultValue: "Nationality" })} <Text as="span" fontSize="xs" color={isDark ? 'whiteAlpha.400' : 'gray.400'}>({t("common.optional", { defaultValue: "optional" })})</Text>
                             </Text>
                             <CSelect
                               value={selectedCountry}
                               onChange={(e: React.ChangeEvent<HTMLSelectElement>) =>
                                 setSelectedCountry(e.target.value)
                               }
-                              borderRadius="md"
-                              px={3}
-                              py={2}
-                              maxW="250px"
-                              bg={colorMode === "dark" ? "black" : "white"}
-                              color={colorMode === "dark" ? "white" : "black"}
-                              
+                              {...inputStyles}
                             >
                               <option value="">{t("auth.nationality_placeholder") || "Select a country"}</option>
                               {countries.map((c) => (
@@ -746,129 +678,16 @@ const Register: React.FC = () => {
                               ))}
                             </CSelect>
                           </GridItem>
-
-                          <GridItem borderRadius="md" px={3} py={2} >
-                            <Text fontSize="sm" mb={1}>
-                              {t("auth.phone", { defaultValue: "Phone" })} <Text as="span" color="whiteAlpha.500" fontSize="xs">({t("common.optional", { defaultValue: "optional" })})</Text>
-                            </Text>
-                            <HStack>
-                              <CSelect
-                                value={dialCode}
-                                onChange={(e: React.ChangeEvent<HTMLSelectElement>) => setDialCode(e.target.value)}
-                                minW={{ base: "40%", md: "36%" }}
-                                borderRadius="md"
-                                px={3}
-                                py={2}
-                                
-                                bg={colorMode === "dark" ? "black" : "white"}
-                                color={colorMode === "dark" ? "white" : "black"}
-                              >
-                                {(() => {
-                                  const c = countries.find((x) => x.cca2 === selectedCountry);
-                                  const root = c?.iddRoots?.[0] || "";
-                                  const suffixes = c?.iddSuffixes?.length ? c.iddSuffixes : [""];
-                                  const opts = suffixes.map((s) => `${root}${s || ""}`).filter(Boolean);
-                                  const unique = Array.from(new Set(opts));
-                                  return unique.length ? unique : ["+"];
-                                })().map((code) => (
-                                  <option key={code} value={code}>
-                                    {code}
-                                  </option>
-                                ))}
-                              </CSelect>
-
-                              <Input
-                                value={phone}
-                                onChange={(e) => setPhone(e.target.value)}
-                                placeholder={(t("auth.phone_placeholder") as string) || "91 234 5678"}
-                                borderRadius="md"
-                                px={3}
-                                py={2}
-                                
-                              />
-                            </HStack>
-
-                            <HStack mt={2} gap={2} flexWrap="wrap">
-                              <Button
-                                variant="solid"
-                                bg="#65a8bf"
-                                onClick={sendOtp}
-                                isLoading={otpSending}
-                                disabled={!dialCode || !phone}
-                              >
-                                {t("auth.send_otp") || "Send OTP"}
-                              </Button>
-                              <Input
-                                value={otpCode}
-                                onChange={(e) => setOtpCode(e.target.value)}
-                                placeholder={(t("auth.otp_placeholder") as string) || "Enter OTP"}
-                                maxW="200px"
-                                borderRadius="md"
-                                
-                              />
-                              <Button onClick={verifyOtp} isLoading={otpVerifying} bg="#65a8bf" disabled={!otpCode}>
-                                {phoneVerified ? t("auth.verified") || "Verified" : t("auth.verify") || "Verify"}
-                              </Button>
-                            </HStack>
-
-                            {otpSent && !phoneVerified && (
-                              <Text fontSize="xs"  mt={1}>
-                                {t("auth.otp_sent") || "OTP sent. Please check your phone."}
-                              </Text>
-                            )}
-                            {phoneVerified && (
-                              <Text fontSize="xs" color="green.500" mt={1}>
-                                {t("auth.phone_verified") || "Phone verified."}
-                              </Text>
-                            )}
-                            <Text fontSize="xs"  mt={1}>
-                              {t("auth.otp_via_whatsapp") || "OTP will be delivered via WhatsApp, not SMS."}
-                            </Text>
-                            <Text fontSize="xs"  mt={1}>
-                              {t("auth.whatsapp_required") || "Your phone must be linked to WhatsApp to receive the OTP."}
-                            </Text>
-                          </GridItem>
                         </SimpleGrid>
 
-                        <HStack pt={2} justifyContent="space-between" />
-                      </Box>
-                    </Fade>
-                  )}
-
-                  {step === 4 && (
-                    <Fade key="step4">
-                      {/* ===== Section: Additional details (optional) ===== */}
-                      <Box>
-                        <Heading as="h2" size="sm" mb={3}>
-                          {t("auth.additional_info") || "Additional details"}
-                        </Heading>
-                        <SimpleGrid columns={{ base: 1, md: 2 }} spacing={{ base: 4, md: 6 }}>
-                          <GridItem borderRadius="md" px={3} py={2}>
-                            <Text fontSize="sm" mb={1} >
-                              {t("auth.dob") || "Date of birth"}
-                            </Text>
-                            <Input type="date" value={dob} onChange={(e) => setDob(e.target.value)} placeholder={t("auth.dob_placeholder") || "Date of birth"} />
-                          </GridItem>
-                          <GridItem borderRadius="md" px={3} py={2} >
-                            <Text fontSize="sm" mb={1} >
-                              {t("auth.gender", { defaultValue: "Gender" })} <Text as="span" color="whiteAlpha.500" fontSize="xs">({t("common.optional", { defaultValue: "optional" })})</Text>
-                            </Text>
-                            <CSelect value={gender} onChange={(e) => setGender(e.target.value)} borderRadius="md" px={3} py={2} bg={colorMode === "dark" ? "black" : "white"} color={colorMode === "dark" ? "white" : "black"} >
-                              <option value="">{t("common.select") || "Select"}</option>
-                              <option value="male">{t("auth.gender_male") || "Male"}</option>
-                              <option value="female">{t("auth.gender_female") || "Female"}</option>
-                            </CSelect>
-                          </GridItem>
-                        </SimpleGrid>
-
-                        <Divider />
+                        <Divider my={4} />
 
                         <FormControl mt={2}>
                           <Checkbox isChecked={checkedTerms} onChange={(e) => setCheckedTerms(e.target.checked)}>
                             {t("auth.accept_terms") || "I accept the Terms & Conditions"}
                           </Checkbox>
                           <FormHelperText>
-                            <Button variant="link" onClick={openTerms}>
+                            <Button variant="link" onClick={openTerms} color={BRAND} fontSize="xs">
                               {t("auth.view_terms") || "View terms"}
                             </Button>
                           </FormHelperText>
@@ -879,12 +698,11 @@ const Register: React.FC = () => {
                             {t("auth.accept_disclaimer") || "I accept the Disclaimer"}
                           </Checkbox>
                           <FormHelperText>
-                            <Button variant="link" onClick={openDisc}>
+                            <Button variant="link" onClick={openDisc} color={BRAND} fontSize="xs">
                               {t("auth.view_disclaimer") || "View disclaimer"}
                             </Button>
                           </FormHelperText>
                         </FormControl>
-                        <HStack pt={2} justifyContent="space-between" />
                       </Box>
                     </Fade>
                   )}
@@ -897,7 +715,6 @@ const Register: React.FC = () => {
               <Button
                 leftIcon={<ArrowLeft size={16} />}
                 variant="ghost"
-                
                 onClick={() => setStep((s) => Math.max(1, s - 1))}
                 isDisabled={step === 1}
                 borderRadius="xl"
@@ -946,21 +763,12 @@ const Register: React.FC = () => {
                     setError(null);
                     setStep(3);
                   } else if (step === 3) {
-                    if (!canAdvanceFromContact()) {
-                      setError(t("auth.phone_verify_required") || "Please verify your WhatsApp/phone OTP to continue.");
-                      return;
-                    }
-                    signupFunnel.step3Completed();
-                    setError(null);
-                    setStep(4);
-                  } else if (step === 4) {
-                    // Submit form on final step
                     formRef.current?.requestSubmit();
                   }
                 }}
-                isDisabled={(step === 1 && !canAdvanceFromBasic()) || (step === 3 && !canAdvanceFromContact())}
+                isDisabled={step === 1 && !canAdvanceFromBasic()}
               >
-                {step === 4 ? (t("auth.create_account") || "Create Account") : (t("common.next") || "Next")}
+                {step === 3 ? (t("auth.create_account") || "Create Account") : (t("common.next") || "Next")}
               </Button>
             </HStack>
           </Box>

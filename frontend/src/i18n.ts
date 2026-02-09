@@ -464,6 +464,7 @@ const resources = {
         subtitle: 'Subtitle',
         note: 'Note',
         close: 'Close',
+        accept: 'Accept',
         name: 'Name',
         origin: 'Origin',
         destination: 'Destination',
@@ -2007,6 +2008,7 @@ const resources = {
         subtitle: "Sous-titre",
         note: "Remarque",
         close: "Fermer",
+        accept: "Accepter",
         name: "Nom",
         origin: "Origine",
         destination: "Destination",
@@ -3391,6 +3393,7 @@ const resources = {
       common: {
         select: 'اختر',
         save: 'حفظ',
+        accept: 'قبول',
         optional: 'اختياري',
         upload: 'رفع',
         anonymous: 'طالب',

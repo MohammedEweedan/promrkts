@@ -40,6 +40,7 @@ const Login: React.FC = () => {
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [showPassword, setShowPassword] = useState(false);
+  const [emailFlowStarted, setEmailFlowStarted] = useState(false);
   const [remember, setRemember] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const [loading, setLoading] = useState(false);
@@ -158,9 +159,10 @@ const Login: React.FC = () => {
               </Heading>
             </VStack>
 
-            {/* OAuth Buttons */}
+            {/* OAuth Buttons — hidden once user starts email flow */}
             <OAuthButtons
               mode="login"
+              hidden={emailFlowStarted}
               onError={(msg) => setError(msg)}
             />
 
@@ -192,7 +194,8 @@ const Login: React.FC = () => {
                     <Input
                       type="email"
                       value={email}
-                      onChange={(e) => setEmail(e.target.value)}
+                      onChange={(e) => { setEmail(e.target.value); if (!emailFlowStarted) setEmailFlowStarted(true); }}
+                      onFocus={() => { if (!emailFlowStarted) setEmailFlowStarted(true); }}
                       placeholder={(t('auth.email_placeholder') as string) || 'you@example.com'}
                       required
                       {...inputStyles}

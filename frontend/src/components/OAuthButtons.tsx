@@ -20,12 +20,6 @@ const GitHubIcon = ({ color = 'currentColor' }: { color?: string }) => (
   </svg>
 );
 
-const AppleIcon = ({ color = 'currentColor' }: { color?: string }) => (
-  <svg width="20" height="20" viewBox="0 0 24 24" fill={color}>
-    <path d="M18.71 19.5c-.83 1.24-1.71 2.45-3.05 2.47-1.34.03-1.77-.79-3.29-.79-1.53 0-2 .77-3.27.82-1.31.05-2.3-1.32-3.14-2.53C4.25 17 2.94 12.45 4.7 9.39c.87-1.52 2.43-2.48 4.12-2.51 1.28-.02 2.5.87 3.29.87.78 0 2.26-1.07 3.8-.91.65.03 2.47.26 3.64 1.98-.09.06-2.17 1.28-2.15 3.81.03 3.02 2.65 4.03 2.68 4.04-.03.07-.42 1.44-1.38 2.83M13 3.5c.73-.83 1.94-1.46 2.94-1.5.13 1.17-.34 2.35-1.04 3.19-.69.85-1.83 1.51-2.95 1.42-.15-1.15.41-2.35 1.05-3.11z"/>
-  </svg>
-);
-
 // ===== Google OAuth via GSI =====
 declare global {
   interface Window {
@@ -43,6 +37,7 @@ declare global {
 
 type OAuthButtonsProps = {
   mode?: 'login' | 'register';
+  hidden?: boolean;
   onSuccess?: () => void;
   onError?: (msg: string) => void;
 };
@@ -50,7 +45,7 @@ type OAuthButtonsProps = {
 const GITHUB_CLIENT_ID = process.env.REACT_APP_GITHUB_CLIENT_ID || '';
 const GOOGLE_CLIENT_ID = process.env.REACT_APP_GOOGLE_CLIENT_ID || '';
 
-const OAuthButtons: React.FC<OAuthButtonsProps> = ({ mode = 'login', onSuccess, onError }) => {
+const OAuthButtons: React.FC<OAuthButtonsProps> = ({ mode = 'login', hidden = false, onSuccess, onError }) => {
   const { setUser, refresh } = useAuth();
   const navigate = useNavigate();
   const { colorMode } = useColorMode();
@@ -162,11 +157,6 @@ const OAuthButtons: React.FC<OAuthButtonsProps> = ({ mode = 'login', onSuccess, 
     }, 500);
   };
 
-  // ===== Apple =====
-  const handleApple = () => {
-    onError?.('Apple sign-in coming soon');
-  };
-
   const btnBase = {
     h: '48px',
     borderRadius: 'xl',
@@ -176,6 +166,8 @@ const OAuthButtons: React.FC<OAuthButtonsProps> = ({ mode = 'login', onSuccess, 
     flex: '1',
     minW: '0',
   };
+
+  if (hidden) return null;
 
   return (
     <VStack spacing={4} w="100%" maxW="md" mx="auto">
@@ -234,28 +226,6 @@ const OAuthButtons: React.FC<OAuthButtonsProps> = ({ mode = 'login', onSuccess, 
           leftIcon={<GitHubIcon color="white" />}
         >
           GitHub
-        </Button>
-
-        {/* Apple Button */}
-        <Button
-          onClick={handleApple}
-          isLoading={loading === 'apple'}
-          {...btnBase}
-          bg={isDark ? 'white' : '#000'}
-          color={isDark ? '#000' : 'white'}
-          border="1px solid"
-          borderColor={isDark ? 'white' : '#000'}
-          _hover={{
-            transform: 'translateY(-2px)',
-            boxShadow: isDark
-              ? '0 4px 15px rgba(255,255,255,0.15)'
-              : '0 4px 15px rgba(0,0,0,0.25)',
-            bg: isDark ? 'gray.100' : '#222',
-          }}
-          _active={{ transform: 'translateY(0)' }}
-          leftIcon={<AppleIcon color={isDark ? '#000' : 'white'} />}
-        >
-          Apple
         </Button>
       </HStack>
     </VStack>
