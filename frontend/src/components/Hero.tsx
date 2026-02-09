@@ -38,6 +38,7 @@ import TradingViewWidget, { TradingViewVariant } from "../components/TradingView
 import OptimizedImage from "../components/OptimizedImage";
 import { Maximize2, Minimize2 } from "lucide-react";
 import BreakingNewsTicker from "./BreakingNewsTicker";
+import TimelineNewsTabs from "./TimelineNewsTabs";
 import GridLayout, { Layout } from "react-grid-layout";
 import { Responsive, WidthProvider } from "react-grid-layout";
 import SpinningWheel from "./SpinningWheel";
@@ -139,7 +140,8 @@ type DesktopWidgetKind =
   | "tvTimeline"
   | "tvSymbolInfo"
   | "tvMarketData"
-  | "tvCryptoMarket";
+  | "tvCryptoMarket"
+  | "newsTimeline";
 
 type DesktopWidgetConfig = {
   id: string;
@@ -317,6 +319,7 @@ const WIDGET_TITLES: Record<DesktopWidgetKind, string> = {
   tvSymbolInfo: "Symbol Info",
   tvMarketData: "Market Data",
   tvCryptoMarket: "Cryptocurrency Market",
+  newsTimeline: "News Timeline",
 };
 
 const ADDABLE_WIDGETS: DesktopWidgetKind[] = [
@@ -340,6 +343,7 @@ const ADDABLE_WIDGETS: DesktopWidgetKind[] = [
   "tvMarketQuotes",
   "tvTimeline",
   "tvSymbolInfo",
+  "newsTimeline",
 ];
 
 // Free users only get basic widgets — no TradingView market data
@@ -349,6 +353,7 @@ const FREE_WIDGETS: DesktopWidgetKind[] = [
   "courses",
   "telegram",
   "discord",
+  "newsTimeline",
 ];
 
 type DashboardPreset = "standard" | "markets" | "ai" | "community" | "minimal";
@@ -1403,6 +1408,13 @@ export default function Hero(props: HeroProps) {
         accentColor: "#65a8bf",
         layout: { i: "discord", x: 6, y: 4, w: 6, h: 6, minW: 4, minH: 4 },
       },
+      {
+        id: "newsTimeline",
+        kind: "newsTimeline",
+        symbols: "",
+        accentColor: "#65a8bf",
+        layout: { i: "newsTimeline", x: 0, y: 10, w: 12, h: 8, minW: 4, minH: 5 },
+      },
     ];
     return base.map((w) => ({ ...w, layout: { ...w.layout, i: w.id } }));
   };
@@ -2410,6 +2422,8 @@ export default function Hero(props: HeroProps) {
         return <TradingViewWidget variant="forex-heatmap" />;
       case "tvTechnical":
         return <TradingViewWidget variant="technical-analysis" symbol={symbolsArray[0] || "NASDAQ:AAPL"} />;
+      case "newsTimeline":
+        return <TimelineNewsTabs mode={mode as "light" | "dark"} accentColor={widget.accentColor || "#65a8bf"} height={440} />;
       default:
         return (
           <Text fontSize="xs" color="gray.500">

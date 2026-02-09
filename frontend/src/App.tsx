@@ -51,6 +51,7 @@ const Discord = lazy(() => import('./pages/Discord'));
 const TokenCheckout = lazy(() => import('./pages/TokenCheckout'));
 const Hub = lazy(() => import('./pages/Hub'));
 const GitHubCallback = lazy(() => import('./pages/GitHubCallback'));
+const GoogleCallback = lazy(() => import('./pages/GoogleCallback'));
 
 function App() {
   const location = useLocation();
@@ -134,6 +135,7 @@ function App() {
               <Route path="/contact" element={<Contact />} />
               <Route path="/login" element={<Suspense fallback={<PageSkeleton variant="auth" />}><Login /></Suspense>} />
               <Route path="/auth/github/callback" element={<Suspense fallback={<PageSkeleton variant="auth" />}><GitHubCallback /></Suspense>} />
+              <Route path="/auth/google/callback" element={<Suspense fallback={<PageSkeleton variant="auth" />}><GoogleCallback /></Suspense>} />
               <Route path="/forgot-password" element={<Suspense fallback={<PageSkeleton variant="auth" />}><ForgotPassword /></Suspense>} />
               <Route path="/reset-password/:token" element={<Suspense fallback={<PageSkeleton variant="auth" />}><ResetPassword /></Suspense>} />
               <Route path="/register" element={<Suspense fallback={<PageSkeleton variant="auth" />}><Register /></Suspense>} />

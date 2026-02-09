@@ -134,9 +134,9 @@ const impactIcon = (impact: string) => {
   return Zap;
 };
 
-const impactColor = (impact: string) => {
-  if (impact === "high") return "red.400";
-  if (impact === "medium") return "orange.300";
+const impactColor = (impact: string, isDark: boolean) => {
+  if (impact === "high") return isDark ? "#f87171" : "#dc2626";
+  if (impact === "medium") return isDark ? "#fbbf24" : "#d97706";
   return ACCENT;
 };
 
@@ -149,7 +149,7 @@ const BreakingNewsTicker: React.FC<Props> = ({ mode }) => {
   const offsetRef = useRef(0);
   const rafRef = useRef<number>(0);
   const hoveredRef = useRef(false);
-  const speedRef = useRef(1.2); // px per frame — fast
+  const speedRef = useRef(0.5); // px per frame — comfortable reading speed
 
   // Fetch on mount + every 3 minutes
   useEffect(() => {
@@ -226,7 +226,7 @@ const BreakingNewsTicker: React.FC<Props> = ({ mode }) => {
             h="6px"
             borderRadius="full"
             bg={hasHighImpact ? "red.400" : "green.400"}
-            boxShadow={`0 0 6px ${hasHighImpact ? "rgba(220,38,38,0.6)" : "rgba(34,197,94,0.6)"}`}
+            boxShadow={`0 0 6px ${hasHighImpact ? "rgba(248,113,113,0.5)" : "rgba(34,197,94,0.6)"}`}
             sx={{
               animation: "tickerPulse 2s infinite",
               "@keyframes tickerPulse": {
@@ -240,7 +240,7 @@ const BreakingNewsTicker: React.FC<Props> = ({ mode }) => {
             fontWeight="800"
             textTransform="uppercase"
             letterSpacing="0.1em"
-            color={hasHighImpact ? "red.400" : ACCENT}
+            color={hasHighImpact ? (isDark ? "#f87171" : "#dc2626") : ACCENT}
           >
             {hasHighImpact ? "BREAKING" : "LIVE"}
           </Text>
@@ -271,14 +271,14 @@ const BreakingNewsTicker: React.FC<Props> = ({ mode }) => {
             <Icon
               as={impactIcon(item.impact)}
               boxSize={3}
-              color={impactColor(item.impact)}
+              color={impactColor(item.impact, isDark)}
             />
             <Text
               fontSize="xs"
               fontWeight={item.impact === "high" ? "bold" : "medium"}
               color={
                 item.impact === "high"
-                  ? "red.300"
+                  ? isDark ? "#fca5a5" : "#b91c1c"
                   : isDark ? "gray.300" : "gray.700"
               }
               whiteSpace="nowrap"

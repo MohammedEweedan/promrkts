@@ -27,7 +27,7 @@ declare global {
       accounts: {
         id: {
           initialize: (config: any) => void;
-          prompt: () => void;
+          prompt: (callback?: (notification: any) => void) => void;
           renderButton: (el: HTMLElement, config: any) => void;
         };
       };
@@ -79,6 +79,54 @@ const OAuthButtons: React.FC<OAuthButtonsProps> = ({ mode = 'login', hidden = fa
   };
 
   // ===== Google =====
+  // Fallback: open Google OAuth consent screen in a popup if One Tap is suppressed
+  const openGooglePopup = () => {
+    const redirectUri = `${window.location.origin}/auth/google/callback`;
+    const scope = 'openid email profile';
+    const url =
+      `https://accounts.google.com/o/oauth2/v2/auth?` +
+      `client_id=${GOOGLE_CLIENT_ID}` +
+      `&redirect_uri=${encodeURIComponent(redirectUri)}` +
+      `&response_type=code` +
+      `&scope=${encodeURIComponent(scope)}` +
+      `&prompt=select_account`;
+
+    const width = 500;
+    const height = 600;
+    const left = window.screenX + (window.outerWidth - width) / 2;
+    const top = window.screenY + (window.outerHeight - height) / 2;
+    const popup = window.open(url, 'google-oauth', `width=${width},height=${height},left=${left},top=${top}`);
+
+    const interval = setInterval(async () => {
+      try {
+        if (!popup || popup.closed) {
+          clearInterval(interval);
+          setLoading(null);
+          return;
+        }
+        const popupUrl = popup.location.href;
+        if (popupUrl.includes('code=')) {
+          clearInterval(interval);
+          const urlParams = new URLSearchParams(new URL(popupUrl).search);
+          const code = urlParams.get('code');
+          popup.close();
+
+          if (code) {
+            try {
+              const { data } = await api.post('/auth/oauth/google', { code });
+              await handleOAuthSuccess(data);
+            } catch (e: any) {
+              onError?.(e?.response?.data?.message || 'Google sign-in failed');
+            }
+          }
+          setLoading(null);
+        }
+      } catch {
+        // Cross-origin — popup hasn't redirected back yet
+      }
+    }, 500);
+  };
+
   const handleGoogle = () => {
     if (!GOOGLE_CLIENT_ID) {
       onError?.('Google sign-in is not configured. Please set REACT_APP_GOOGLE_CLIENT_ID.');
@@ -86,9 +134,9 @@ const OAuthButtons: React.FC<OAuthButtonsProps> = ({ mode = 'login', hidden = fa
     }
     setLoading('google');
 
+    // If GSI script hasn't loaded yet, go straight to popup flow
     if (!window.google?.accounts?.id) {
-      onError?.('Google sign-in is loading, please try again');
-      setLoading(null);
+      openGooglePopup();
       return;
     }
 
@@ -106,7 +154,13 @@ const OAuthButtons: React.FC<OAuthButtonsProps> = ({ mode = 'login', hidden = fa
       },
     });
 
-    window.google.accounts.id.prompt();
+    // prompt() with notification listener — if suppressed, fall back to popup
+    window.google.accounts.id.prompt((notification: any) => {
+      // If One Tap was suppressed or dismissed, open the popup consent screen
+      if (notification?.isNotDisplayed?.() || notification?.isSkippedMoment?.()) {
+        openGooglePopup();
+      }
+    });
   };
 
   // ===== GitHub =====

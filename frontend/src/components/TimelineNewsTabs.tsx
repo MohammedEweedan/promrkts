@@ -323,7 +323,7 @@ const TimelineNewsTabs: React.FC<Props> = ({ mode, accentColor = "#65a8bf", heig
   ];
 
   return (
-    <Box borderRadius="xl" overflow="hidden">
+    <Box borderRadius="xl" overflow="hidden" bg={isDark ? "rgba(15, 23, 42, 0.9)" : "white"}>
       <Tabs variant="unstyled" isLazy defaultIndex={0}>
         <TabList
           bg={isDark ? "rgba(15, 23, 42, 0.8)" : "white"}

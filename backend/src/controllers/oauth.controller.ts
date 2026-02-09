@@ -105,11 +105,38 @@ async function issueTokens(res: Response, user: any) {
 // ==================== GOOGLE ====================
 export const googleOAuth = async (req: Request, res: Response) => {
   try {
-    const { token, credential } = req.body as { token?: string; credential?: string };
-    const idToken = token || credential;
+    const { token, credential, code } = req.body as { token?: string; credential?: string; code?: string };
+    let idToken = token || credential;
+
+    // If we received an authorization code (popup flow), exchange it for an id_token
+    if (!idToken && code) {
+      const clientId = process.env.GOOGLE_CLIENT_ID || process.env.REACT_APP_GOOGLE_CLIENT_ID || '';
+      const clientSecret = process.env.GOOGLE_CLIENT_SECRET || '';
+      const origin = req.headers.origin || req.headers.referer?.replace(/\/$/, '') || '';
+      const redirectUri = `${origin}/auth/google/callback`;
+
+      const tokenResp = await fetch('https://oauth2.googleapis.com/token', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          code,
+          client_id: clientId,
+          client_secret: clientSecret,
+          redirect_uri: redirectUri,
+          grant_type: 'authorization_code',
+        }),
+      });
+
+      const tokenData = await tokenResp.json();
+      if (tokenData.error) {
+        logger.error('Google code exchange error:', tokenData);
+        return res.status(401).json({ status: 'error', message: tokenData.error_description || 'Failed to exchange Google code' });
+      }
+      idToken = tokenData.id_token;
+    }
 
     if (!idToken) {
-      return res.status(400).json({ status: 'error', message: 'Google token is required' });
+      return res.status(400).json({ status: 'error', message: 'Google token or code is required' });
     }
 
     // Verify the Google ID token by calling Google's tokeninfo endpoint
