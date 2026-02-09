@@ -40,8 +40,6 @@ import { useThemeMode } from "../themeProvider";
 import { Star, Trophy, Maximize2, Minimize2, Users, TrendingUp, DollarSign, Award, Target, Bot, MessageCircle, BarChart3, Smartphone, Lock, CheckCircle, GraduationCap, Globe, Flame, BookOpen, Rocket, Handshake } from "lucide-react";
 import Hero from "../components/Hero";
 import { useSessionMemory } from "../hooks/useSessionMemory";
-import CryptoMatrix from "../components/CryptoMatrix";
-import ForexMatrix from "../components/ForexMatrix";
 import { useAuth } from "../auth/AuthContext";
 import TimelineNewsTabs from "../components/TimelineNewsTabs";
 import LeaderboardOnboarding from "../components/LeaderboardOnboarding";
@@ -49,6 +47,7 @@ import SpotlightCard from "../components/SpotlightCard";
 import Leaderboard from "../components/Leaderboard";
 import GuestLanding from "../components/GuestLanding";
 import SpinningWheel from "../components/SpinningWheel";
+import GridMotion, { GridMotionItem } from "../components/GridMotion";
 import {
   fetchJourney,
   fetchEntitlements,
@@ -3133,6 +3132,76 @@ const Home: React.FC = () => {
                     </Box>
                   </ParallaxSection>
                 )}
+
+                {/* GridMotion Showcase — courses + products/offers */}
+                {(() => {
+                  const OFFER_TILES: { label: string; sub: string; icon: string; href: string }[] = [
+                    { label: "Prop Firm Challenge", sub: "Get funded up to $200k", icon: "🏆", href: "/products" },
+                    { label: "Discord Trading Floor", sub: "Live signals & community", icon: "💬", href: "/products" },
+                    { label: "AI Trading Coach", sub: "Personalized guidance", icon: "🤖", href: "/products" },
+                    { label: "Broker Partner", sub: "Tight spreads, ECN", icon: "📊", href: "/broker" },
+                    { label: "Mobile App", sub: "Trade on the go", icon: "📱", href: "/products" },
+                    { label: "Crypto Mastery", sub: "BTC, ETH & Altcoins", icon: "₿", href: "/products" },
+                    { label: "Forex Signals", sub: "Daily setups & analysis", icon: "📈", href: "/products" },
+                    { label: "Risk Management", sub: "Protect your capital", icon: "🛡️", href: "/products" },
+                  ];
+
+                  const courseItems: GridMotionItem[] = tiers.slice(0, 12).map((tier: any) => ({
+                    content: (
+                      <div style={{ display: "flex", flexDirection: "column", alignItems: "center", justifyContent: "center", gap: "8px", padding: "12px", width: "100%", height: "100%" }}>
+                        <span style={{ fontSize: "28px" }}>📘</span>
+                        <span style={{ fontWeight: 700, fontSize: "13px", lineHeight: 1.3, color: "#65a8bf", textAlign: "center", overflow: "hidden", display: "-webkit-box", WebkitLineClamp: 2, WebkitBoxOrient: "vertical" as any }}>{tier.name}</span>
+                        <span style={{ fontSize: "10px", opacity: 0.7, textAlign: "center", overflow: "hidden", display: "-webkit-box", WebkitLineClamp: 2, WebkitBoxOrient: "vertical" as any }}>{tier.description?.slice(0, 60)}</span>
+                      </div>
+                    ),
+                    onClick: () => navigate(`/products/${tier.id}`),
+                  }));
+
+                  const offerItems: GridMotionItem[] = OFFER_TILES.map((o) => ({
+                    content: (
+                      <div style={{ display: "flex", flexDirection: "column", alignItems: "center", justifyContent: "center", gap: "6px", padding: "12px", width: "100%", height: "100%" }}>
+                        <span style={{ fontSize: "28px" }}>{o.icon}</span>
+                        <span style={{ fontWeight: 700, fontSize: "13px", lineHeight: 1.3, color: "white", textAlign: "center" }}>{o.label}</span>
+                        <span style={{ fontSize: "10px", opacity: 0.6, textAlign: "center" }}>{o.sub}</span>
+                      </div>
+                    ),
+                    onClick: () => navigate(o.href),
+                  }));
+
+                  const allGridItems = [...courseItems, ...offerItems];
+                  if (allGridItems.length === 0) return null;
+
+                  return (
+                    <Box py={{ base: 10, md: 16 }}>
+                      <MotionBox
+                        initial={{ opacity: 0, y: 30 }}
+                        whileInView={{ opacity: 1, y: 0 }}
+                        transition={{ duration: 0.8 }}
+                        viewport={{ once: true, amount: 0.3 }}
+                      >
+                        <VStack spacing={3} textAlign="center" mb={{ base: 6, md: 10 }}>
+                          <Heading
+                            fontSize={{ base: "2.5rem", md: "3.5rem" }}
+                            letterSpacing="-0.03em"
+                            fontWeight="700"
+                            bgGradient="linear(to-r, #65a8bf, #b7a27d)"
+                            bgClip="text"
+                          >
+                            {t("home.grid.title", { defaultValue: "Explore Our Ecosystem" })}
+                          </Heading>
+                          <Text maxW="xl" fontSize={{ base: "md", md: "lg" }} opacity={0.8}>
+                            {t("home.grid.subtitle", { defaultValue: "Courses, tools, and communities — everything you need to trade smarter" })}
+                          </Text>
+                        </VStack>
+                      </MotionBox>
+                      <GridMotion
+                        items={allGridItems}
+                        bgColor={isDark ? "#050811" : "#f7fafc"}
+                        gradientColor={isDark ? "rgba(101, 168, 191, 0.06)" : "rgba(101, 168, 191, 0.04)"}
+                      />
+                    </Box>
+                  );
+                })()}
 
                 {/* Featured Courses & Subscriptions — always shown for non-enrolled */}
                 <ParallaxSection speed={0.3}>
