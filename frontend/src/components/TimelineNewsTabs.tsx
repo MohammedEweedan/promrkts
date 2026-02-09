@@ -101,7 +101,7 @@ const RSS2JSON_API = "https://api.rss2json.com/v1/api.json";
 async function fetchRssFeed(feedUrl: string, sourceName: string, tag: string, tagColor: string): Promise<RssItem[]> {
   try {
     const resp = await fetch(
-      `${RSS2JSON_API}?rss_url=${encodeURIComponent(feedUrl)}&count=20`,
+      `${RSS2JSON_API}?rss_url=${encodeURIComponent(feedUrl)}`,
       { signal: AbortSignal.timeout(8000) }
     );
     if (!resp.ok) return [];

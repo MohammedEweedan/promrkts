@@ -69,7 +69,7 @@ async function fetchTickerItems(): Promise<TickerItem[]> {
     TICKER_SOURCES.map(async (source) => {
       try {
         const resp = await fetch(
-          `${RSS2JSON_API}?rss_url=${encodeURIComponent(source.url)}&count=15`,
+          `${RSS2JSON_API}?rss_url=${encodeURIComponent(source.url)}`,
           { signal: AbortSignal.timeout(8000) }
         );
         if (!resp.ok) return [];
