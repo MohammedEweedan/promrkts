@@ -2678,7 +2678,7 @@ export default function Hero(props: HeroProps) {
                       bottom: 0,
                       zIndex: 9999,
                       bg: mode === "dark" ? "#0a0f1a" : "gray.50",
-                      pt: 16,
+                      pt: 20,
                       pb: 4,
                       overflowY: "auto",
                     } : {})}
@@ -2778,6 +2778,12 @@ export default function Hero(props: HeroProps) {
                             </Tooltip>
                           </HStack>
                         </HStack>
+                      </Box>
+                    )}
+                    {/* Ticker inside fullscreen */}
+                    {isFullscreen && (
+                      <Box position="fixed" top="48px" left={0} right={0} zIndex={10000}>
+                        <BreakingNewsTicker mode={mode as "dark" | "light"} />
                       </Box>
                     )}
                     <GridLayout

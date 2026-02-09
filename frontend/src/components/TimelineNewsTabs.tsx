@@ -16,7 +16,7 @@ import {
   Link,
   Icon,
 } from "@chakra-ui/react";
-import { ExternalLink, Newspaper, TrendingUp, Radio, Zap } from "lucide-react";
+import { ExternalLink, Newspaper, TrendingUp, Radio, Zap, Globe, DollarSign, Cpu } from "lucide-react";
 
 type Props = {
   mode: "light" | "dark";
@@ -38,32 +38,52 @@ function tvTimelineUrl(theme: "light" | "dark", market?: string) {
   return `${base}${query}#${cfg}`;
 }
 
-// ===== RSS Feed Sources (reliable feeds that work with rss2json) =====
-const RSS_SOURCES = [
-  {
-    name: "CNBC Markets",
-    url: "https://search.cnbc.com/rs/search/combinedcms/view.xml?partnerId=wrss01&id=20910258",
-    tag: "Finance",
-    color: "orange",
-  },
-  {
-    name: "MarketWatch",
-    url: "https://feeds.marketwatch.com/marketwatch/topstories/",
-    tag: "Markets",
-    color: "blue",
-  },
-  {
-    name: "CoinDesk",
-    url: "https://www.coindesk.com/arc/outboundfeeds/rss/",
-    tag: "Crypto",
-    color: "purple",
-  },
-  {
-    name: "Reuters Business",
-    url: "https://feeds.reuters.com/reuters/businessNews",
-    tag: "Business",
-    color: "teal",
-  },
+// ===== RSS Feed Sources — comprehensive list =====
+type FeedSource = {
+  name: string;
+  url: string;
+  tag: string;
+  color: string;
+  category: "finance" | "crypto" | "forex" | "world" | "tech";
+};
+
+const ALL_RSS_SOURCES: FeedSource[] = [
+  // --- Financial / Markets ---
+  { name: "CNBC", url: "https://search.cnbc.com/rs/search/combinedcms/view.xml?partnerId=wrss01&id=100003114", tag: "Finance", color: "orange", category: "finance" },
+  { name: "CNBC Markets", url: "https://search.cnbc.com/rs/search/combinedcms/view.xml?partnerId=wrss01&id=20910258", tag: "Markets", color: "orange", category: "finance" },
+  { name: "MarketWatch", url: "https://feeds.marketwatch.com/marketwatch/topstories/", tag: "Markets", color: "blue", category: "finance" },
+  { name: "MW Pulse", url: "https://feeds.marketwatch.com/marketwatch/marketpulse/", tag: "Markets", color: "blue", category: "finance" },
+  { name: "Reuters", url: "https://feeds.reuters.com/reuters/businessNews", tag: "Business", color: "teal", category: "finance" },
+  { name: "Reuters Corp", url: "https://feeds.reuters.com/reuters/companyNews", tag: "Business", color: "teal", category: "finance" },
+  { name: "Bloomberg", url: "https://feeds.bloomberg.com/markets/news.rss", tag: "Finance", color: "purple", category: "finance" },
+  { name: "Yahoo Finance", url: "https://feeds.finance.yahoo.com/rss/2.0/headline?s=^GSPC&region=US&lang=en-US", tag: "Finance", color: "purple", category: "finance" },
+  { name: "Investing.com", url: "https://www.investing.com/rss/news.rss", tag: "Markets", color: "green", category: "finance" },
+  { name: "Seeking Alpha", url: "https://seekingalpha.com/market_currents.xml", tag: "Markets", color: "orange", category: "finance" },
+  { name: "Financial Times", url: "https://www.ft.com/?format=rss", tag: "Finance", color: "pink", category: "finance" },
+  { name: "Economist", url: "https://www.economist.com/finance-and-economics/rss.xml", tag: "Economy", color: "red", category: "finance" },
+  // --- Crypto ---
+  { name: "CoinDesk", url: "https://www.coindesk.com/arc/outboundfeeds/rss/", tag: "Crypto", color: "purple", category: "crypto" },
+  { name: "CoinTelegraph", url: "https://cointelegraph.com/rss", tag: "Crypto", color: "blue", category: "crypto" },
+  { name: "Decrypt", url: "https://decrypt.co/feed", tag: "Crypto", color: "cyan", category: "crypto" },
+  { name: "Bitcoin Mag", url: "https://bitcoinmagazine.com/.rss/full/", tag: "Bitcoin", color: "orange", category: "crypto" },
+  // --- Forex / Commodities ---
+  { name: "ForexLive", url: "https://www.forexlive.com/feed/news", tag: "Forex", color: "green", category: "forex" },
+  { name: "FXStreet", url: "https://www.fxstreet.com/rss/news", tag: "Forex", color: "teal", category: "forex" },
+  { name: "DailyFX", url: "https://www.dailyfx.com/feeds/market-news", tag: "Forex", color: "blue", category: "forex" },
+  // --- World / General ---
+  { name: "BBC World", url: "https://feeds.bbci.co.uk/news/world/rss.xml", tag: "World", color: "red", category: "world" },
+  { name: "BBC Business", url: "https://feeds.bbci.co.uk/news/business/rss.xml", tag: "Business", color: "red", category: "world" },
+  { name: "NYT Business", url: "https://rss.nytimes.com/services/xml/rss/nyt/Business.xml", tag: "Business", color: "gray", category: "world" },
+  { name: "NYT World", url: "https://rss.nytimes.com/services/xml/rss/nyt/World.xml", tag: "World", color: "gray", category: "world" },
+  { name: "WaPo Business", url: "https://feeds.washingtonpost.com/rss/business", tag: "Business", color: "gray", category: "world" },
+  { name: "WaPo World", url: "https://feeds.washingtonpost.com/rss/world", tag: "World", color: "gray", category: "world" },
+  { name: "Al Jazeera", url: "https://www.aljazeera.com/xml/rss/all.xml", tag: "World", color: "orange", category: "world" },
+  { name: "AP News", url: "https://rss.app/feeds/v1.1/tGXWfDFCYDkSZhkl.xml", tag: "World", color: "red", category: "world" },
+  { name: "Guardian World", url: "https://www.theguardian.com/world/rss", tag: "World", color: "blue", category: "world" },
+  { name: "Guardian Biz", url: "https://www.theguardian.com/business/rss", tag: "Business", color: "blue", category: "world" },
+  // --- Tech ---
+  { name: "Ars Technica", url: "https://feeds.arstechnica.com/arstechnica/index", tag: "Tech", color: "orange", category: "tech" },
+  { name: "TechCrunch", url: "https://techcrunch.com/feed/", tag: "Tech", color: "green", category: "tech" },
 ];
 
 type RssItem = {
@@ -80,19 +100,22 @@ const RSS2JSON_API = "https://api.rss2json.com/v1/api.json";
 
 async function fetchRssFeed(feedUrl: string, sourceName: string, tag: string, tagColor: string): Promise<RssItem[]> {
   try {
-    const resp = await fetch(`${RSS2JSON_API}?rss_url=${encodeURIComponent(feedUrl)}&count=15`);
+    const resp = await fetch(
+      `${RSS2JSON_API}?rss_url=${encodeURIComponent(feedUrl)}&count=20`,
+      { signal: AbortSignal.timeout(8000) }
+    );
     if (!resp.ok) return [];
     const data = await resp.json();
     if (data.status !== "ok" || !Array.isArray(data.items)) return [];
     return data.items.map((item: any) => ({
-      title: item.title || "",
+      title: (item.title || "").trim(),
       link: item.link || "",
       pubDate: item.pubDate || "",
       source: sourceName,
       tag,
       tagColor,
       description: (item.description || "").replace(/<[^>]*>/g, "").slice(0, 200),
-    }));
+    })).filter((i: RssItem) => i.title);
   } catch {
     return [];
   }
@@ -192,14 +215,17 @@ const NewsItem: React.FC<{ item: RssItem; mode: string }> = ({ item, mode }) => 
 };
 
 // ===== RSS Feed Panel =====
-const RssFeedPanel: React.FC<{ mode: string; height: number; sources?: typeof RSS_SOURCES }> = ({
+const RssFeedPanel: React.FC<{ mode: string; height: number; sources: FeedSource[] }> = ({
   mode,
   height,
-  sources = RSS_SOURCES,
+  sources,
 }) => {
   const isDark = mode === "dark";
   const [items, setItems] = React.useState<RssItem[]>([]);
   const [loading, setLoading] = React.useState(true);
+
+  // Stable key so we don't refetch on every render
+  const sourceKey = React.useMemo(() => sources.map((s) => s.url).join("|"), [sources]);
 
   React.useEffect(() => {
     let cancelled = false;
@@ -213,13 +239,21 @@ const RssFeedPanel: React.FC<{ mode: string; height: number; sources?: typeof RS
       for (const r of results) {
         if (r.status === "fulfilled") all.push(...r.value);
       }
-      all.sort((a, b) => new Date(b.pubDate).getTime() - new Date(a.pubDate).getTime());
-      setItems(all);
+      // Deduplicate
+      const seen = new Set<string>();
+      const unique = all.filter((item) => {
+        const key = item.title.toLowerCase().slice(0, 60);
+        if (seen.has(key)) return false;
+        seen.add(key);
+        return true;
+      });
+      unique.sort((a, b) => new Date(b.pubDate).getTime() - new Date(a.pubDate).getTime());
+      setItems(unique);
       setLoading(false);
     });
 
     return () => { cancelled = true; };
-  }, [sources]);
+  }, [sourceKey]);
 
   if (loading) {
     return (
@@ -267,12 +301,26 @@ const RssFeedPanel: React.FC<{ mode: string; height: number; sources?: typeof RS
   );
 };
 
+// ===== Filtered source lists =====
+const FINANCE_SOURCES = ALL_RSS_SOURCES.filter((s) => s.category === "finance");
+const CRYPTO_SOURCES = ALL_RSS_SOURCES.filter((s) => s.category === "crypto");
+const FOREX_SOURCES = ALL_RSS_SOURCES.filter((s) => s.category === "forex");
+const WORLD_SOURCES = ALL_RSS_SOURCES.filter((s) => s.category === "world");
+
 // ===== Main Component =====
 const TimelineNewsTabs: React.FC<Props> = ({ mode, accentColor = "#65a8bf", height = 540 }) => {
   const tvAllSrc = React.useMemo(() => tvTimelineUrl(mode), [mode]);
-  const tvForexSrc = React.useMemo(() => tvTimelineUrl(mode, "forex"), [mode]);
-  const tvCryptoSrc = React.useMemo(() => tvTimelineUrl(mode, "crypto"), [mode]);
   const isDark = mode === "dark";
+
+  const tabs = [
+    { label: "All News", icon: Newspaper },
+    { label: "Finance", icon: DollarSign },
+    { label: "Crypto", icon: Radio },
+    { label: "Forex", icon: TrendingUp },
+    { label: "World", icon: Globe },
+    { label: "Tech", icon: Cpu },
+    { label: "TradingView", icon: TrendingUp },
+  ];
 
   return (
     <Box borderRadius="xl" overflow="hidden">
@@ -289,17 +337,12 @@ const TimelineNewsTabs: React.FC<Props> = ({ mode, accentColor = "#65a8bf", heig
             "&::-webkit-scrollbar": { height: "0px" },
           }}
         >
-          {[
-            { label: "TradingView", icon: TrendingUp },
-            { label: "All News", icon: Newspaper },
-            { label: "Forex", icon: TrendingUp },
-            { label: "Crypto", icon: Radio },
-          ].map((tab) => (
+          {tabs.map((tab) => (
             <Tab
               key={tab.label}
               fontSize="xs"
               fontWeight="600"
-              px={4}
+              px={3}
               py={2}
               borderRadius="lg"
               color={isDark ? "gray.400" : "gray.600"}
@@ -323,43 +366,42 @@ const TimelineNewsTabs: React.FC<Props> = ({ mode, accentColor = "#65a8bf", heig
         </TabList>
 
         <TabPanels>
-          {/* TradingView General Timeline (default) */}
+          {/* All News — every RSS source */}
+          <TabPanel p={0}>
+            <RssFeedPanel mode={mode} height={height} sources={ALL_RSS_SOURCES} />
+          </TabPanel>
+
+          {/* Finance */}
+          <TabPanel p={0}>
+            <RssFeedPanel mode={mode} height={height} sources={FINANCE_SOURCES} />
+          </TabPanel>
+
+          {/* Crypto */}
+          <TabPanel p={0}>
+            <RssFeedPanel mode={mode} height={height} sources={CRYPTO_SOURCES} />
+          </TabPanel>
+
+          {/* Forex */}
+          <TabPanel p={0}>
+            <RssFeedPanel mode={mode} height={height} sources={FOREX_SOURCES} />
+          </TabPanel>
+
+          {/* World */}
+          <TabPanel p={0}>
+            <RssFeedPanel mode={mode} height={height} sources={WORLD_SOURCES} />
+          </TabPanel>
+
+          {/* Tech */}
+          <TabPanel p={0}>
+            <RssFeedPanel mode={mode} height={height} sources={ALL_RSS_SOURCES.filter((s) => s.category === "tech")} />
+          </TabPanel>
+
+          {/* TradingView (kept as last tab) */}
           <TabPanel p={0}>
             <iframe
               key={`tv-all-${mode}`}
               title="TradingView Market News"
               src={tvAllSrc}
-              style={{ border: 0, width: "100%", height }}
-              loading="lazy"
-              referrerPolicy="no-referrer-when-downgrade"
-              allow="clipboard-write; fullscreen"
-            />
-          </TabPanel>
-
-          {/* All News — Combined RSS feeds */}
-          <TabPanel p={0}>
-            <RssFeedPanel mode={mode} height={height} />
-          </TabPanel>
-
-          {/* TradingView Forex Timeline */}
-          <TabPanel p={0}>
-            <iframe
-              key={`tv-forex-${mode}`}
-              title="Forex News"
-              src={tvForexSrc}
-              style={{ border: 0, width: "100%", height }}
-              loading="lazy"
-              referrerPolicy="no-referrer-when-downgrade"
-              allow="clipboard-write; fullscreen"
-            />
-          </TabPanel>
-
-          {/* TradingView Crypto Timeline */}
-          <TabPanel p={0}>
-            <iframe
-              key={`tv-crypto-${mode}`}
-              title="Crypto News"
-              src={tvCryptoSrc}
               style={{ border: 0, width: "100%", height }}
               loading="lazy"
               referrerPolicy="no-referrer-when-downgrade"
