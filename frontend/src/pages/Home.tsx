@@ -3136,14 +3136,14 @@ const Home: React.FC = () => {
                 {/* GridMotion Showcase — courses + products/offers */}
                 {(() => {
                   const OFFER_TILES: { label: string; sub: string; icon: string; href: string }[] = [
-                    { label: "Prop Firm Challenge", sub: "Get funded up to $200k", icon: "🏆", href: "/products" },
-                    { label: "Discord Trading Floor", sub: "Live signals & community", icon: "💬", href: "/products" },
-                    { label: "AI Trading Coach", sub: "Personalized guidance", icon: "🤖", href: "/products" },
-                    { label: "Broker Partner", sub: "Tight spreads, ECN", icon: "📊", href: "/broker" },
-                    { label: "Mobile App", sub: "Trade on the go", icon: "📱", href: "/products" },
-                    { label: "Crypto Mastery", sub: "BTC, ETH & Altcoins", icon: "₿", href: "/products" },
-                    { label: "Forex Signals", sub: "Daily setups & analysis", icon: "📈", href: "/products" },
+                    { label: "Trading Guides", sub: "Structured courses for every level", icon: "📘", href: "/products" },
+                    { label: "Discord Community", sub: "Live discussions & setups", icon: "💬", href: "/products" },
+                    { label: "Telegram Group", sub: "Real-time trader chat", icon: "✈️", href: "/products" },
+                    { label: "AI Personal Mentor", sub: "Coming soon — your 24/7 coach", icon: "🤖", href: "/products" },
+                    { label: "Social Trading App", sub: "Coming soon — connect & learn", icon: "📱", href: "/products" },
+                    { label: "Custom Dashboard", sub: "Your personalized terminal", icon: "📊", href: "/products" },
                     { label: "Risk Management", sub: "Protect your capital", icon: "🛡️", href: "/products" },
+                    { label: "Advanced Strategies", sub: "Real trade breakdowns", icon: "📈", href: "/products" },
                   ];
 
                   const courseItems: GridMotionItem[] = tiers.slice(0, 12).map((tier: any) => ({
@@ -3190,7 +3190,7 @@ const Home: React.FC = () => {
                             {t("home.grid.title", { defaultValue: "Explore Our Ecosystem" })}
                           </Heading>
                           <Text maxW="xl" fontSize={{ base: "md", md: "lg" }} opacity={0.8}>
-                            {t("home.grid.subtitle", { defaultValue: "Courses, tools, and communities — everything you need to trade smarter" })}
+                            {t("home.grid.subtitle", { defaultValue: "Trading guides, communities, and the tools to help you trade smarter" })}
                           </Text>
                         </VStack>
                       </MotionBox>

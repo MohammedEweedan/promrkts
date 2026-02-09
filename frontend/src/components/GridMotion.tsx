@@ -22,7 +22,7 @@ const GridMotion: FC<GridMotionProps> = ({
   const rowRefs = useRef<(HTMLDivElement | null)[]>([]);
   const mouseXRef = useRef<number>(typeof window !== 'undefined' ? window.innerWidth / 2 : 500);
 
-  const totalItems = 28;
+  const totalItems = 56;
   const combinedItems: GridMotionItem[] =
     items.length > 0
       ? Array.from({ length: totalItems }, (_, i) => items[i % items.length])
@@ -102,8 +102,8 @@ const GridMotion: FC<GridMotionProps> = ({
                 rowRefs.current[rowIndex] = el;
               }}
             >
-              {Array.from({ length: 7 }, (_, itemIndex) => {
-                const item = combinedItems[rowIndex * 7 + itemIndex];
+              {Array.from({ length: 14 }, (_, itemIndex) => {
+                const item = combinedItems[rowIndex * 14 + itemIndex];
                 const clickable = Boolean(item?.onClick);
                 return (
                   <div key={itemIndex} className="row__item">

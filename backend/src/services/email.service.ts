@@ -194,61 +194,51 @@ export async function sendWelcomeEmailAfterVerification(user: { email: string; n
       Hi ${user.name},
     </p>
     <p style="color: #333333; font-size: 15px; line-height: 1.7; margin: 0 0 16px;">
-      I'm Moe Ali, the founder of promrkts — and I wanted to personally welcome you.
+      I'm Moe, the founder of promrkts. I wanted to personally welcome you — your account is verified and ready to go.
     </p>
     <p style="color: #333333; font-size: 15px; line-height: 1.7; margin: 0 0 16px;">
-      Your account is verified and ready to go. I built promrkts because I believe every trader deserves access to clear, honest education — no fluff, no hype, just the real strategies and frameworks that actually work in the markets.
+      I built promrkts because I believe every trader deserves access to clear, honest education. No fluff, no hype — just the real strategies and frameworks that actually work in the markets. Our guides have helped thousands of traders overcome their losses and become consistently better at what they do.
     </p>
-    <p style="color: #333333; font-size: 15px; line-height: 1.7; margin: 0 0 24px;">
-      Here's what you now have access to:
-    </p>
-
-    <table role="presentation" width="100%" cellpadding="0" cellspacing="0" style="margin-bottom: 24px;">
-      <tr>
-        <td style="padding: 16px; background-color: #f9fafb; border-radius: 10px; border-left: 3px solid ${BRAND.primaryColor}; margin-bottom: 10px;">
-          <p style="color: #1a1a1a; font-size: 14px; font-weight: 600; margin: 0 0 4px;">Trading Guides</p>
-          <p style="color: #6b7280; font-size: 13px; margin: 0;">Step-by-step guides covering everything from the basics to advanced strategies and setups.</p>
-        </td>
-      </tr>
-      <tr><td style="height: 10px;"></td></tr>
-      <tr>
-        <td style="padding: 16px; background-color: #f9fafb; border-radius: 10px; border-left: 3px solid ${BRAND.secondaryColor};">
-          <p style="color: #1a1a1a; font-size: 14px; font-weight: 600; margin: 0 0 4px;">Trading Communities</p>
-          <p style="color: #6b7280; font-size: 13px; margin: 0;">Join our private Telegram and Discord groups to learn alongside other serious traders.</p>
-        </td>
-      </tr>
-    </table>
-
-    <table role="presentation" width="100%" cellpadding="0" cellspacing="0" style="margin-bottom: 28px;">
-      <tr>
-        <td align="center">
-          <a href="${BRAND.websiteUrl}/products" style="display: inline-block; background: linear-gradient(135deg, ${BRAND.primaryColor} 0%, ${BRAND.secondaryColor} 100%); color: #ffffff; text-decoration: none; padding: 14px 40px; border-radius: 10px; font-weight: 600; font-size: 15px;">
-            Explore Our Guides &amp; Communities
-          </a>
-        </td>
-      </tr>
-    </table>
-
     <p style="color: #333333; font-size: 15px; line-height: 1.7; margin: 0 0 16px;">
-      If you ever have questions, just reply to this email — it comes straight to me.
+      Here's what's waiting for you:
     </p>
-    <p style="color: #333333; font-size: 15px; line-height: 1.7; margin: 0 0 4px;">
+    <p style="color: #333333; font-size: 15px; line-height: 1.7; margin: 0 0 8px;">
+      <strong style="color: #1a1a1a;">Trading Guides</strong> — structured courses from the fundamentals to advanced strategies. Real trade breakdowns, risk management frameworks, and actionable setups you can apply immediately.
+    </p>
+    <p style="color: #333333; font-size: 15px; line-height: 1.7; margin: 0 0 8px;">
+      <strong style="color: #1a1a1a;">Telegram &amp; Discord Communities</strong> — private groups where serious traders share ideas, discuss setups, and learn together in real time. You're not doing this alone.
+    </p>
+    <p style="color: #333333; font-size: 15px; line-height: 1.7; margin: 0 0 8px;">
+      <strong style="color: #1a1a1a;">Social Trading App (coming soon)</strong> — we're building a dedicated social platform for traders, with AI-powered personal mentors that adapt to your skill level and trading style. Think of it as having a coach in your pocket 24/7.
+    </p>
+    <p style="color: #333333; font-size: 15px; line-height: 1.7; margin: 0 0 16px;">
+      <strong style="color: #1a1a1a;">Your Dashboard</strong> — the most customizable trading terminal in the industry. Live charts, news feeds, market data, and your learning progress — all in one place, built exactly the way you want it.
+    </p>
+    <p style="color: #333333; font-size: 15px; line-height: 1.7; margin: 0 0 16px;">
+      Log in anytime at <a href="${BRAND.websiteUrl}" style="color: ${BRAND.primaryColor}; text-decoration: none;">promrkts.com</a> to get started.
+    </p>
+    <p style="color: #333333; font-size: 15px; line-height: 1.7; margin: 0 0 16px;">
+      If you ever have questions, just hit reply — this email comes straight to me, and I try to personally read and reply to all of them.
+    </p>
+    <p style="color: #333333; font-size: 15px; line-height: 1.7; margin: 0 0 6px;">
       Welcome aboard,
     </p>
-    <img src="data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHdpZHRoPSIxODAiIGhlaWdodD0iNjAiIHZpZXdCb3g9IjAgMCAxODAgNjAiPjxwYXRoIGQ9Ik0xMCA0NUMxNSAyMCAyNSAxMiAzNSAyMEM0MCAyNSAzMCA0MCAzNSA0NUM0MCA1MCA1MCAyMCA1NSAxNUM2MCAxMCA2NSAzMCA2MCAzNUM1NSA0MCA2NSA0NSA3MCAzNSIgZmlsbD0ibm9uZSIgc3Ryb2tlPSIjMWExYTFhIiBzdHJva2Utd2lkdGg9IjEuOCIgc3Ryb2tlLWxpbmVjYXA9InJvdW5kIiBzdHJva2UtbGluZWpvaW49InJvdW5kIi8+PHBhdGggZD0iTTc1IDQwQzgwIDI1IDg1IDE1IDkwIDIwQzk1IDI1IDg1IDQwIDkwIDQ1Qzk1IDUwIDEwMCAxNSAxMDUgMjBDMTEwIDI1IDEwNSA0MCAxMTAgMzUiIGZpbGw9Im5vbmUiIHN0cm9rZT0iIzFhMWExYSIgc3Ryb2tlLXdpZHRoPSIxLjgiIHN0cm9rZS1saW5lY2FwPSJyb3VuZCIgc3Ryb2tlLWxpbmVqb2luPSJyb3VuZCIvPjxwYXRoIGQ9Ik0xMTUgNDBDMTIwIDIwIDEzMCAxNSAxMzUgMjVDMTQwIDM1IDEyNSA0NSAxMzUgNDVDMTQ1IDQ1IDE1MCAyMCAxNTUgMjVDMTYwIDMwIDE1NSA0MCAxNjUgMzUiIGZpbGw9Im5vbmUiIHN0cm9rZT0iIzFhMWExYSIgc3Ryb2tlLXdpZHRoPSIxLjgiIHN0cm9rZS1saW5lY2FwPSJyb3VuZCIgc3Ryb2tlLWxpbmVqb2luPSJyb3VuZCIvPjwvc3ZnPg==" alt="Moe Ali signature" width="140" height="48" style="display: block; margin: 8px 0 4px; opacity: 0.85;" />
-    <p style="color: #1a1a1a; font-size: 15px; font-weight: 600; margin: 0 0 2px;">
+    <p style="font-family: 'Segoe Script', 'Bradley Hand', 'Dancing Script', cursive; font-size: 26px; color: #1a1a1a; margin: 4px 0 6px; line-height: 1.2;">
+    محمد
+    </p>
+    <p style="color: #1a1a1a; font-size: 14px; font-weight: 600; margin: 0 0 2px;">
       Moe Ali
     </p>
     <p style="color: #6b7280; font-size: 13px; margin: 0;">
-      Founder &amp; CEO, promrkts
+      Founder, promrkts
     </p>
   `;
 
-  const html = createEmailTemplate(content, `Welcome to promrkts, ${user.name} — your trading journey starts now.`);
+  const html = createEmailTemplate(content);
 
   return sendEmail({
     to: user.email,
-    subject: `Welcome to promrkts, ${user.name}`,
+    subject: `Ready to become a pro at the markets, ${user.name}?`,
     html,
     from: 'moe',
     replyTo: EMAIL_ALIASES.moe,
