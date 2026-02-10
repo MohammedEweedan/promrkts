@@ -25,13 +25,8 @@ import {
 import { Document, Page, pdfjs } from "react-pdf";
 import { useResourceProgress } from "./ResourceProgressTracker";
 
-// IMPORTANT: point PDF.js worker to your bundle’s worker file
-// Vite example: new URL(..., import.meta.url)
-// CRA/Webpack usually works with this as-is
-pdfjs.GlobalWorkerOptions.workerSrc = new URL(
-  "pdfjs-dist/build/pdf.worker.min.mjs",
-  import.meta.url
-).toString();
+// Use CDN-hosted worker matching the installed pdfjs-dist version
+pdfjs.GlobalWorkerOptions.workerSrc = `https://cdn.jsdelivr.net/npm/pdfjs-dist@${pdfjs.version}/build/pdf.worker.min.mjs`;
 
 type FitMode = "width" | "page";
 

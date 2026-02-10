@@ -212,7 +212,7 @@ const Learn: React.FC = () => {
     const load = async () => {
       const list = Array.isArray(resources) ? resources : [];
       const pdfs = list.filter(
-        (r: any) => (r.type || "").toLowerCase() === "pdf" && r.url
+        (r: any) => (r.type || "").toLowerCase() === "pdf" && r.url && (/^\//.test(String(r.url)) || /^https?:\/\//i.test(String(r.url)))
       );
       const entries = await Promise.all(
         pdfs.map(async (r: any) => {
@@ -961,7 +961,7 @@ const Learn: React.FC = () => {
   const tier = course || {};
   const list = Array.isArray(resources) ? resources : [];
   const pdfs = list.filter(
-    (r: any) => (r.type || "").toLowerCase() === "pdf" && r.url
+    (r: any) => (r.type || "").toLowerCase() === "pdf" && r.url && (/^\//.test(String(r.url)) || /^https?:\/\//i.test(String(r.url)))
   );
   const videos = list.filter(
     (r: any) => (r.type || "").toLowerCase() === "video" && r.url
