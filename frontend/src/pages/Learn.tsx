@@ -1977,7 +1977,7 @@ const Learn: React.FC = () => {
                                 </VStack>
                               </VStack>
                             </Button>
-                          ) : blob ? (
+                          ) : (
                             <TrackedPDFPro
                               resourceId={resourceId}
                               src={src}
@@ -2003,18 +2003,6 @@ const Learn: React.FC = () => {
                                 </>
                               }
                             />
-                          ) : (
-                            <Box
-                              display="flex"
-                              alignItems="center"
-                              justifyContent="center"
-                              height="40vh"
-                            >
-                              <Spinner />
-                              <Text ml={2} color={primaryTextColor}>
-                                {t("learn.documents.loading")}
-                              </Text>
-                            </Box>
                           )}
 
                           {isLoaded && (

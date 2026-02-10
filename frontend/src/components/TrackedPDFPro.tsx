@@ -279,7 +279,7 @@ export const TrackedPDFPro: React.FC<TrackedPDFProProps> = ({
       >
         <Box ref={pageWrapRef} display="flex" justifyContent="center">
           <Document
-            file={src}
+            file={src.split("#")[0]}
             onLoadSuccess={(pdf) => {
               setNumPages(pdf.numPages);
               setPage((p) => clampPage(p));
