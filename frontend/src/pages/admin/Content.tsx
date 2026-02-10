@@ -176,15 +176,11 @@ const ContentAdmin: React.FC = () => {
   };
 
   const onUpload = async (file: File) => {
-    const toDataUrl = (f: File) =>
-      new Promise<string>((resolve, reject) => {
-        const reader = new FileReader();
-        reader.onload = () => resolve(reader.result as string);
-        reader.onerror = reject;
-        reader.readAsDataURL(f);
-      });
-    const dataUrl = await toDataUrl(file);
-    const { data } = await api.post("/admin/upload", { data: dataUrl, filename: file.name });
+    const formData = new FormData();
+    formData.append("file", file);
+    const { data } = await api.post("/upload/upload", formData, {
+      headers: { "Content-Type": "multipart/form-data" },
+    });
     return data?.url as string;
   };
 

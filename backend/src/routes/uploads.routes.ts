@@ -6,7 +6,7 @@ import path from "path";
 import fs from "fs";
 
 const router = Router();
-const upload = multer({ storage: multer.memoryStorage() });
+const upload = multer({ storage: multer.memoryStorage(), limits: { fileSize: 50 * 1024 * 1024 } });
 
 // Check if Vercel Blob is configured
 const hasVercelBlob = !!process.env.BLOB_READ_WRITE_TOKEN;
@@ -40,17 +40,59 @@ async function saveFile(file: Express.Multer.File, folder: string): Promise<stri
   }
 }
 
-// Serve uploaded files
+// Helper: resolve file path, strip query params, set headers
+function serveUploadedFile(filePath: string, filename: string, res: any) {
+  // Strip query params like ?signed=1 from filename
+  const cleanName = filename.split("?")[0];
+  const cleanPath = filePath.split("?")[0];
+
+  if (!fs.existsSync(cleanPath)) {
+    return res.status(404).json({ error: "File not found" });
+  }
+
+  const ext = path.extname(cleanName).toLowerCase();
+  const mimeMap: Record<string, string> = {
+    ".pdf": "application/pdf",
+    ".mp4": "video/mp4",
+    ".webm": "video/webm",
+    ".jpg": "image/jpeg",
+    ".jpeg": "image/jpeg",
+    ".png": "image/png",
+    ".webp": "image/webp",
+    ".gif": "image/gif",
+    ".svg": "image/svg+xml",
+  };
+  const contentType = mimeMap[ext] || "application/octet-stream";
+  res.setHeader("Content-Type", contentType);
+  if (ext === ".pdf") {
+    res.setHeader("Content-Disposition", `inline; filename="${cleanName}"`);
+  }
+  res.sendFile(cleanPath);
+}
+
+// Serve uploaded files (two-segment path: /uploads/:folder/:filename)
 router.get("/uploads/:folder/:filename", (req, res) => {
   try {
     const { folder, filename } = req.params;
-    const filePath = path.join(uploadsDir, folder, filename);
-    
+    const filePath = path.join(uploadsDir, folder, filename.split("?")[0]);
+    serveUploadedFile(filePath, filename, res);
+  } catch (e: any) {
+    console.error("File serve failed:", e);
+    return res.status(500).json({ error: "Failed to serve file" });
+  }
+});
+
+// Serve uploaded files (single-segment path: /uploads/:filename) — backward compat
+router.get("/uploads/:filename", (req, res) => {
+  try {
+    const { filename } = req.params;
+    const cleanName = filename.split("?")[0];
+    // Try root uploads dir first, then uploads/uploads subfolder
+    let filePath = path.join(uploadsDir, cleanName);
     if (!fs.existsSync(filePath)) {
-      return res.status(404).json({ error: "File not found" });
+      filePath = path.join(uploadsDir, "uploads", cleanName);
     }
-    
-    res.sendFile(filePath);
+    serveUploadedFile(filePath, filename, res);
   } catch (e: any) {
     console.error("File serve failed:", e);
     return res.status(500).json({ error: "Failed to serve file" });
