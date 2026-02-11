@@ -62,7 +62,7 @@ const PremiumCourseCard: React.FC<PremiumCourseCardProps> = ({
   description,
   price,
   level,
-  rating = 4.8,
+  rating = 0,
   reviewsCount = 0,
   enrolledCount = 0,
   isVip = false,
@@ -96,8 +96,6 @@ const PremiumCourseCard: React.FC<PremiumCourseCardProps> = ({
   const hasDiscount = originalPrice && originalPrice > price;
   const discountPercent = hasDiscount ? Math.round((1 - price / originalPrice) * 100) : 0;
 
-  // Generate random but consistent enrolled count if not provided
-  const displayEnrolled = enrolledCount > 0 ? enrolledCount : Math.floor(Math.random() * 500) + 150;
 
   return (
     <MotionBox
@@ -198,17 +196,19 @@ const PremiumCourseCard: React.FC<PremiumCourseCardProps> = ({
           {/* Social Proof */}
           <HStack spacing={4} flexWrap="wrap">
             {rating > 0 && (
-              <Tooltip label={`${reviewsCount || 50}+ reviews`}>
+              <Tooltip label={`${reviewsCount || 0} reviews`}>
                 <HStack spacing={1}>
                   <Icon as={Star} boxSize={4} color={GOLD} fill={GOLD} />
-                  <Text fontSize="sm" fontWeight="600">{rating.toFixed(1)}</Text>
+                  <Text fontSize="sm" fontWeight="600" color={isDark ? 'white' : 'gray.800'}>{rating.toFixed(1)}</Text>
                 </HStack>
               </Tooltip>
             )}
-            <HStack spacing={1} color={textMuted}>
-              <Icon as={Users} boxSize={4} color={BRAND} />
-              <Text fontSize="sm">{displayEnrolled.toLocaleString()}+ enrolled</Text>
-            </HStack>
+            {enrolledCount > 0 && (
+              <HStack spacing={1} color={textMuted}>
+                <Icon as={Users} boxSize={4} color={BRAND} />
+                <Text fontSize="sm">{enrolledCount.toLocaleString()} purchased</Text>
+              </HStack>
+            )}
           </HStack>
 
           {/* Features */}

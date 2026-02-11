@@ -30,6 +30,7 @@ import {
   Play,
   FileText,
   TrendingUp,
+  X,
 } from "lucide-react";
 import { useThemeMode } from "../themeProvider";
 import ProgressWidget from "../components/ProgressWidget";
@@ -39,15 +40,6 @@ import TrackedPDFPro from "../components/TrackedPDFPro";
 import { AdvancedRealTimeChart } from "react-ts-tradingview-widgets";
 
 type AiMessage = { id: string; from: "user" | "assistant"; text: string };
-
-type ChatMessage = {
-  id: string;
-  userId?: string;
-  userName?: string;
-  text: string;
-  createdAt?: string;
-  self?: boolean;
-};
 
 const Learn: React.FC = () => {
   const { id } = useParams<{ id: string }>(); // tier id
@@ -83,12 +75,13 @@ const Learn: React.FC = () => {
   const [autoplayNext, setAutoplayNext] = React.useState(true);
   const playerRef = React.useRef<HTMLVideoElement | null>(null);
 
-  // Inline PDF overlay while video is playing
-  const [showInlinePdf, setShowInlinePdf] = React.useState(false);
   const [activePdfIdx, setActivePdfIdx] = React.useState(0);
 
   // Standalone PDF modal (works even when no videos / cinematic mode off)
   const [showPdfModal, setShowPdfModal] = React.useState(false);
+
+  // Togglable chart
+  const [showChart, setShowChart] = React.useState(false);
 
   // AI coach bubble over the video
   const [aiOpen, setAiOpen] = React.useState(false);
@@ -96,12 +89,6 @@ const Learn: React.FC = () => {
   const [aiInput, setAiInput] = React.useState("");
   const [aiLoading, setAiLoading] = React.useState(false);
 
-  // Live chat
-  const [chatMessages, setChatMessages] = React.useState<ChatMessage[]>([]);
-  const [chatInput, setChatInput] = React.useState("");
-  const [chatLoading, setChatLoading] = React.useState(false);
-  const [onlineStudents, setOnlineStudents] = React.useState<any[]>([]);
-  const [chatConnecting, setChatConnecting] = React.useState(false);
 
   // Logos & constants
   const tpLogo =
@@ -838,84 +825,6 @@ const Learn: React.FC = () => {
     }
   }
 
-  // --- Live chat --------------------------------------------------------------
-
-  React.useEffect(() => {
-    if (!id) return;
-    let cancelled = false;
-
-    const load = async () => {
-      try {
-        setChatConnecting(true);
-        const [msgsRes, onlineRes] = await Promise.all([
-          api.get(`/courses/${id}/chat`).catch(() => ({ data: [] })),
-          api.get(`/courses/${id}/online`).catch(() => ({ data: [] })),
-        ]);
-        if (cancelled) return;
-
-        const msgs = Array.isArray(msgsRes.data)
-          ? msgsRes.data
-          : [];
-        const online = Array.isArray(onlineRes.data)
-          ? onlineRes.data
-          : [];
-
-        setChatMessages(msgs);
-        setOnlineStudents(online);
-      } catch (e) {
-        if (!cancelled) {
-          console.error("Failed to load chat", e);
-        }
-      } finally {
-        if (!cancelled) setChatConnecting(false);
-      }
-    };
-
-    load();
-    const interval = window.setInterval(load, 15000);
-    return () => {
-      cancelled = true;
-      window.clearInterval(interval);
-    };
-  }, [id]);
-
-  async function handleSendChat() {
-    if (!id || !chatInput.trim()) return;
-    const text = chatInput.trim();
-    setChatInput("");
-    setChatLoading(true);
-
-    const tempId = `temp-${Date.now()}`;
-    const tempMsg: ChatMessage = {
-      id: tempId,
-      userId: user?.id,
-      userName:
-        user?.fullName || user?.name || user?.email || "You",
-      text,
-      createdAt: new Date().toISOString(),
-      self: true,
-    };
-
-    setChatMessages((prev) => [...prev, tempMsg]);
-
-    try {
-      const resp = await api.post(`/courses/${id}/chat`, { text });
-      if (resp?.data) {
-        setChatMessages((prev) =>
-          prev.map((m) => (m.id === tempId ? resp.data : m))
-        );
-      }
-    } catch (e) {
-      console.error("Failed to send chat", e);
-      // remove temp message on failure
-      setChatMessages((prev) =>
-        prev.filter((m) => m.id !== tempId)
-      );
-    } finally {
-      setChatLoading(false);
-    }
-  }
-
   // --- Early returns for loading / access ------------------------------------
 
   if (loading) {
@@ -1164,14 +1073,11 @@ const Learn: React.FC = () => {
                             transform: "translateY(-1px)",
                           }}
                           onClick={() => {
-                            setShowInlinePdf((s) => !s);
                             setActivePdfIdx(0);
+                            setShowPdfModal(true);
                           }}
                         >
-                          {showInlinePdf
-                            ? t("learn.inline_pdf.hide") ||
-                              "Hide notes"
-                            : t("learn.inline_pdf.show") || "Notes"}
+                          {t("learn.inline_pdf.show") || "Notes"}
                         </Button>
                       )}
 
@@ -1241,141 +1147,6 @@ const Learn: React.FC = () => {
                       }}
                       videoRefExternal={playerRef}
                     />
-
-                    {/* Inline PDF overlay – slides in from right */}
-                    {showInlinePdf && pdfsForRender.length > 0 && (
-                      <Box
-                        position="absolute"
-                        top={0}
-                        right={0}
-                        height="100%"
-                        width={{ base: "100%", md: "36%" }}
-                        bg="blackAlpha.900"
-                        borderLeftWidth={{ base: 0, md: 1 }}
-                        
-                        zIndex={4}
-                        display="flex"
-                        flexDirection="column"
-                      >
-                        <HStack
-                          justify="space-between"
-                          align="center"
-                          px={3}
-                          py={2}
-                          borderBottomWidth={1}
-                          
-                        >
-                          <Text
-                            fontSize="xs"
-                            fontWeight="600"
-                            textTransform="uppercase"
-                          >
-                            {t("learn.inline_pdf.title") ||
-                              "Lesson notes"}
-                          </Text>
-                          <HStack spacing={2}>
-                            {pdfsForRender.length > 1 && (
-                              <HStack spacing={1}>
-                                {pdfsForRender.map(
-                                  (doc, idx) => (
-                                    <Button
-                                      key={idx}
-                                      size="xs"
-                                      variant={
-                                        idx === activePdfIdx
-                                          ? "solid"
-                                          : "ghost"
-                                      }
-                                      bg={
-                                        idx === activePdfIdx
-                                          ? "#65a8bf"
-                                          : "transparent"
-                                      }
-                                      color={
-                                        idx === activePdfIdx
-                                          ? "black"
-                                          : "whiteAlpha.800"
-                                      }
-                                      _hover={{
-                                        opacity: 0.9,
-                                      }}
-                                      onClick={() =>
-                                        setActivePdfIdx(
-                                          idx
-                                        )
-                                      }
-                                    >
-                                      {idx + 1}
-                                    </Button>
-                                  )
-                                )}
-                              </HStack>
-                            )}
-                            <Button
-                              size="xs"
-                              variant="ghost"
-                              onClick={() =>
-                                setShowInlinePdf(false)
-                              }
-                            >
-                              {t("common.close") ||
-                                "Close"}
-                            </Button>
-                          </HStack>
-                        </HStack>
-
-                        <Box flex="1" overflow="hidden">
-                          {(() => {
-                            const doc =
-                              pdfsForRender[activePdfIdx];
-                            const blob =
-                              pdfBlobUrls[String(doc.url)];
-                            const src = blob
-                              ? `${blob}#toolbar=0&navpanes=0`
-                              : `${toAbsoluteUrl(
-                                  String(doc.url)
-                                )}#toolbar=0&navpanes=0`;
-                            const resourceId =
-                              doc.id ||
-                              `pdf-inline-${activePdfIdx}-${tier.id}`;
-
-                            return (
-                              <TrackedPDFPro
-                                resourceId={resourceId}
-                                src={src}
-                                tierId={tier.id}
-                                style={{ width: "100%", height: "100%" }}
-                                watermark={
-                                  <>
-                                    <Box
-                                      position="absolute"
-                                      inset={0}
-                                      pointerEvents="none"
-                                      zIndex={1}
-                                    />
-                                    <Watermark
-                                      text={
-                                        user?.email ||
-                                        user?.id
-                                          ? t(
-                                              "learn.watermark.user",
-                                              {
-                                                user:
-                                                  user?.email ||
-                                                  user?.id,
-                                              }
-                                            )
-                                          : undefined
-                                      }
-                                    />
-                                  </>
-                                }
-                              />
-                            );
-                          })()}
-                        </Box>
-                      </Box>
-                    )}
 
                     {/* AI coach bubble */}
                     {aiOpen && (
@@ -1934,13 +1705,7 @@ const Learn: React.FC = () => {
                           cursor="pointer"
                           onClick={() => {
                             setActivePdfIdx(idx);
-                            // If cinematic player is visible, use inline overlay; otherwise open standalone modal
-                            if (videos.length > 0 && useCinematic) {
-                              setShowInlinePdf(true);
-                              scrollTo(playerRef as any);
-                            } else {
-                              setShowPdfModal(true);
-                            }
+                            setShowPdfModal(true);
                           }}
                           spacing={3}
                         >
@@ -2084,7 +1849,7 @@ const Learn: React.FC = () => {
               </Box>
             )}
 
-            {/* LIVE CHART ---------------------------------------------------- */}
+            {/* LIVE CHART (togglable) ---------------------------------------- */}
             <Box
               ref={chartRef}
               bg={cardBg}
@@ -2095,13 +1860,16 @@ const Learn: React.FC = () => {
             >
               <HStack
                 justify="space-between"
-                mb={4}
                 align="center"
+                cursor="pointer"
+                onClick={() => setShowChart((v) => !v)}
+                _hover={{ opacity: 0.85 }}
+                transition="opacity 0.2s"
               >
-                <HStack>
+                <HStack spacing={3}>
                   <Icon
                     as={TrendingUp}
-                    boxSize={6}
+                    boxSize={5}
                     color="#65a8bf"
                   />
                   <Heading
@@ -2112,297 +1880,62 @@ const Learn: React.FC = () => {
                       "Live Chart Practice"}
                   </Heading>
                 </HStack>
-              </HStack>
-              <VStack align="stretch" spacing={3}>
-                <Text
-                  fontSize="sm"
-                  color={mutedTextColor}
+                <Button
+                  size="sm"
+                  variant="outline"
+                  borderColor="#65a8bf"
+                  color="#65a8bf"
+                  _hover={{ bg: "rgba(101,168,191,0.1)" }}
+                  onClick={(e) => { e.stopPropagation(); setShowChart((v) => !v); }}
                 >
+                  {showChart
+                    ? (t("common.hide") || "Hide")
+                    : (t("common.show") || "Show")}
+                </Button>
+              </HStack>
+
+              {!showChart && (
+                <Text fontSize="sm" color={mutedTextColor} mt={2}>
                   {t("learn.chart.description") ||
                     "Practice reading charts in real-time. Use the tools below to analyze price action, identify patterns, and apply what you've learned."}
                 </Text>
-                <Box
-                  borderRadius="md"
-                  overflow="hidden"
-                  borderWidth={1}
-                  
-                  h="600px"
-                >
-                  {/* eslint-disable-next-line react/style-prop-object */}
-                  <AdvancedRealTimeChart
-                    theme={mode === "dark" ? "dark" : "light"}
-                    autosize
-                    symbol="BTCUSD"
-                    interval="D"
-                    timezone="Etc/UTC"
-                    style="1"
-                    locale="en"
-                    toolbar_bg="#f1f3f6"
-                    enable_publishing={false}
-                    allow_symbol_change={true}
-                    save_image={false}
-                    container_id="tradingview_chart"
-                  />
-                </Box>
-                <Text
-                  fontSize="xs"
-                  color={mutedTextColor}
-                  textAlign="center"
-                >
-                  {t("learn.chart.tip") ||
-                    "💡 Tip: Try different timeframes and symbols to practice your analysis skills"}
-                </Text>
-              </VStack>
-            </Box>
-
-            {/* LIVE CLASSROOM CHAT ------------------------------------------- */}
-            <Box
-              bg={cardBg}
-              borderRadius="2xl"
-              borderWidth={1}
-              
-              p={5}
-            >
-              <HStack
-                justify="space-between"
-                align="center"
-                mb={3}
-              >
-                <Heading
-                  size="md"
-                  color={primaryTextColor}
-                >
-                  {t("learn.chat.title", {
-                    defaultValue: "Live classroom chat",
-                  })}
-                </Heading>
-                <HStack spacing={2}>
-                  <Box
-                    px={3}
-                    py={1}
-                    borderRadius="full"
-                    bg={
-                      mode === "dark"
-                        ? "green.900"
-                        : "green.50"
-                    }
-                    borderWidth={1}
-                    borderColor="green.500"
-                    fontSize="xs"
-                    display="flex"
-                    alignItems="center"
-                    gap={1}
-                  >
-                    <Box
-                      boxSize={2}
-                      borderRadius="full"
-                      bg="green.400"
-                    />
-                    <Text
-                      fontWeight="600"
-                      color={primaryTextColor}
-                    >
-                      {t("learn.chat.online_count", {
-                        defaultValue: "{{n}} online now",
-                        n: Math.max(onlineStudents.length, 1),
-                      })}
-                    </Text>
-                  </Box>
-                </HStack>
-              </HStack>
-
-              {onlineStudents.length > 0 && (
-                <HStack
-                  spacing={2}
-                  mb={3}
-                  flexWrap="wrap"
-                >
-                  {onlineStudents.slice(0, 8).map((s: any) => (
-                    <Box
-                      key={s.id || s.email}
-                      px={3}
-                      py={1}
-                      borderRadius="full"
-                      bg={
-                        mode === "dark"
-                          ? "whiteAlpha.100"
-                          : "gray.100"
-                      }
-                      fontSize="xs"
-                    >
-                      {s.name ||
-                        s.fullName ||
-                        s.email ||
-                        t("learn.chat.anonymous", {
-                          defaultValue:
-                            "Student",
-                        })}
-                    </Box>
-                  ))}
-                  {onlineStudents.length > 8 && (
-                    <Text
-                      fontSize="xs"
-                      color={mutedTextColor}
-                    >
-                      +
-                      {onlineStudents.length -
-                        8}{" "}
-                      {t("learn.chat.more", {
-                        defaultValue: "more",
-                      })}
-                    </Text>
-                  )}
-                </HStack>
               )}
 
-              <Box
-                borderRadius="lg"
-                borderWidth={1}
-                borderColor={
-                  mode === "dark"
-                    ? "whiteAlpha.200"
-                    : "gray.200"
-                }
-                bg={
-                  mode === "dark"
-                    ? "blackAlpha.500"
-                    : "gray.50"
-                }
-                h="260px"
-                overflowY="auto"
-                p={3}
-                mb={3}
-              >
-                {chatConnecting && chatMessages.length === 0 ? (
-                  <HStack>
-                    <Spinner size="sm" />
-                    <Text
-                      fontSize="sm"
-                      color={mutedTextColor}
-                    >
-                      {t("learn.chat.connecting", {
-                        defaultValue:
-                          "Connecting to classroom chat…",
-                      })}
-                    </Text>
-                  </HStack>
-                ) : chatMessages.length === 0 ? (
+              {showChart && (
+                <VStack align="stretch" spacing={3} mt={4}>
+                  <Box
+                    borderRadius="md"
+                    overflow="hidden"
+                    borderWidth={1}
+                    
+                    h={{ base: "400px", md: "600px" }}
+                  >
+                    {/* eslint-disable-next-line react/style-prop-object */}
+                    <AdvancedRealTimeChart
+                      theme={mode === "dark" ? "dark" : "light"}
+                      autosize
+                      symbol="BTCUSD"
+                      interval="D"
+                      timezone="Etc/UTC"
+                      style="1"
+                      locale="en"
+                      toolbar_bg="#f1f3f6"
+                      enable_publishing={false}
+                      allow_symbol_change={true}
+                      save_image={false}
+                      container_id="tradingview_chart"
+                    />
+                  </Box>
                   <Text
-                    fontSize="sm"
+                    fontSize="xs"
                     color={mutedTextColor}
+                    textAlign="center"
                   >
-                    {t("learn.chat.empty", {
-                      defaultValue:
-                        "No messages yet. Say hi and start the discussion!",
-                    })}
+                    {t("learn.chart.tip") ||
+                      "Tip: Try different timeframes and symbols to practice your analysis skills"}
                   </Text>
-                ) : (
-                  <VStack
-                    align="stretch"
-                    spacing={2}
-                  >
-                    {chatMessages.map((m) => {
-                      const self =
-                        (m.userId &&
-                          m.userId === user?.id) ||
-                        m.self;
-                      return (
-                        <Box
-                          key={m.id}
-                          display="flex"
-                          justifyContent={
-                            self
-                              ? "flex-end"
-                              : "flex-start"
-                          }
-                        >
-                          <Box
-                            maxW="80%"
-                            px={3}
-                            py={2}
-                            borderRadius="lg"
-                            bg={
-                              self
-                                ? "#65a8bf"
-                                : mode === "dark"
-                                ? "gray.800"
-                                : "white"
-                            }
-                            color={
-                              self
-                                ? "black"
-                                : primaryTextColor
-                            }
-                            boxShadow="sm"
-                          >
-                            <Text
-                              fontSize="xs"
-                              mb={0.5}
-                              color={
-                                self
-                                  ? "blackAlpha.700"
-                                  : mutedTextColor
-                              }
-                            >
-                              {self
-                                ? t("learn.chat.you", {
-                                    defaultValue:
-                                      "You",
-                                  })
-                                : m.userName ||
-                                  t(
-                                    "learn.chat.anonymous",
-                                    {
-                                      defaultValue:
-                                        "Student",
-                                    }
-                                  )}
-                            </Text>
-                            <Text
-                              fontSize="sm"
-                              whiteSpace="pre-wrap"
-                            >
-                              {m.text}
-                            </Text>
-                          </Box>
-                        </Box>
-                      );
-                    })}
-                  </VStack>
-                )}
-              </Box>
-
-              <HStack spacing={2}>
-                <Input
-                  placeholder={
-                    t("learn.chat.input_ph", {
-                      defaultValue:
-                        "Share a thought, ask a question…",
-                    }) as string
-                  }
-                  value={chatInput}
-                  onChange={(e) =>
-                    setChatInput(e.target.value)
-                  }
-                  onKeyDown={(e) => {
-                    if (e.key === "Enter" && !e.shiftKey) {
-                      e.preventDefault();
-                      handleSendChat();
-                    }
-                  }}
-                />
-                <Button
-                  bg="#65a8bf"
-                  color="black"
-                  _hover={{ opacity: 0.9 }}
-                  isLoading={chatLoading}
-                  onClick={handleSendChat}
-                >
-                  {t("learn.chat.send", {
-                    defaultValue: "Send",
-                  })}
-                </Button>
-              </HStack>
+                </VStack>
+              )}
             </Box>
 
             {/* SUPPORT / PURCHASE INFO -------------------------------------- */}
@@ -2440,21 +1973,21 @@ const Learn: React.FC = () => {
         const doc = pdfsForRender[activePdfIdx];
         const blob = pdfBlobUrls[String(doc?.url)];
         const pdfSrc = blob
-          ? `${blob}#toolbar=0&navpanes=0`
-          : `${toAbsoluteUrl(String(doc?.url))}#toolbar=0&navpanes=0`;
+          ? blob
+          : toAbsoluteUrl(String(doc?.url));
         const pdfResourceId = doc?.id || `pdf-modal-${activePdfIdx}-${tier?.id}`;
         return (
           <Box
             position="fixed"
             inset={0}
-            bg="blackAlpha.800"
+            bg={mode === "dark" ? "gray.950" : "gray.50"}
             zIndex={1500}
             display="flex"
             flexDirection="column"
           >
             {/* Header bar */}
             <HStack
-              px={4}
+              px={{ base: 3, md: 4 }}
               py={2}
               bg={mode === "dark" ? "gray.900" : "white"}
               borderBottomWidth={1}
@@ -2462,13 +1995,13 @@ const Learn: React.FC = () => {
               justify="space-between"
               flexShrink={0}
             >
-              <HStack spacing={3}>
-                <Icon as={FileText} boxSize={5} color="#65a8bf" />
-                <Text fontWeight="600" fontSize="sm" color={primaryTextColor}>
+              <HStack spacing={2} flex={1} minW={0}>
+                <Icon as={FileText} boxSize={4} color="#65a8bf" flexShrink={0} />
+                <Text fontWeight="600" fontSize="sm" color={primaryTextColor} isTruncated>
                   {prettyDocName(doc?.url)}
                 </Text>
               </HStack>
-              <HStack spacing={2}>
+              <HStack spacing={1} flexShrink={0}>
                 {pdfsForRender.length > 1 && pdfsForRender.map((_: any, idx: number) => (
                   <Button
                     key={idx}
@@ -2478,39 +2011,36 @@ const Learn: React.FC = () => {
                     color={idx === activePdfIdx ? "black" : primaryTextColor}
                     _hover={{ opacity: 0.9 }}
                     onClick={() => setActivePdfIdx(idx)}
+                    minW="28px"
                   >
                     {idx + 1}
                   </Button>
                 ))}
-                <Button
+                <IconButton
+                  aria-label="Close PDF"
                   size="sm"
                   variant="ghost"
+                  icon={<X size={18} />}
                   onClick={() => setShowPdfModal(false)}
-                >
-                  {t("common.close") || "Close"}
-                </Button>
+                />
               </HStack>
             </HStack>
 
             {/* PDF viewer */}
-            <Box flex="1" overflow="hidden" p={{ base: 0, md: 4 }}>
+            <Box flex="1" overflow="hidden" p={{ base: 0, md: 2 }}>
               <TrackedPDFPro
                 resourceId={pdfResourceId}
                 src={pdfSrc}
                 tierId={tier?.id || ""}
                 style={{ width: "100%", height: "100%" }}
-                defaultReadingMode
                 watermark={
-                  <>
-                    <Box position="absolute" inset={0} pointerEvents="none" zIndex={1} />
-                    <Watermark
-                      text={
-                        user?.email || user?.id
-                          ? t("learn.watermark.user", { user: user?.email || user?.id })
-                          : undefined
-                      }
-                    />
-                  </>
+                  <Watermark
+                    text={
+                      user?.email || user?.id
+                        ? t("learn.watermark.user", { user: user?.email || user?.id })
+                        : undefined
+                    }
+                  />
                 }
               />
             </Box>

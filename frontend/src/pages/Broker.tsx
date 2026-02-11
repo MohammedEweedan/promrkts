@@ -1,5 +1,4 @@
 // src/pages/Broker.tsx
-/* eslint-disable @typescript-eslint/no-unused-vars */
 import React, { useEffect, useRef } from "react";
 import { brokerFunnel } from "../utils/tracking";
 import {
@@ -14,11 +13,8 @@ import {
   Icon,
   Badge,
   Divider,
-  List,
-  ListItem,
-  ListIcon,
   Image,
-  Flex,
+  useColorMode,
 } from "@chakra-ui/react";
 import { useTranslation } from "react-i18next";
 import { motion } from "framer-motion";
@@ -28,615 +24,628 @@ import {
   DollarSign,
   Clock,
   CheckCircle2,
-  Star,
+  Zap,
+  Globe,
+  TrendingUp,
+  ArrowRight,
+  Smartphone,
+  Monitor,
+  BarChart3,
+  Wallet,
 } from "lucide-react";
 
-import GlassCard from "../components/GlassCard";
 import SpotlightCard from "../components/SpotlightCard";
 
-const brand = "#65a8bf";
-const ANAX_LOGO_SRC = "/ANAX-Logo.png";
-const ANAX_LOGIN_LINK = "https://portal.anaxcapital.ae/login";
-const ANAX_DEMO_LINK = "https://portal.anaxcapital.ae/register/";
+const MotionBox = motion(Box);
 
-const ANAX_NAMESPACE = "broker.anax";
+const BRAND = "#65a8bf";
+const GOLD = "#b7a27d";
+const LDN_REGISTER = "https://ldnglobalmarkets.com/register-now/";
+const LDN_IB = "https://ldnglobalmarkets.com/intreduce-broker/";
+const LDN_SITE = "https://ldnglobalmarkets.com";
 
-const PARTNER_LABEL = "IB Partner";
-const YOUR_BRAND_LABEL = "promrkts"; // change if needed
+const IMG = {
+  skyline: "/images/rand/ldn-skyline.png",
+  dashboard: "/images/rand/dashboard-screenshot.png",
+  platforms: "/images/rand/many-platforms.webp",
+  features: "/images/rand/trading-features.png",
+  fsa: "/images/rand/FSA-regulated.png",
+  ib: "/images/rand/ib.png",
+  advisors: "/images/rand/advisors.png",
+  goldSilver: "/images/rand/gold-silver-bars.webp",
+  candlesticks: "/images/rand/candlesticks.png",
+  btc: "/images/rand/btc.png",
+  eth: "/images/rand/eth.png",
+  eur: "/images/rand/eur.png",
+  gbp: "/images/rand/gbp.png",
+  bofa: "/images/rand/bofa.png",
+};
 
-const createKeyMap = <T extends readonly [...string[]]>(keys: T) => keys;
-
-const anaxFeatureKeys = createKeyMap([
-  "multi_market",
-  "low_spreads",
-  "hassle_free",
-  "support",
-] as const);
-
-const anaxPlatformKeys = createKeyMap(["mt5", "app", "web"] as const);
-
-const anaxAccountStepKeys = createKeyMap([
-  "register",
-  "verify",
-  "fund",
-  "trade",
-] as const);
-
-const anaxSupportKeys = createKeyMap([
-  "efficient_onboarding",
-  "multilingual_support",
-  "education_demo",
-  "secure_payments",
-] as const);
-
-const anaxDisclaimerKeys = createKeyMap([
-  "website",
-  "restricted_regions",
-  "risk_warning",
-] as const);
+const MARKETS = [
+  { name: "Forex", icon: IMG.eur, desc: "Trade 60+ major, minor & exotic currency pairs" },
+  { name: "Crypto", icon: IMG.btc, desc: "BTC, ETH, and more with competitive leverage" },
+  { name: "Metals", icon: IMG.goldSilver, desc: "Gold, silver & precious metals CFDs" },
+  { name: "Indices", icon: IMG.candlesticks, desc: "S&P 500, NASDAQ, FTSE & global indices" },
+  { name: "Commodities", icon: IMG.bofa, desc: "Oil, gas & agricultural commodities" },
+  { name: "Shares", icon: IMG.gbp, desc: "Trade CFDs on top global company shares" },
+];
 
 const Broker: React.FC = () => {
   const { t } = useTranslation() as any;
+  const { colorMode } = useColorMode();
+  const isDark = colorMode === "dark";
   const hasTrackedPageView = useRef(false);
 
-  const IB_LINK = process.env.REACT_APP_BROKER_IB_LINK || "https://anaxcapital.ae";
+  const IB_LINK = process.env.REACT_APP_BROKER_IB_LINK || LDN_REGISTER;
 
-  // Track page view on mount
+  const textPrimary = isDark ? "gray.100" : "gray.800";
+  const textMuted = isDark ? "gray.400" : "gray.600";
+  const cardBg = isDark ? "whiteAlpha.50" : "blackAlpha.30";
+  const borderCol = isDark ? "whiteAlpha.100" : "gray.200";
+
   useEffect(() => {
     if (!hasTrackedPageView.current) {
       hasTrackedPageView.current = true;
-      brokerFunnel.pageViewed('anax', 'ANAX Capital');
+      brokerFunnel.pageViewed("ldn", "LDN Global Markets");
     }
   }, []);
 
   const handleJoin = () => {
-    if (!IB_LINK || IB_LINK === "#") return;
-    // Track CTA click and link open
-    brokerFunnel.ctaClicked('primary_cta');
-    brokerFunnel.linkOpened('anax', 'register');
+    brokerFunnel.ctaClicked("primary_cta");
+    brokerFunnel.linkOpened("ldn", "register");
     window.open(IB_LINK, "_blank", "noopener,noreferrer");
   };
 
   return (
-    <Box mt={{ base: 6, md: 2 }} py={{ base: 8, md: 16 }}>
+    <Box py={{ base: 6, md: 12 }}>
       <Container maxW="7xl">
-        <VStack align="stretch" spacing={{ base: 8, md: 10 }}>
-          {/* HERO */}
-          <motion.div
-            initial={{ opacity: 0, y: 24 }}
+        <VStack align="stretch" spacing={{ base: 8, md: 12 }}>
+
+          {/* ═══════════════════ HERO ═══════════════════ */}
+          <MotionBox
+            initial={{ opacity: 0, y: 30 }}
             animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.6, ease: "easeOut" }}
+            transition={{ duration: 0.7 }}
+          >
+            <Box
+              position="relative"
+              borderRadius="2xl"
+              overflow="hidden"
+              bg={isDark
+                ? "linear-gradient(135deg, rgba(10,15,26,0.95), rgba(20,30,50,0.95))"
+                : "linear-gradient(135deg, rgba(245,250,255,0.98), rgba(230,240,250,0.98))"
+              }
+              border="1px solid"
+              borderColor={borderCol}
+            >
+              {/* Skyline background */}
+              <Box
+                position="absolute"
+                inset={0}
+                bgImage={`url(${IMG.skyline})`}
+                bgSize="cover"
+                bgPosition="center"
+                opacity={isDark ? 0.08 : 0.05}
+                pointerEvents="none"
+              />
+
+              <SimpleGrid columns={{ base: 1, lg: 2 }} gap={0} position="relative">
+                {/* Left — copy */}
+                <VStack
+                  align={{ base: "center", lg: "start" }}
+                  spacing={5}
+                  p={{ base: 6, md: 10 }}
+                  textAlign={{ base: "center", lg: "left" }}
+                >
+                  <HStack spacing={2} flexWrap="wrap" justify={{ base: "center", lg: "flex-start" }}>
+                    <Badge
+                      borderRadius="full"
+                      px={3}
+                      py={1}
+                      fontSize="0.65rem"
+                      bg="rgba(101,168,191,0.15)"
+                      color={BRAND}
+                      border="1px solid rgba(101,168,191,0.35)"
+                      textTransform="uppercase"
+                      letterSpacing="widest"
+                    >
+                      IB Partner
+                    </Badge>
+                    <Badge
+                      borderRadius="full"
+                      px={3}
+                      py={1}
+                      fontSize="0.65rem"
+                      bg="rgba(183,162,125,0.15)"
+                      color={GOLD}
+                      border="1px solid rgba(183,162,125,0.35)"
+                      textTransform="uppercase"
+                      letterSpacing="widest"
+                    >
+                      Official
+                    </Badge>
+                  </HStack>
+
+                  <Heading
+                    fontSize={{ base: "2xl", md: "3xl", lg: "4xl" }}
+                    fontWeight="800"
+                    lineHeight="1.1"
+                    color={textPrimary}
+                  >
+                    Trade with{" "}
+                    <Text as="span" bgGradient={`linear(to-r, ${BRAND}, ${GOLD})`} bgClip="text">
+                      LDN Global Markets
+                    </Text>
+                  </Heading>
+
+                  <Text fontSize={{ base: "sm", md: "md" }} color={textMuted} maxW="lg">
+                    Join our preferred broker through our official IB link. Access 100+ instruments across Forex, Crypto, Metals & more with same-day withdrawals, tight spreads, and the powerful MT5 platform.
+                  </Text>
+
+                  <HStack spacing={4} flexWrap="wrap" justify={{ base: "center", lg: "flex-start" }}>
+                    <HStack spacing={2}>
+                      <Icon as={ShieldCheck} color={BRAND} boxSize={4} />
+                      <Text fontSize="xs" color={textMuted}>Licensed Broker</Text>
+                    </HStack>
+                    <HStack spacing={2}>
+                      <Icon as={Zap} color={BRAND} boxSize={4} />
+                      <Text fontSize="xs" color={textMuted}>Same-Day Withdrawals</Text>
+                    </HStack>
+                    <HStack spacing={2}>
+                      <Icon as={Globe} color={BRAND} boxSize={4} />
+                      <Text fontSize="xs" color={textMuted}>Global Access</Text>
+                    </HStack>
+                  </HStack>
+
+                  <HStack spacing={3} pt={2} flexWrap="wrap" justify={{ base: "center", lg: "flex-start" }}>
+                    <Button
+                      size="lg"
+                      bg={`linear-gradient(135deg, ${BRAND}, ${GOLD})`}
+                      color="white"
+                      fontWeight="700"
+                      px={8}
+                      borderRadius="xl"
+                      rightIcon={<ArrowRight size={18} />}
+                      onClick={handleJoin}
+                      _hover={{ transform: "translateY(-2px)", boxShadow: `0 8px 25px rgba(101,168,191,0.4)` }}
+                      _active={{ transform: "translateY(0)" }}
+                      transition="all 0.2s"
+                    >
+                      Open Account via IB Link
+                    </Button>
+                    <Button
+                      as="a"
+                      href={LDN_SITE}
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      size="lg"
+                      variant="outline"
+                      borderColor={BRAND}
+                      color={BRAND}
+                      borderRadius="xl"
+                      px={6}
+                      _hover={{ bg: "rgba(101,168,191,0.08)" }}
+                    >
+                      Visit Website
+                    </Button>
+                  </HStack>
+                </VStack>
+
+                {/* Right — metrics card */}
+                <Box p={{ base: 4, md: 8 }} display="flex" alignItems="center" justifyContent="center">
+                  <Box
+                    w="100%"
+                    maxW="400px"
+                    bg={isDark ? "rgba(15,20,35,0.8)" : "white"}
+                    border="1px solid"
+                    borderColor={borderCol}
+                    borderRadius="2xl"
+                    p={6}
+                    backdropFilter="blur(10px)"
+                  >
+                    <SimpleGrid columns={2} gap={4}>
+                      {[
+                        { label: "Spreads from", value: "0.0 pips", sub: "On major FX pairs", icon: DollarSign },
+                        { label: "Leverage up to", value: "1:500", sub: "Varies by instrument", icon: TrendingUp },
+                        { label: "Withdrawals", value: "Same Day", sub: "No withdrawal fees", icon: Wallet },
+                        { label: "Instruments", value: "100+", sub: "Forex, Crypto, Metals", icon: BarChart3 },
+                      ].map((m, i) => (
+                        <VStack key={i} align="start" spacing={1} p={3} bg={cardBg} borderRadius="lg">
+                          <Icon as={m.icon} color={BRAND} boxSize={4} />
+                          <Text fontWeight="700" fontSize="md" color={textPrimary}>{m.value}</Text>
+                          <Text fontSize="2xs" color={textMuted}>{m.label}</Text>
+                          <Text fontSize="2xs" color={textMuted}>{m.sub}</Text>
+                        </VStack>
+                      ))}
+                    </SimpleGrid>
+
+                    <Image
+                      src={IMG.fsa}
+                      alt="FSA Regulated"
+                      h="40px"
+                      objectFit="contain"
+                      mx="auto"
+                      mt={4}
+                      opacity={isDark ? 0.7 : 0.8}
+                    />
+                  </Box>
+                </Box>
+              </SimpleGrid>
+            </Box>
+          </MotionBox>
+
+          {/* ═══════════════════ WHY THROUGH OUR IB ═══════════════════ */}
+          <MotionBox
+            initial={{ opacity: 0, y: 20 }}
+            whileInView={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.6 }}
+            viewport={{ once: true }}
           >
             <SpotlightCard>
               <Box p={{ base: 5, md: 8 }}>
-                <SimpleGrid
-                  columns={{ base: 1, md: 2 }}
-                  gap={{ base: 6, md: 8 }}
-                  alignItems="center"
-                >
-                  {/* Left side content */}
-                  <VStack
-                    align={{ base: "center", md: "start" }}
-                    spacing={4}
-                    textAlign={{ base: "center", md: "left" }}
-                  >
-                    <VStack spacing={2} align={{ base: "center", md: "start" }}>
-                      <HStack
-                        spacing={2}
-                        justify={{ base: "center", md: "flex-start" }}
-                        flexWrap="wrap"
-                      >
-                        <Badge
-                          borderRadius="full"
-                          px={3}
-                          py={1}
-                          fontSize="0.65rem"
-                          bg="rgba(104,165,191,0.16)"
-                          color={brand}
-                          border="1px solid rgba(104,165,191,0.35)"
-                          textTransform="uppercase"
-                          letterSpacing="widest"
-                        >
-                          {PARTNER_LABEL}
-                        </Badge>
+                <VStack spacing={3} textAlign="center" mb={6}>
+                  <Image src={IMG.ib} alt="IB Partner" h="50px" objectFit="contain" mx="auto" />
+                  <Heading size={{ base: "md", md: "lg" }} bgGradient={`linear(to-r, ${BRAND}, ${GOLD})`} bgClip="text">
+                    Why Register Through Our IB Link?
+                  </Heading>
+                  <Text fontSize="sm" color={textMuted} maxW="2xl">
+                    By signing up through our official Introducing Broker link, you support promrkts while getting the same great trading conditions. We negotiate on your behalf for the best possible experience.
+                  </Text>
+                </VStack>
 
-                        <Text fontSize="xs">
-                          {t("broker.partner_label", {
-                            defaultValue: "Official referral link",
-                          })}
-                        </Text>
-                      </HStack>
-
-                      <Text fontSize="sm" fontWeight="semibold">
-                        {t("broker.anax_brand", { defaultValue: "ANAX Capital" })}
-                      </Text>
+                <SimpleGrid columns={{ base: 1, md: 3 }} gap={5}>
+                  {[
+                    { icon: DollarSign, title: "Competitive Spreads", desc: "Access tight spreads from 0.0 pips on major pairs, aligned with how we actually trade." },
+                    { icon: Clock, title: "Same-Day Withdrawals", desc: "Get your money the same day you request it — no fees for deposits or withdrawals." },
+                    { icon: ShieldCheck, title: "Aligned Conditions", desc: "Trade under the same conditions we use. Your success is our success as IB partners." },
+                  ].map((b, i) => (
+                    <VStack
+                      key={i}
+                      p={5}
+                      bg={cardBg}
+                      borderRadius="xl"
+                      border="1px solid"
+                      borderColor={borderCol}
+                      spacing={3}
+                      align="start"
+                    >
+                      <Icon as={b.icon} color={BRAND} boxSize={6} />
+                      <Text fontWeight="700" color={textPrimary}>{b.title}</Text>
+                      <Text fontSize="sm" color={textMuted}>{b.desc}</Text>
                     </VStack>
-
-                    <Heading
-                      fontSize={{ base: "2xl", md: "3xl", lg: "4xl" }}
-                      bgGradient="linear(to-r, #65a8bf, #65a8bf)"
-                      bgClip="text"
-                      lineHeight="1.1"
-                    >
-                      {t("broker.hero_title")}
-                    </Heading>
-
-                    <Text
-                      fontSize={{ base: "sm", md: "md" }}
-                     
-                      maxW={{ base: "full", md: "lg" }}
-                    >
-                      {t("broker.hero_subtitle", {
-                        defaultValue:
-                          "Join our broker through our official IB link to align your trading conditions with the way we actually trade: tight spreads, fast execution and institutional-level support.",
-                      })}
-                    </Text>
-
-                    <HStack
-                      spacing={4}
-                      flexWrap="wrap"
-                      justify={{ base: "center", md: "flex-start" }}
-                    >
-                      <HStack spacing={2}>
-                        <Icon as={ShieldCheck} color={brand} />
-                        <Text fontSize="xs">
-                          {t("broker.hero_point_1")}
-                        </Text>
-                      </HStack>
-                      <HStack spacing={2}>
-                        <Icon as={LineChart} color={brand} />
-                        <Text fontSize="xs">
-                          {t("broker.hero_point_2")}
-                        </Text>
-                      </HStack>
-                    </HStack>
-
-                    <Text fontSize="xs" mt={2} maxW={{ base: "full", md: "lg" }}>
-                      {t("broker.disclaimer_short")}
-                    </Text>
-                  </VStack>
-
-                  {/* Right side – summary card */}
-                  <Box w="100%" maxW={{ base: "sm", md: "full" }} mx={{ base: "auto", md: 0 }}>
-                    <SpotlightCard>
-                      <Box p={{ base: 5, md: 6 }}>
-                        <VStack align="stretch" spacing={4}>
-                          <SimpleGrid columns={2} gap={{ base: 3, md: 4 }}>
-                            <VStack align="start" spacing={1}>
-                              <Text fontSize="xs" color="#65a8bf">
-                                {t("broker.metric_spreads", { defaultValue: "Spreads from" })}
-                              </Text>
-                              <Text fontWeight="semibold" fontSize="sm" color="#65a8bf">
-                                0.0 pips
-                              </Text>
-                              <Text fontSize="xs" color="#65a8bf">
-                                {t("broker.metric_spreads_note", {
-                                  defaultValue: "On major FX pairs",
-                                })}
-                              </Text>
-                            </VStack>
-
-                            <VStack align="start" spacing={1}>
-                              <Text fontSize="xs" color="#65a8bf">
-                                {t("broker.metric_leverage", { defaultValue: "Leverage up to" })}
-                              </Text>
-                              <Text fontWeight="semibold" fontSize="sm" color="#65a8bf">
-                                1:500
-                              </Text>
-                              <Text fontSize="xs" color="#65a8bf">
-                                {t("broker.metric_leverage_note", {
-                                  defaultValue: "Varies by region & instrument",
-                                })}
-                              </Text>
-                            </VStack>
-
-                            <VStack align="start" spacing={1}>
-                              <Text fontSize="xs" color="#65a8bf">
-                                {t("broker.metric_execution", {
-                                  defaultValue: "Average execution",
-                                })}
-                              </Text>
-                              <Text fontWeight="semibold" fontSize="sm" color="#65a8bf">
-                                &lt; 50ms
-                              </Text>
-                              <Text fontSize="xs" color="#65a8bf">
-                                {t("broker.metric_execution_note", {
-                                  defaultValue: "Low-latency infrastructure",
-                                })}
-                              </Text>
-                            </VStack>
-
-                            <VStack align="start" spacing={1}>
-                              <Text fontSize="xs" color="#65a8bf">
-                                {t("broker.metric_platforms", { defaultValue: "Platforms" })}
-                              </Text>
-                              <Text fontWeight="semibold" fontSize="sm" color="#65a8bf">
-                                MT5 / Web
-                              </Text>
-                              <Text fontSize="xs" color="#65a8bf">
-                                {t("broker.metric_platforms_note", {
-                                  defaultValue: "Mobile & web",
-                                })}
-                              </Text>
-                            </VStack>
-                          </SimpleGrid>
-
-                          <Button
-                            w="100%"
-                            bg="linear-gradient(135deg, #65a8bf, #b7a27d)"
-                            color="white"
-                            fontWeight="700"
-                            borderRadius="xl"
-                            py={6}
-                            onClick={handleJoin}
-                            _hover={{
-                              transform: "translateY(-2px)",
-                              boxShadow: "0 8px 25px rgba(101, 168, 191, 0.4)",
-                            }}
-                            _active={{ transform: "translateY(0)" }}
-                            transition="all 0.2s"
-                          >
-                            {t("broker.cta_primary", { defaultValue: "Open via IB Link" })}
-                          </Button>
-                        </VStack>
-                      </Box>
-                    </SpotlightCard>
-                  </Box>
+                  ))}
                 </SimpleGrid>
               </Box>
             </SpotlightCard>
-          </motion.div>
+          </MotionBox>
 
-          {/* WHY THROUGH OUR IB */}
-          <SpotlightCard>
-            <Box p={{ base: 5, md: 8 }}>
-              <VStack
-                align={{ base: "center", md: "start" }}
-                spacing={3}
-                textAlign={{ base: "center", md: "left" }}
-              >
-                <Heading
-                  size={{ base: "md", md: "lg" }}
-                  bgGradient="linear(to-r, #65a8bf, #65a8bf)"
-                  bgClip="text"
+          {/* ═══════════════════ TRADEABLE MARKETS ═══════════════════ */}
+          <MotionBox
+            initial={{ opacity: 0, y: 20 }}
+            whileInView={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.6 }}
+            viewport={{ once: true }}
+          >
+            <VStack spacing={4} textAlign="center" mb={6}>
+              <Heading size={{ base: "md", md: "lg" }} color={textPrimary}>
+                Trade 100+ Instruments
+              </Heading>
+              <Text fontSize="sm" color={textMuted} maxW="xl">
+                Access a wide range of global markets from a single MT5 account.
+              </Text>
+            </VStack>
+
+            <SimpleGrid columns={{ base: 2, md: 3 }} gap={4}>
+              {MARKETS.map((m, i) => (
+                <MotionBox
+                  key={i}
+                  initial={{ opacity: 0, y: 15 }}
+                  whileInView={{ opacity: 1, y: 0 }}
+                  transition={{ duration: 0.4, delay: i * 0.08 }}
+                  viewport={{ once: true }}
                 >
-                  {t("broker.why_title")}
+                  <VStack
+                    p={5}
+                    bg={cardBg}
+                    borderRadius="xl"
+                    border="1px solid"
+                    borderColor={borderCol}
+                    spacing={3}
+                    _hover={{ borderColor: BRAND, transform: "translateY(-3px)" }}
+                    transition="all 0.2s"
+                    h="100%"
+                  >
+                    <Image src={m.icon} alt={m.name} h="36px" objectFit="contain" />
+                    <Text fontWeight="700" fontSize="sm" color={textPrimary}>{m.name}</Text>
+                    <Text fontSize="xs" color={textMuted} textAlign="center">{m.desc}</Text>
+                  </VStack>
+                </MotionBox>
+              ))}
+            </SimpleGrid>
+          </MotionBox>
+
+          {/* ═══════════════════ PLATFORM & FEATURES ═══════════════════ */}
+          <MotionBox
+            initial={{ opacity: 0, y: 20 }}
+            whileInView={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.6 }}
+            viewport={{ once: true }}
+          >
+            <SimpleGrid columns={{ base: 1, lg: 2 }} gap={8} alignItems="center">
+              <VStack align="start" spacing={5}>
+                <Heading size={{ base: "md", md: "lg" }} color={textPrimary}>
+                  Powerful{" "}
+                  <Text as="span" color={BRAND}>MT5</Text>{" "}
+                  Trading Platform
                 </Heading>
-
-                <Text fontSize={{ base: "sm", md: "sm" }} maxW="2xl">
-                  {t("broker.why_subtitle", {
-                    defaultValue:
-                      "By registering through our official IB link, you help us negotiate better conditions with the broker and unlock extra perks aligned with the way we actually trade in promrkts.",
-                  })}
+                <Text fontSize="sm" color={textMuted}>
+                  Trade on desktop, web, or mobile with the industry-leading MetaTrader 5 platform. Advanced charting, one-click trading, and algorithmic trading support.
                 </Text>
-              </VStack>
 
-              <SimpleGrid
-                columns={{ base: 1, md: 3 }}
-                gap={{ base: 4, md: 5 }}
-                mt={{ base: 4, md: 6 }}
-              >
-                <Box p={{ base: 4, md: 5 }}>
-                  <HStack mb={3} spacing={3}>
-                    <Icon as={DollarSign} color={brand} />
-                    <Text fontWeight="semibold" fontSize="sm" color="#65a8bf">
-                      {t("broker.benefit_spreads")}
-                    </Text>
-                  </HStack>
-                  <Text fontSize="sm" color="#65a8bf">
-                    {t("broker.benefit_spreads_desc")}
-                  </Text>
-                </Box>
+                <SimpleGrid columns={2} gap={3} w="100%">
+                  {[
+                    { icon: Monitor, label: "MT5 Desktop" },
+                    { icon: Globe, label: "MT5 Web Trader" },
+                    { icon: Smartphone, label: "MT5 Mobile" },
+                    { icon: LineChart, label: "Advanced Charts" },
+                  ].map((p, i) => (
+                    <HStack
+                      key={i}
+                      p={3}
+                      bg={cardBg}
+                      borderRadius="lg"
+                      border="1px solid"
+                      borderColor={borderCol}
+                      spacing={3}
+                    >
+                      <Icon as={p.icon} color={BRAND} boxSize={5} />
+                      <Text fontSize="sm" fontWeight="600" color={textPrimary}>{p.label}</Text>
+                    </HStack>
+                  ))}
+                </SimpleGrid>
 
-                <Box p={{ base: 4, md: 5 }}>
-                  <HStack mb={3} spacing={3}>
-                    <Icon as={Clock} color={brand} />
-                    <Text fontWeight="semibold" fontSize="sm" color="#65a8bf">
-                      {t("broker.benefit_execution")}
-                    </Text>
-                  </HStack>
-                  <Text fontSize="sm" color="#65a8bf">
-                    {t("broker.benefit_execution_desc")}
-                  </Text>
-                </Box>
-
-                <Box p={{ base: 4, md: 5 }}>
-                  <HStack mb={3} spacing={3}>
-                    <Icon as={Star} color={brand} />
-                    <Text fontWeight="semibold" fontSize="sm" color="#65a8bf">
-                      {t("broker.benefit_alignment")}
-                    </Text>
-                  </HStack>
-                  <Text fontSize="sm" color="#65a8bf">
-                    {t("broker.benefit_alignment_desc")}
-                  </Text>
-                </Box>
-              </SimpleGrid>
-            </Box>
-          </SpotlightCard>
-
-          {/* ANAX OVERVIEW */}
-          <SpotlightCard>
-            <Box p={{ base: 5, md: 8 }}>
-              <VStack
-                align={{ base: "center", md: "start" }}
-                spacing={3}
-                textAlign={{ base: "center", md: "left" }}
-              >
-                <Text fontSize={{ base: "sm", md: "md" }} color={brand} fontWeight="bold">
-                  {t(`${ANAX_NAMESPACE}.hero_badge`)}
-                </Text>
-                <Text fontSize={{ base: "sm", md: "md" }}>
-                  {t(`${ANAX_NAMESPACE}.hero_intro`)}
-                </Text>
-                <Text fontSize={{ base: "sm", md: "md" }}>
-                  {t(`${ANAX_NAMESPACE}.hero_intro_secondary`)}
-                </Text>
-              </VStack>
-
-              <HStack
-                spacing={4}
-                justify={{ base: "center", md: "flex-start" }}
-                pt={4}
-                flexWrap="wrap"
-              >
                 <Button
-                  as="a"
-                  href={ANAX_LOGIN_LINK}
-                  target="_blank"
-                  rel="noopener noreferrer"
-                  size="lg"
-                  bg="linear-gradient(135deg, #65a8bf, #b7a27d)"
+                  size="md"
+                  bg={`linear-gradient(135deg, ${BRAND}, ${GOLD})`}
                   color="white"
                   fontWeight="700"
                   borderRadius="xl"
-                  px={8}
-                  _hover={{
-                    transform: "translateY(-2px)",
-                    boxShadow: "0 8px 25px rgba(101, 168, 191, 0.4)",
-                  }}
-                  _active={{ transform: "translateY(0)" }}
+                  rightIcon={<ArrowRight size={16} />}
+                  onClick={handleJoin}
+                  _hover={{ transform: "translateY(-2px)", boxShadow: `0 8px 25px rgba(101,168,191,0.4)` }}
                   transition="all 0.2s"
                 >
-                  {t(`${ANAX_NAMESPACE}.cta_primary`, { defaultValue: "Client Portal" })}
+                  Start Trading on MT5
                 </Button>
+              </VStack>
 
-                <Button
-                  as="a"
-                  href={ANAX_DEMO_LINK}
-                  target="_blank"
-                  rel="noopener noreferrer"
-                  size="lg"
-                  variant="outline"
-                  borderColor="#65a8bf"
-                  color="#65a8bf"
-                  borderRadius="xl"
-                  px={8}
-                  _hover={{ bg: "rgba(101, 168, 191, 0.1)" }}
-                >
-                  {t(`${ANAX_NAMESPACE}.cta_secondary`, { defaultValue: "Open Demo / Register" })}
-                </Button>
-              </HStack>
+              <Box borderRadius="xl" overflow="hidden" border="1px solid" borderColor={borderCol}>
+                <Image
+                  src={IMG.platforms}
+                  alt="LDN Global Markets Platforms"
+                  w="100%"
+                  objectFit="cover"
+                />
+              </Box>
+            </SimpleGrid>
+          </MotionBox>
 
-              <Divider my={8} borderColor="rgba(255,255,255,0.1)" />
+          {/* ═══════════════════ TRADING FEATURES SHOWCASE ═══════════════════ */}
+          <MotionBox
+            initial={{ opacity: 0, y: 20 }}
+            whileInView={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.6 }}
+            viewport={{ once: true }}
+          >
+            <SimpleGrid columns={{ base: 1, lg: 2 }} gap={8} alignItems="center">
+              <Box borderRadius="xl" overflow="hidden" border="1px solid" borderColor={borderCol} order={{ base: 2, lg: 1 }}>
+                <Image
+                  src={IMG.features}
+                  alt="Trading Features"
+                  w="100%"
+                  objectFit="cover"
+                />
+              </Box>
 
-              <Heading
-                size={{ base: "md", md: "lg" }}
-                color="#65a8bf"
-                textAlign={{ base: "center", md: "left" }}
-              >
-                {t(`${ANAX_NAMESPACE}.why_title`)}
-              </Heading>
+              <VStack align="start" spacing={5} order={{ base: 1, lg: 2 }}>
+                <Heading size={{ base: "md", md: "lg" }} color={textPrimary}>
+                  Built for{" "}
+                  <Text as="span" bgGradient={`linear(to-r, ${BRAND}, ${GOLD})`} bgClip="text">
+                    Serious Traders
+                  </Text>
+                </Heading>
 
-              <Text
-                fontSize="sm"
-               
-                maxW="4xl"
-                textAlign={{ base: "center", md: "left" }}
-              >
-                {t(`${ANAX_NAMESPACE}.why_intro`)}
-              </Text>
-              <Text
-                fontSize="sm"
-               
-                maxW="4xl"
-                textAlign={{ base: "center", md: "left" }}
-              >
-                {t(`${ANAX_NAMESPACE}.why_intro_secondary`)}
-              </Text>
-
-              <SimpleGrid
-                columns={{ base: 1, md: 2 }}
-                gap={{ base: 4, md: 6 }}
-                mt={{ base: 6, md: 8 }}
-              >
-                {anaxFeatureKeys.map((key) => (
-                  <GlassCard key={key}>
-                    <Box p={{ base: 4, md: 5 }}>
-                      <Heading size="sm" color="#65a8bf" mb={2}>
-                        {t(`${ANAX_NAMESPACE}.features.${key}.title`)}
-                      </Heading>
-                      <Text fontSize="sm">
-                        {t(`${ANAX_NAMESPACE}.features.${key}.description`)}
-                      </Text>
-                    </Box>
-                  </GlassCard>
-                ))}
-              </SimpleGrid>
-
-              <SimpleGrid
-                columns={{ base: 1, md: 2 }}
-                gap={{ base: 6, md: 8 }}
-                mt={{ base: 8, md: 10 }}
-              >
-                <VStack align="stretch" spacing={4}>
-                  <Heading size="sm" color="#65a8bf">
-                    {t(`${ANAX_NAMESPACE}.platform_title`)}
-                  </Heading>
-
-                  {anaxPlatformKeys.map((key) => (
-                    <Box
-                      key={key}
-                      p={{ base: 3, md: 4 }}
-                      border="1px solid rgba(255,255,255,0.08)"
-                      borderRadius="xl"
-                    >
-                      <Text fontWeight="semibold" color="#65a8bf" mb={1}>
-                        {t(`${ANAX_NAMESPACE}.platforms.${key}.title`)}
-                      </Text>
-                      <Text fontSize="sm">
-                        {t(`${ANAX_NAMESPACE}.platforms.${key}.description`)}
-                      </Text>
-                    </Box>
+                <VStack align="start" spacing={3} w="100%">
+                  {[
+                    "Spreads from 0.0 pips on major pairs",
+                    "Leverage up to 1:500",
+                    "Same-day withdrawals with zero fees",
+                    "No deposit fees — fund instantly",
+                    "100+ tradeable instruments",
+                    "24/5 multilingual support",
+                  ].map((f, i) => (
+                    <HStack key={i} spacing={3}>
+                      <Icon as={CheckCircle2} color="green.500" boxSize={4} flexShrink={0} />
+                      <Text fontSize="sm" color={textPrimary}>{f}</Text>
+                    </HStack>
                   ))}
                 </VStack>
+              </VStack>
+            </SimpleGrid>
+          </MotionBox>
 
-                <VStack align="stretch" spacing={5}>
-                  <Box>
-                    <Heading size="sm" color="#65a8bf" mb={2}>
-                      {t(`${ANAX_NAMESPACE}.steps_title`)}
-                    </Heading>
-
-                    <SimpleGrid columns={{ base: 2, md: 2 }} gap={4}>
-                      {anaxAccountStepKeys.map((key) => (
-                        <Box
-                          key={key}
-                          border="1px solid rgba(255,255,255,0.08)"
-                          borderRadius="lg"
-                          p={3}
-                        >
-                          <Text fontWeight="semibold" color={brand} fontSize="sm">
-                            {t(`${ANAX_NAMESPACE}.steps.${key}.title`)}
-                          </Text>
-                          <Text fontSize="xs">
-                            {t(`${ANAX_NAMESPACE}.steps.${key}.description`)}
-                          </Text>
-                        </Box>
-                      ))}
-                    </SimpleGrid>
-                  </Box>
-
-                  <Box>
-                    <Heading size="sm" color="#65a8bf" mb={2}>
-                      {t(`${ANAX_NAMESPACE}.support_title`)}
-                    </Heading>
-                    <List spacing={2} fontSize="sm">
-                      {anaxSupportKeys.map((key) => (
-                        <ListItem key={key}>
-                          <ListIcon as={CheckCircle2} color={brand} />
-                          {t(`${ANAX_NAMESPACE}.support.${key}`)}
-                        </ListItem>
-                      ))}
-                    </List>
-                  </Box>
-                </VStack>
-              </SimpleGrid>
-            </Box>
-          </SpotlightCard>
-
-          {/* STEP-BY-STEP FUNNEL */}
-          <SpotlightCard>
-            <Box p={{ base: 5, md: 8 }}>
-              <SimpleGrid columns={{ base: 1, md: 2 }} gap={{ base: 6, md: 8 }}>
-                <Box>
-                  <Heading
-                    size={{ base: "md", md: "lg" }}
-                    bgGradient="linear(to-r, #65a8bf, #65a8bf)"
-                    bgClip="text"
-                    mb={3}
-                  >
-                    {t("broker.steps_title")}
-                  </Heading>
-
-                  <List spacing={3} fontSize="sm" color="#65a8bf" maxW={{ base: "full", md: "md" }}>
-                    <ListItem>
-                      <ListIcon as={CheckCircle2} color={brand} />
-                      {t("broker.step_1")}
-                    </ListItem>
-                    <ListItem>
-                      <ListIcon as={CheckCircle2} color={brand} />
-                      {t("broker.step_2")}
-                    </ListItem>
-                    <ListItem>
-                      <ListIcon as={CheckCircle2} color={brand} />
-                      {t("broker.step_3")}
-                    </ListItem>
-                  </List>
-
-                  <HStack mt={6} justify={{ base: "center", md: "flex-start" }}>
-                    <Button
-                      size="lg"
-                      w={{ base: "100%", sm: "auto" }}
-                      bg={brand}
-                      color="black"
-                      borderRadius="xl"
-                      _hover={{ bg: "rgba(104,165,191,0.9)" }}
-                      onClick={handleJoin}
-                    >
-                      {t("broker.cta_again")}
-                    </Button>
-                  </HStack>
-                </Box>
-
-                {/* Mini “compliance / safety” box */}
-                <Box w="100%">
-                  <GlassCard>
-                    <Box p={{ base: 4, md: 5 }}>
-                      <HStack mb={3} spacing={3}>
-                        <Icon as={ShieldCheck} color={brand} />
-                        <Text fontWeight="semibold" fontSize="sm" color={brand}>
-                          {t("broker.risk_title")}
-                        </Text>
-                      </HStack>
-                      <Text fontSize="xs" color={brand} mb={3}>
-                        {t("broker.risk_1")}
-                      </Text>
-                      <Text fontSize="xs" color={brand} mb={3}>
-                        {t("broker.risk_2")}
-                      </Text>
-                      <Text fontSize="xs" color={brand}>
-                        {t("broker.risk_3")}
-                      </Text>
-                    </Box>
-                  </GlassCard>
-                </Box>
-              </SimpleGrid>
-            </Box>
-          </SpotlightCard>
-        </VStack>
-
-        {/* Bottom disclaimers + collaboration mark */}
-        <Box mt={10} borderTop="1px solid rgba(255,255,255,0.08)" pt={6}>
-          <VStack align="stretch" spacing={4}>
-            {anaxDisclaimerKeys.map((key) => (
-              <Text key={key} fontSize="xs">
-                {t(`${ANAX_NAMESPACE}.disclaimer.${key}`)}
-              </Text>
-            ))}
-
-            <VStack spacing={2} pt={2}>
-              <Image src={ANAX_LOGO_SRC} alt="ANAX Capital logo" h={9} objectFit="contain" />
-
-              <Text
-                fontSize="xl"
-                bgGradient="linear(to-r, #65a8bf, #65a8bf)"
-                bgClip="text"
-                fontWeight="extrabold"
-                lineHeight="1"
-              >
-                ×
-              </Text>
-
-              <Text fontSize="sm" fontWeight="semibold">
-                {YOUR_BRAND_LABEL}
-              </Text>
-
-              <Text fontSize="xs">
-                {t("broker.ib_partner_note", { defaultValue: "Introducing Broker (IB) partner" })}
+          {/* ═══════════════════ DASHBOARD PREVIEW ═══════════════════ */}
+          <MotionBox
+            initial={{ opacity: 0, y: 20 }}
+            whileInView={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.6 }}
+            viewport={{ once: true }}
+          >
+            <VStack spacing={4} textAlign="center" mb={4}>
+              <Heading size={{ base: "md", md: "lg" }} color={textPrimary}>
+                Client Dashboard
+              </Heading>
+              <Text fontSize="sm" color={textMuted} maxW="xl">
+                Manage your accounts, deposits, and withdrawals from a clean, intuitive dashboard.
               </Text>
             </VStack>
+            <Box borderRadius="2xl" overflow="hidden" border="1px solid" borderColor={borderCol} boxShadow={isDark ? "0 8px 32px rgba(0,0,0,0.4)" : "0 8px 32px rgba(0,0,0,0.1)"}>
+              <Image src={IMG.dashboard} alt="LDN Dashboard" w="100%" objectFit="cover" />
+            </Box>
+          </MotionBox>
+
+          {/* ═══════════════════ HOW TO GET STARTED ═══════════════════ */}
+          <MotionBox
+            initial={{ opacity: 0, y: 20 }}
+            whileInView={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.6 }}
+            viewport={{ once: true }}
+          >
+            <SpotlightCard>
+              <Box p={{ base: 5, md: 8 }}>
+                <VStack spacing={3} textAlign="center" mb={6}>
+                  <Heading size={{ base: "md", md: "lg" }} bgGradient={`linear(to-r, ${BRAND}, ${GOLD})`} bgClip="text">
+                    Start Trading in 3 Steps
+                  </Heading>
+                </VStack>
+
+                <SimpleGrid columns={{ base: 1, md: 3 }} gap={6}>
+                  {[
+                    { step: "01", title: "Register", desc: "Click our IB link and complete the fast, secure registration form.", icon: Globe },
+                    { step: "02", title: "Fund", desc: "Deposit using a wide range of methods — no fees, instant processing.", icon: Wallet },
+                    { step: "03", title: "Trade", desc: "Start trading 100+ instruments on MT5 with competitive conditions.", icon: TrendingUp },
+                  ].map((s, i) => (
+                    <VStack
+                      key={i}
+                      p={6}
+                      bg={cardBg}
+                      borderRadius="xl"
+                      border="1px solid"
+                      borderColor={borderCol}
+                      spacing={3}
+                      textAlign="center"
+                    >
+                      <Text fontSize="3xl" fontWeight="800" bgGradient={`linear(to-r, ${BRAND}, ${GOLD})`} bgClip="text">
+                        {s.step}
+                      </Text>
+                      <Icon as={s.icon} color={BRAND} boxSize={6} />
+                      <Text fontWeight="700" color={textPrimary}>{s.title}</Text>
+                      <Text fontSize="sm" color={textMuted}>{s.desc}</Text>
+                    </VStack>
+                  ))}
+                </SimpleGrid>
+
+                <VStack pt={6}>
+                  <Button
+                    size="lg"
+                    bg={`linear-gradient(135deg, ${BRAND}, ${GOLD})`}
+                    color="white"
+                    fontWeight="700"
+                    px={10}
+                    borderRadius="xl"
+                    rightIcon={<ArrowRight size={18} />}
+                    onClick={handleJoin}
+                    _hover={{ transform: "translateY(-2px)", boxShadow: `0 8px 25px rgba(101,168,191,0.4)` }}
+                    transition="all 0.2s"
+                  >
+                    Open Your Account Now
+                  </Button>
+                </VStack>
+              </Box>
+            </SpotlightCard>
+          </MotionBox>
+
+          {/* ═══════════════════ ADVISORS / SUPPORT ═══════════════════ */}
+          <MotionBox
+            initial={{ opacity: 0, y: 20 }}
+            whileInView={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.6 }}
+            viewport={{ once: true }}
+          >
+            <SimpleGrid columns={{ base: 1, lg: 2 }} gap={8} alignItems="center">
+              <VStack align="start" spacing={4}>
+                <Heading size={{ base: "md", md: "lg" }} color={textPrimary}>
+                  Dedicated Support & Advisors
+                </Heading>
+                <Text fontSize="sm" color={textMuted}>
+                  LDN Global Markets provides multilingual support, personal account managers, and educational resources to help you succeed.
+                </Text>
+                <VStack align="start" spacing={2}>
+                  {[
+                    "24/5 multilingual customer support",
+                    "Personal account managers",
+                    "Free webinars & educational seminars",
+                    "Demo accounts for risk-free practice",
+                    "Secure payment processing",
+                  ].map((s, i) => (
+                    <HStack key={i} spacing={3}>
+                      <Icon as={CheckCircle2} color="green.500" boxSize={4} flexShrink={0} />
+                      <Text fontSize="sm" color={textPrimary}>{s}</Text>
+                    </HStack>
+                  ))}
+                </VStack>
+              </VStack>
+
+              <Box borderRadius="xl" overflow="hidden" border="1px solid" borderColor={borderCol}>
+                <Image src={IMG.advisors} alt="LDN Advisors" w="100%" objectFit="cover" />
+              </Box>
+            </SimpleGrid>
+          </MotionBox>
+
+          {/* ═══════════════════ RISK & COMPLIANCE ═══════════════════ */}
+          <Box
+            p={{ base: 5, md: 8 }}
+            bg={cardBg}
+            borderRadius="2xl"
+            border="1px solid"
+            borderColor={borderCol}
+          >
+            <HStack mb={4} spacing={3}>
+              <Icon as={ShieldCheck} color={BRAND} boxSize={5} />
+              <Heading size="sm" color={textPrimary}>Licensing & Risk Disclosure</Heading>
+            </HStack>
+
+            <VStack align="start" spacing={3}>
+              <Text fontSize="xs" color={textMuted}>
+                <strong>Licensing:</strong> LDN GLOBAL MARKETS LLC is an officially licensed broker holding an International Brokerage License in Saint Vincent and the Grenadines, numbered 1547 LLC. Registered address: Richmond Hill Rd, Kingstown, St. Vincent and the Grenadines, VC0100. Additionally registered with license number T2023240 on Bonovo Road in Fomboni, Island of Mohéli, Comoros Union.
+              </Text>
+              <Text fontSize="xs" color={textMuted}>
+                <strong>Physical Address:</strong> Vasiliou Vrionidi 6, 5th floor, office 6, 3095 Limassol.
+              </Text>
+              <Text fontSize="xs" color={textMuted}>
+                <strong>Risk Warning:</strong> CFDs are complex financial products traded on margin. Trading CFDs carries a high level of risk — you may lose all your invested capital. CFDs may not be suitable for all investors. Please ensure you fully understand the risks involved and seek independent advice if necessary.
+              </Text>
+              <Text fontSize="xs" color={textMuted}>
+                <strong>Restricted Regions:</strong> LDN Global Markets does not provide services to citizens/residents of the United States, United Kingdom, Canada, Japan, EU countries, Iran, Israel, and North Korea.
+              </Text>
+            </VStack>
+          </Box>
+
+          <Divider borderColor={borderCol} />
+
+          {/* ═══════════════════ PARTNERSHIP FOOTER ═══════════════════ */}
+          <VStack spacing={3} py={4} textAlign="center">
+            <HStack spacing={4} align="center" justify="center">
+              <Text
+                fontSize="lg"
+                fontWeight="800"
+                bgGradient={`linear(to-r, ${BRAND}, ${GOLD})`}
+                bgClip="text"
+              >
+                LDN Global Markets
+              </Text>
+              <Text fontSize="xl" fontWeight="800" color={textMuted}>×</Text>
+              <Text fontSize="lg" fontWeight="800" color={textPrimary}>promrkts</Text>
+            </HStack>
+            <Text fontSize="xs" color={textMuted}>
+              Official Introducing Broker (IB) Partnership
+            </Text>
+            <Text fontSize="xs" color={textMuted}>
+              © {new Date().getFullYear()} LDN Global Markets. All rights reserved.
+            </Text>
           </VStack>
-        </Box>
+
+        </VStack>
       </Container>
     </Box>
   );

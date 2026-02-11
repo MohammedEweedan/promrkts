@@ -1,5 +1,4 @@
 // src/pages/Home.tsx — Premium AI Trading + Course Startup Redesign
-/* eslint-disable */
 import React from "react";
 import "../styles/fonts.css";
 import { useTranslation } from "react-i18next";
@@ -1013,72 +1012,6 @@ const SocialProofBar: React.FC<{ t: any }> = ({ t }) => {
   );
 };
 
-// Urgency banner with countdown
-const UrgencyBanner: React.FC<{ t: any }> = ({ t }) => {
-  const [timeLeft, setTimeLeft] = React.useState({ hours: 23, minutes: 59, seconds: 59 });
-  
-  React.useEffect(() => {
-    const timer = setInterval(() => {
-      setTimeLeft(prev => {
-        if (prev.seconds > 0) return { ...prev, seconds: prev.seconds - 1 };
-        if (prev.minutes > 0) return { ...prev, minutes: prev.minutes - 1, seconds: 59 };
-        if (prev.hours > 0) return { hours: prev.hours - 1, minutes: 59, seconds: 59 };
-        return { hours: 23, minutes: 59, seconds: 59 }; // Reset
-      });
-    }, 1000);
-    return () => clearInterval(timer);
-  }, []);
-
-  return (
-    <MotionBox
-      initial={{ opacity: 0, scale: 0.95 }}
-      whileInView={{ opacity: 1, scale: 1 }}
-      viewport={{ once: true }}
-      transition={{ duration: 0.5 }}
-    >
-      <Box
-        p={{ base: 4, md: 6 }}
-        borderRadius="20px"
-        bg="linear-gradient(135deg, rgba(239, 68, 68, 0.1) 0%, rgba(234, 179, 8, 0.1) 100%)"
-        border="1px solid rgba(239, 68, 68, 0.3)"
-        textAlign="center"
-      >
-        <HStack justify="center" spacing={2} mb={3}>
-          <Icon as={Flame} boxSize={5} color="#ef4444" />
-          <Text color="#ef4444" fontWeight="700" fontSize={{ base: "sm", md: "md" }} textTransform="uppercase" letterSpacing="1px">
-            {t("home.urgency.title", { defaultValue: "Limited Time Offer" })}
-          </Text>
-        </HStack>
-        <Text fontSize={{ base: "lg", md: "xl" }} fontWeight="600" mb={4}>
-          {t("home.urgency.message", { defaultValue: "Get 30% off all courses - Only 7 spots left at this price!" })}
-        </Text>
-        <HStack justify="center" spacing={4}>
-          {[
-            { value: timeLeft.hours, label: "HRS" },
-            { value: timeLeft.minutes, label: "MIN" },
-            { value: timeLeft.seconds, label: "SEC" },
-          ].map((unit, i) => (
-            <VStack key={i} spacing={0}>
-              <Box
-                bg="rgba(239, 68, 68, 0.2)"
-                borderRadius="12px"
-                px={4}
-                py={2}
-                minW="60px"
-              >
-                <Text fontSize={{ base: "xl", md: "2xl" }} fontWeight="800" color="#ef4444">
-                  {String(unit.value).padStart(2, '0')}
-                </Text>
-              </Box>
-              <Text fontSize="xs" mt={1}>{unit.label}</Text>
-            </VStack>
-          ))}
-        </HStack>
-      </Box>
-    </MotionBox>
-  );
-};
-
 // Trust signals section
 const TrustSignals: React.FC<{ t: any }> = ({ t }) => {
   const signals = [
@@ -1192,71 +1125,6 @@ const TestimonialCard: React.FC<{
     </Box>
   </MotionBox>
 );
-
-// Success stories carousel
-const SuccessStories: React.FC<{ t: any }> = ({ t }) => {
-  const testimonials = [
-    {
-      name: "Ahmed K.",
-      role: t("home.testimonial.role1", { defaultValue: "Forex Trader" }),
-      quote: t("home.testimonial.quote1", { defaultValue: "I went from losing money to consistent profits in just 3 months. The AI coaching changed everything." }),
-      profit: "$12,400",
-      avatarIcon: TrendingUp,
-    },
-    {
-      name: "Sarah M.",
-      role: t("home.testimonial.role2", { defaultValue: "Crypto Investor" }),
-      quote: t("home.testimonial.quote2", { defaultValue: "Best investment I've ever made. The community support is incredible and the strategies actually work." }),
-      profit: "$8,750",
-      avatarIcon: BarChart3,
-    },
-    {
-      name: "James L.",
-      role: t("home.testimonial.role3", { defaultValue: "Day Trader" }),
-      quote: t("home.testimonial.quote3", { defaultValue: "Finally quit my 9-5 after completing the advanced course. Trading full-time now with consistent income." }),
-      profit: "$23,000",
-      avatarIcon: Award,
-    },
-  ];
-
-  return (
-    <Box py={{ base: 12, md: 20 }}>
-      <VStack spacing={4} textAlign="center" mb={{ base: 10, md: 14 }}>
-        <Badge 
-          bg="rgba(101, 168, 191, 0.1)" 
-          color={UI.accent} 
-          px={4} 
-          py={1} 
-          borderRadius="full"
-          fontSize="xs"
-          fontWeight="600"
-          textTransform="uppercase"
-          letterSpacing="1px"
-        >
-          {t("home.stories.badge", { defaultValue: "Real Results" })}
-        </Badge>
-        <Heading 
-          fontSize={{ base: "2.5rem", md: "3.5rem" }} 
-          letterSpacing="-0.03em" 
-          fontWeight="700"
-          bgGradient="linear(to-r, #65a8bf, #b7a27d)" 
-          bgClip="text"
-        >
-          {t("home.stories.title", { defaultValue: "Success Stories" })}
-        </Heading>
-        <Text maxW="xl" fontSize={{ base: "md", md: "lg" }}>
-          {t("home.stories.subtitle", { defaultValue: "Join thousands of traders who transformed their financial future" })}
-        </Text>
-      </VStack>
-      
-      <SimpleGrid columns={{ base: 1, md: 3 }} gap={6}>
-        {testimonials.map((t, i) => (
-          <TestimonialCard key={i} {...t} delay={i * 0.15} />
-        ))}
-      </SimpleGrid>
-    </Box>
-  );
-};
 
 // Sticky CTA that appears on scroll
 const StickyCTA: React.FC<{ t: any; onNavigate: () => void }> = ({ t, onNavigate }) => {
@@ -3017,29 +2885,6 @@ const Home: React.FC = () => {
                   </VStack>
                 </Box>
 
-                {/* Broker CTA */}
-                <Box textAlign="center" p={{ base: 5, md: 6 }}>
-                  <Heading size="md" mb={2} color={accentColor}>
-                    {t("home.enrolled.broker_title", {
-                      defaultValue: "Trade With Our Preferred Broker",
-                    })}
-                  </Heading>
-                  <Text opacity={0.9} mb={4} color="#65a8bf">
-                    {t("home.enrolled.broker_sub", {
-                      defaultValue: "Tight spreads, ECN execution, and fast withdrawals.",
-                    })}
-                  </Text>
-                  <Button
-                    size="lg"
-                    bg={accentColor}
-                    boxShadow={UI.glow}
-                    onClick={() => window.open("/broker", "_self")}
-                  >
-                    {t("home.enrolled.broker_cta", {
-                      defaultValue: "Join Our Broker",
-                    })}
-                  </Button>
-                </Box>
               </>
             ) : (
               <>
@@ -3134,7 +2979,7 @@ const Home: React.FC = () => {
                 )}
 
                 {/* Terminal GIF Showcase */}
-                <Box py={{ base: 14, md: 20 }} position="relative" overflow="hidden">
+                <Box py={{ base: 8, md: 12 }} position="relative" overflow="hidden">
                   <MotionBox
                     initial={{ opacity: 0, y: 40 }}
                     whileInView={{ opacity: 1, y: 0 }}
@@ -3299,7 +3144,7 @@ const Home: React.FC = () => {
                 </Box>
 
                 {/* Institutional-Grade Education Section */}
-                <Box py={{ base: 14, md: 20 }}>
+                <Box py={{ base: 8, md: 12 }}>
                   <MotionBox
                     initial={{ opacity: 0, y: 40 }}
                     whileInView={{ opacity: 1, y: 0 }}
@@ -3586,68 +3431,8 @@ const Home: React.FC = () => {
                   </Box>
                 </ParallaxSection>
 
-                {/* Broker CTA — always shown for non-enrolled */}
-                <GradualFooter>
-                  <Box my={{ base: 12, md: 20 }} px={{ base: 4, md: 0 }}>
-                    <Box 
-                      textAlign="center" 
-                      p={{ base: 8, md: 12 }}
-                      borderRadius="28px"
-                      bg={UI.surfaceLight}
-                      border="1px solid"
-                      borderColor={UI.border}
-                      position="relative"
-                      overflow="hidden"
-                    >
-                      <Box
-                        position="absolute"
-                        top="-50%"
-                        left="50%"
-                        transform="translateX(-50%)"
-                        w="120%"
-                        h="100%"
-                        bgGradient="radial(ellipse at center, rgba(101, 168, 191, 0.08), transparent 60%)"
-                        pointerEvents="none"
-                      />
-                      <VStack spacing={4} position="relative">
-                        <Heading 
-                          size="lg" 
-                          bgGradient="linear(to-r, #65a8bf, #b7a27d)" 
-                          bgClip="text"
-                          fontWeight="700"
-                        >
-                          {t("home.enrolled.broker_title", {
-                            defaultValue: "Trade With Our Preferred Broker",
-                          })}
-                        </Heading>
-                        <Text maxW="md" fontSize={{ base: "sm", md: "md" }}>
-                          {t("home.enrolled.broker_sub", {
-                            defaultValue: "Tight spreads, ECN execution, and fast withdrawals.",
-                          })}
-                        </Text>
-                        <Button
-                          size="lg"
-                          bg={UI.gradient}
-                          color="#0a0f1a"
-                          fontWeight="700"
-                          px={10}
-                          borderRadius="14px"
-                          boxShadow={UI.glow}
-                          _hover={{ transform: "translateY(-2px)", boxShadow: UI.glowStrong }}
-                          transition="all 0.3s"
-                          onClick={() => window.open("/broker", "_self")}
-                        >
-                          {t("home.enrolled.broker_cta", {
-                            defaultValue: "Join Our Broker",
-                          })}
-                        </Button>
-                      </VStack>
-                    </Box>
-                  </Box>
-                </GradualFooter>
-
                 {/* Services Stacking Cards — visible for ALL non-enrolled users */}
-                <Box position="relative" py={{ base: 10, md: 20 }}>
+                <Box position="relative" py={{ base: 8, md: 14 }}>
                   <MotionBox
                     initial={{ opacity: 0, y: 30 }}
                     whileInView={{ opacity: 1, y: 0 }}
@@ -3843,7 +3628,7 @@ const Home: React.FC = () => {
                       viewport={{ once: true, amount: 0.3 }}
                     >
                       <Image
-                        src="/images/rand/iphones-chart.webp"
+                        src="/images/rand/many-platforms.webp"
                         maxW="container.lg"
                         w="100%"
                         mx="auto"
@@ -4357,20 +4142,6 @@ const Home: React.FC = () => {
                   </Container>
                 </ParallaxSection>
 
-                {/* Success Stories / Testimonials */}
-                <ParallaxSection speed={0.3}>
-                  <Container maxW="container.xl">
-                    <SuccessStories t={t} />
-                  </Container>
-                </ParallaxSection>
-
-                {/* Urgency Banner */}
-                <ParallaxSection speed={0.2}>
-                  <Container maxW="container.lg">
-                    <UrgencyBanner t={t} />
-                  </Container>
-                </ParallaxSection>
-
                 {/* Trust Signals */}
                 <ParallaxSection speed={0.2}>
                   <Container maxW="container.xl">
@@ -4537,6 +4308,64 @@ const Home: React.FC = () => {
                 </>)}
               </>
             )}
+          {/* Broker CTA — always at the very bottom */}
+          <Box my={{ base: 8, md: 14 }} px={{ base: 4, md: 0 }}>
+            <Box
+              textAlign="center"
+              p={{ base: 8, md: 12 }}
+              borderRadius="28px"
+              bg={UI.surfaceLight}
+              border="1px solid"
+              borderColor={UI.border}
+              position="relative"
+              overflow="hidden"
+            >
+              <Box
+                position="absolute"
+                top="-50%"
+                left="50%"
+                transform="translateX(-50%)"
+                w="120%"
+                h="100%"
+                bgGradient="radial(ellipse at center, rgba(101, 168, 191, 0.08), transparent 60%)"
+                pointerEvents="none"
+              />
+              <VStack spacing={4} position="relative">
+                <Heading
+                  size="lg"
+                  bgGradient="linear(to-r, #65a8bf, #b7a27d)"
+                  bgClip="text"
+                  fontWeight="700"
+                >
+                  {t("home.enrolled.broker_title", {
+                    defaultValue: "Trade With Our Preferred Broker",
+                  })}
+                </Heading>
+                <Text maxW="md" fontSize={{ base: "sm", md: "md" }}>
+                  {t("home.enrolled.broker_sub", {
+                    defaultValue: "Tight spreads, ECN execution, and fast withdrawals.",
+                  })}
+                </Text>
+                <Button
+                  size="lg"
+                  bg={UI.gradient}
+                  color="#0a0f1a"
+                  fontWeight="700"
+                  px={10}
+                  borderRadius="14px"
+                  boxShadow={UI.glow}
+                  _hover={{ transform: "translateY(-2px)", boxShadow: UI.glowStrong }}
+                  transition="all 0.3s"
+                  onClick={() => window.open("/broker", "_self")}
+                >
+                  {t("home.enrolled.broker_cta", {
+                    defaultValue: "Join Our Broker",
+                  })}
+                </Button>
+              </VStack>
+            </Box>
+          </Box>
+
           </Container>
           <SpinningWheel isOpen={spinOpen} onClose={() => setSpinOpen(false)} />
           

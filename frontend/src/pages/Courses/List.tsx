@@ -34,7 +34,6 @@ import { useTranslation } from "react-i18next";
 import { Star, TrendingUp, Users, Award, Zap, CheckCircle, ArrowRight, Sparkles } from "lucide-react";
 // CheckCircle and ArrowRight used in enhanced course cards below
 import { motion } from "framer-motion";
-import { SocialProofBanner } from "../../components/TrustBadges";
 
 const MotionBox = motion(Box);
 
@@ -79,6 +78,9 @@ const CoursesList: React.FC = () => {
   const [tiers, setTiers] = React.useState<CourseTier[]>([]);
   const [loading, setLoading] = React.useState<boolean>(true);
   const [error, setError] = React.useState<string | null>(null);
+  const [platformStats, setPlatformStats] = React.useState<{
+    users: number; purchases: number; buyersPerCourse: Record<string, number>;
+  }>({ users: 0, purchases: 0, buyersPerCourse: {} });
   const { isOpen: isExitOpen, onOpen: onExitOpen, onClose: onExitClose } = useDisclosure();
   const [hasShownExit, setHasShownExit] = React.useState(false);
   const hasTrackedListView = useRef(false);
@@ -116,14 +118,22 @@ const CoursesList: React.FC = () => {
   React.useEffect(() => {
     (async () => {
       try {
-        // Load courses + subscriptions (challenges removed)
-        const [coursesResp, subsResp] = await Promise.all([
+        // Load courses + subscriptions + public stats
+        const [coursesResp, subsResp, statsResp] = await Promise.all([
           api.get("/courses").catch(() => ({ data: [] })),
           api.get("/subscriptions").catch(() => ({ data: [] })),
+          api.get("/stats/public").catch(() => ({ data: {} })),
         ]);
         const courses = Array.isArray(coursesResp.data) ? coursesResp.data : [];
         const subs = Array.isArray(subsResp.data) ? subsResp.data : [];
         setTiers([...courses, ...subs]);
+        if (statsResp.data) {
+          setPlatformStats({
+            users: statsResp.data.users || 0,
+            purchases: statsResp.data.purchases || 0,
+            buyersPerCourse: statsResp.data.buyersPerCourse || {},
+          });
+        }
       } catch (e: any) {
         setError(
           e?.response?.data?.message || t("errors.load_failed", { defaultValue: "Failed to load." })
@@ -216,31 +226,27 @@ const CoursesList: React.FC = () => {
             {t("hero.subtitle", { defaultValue: "Join thousands of successful traders who transformed their financial future with our proven strategies." })}
           </Text>
 
-          {/* Stats */}
-          <SimpleGrid columns={{ base: 2, md: 4 }} gap={4} pt={4}>
-            <VStack p={3} bg={isDark ? 'whiteAlpha.50' : 'blackAlpha.30'} borderRadius="lg">
+          {/* Stats — real data from API */}
+          <SimpleGrid columns={{ base: 2, md: 2 }} gap={4} pt={4} maxW="md" mx="auto">
+            <VStack p={4} bg={isDark ? 'whiteAlpha.50' : 'blackAlpha.30'} borderRadius="xl" border="1px solid" borderColor={isDark ? 'whiteAlpha.100' : 'blackAlpha.50'}>
               <Icon as={Users} boxSize={5} color={GOLD} />
-              <Text fontWeight="800" bgGradient="linear(to-r, #65a8bf, #b7a27d)" bgClip="text">100,007+</Text>
-              <Text fontSize="xs" color={isDark ? 'whiteAlpha.700' : 'gray.500'}>Students</Text>
+              <Text fontWeight="800" fontSize="2xl" bgGradient="linear(to-r, #65a8bf, #b7a27d)" bgClip="text">
+                {platformStats.users > 0 ? platformStats.users.toLocaleString() : '—'}
+              </Text>
+              <Text fontSize="xs" color={isDark ? 'whiteAlpha.700' : 'gray.500'}>
+                {t("stats.registered_users", { defaultValue: "Registered Users" })}
+              </Text>
             </VStack>
-            <VStack p={3} bg={isDark ? 'whiteAlpha.50' : 'blackAlpha.30'} borderRadius="lg">
-              <Icon as={Award} boxSize={5} color={GOLD} />
-              <Text fontWeight="800" bgGradient="linear(to-r, #65a8bf, #b7a27d)" bgClip="text">4.9★</Text>
-              <Text fontSize="xs" color={isDark ? 'whiteAlpha.700' : 'gray.500'}>Rating</Text>
-            </VStack>
-            <VStack p={3} bg={isDark ? 'whiteAlpha.50' : 'blackAlpha.30'} borderRadius="lg">
+            <VStack p={4} bg={isDark ? 'whiteAlpha.50' : 'blackAlpha.30'} borderRadius="xl" border="1px solid" borderColor={isDark ? 'whiteAlpha.100' : 'blackAlpha.50'}>
               <Icon as={TrendingUp} boxSize={5} color={GOLD} />
-              <Text fontWeight="800" bgGradient="linear(to-r, #65a8bf, #b7a27d)" bgClip="text">$50K+</Text>
-              <Text fontSize="xs" color={isDark ? 'whiteAlpha.700' : 'gray.500'}>Avg. Profit</Text>
-            </VStack>
-            <VStack p={3} bg={isDark ? 'whiteAlpha.50' : 'blackAlpha.30'} borderRadius="lg">
-              <Icon as={Zap} boxSize={5} color={GOLD} />
-              <Text fontWeight="800" bgGradient="linear(to-r, #65a8bf, #b7a27d)" bgClip="text">100%</Text>
-              <Text fontSize="xs" color={isDark ? 'whiteAlpha.700' : 'gray.500'}>Lifetime Access</Text>
+              <Text fontWeight="800" fontSize="2xl" bgGradient="linear(to-r, #65a8bf, #b7a27d)" bgClip="text">
+                {platformStats.purchases > 0 ? platformStats.purchases.toLocaleString() : '—'}
+              </Text>
+              <Text fontSize="xs" color={isDark ? 'whiteAlpha.700' : 'gray.500'}>
+                {t("stats.total_purchases", { defaultValue: "Courses Purchased" })}
+              </Text>
             </VStack>
           </SimpleGrid>
-
-          <SocialProofBanner enrolledCount={100007} recentPurchases={8} />
         </VStack>
       </MotionBox>
 
@@ -397,21 +403,23 @@ const CoursesList: React.FC = () => {
                                 {tier.description}
                               </Text>
 
-                              {/* Social proof */}
+                              {/* Social proof — real buyers count */}
                               <HStack spacing={4}>
                                 {renderSnippetStyleStars(tier)}
-                                <HStack spacing={1} color={isDark ? "whiteAlpha.600" : "gray.500"}>
-                                  <Icon as={Users} boxSize={4} color="#65a8bf" />
-                                  <Text
-                                    fontSize="sm"
-                                    color={isDark ? "whiteAlpha.700" : "gray.600"}
-                                  >
-                                    {t("products.enrolled_count", {
-                                      defaultValue: "{{count}}+ enrolled",
-                                      count: Math.floor(Math.random() * 400) + 100,
-                                    })}
-                                  </Text>
-                                </HStack>
+                                {(platformStats.buyersPerCourse[tier.id] ?? 0) > 0 && (
+                                  <HStack spacing={1} color={isDark ? "whiteAlpha.600" : "gray.500"}>
+                                    <Icon as={Users} boxSize={4} color="#65a8bf" />
+                                    <Text
+                                      fontSize="sm"
+                                      color={isDark ? "whiteAlpha.700" : "gray.600"}
+                                    >
+                                      {t("products.buyers_count", {
+                                        defaultValue: "{{count}} purchased",
+                                        count: platformStats.buyersPerCourse[tier.id],
+                                      })}
+                                    </Text>
+                                  </HStack>
+                                )}
                               </HStack>
 
                               {/* Value props */}

@@ -52,12 +52,7 @@ interface PremiumHeroSectionProps {
 const MotionBox = motion(Box);
 const MotionHeading = motion(Heading);
 
-const defaultStats: StatItem[] = [
-  { value: '100,007+', label: 'Students', icon: Users },
-  { value: '4.9★', label: 'Rating', icon: Award },
-  { value: '$50K+', label: 'Avg. Profit', icon: TrendingUp },
-  { value: '100%', label: 'Secure', icon: Shield },
-];
+const defaultStats: StatItem[] = [];
 
 const PremiumHeroSection: React.FC<PremiumHeroSectionProps> = ({
   title = 'Master the Markets. Build Your Wealth.',
