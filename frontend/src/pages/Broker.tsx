@@ -57,6 +57,8 @@ const IMG = {
   eur: "/images/rand/eur.png",
   gbp: "/images/rand/gbp.png",
   bofa: "/images/rand/bofa.png",
+  shares: "/images/rand/shares.png",
+  oil: "/images/rand/oil.png"
 };
 
 const MARKETS = [
@@ -64,8 +66,8 @@ const MARKETS = [
   { name: "Crypto", icon: IMG.btc, desc: "BTC, ETH, and more with competitive leverage" },
   { name: "Metals", icon: IMG.goldSilver, desc: "Gold, silver & precious metals CFDs" },
   { name: "Indices", icon: IMG.candlesticks, desc: "S&P 500, NASDAQ, FTSE & global indices" },
-  { name: "Commodities", icon: IMG.bofa, desc: "Oil, gas & agricultural commodities" },
-  { name: "Shares", icon: IMG.gbp, desc: "Trade CFDs on top global company shares" },
+  { name: "Commodities", icon: IMG.oil, desc: "Oil, gas & agricultural commodities" },
+  { name: "Shares", icon: IMG.shares, desc: "Trade CFDs on top global company shares" },
 ];
 
 const Broker: React.FC = () => {
@@ -74,9 +76,6 @@ const Broker: React.FC = () => {
   const hasTrackedPageView = useRef(false);
 
   const IB_LINK = process.env.REACT_APP_BROKER_IB_LINK || LDN_REGISTER;
-
-  const textPrimary = isDark ? "white" : "black";
-  const textMuted = isDark ? "gray.400" : "gray.600";
   const cardBg = isDark ? "whiteAlpha.50" : "blackAlpha.30";
   const borderCol = isDark ? "whiteAlpha.100" : "gray.200";
 
@@ -94,7 +93,7 @@ const Broker: React.FC = () => {
   };
 
   return (
-    <Box py={{ base: 6, md: 12 }}>
+    <Box py={{ base: 6, md: 12 }} mt="20px">
       <Container maxW="7xl">
         <VStack align="stretch" spacing={{ base: 8, md: 12 }}>
 
@@ -139,7 +138,7 @@ const Broker: React.FC = () => {
                     fontSize={{ base: "2xl", md: "3xl", lg: "4xl" }}
                     fontWeight="800"
                     lineHeight="1.1"
-                    color={textPrimary}
+                    color="black"
                   >
                     Trade with{" "}
                     <Text as="span" bgGradient={`linear(to-r, ${BRAND}, ${GOLD})`} bgClip="text">
@@ -147,22 +146,22 @@ const Broker: React.FC = () => {
                     </Text>
                   </Heading>
 
-                  <Text fontSize={{ base: "sm", md: "md" }} color={textMuted} maxW="lg">
+                  <Text fontSize={{ base: "sm", md: "md" }} maxW="lg" color="black">
                     Join our preferred broker through our official IB link. Access 100+ instruments across Forex, Crypto, Metals & more with same-day withdrawals, tight spreads, and the powerful MT5 platform.
                   </Text>
 
-                  <HStack spacing={4} flexWrap="wrap" justify={{ base: "center", lg: "flex-start" }}>
+                  <HStack spacing={4} flexWrap="wrap" justify={{ base: "center", lg: "flex-start" }} color="black">
                     <HStack spacing={2}>
                       <Icon as={ShieldCheck} color={BRAND} boxSize={4} />
-                      <Text fontSize="xs" color={textMuted}>Licensed Broker</Text>
+                      <Text fontSize="xs">Licensed Broker</Text>
                     </HStack>
                     <HStack spacing={2}>
                       <Icon as={Zap} color={BRAND} boxSize={4} />
-                      <Text fontSize="xs" color={textMuted}>Same-Day Withdrawals</Text>
+                      <Text fontSize="xs">Same-Day Withdrawals</Text>
                     </HStack>
                     <HStack spacing={2}>
                       <Icon as={Globe} color={BRAND} boxSize={4} />
-                      <Text fontSize="xs" color={textMuted}>Global Access</Text>
+                      <Text fontSize="xs">Global Access</Text>
                     </HStack>
                   </HStack>
 
@@ -182,21 +181,6 @@ const Broker: React.FC = () => {
                     >
                       Open Account via IB Link
                     </Button>
-                    <Button
-                      as="a"
-                      href={LDN_SITE}
-                      target="_blank"
-                      rel="noopener noreferrer"
-                      size="lg"
-                      variant="outline"
-                      borderColor={BRAND}
-                      color={BRAND}
-                      borderRadius="xl"
-                      px={6}
-                      _hover={{ bg: "rgba(101,168,191,0.08)" }}
-                    >
-                      Visit Website
-                    </Button>
                   </HStack>
                 </VStack>
 
@@ -209,6 +193,7 @@ const Broker: React.FC = () => {
                     border="1px solid"
                     borderColor={borderCol}
                     borderRadius="2xl"
+                    color="black"
                     p={6}
                     backdropFilter="blur(10px)"
                   >
@@ -221,9 +206,9 @@ const Broker: React.FC = () => {
                       ].map((m, i) => (
                         <VStack key={i} align="start" spacing={1} p={3} bg={cardBg} borderRadius="lg">
                           <Icon as={m.icon} color={BRAND} boxSize={4} />
-                          <Text fontWeight="700" fontSize="md" color={textPrimary}>{m.value}</Text>
-                          <Text fontSize="2xs" color={textMuted}>{m.label}</Text>
-                          <Text fontSize="2xs" color={textMuted}>{m.sub}</Text>
+                          <Text fontWeight="700" fontSize="md">{m.value}</Text>
+                          <Text fontSize="2xs">{m.label}</Text>
+                          <Text fontSize="2xs">{m.sub}</Text>
                         </VStack>
                       ))}
                     </SimpleGrid>
@@ -231,7 +216,7 @@ const Broker: React.FC = () => {
                     <Image
                       src={IMG.fsa}
                       alt="FSA Regulated"
-                      h="40px"
+                      h="50px"
                       objectFit="contain"
                       mx="auto"
                       mt={4}
@@ -256,7 +241,7 @@ const Broker: React.FC = () => {
                   <Heading size={{ base: "md", md: "lg" }} bgGradient={`linear(to-r, ${BRAND}, ${GOLD})`} bgClip="text">
                     Why Register Through Our IB Link?
                   </Heading>
-                  <Text fontSize="sm" color={textMuted} maxW="2xl">
+                  <Text fontSize="sm" maxW="2xl">
                     By signing up through our official Introducing Broker link, you support promrkts while getting the same great trading conditions. We negotiate on your behalf for the best possible experience.
                   </Text>
                 </VStack>
@@ -271,15 +256,11 @@ const Broker: React.FC = () => {
                       key={i}
                       p={5}
                       bg={cardBg}
-                      borderRadius="xl"
-                      border="1px solid"
-                      borderColor={borderCol}
-                      spacing={3}
                       align="start"
                     >
                       <Icon as={b.icon} color={BRAND} boxSize={6} />
-                      <Text fontWeight="700" color={textPrimary}>{b.title}</Text>
-                      <Text fontSize="sm" color={textMuted}>{b.desc}</Text>
+                      <Text fontWeight="700">{b.title}</Text>
+                      <Text fontSize="sm">{b.desc}</Text>
                     </VStack>
                   ))}
                 </SimpleGrid>
@@ -295,10 +276,10 @@ const Broker: React.FC = () => {
             viewport={{ once: true }}
           >
             <VStack spacing={4} textAlign="center" mb={6}>
-              <Heading size={{ base: "md", md: "lg" }} color={textPrimary}>
+              <Heading size={{ base: "md", md: "lg" }}>
                 Trade 100+ Instruments
               </Heading>
-              <Text fontSize="sm" color={textMuted} maxW="xl">
+              <Text fontSize="sm" maxW="xl">
                 Access a wide range of global markets from a single MT5 account.
               </Text>
             </VStack>
@@ -315,17 +296,14 @@ const Broker: React.FC = () => {
                   <VStack
                     p={5}
                     bg={cardBg}
-                    borderRadius="xl"
-                    border="1px solid"
-                    borderColor={borderCol}
                     spacing={3}
                     _hover={{ borderColor: BRAND, transform: "translateY(-3px)" }}
                     transition="all 0.2s"
                     h="100%"
                   >
                     <Image src={m.icon} alt={m.name} h="36px" objectFit="contain" />
-                    <Text fontWeight="700" fontSize="sm" color={textPrimary}>{m.name}</Text>
-                    <Text fontSize="xs" color={textMuted} textAlign="center">{m.desc}</Text>
+                    <Text fontWeight="700" fontSize="sm">{m.name}</Text>
+                    <Text fontSize="xs" textAlign="center">{m.desc}</Text>
                   </VStack>
                 </MotionBox>
               ))}
@@ -341,12 +319,12 @@ const Broker: React.FC = () => {
           >
             <SimpleGrid columns={{ base: 1, lg: 2 }} gap={8} alignItems="center">
               <VStack align="start" spacing={5}>
-                <Heading size={{ base: "md", md: "lg" }} color={textPrimary}>
+                <Heading size={{ base: "md", md: "lg" }}>
                   Powerful{" "}
                   <Text as="span" color={BRAND}>MT5</Text>{" "}
                   Trading Platform
                 </Heading>
-                <Text fontSize="sm" color={textMuted}>
+                <Text fontSize="sm">
                   Trade on desktop, web, or mobile with the industry-leading MetaTrader 5 platform. Advanced charting, one-click trading, and algorithmic trading support.
                 </Text>
 
@@ -367,7 +345,7 @@ const Broker: React.FC = () => {
                       spacing={3}
                     >
                       <Icon as={p.icon} color={BRAND} boxSize={5} />
-                      <Text fontSize="sm" fontWeight="600" color={textPrimary}>{p.label}</Text>
+                      <Text fontSize="sm" fontWeight="600">{p.label}</Text>
                     </HStack>
                   ))}
                 </SimpleGrid>
@@ -416,7 +394,7 @@ const Broker: React.FC = () => {
               </Box>
 
               <VStack align="start" spacing={5} order={{ base: 1, lg: 2 }}>
-                <Heading size={{ base: "md", md: "lg" }} color={textPrimary}>
+                <Heading size={{ base: "md", md: "lg" }}>
                   Built for{" "}
                   <Text as="span" bgGradient={`linear(to-r, ${BRAND}, ${GOLD})`} bgClip="text">
                     Serious Traders
@@ -434,7 +412,7 @@ const Broker: React.FC = () => {
                   ].map((f, i) => (
                     <HStack key={i} spacing={3}>
                       <Icon as={CheckCircle2} color="green.500" boxSize={4} flexShrink={0} />
-                      <Text fontSize="sm" color={textPrimary}>{f}</Text>
+                      <Text fontSize="sm">{f}</Text>
                     </HStack>
                   ))}
                 </VStack>
@@ -450,15 +428,15 @@ const Broker: React.FC = () => {
             viewport={{ once: true }}
           >
             <VStack spacing={4} textAlign="center" mb={4}>
-              <Heading size={{ base: "md", md: "lg" }} color={textPrimary}>
-                Client Dashboard
+              <Heading size={{ base: "md", md: "lg" }}>
+                Client App
               </Heading>
-              <Text fontSize="sm" color={textMuted} maxW="xl">
+              <Text fontSize="sm" maxW="xl">
                 Manage your accounts, deposits, and withdrawals from a clean, intuitive dashboard.
               </Text>
             </VStack>
-            <Box overflow="hidden" alignItems="center">
-              <Image src={IMG.dashboard} alt="LDN Dashboard" objectFit="cover" />
+            <Box justifyContent="center" alignItems="center">
+              <Image src={IMG.dashboard} alt="LDN Dashboard" />
             </Box>
           </MotionBox>
 
@@ -497,8 +475,8 @@ const Broker: React.FC = () => {
                         {s.step}
                       </Text>
                       <Icon as={s.icon} color={BRAND} boxSize={6} />
-                      <Text fontWeight="700" color={textPrimary}>{s.title}</Text>
-                      <Text fontSize="sm" color={textMuted}>{s.desc}</Text>
+                      <Text fontWeight="700">{s.title}</Text>
+                      <Text fontSize="sm">{s.desc}</Text>
                     </VStack>
                   ))}
                 </SimpleGrid>
@@ -532,10 +510,10 @@ const Broker: React.FC = () => {
           >
             <SimpleGrid columns={{ base: 1, lg: 2 }} gap={8} alignItems="center">
               <VStack align="start" spacing={4}>
-                <Heading size={{ base: "md", md: "lg" }} color={textPrimary}>
+                <Heading size={{ base: "md", md: "lg" }}>
                   Dedicated Support & Advisors
                 </Heading>
-                <Text fontSize="sm" color={textMuted}>
+                <Text fontSize="sm">
                   LDN Global Markets provides multilingual support, personal account managers, and educational resources to help you succeed.
                 </Text>
                 <VStack align="start" spacing={2}>
@@ -548,7 +526,7 @@ const Broker: React.FC = () => {
                   ].map((s, i) => (
                     <HStack key={i} spacing={3}>
                       <Icon as={CheckCircle2} color="green.500" boxSize={4} flexShrink={0} />
-                      <Text fontSize="sm" color={textPrimary}>{s}</Text>
+                      <Text fontSize="sm">{s}</Text>
                     </HStack>
                   ))}
                 </VStack>
@@ -570,20 +548,20 @@ const Broker: React.FC = () => {
           >
             <HStack mb={4} spacing={3}>
               <Icon as={ShieldCheck} color={BRAND} boxSize={5} />
-              <Heading size="sm" color={textPrimary}>Licensing & Risk Disclosure</Heading>
+              <Heading size="sm">Licensing & Risk Disclosure</Heading>
             </HStack>
 
             <VStack align="start" spacing={3}>
-              <Text fontSize="xs" color={textMuted}>
+              <Text fontSize="xs">
                 <strong>Licensing:</strong> LDN GLOBAL MARKETS LLC is an officially licensed broker holding an International Brokerage License in Saint Vincent and the Grenadines, numbered 1547 LLC. Registered address: Richmond Hill Rd, Kingstown, St. Vincent and the Grenadines, VC0100. Additionally registered with license number T2023240 on Bonovo Road in Fomboni, Island of Mohéli, Comoros Union.
               </Text>
-              <Text fontSize="xs" color={textMuted}>
+              <Text fontSize="xs">
                 <strong>Physical Address:</strong> Vasiliou Vrionidi 6, 5th floor, office 6, 3095 Limassol.
               </Text>
-              <Text fontSize="xs" color={textMuted}>
+              <Text fontSize="xs">
                 <strong>Risk Warning:</strong> CFDs are complex financial products traded on margin. Trading CFDs carries a high level of risk — you may lose all your invested capital. CFDs may not be suitable for all investors. Please ensure you fully understand the risks involved and seek independent advice if necessary.
               </Text>
-              <Text fontSize="xs" color={textMuted}>
+              <Text fontSize="xs">
                 <strong>Restricted Regions:</strong> LDN Global Markets does not provide services to citizens/residents of the United States, United Kingdom, Canada, Japan, EU countries, Iran, Israel, and North Korea.
               </Text>
             </VStack>
@@ -602,13 +580,13 @@ const Broker: React.FC = () => {
               >
                 LDN Global Markets
               </Text>
-              <Text fontSize="xl" fontWeight="800" color={textMuted}>×</Text>
-              <Text fontSize="lg" fontWeight="800" color={textPrimary}>promrkts</Text>
+              <Text fontSize="xl" fontWeight="800">×</Text>
+              <Text fontSize="lg" fontWeight="800">promrkts</Text>
             </HStack>
-            <Text fontSize="xs" color={textMuted}>
+            <Text fontSize="xs">
               Official Introducing Broker (IB) Partnership
             </Text>
-            <Text fontSize="xs" color={textMuted}>
+            <Text fontSize="xs">
               © {new Date().getFullYear()} LDN Global Markets. All rights reserved.
             </Text>
           </VStack>
