@@ -32,8 +32,8 @@ const fonts = {
 /** ---- Semantic tokens ---- */
 const semanticTokens = {
   colors: {
-    "bg.canvas":   { default: "sand.50",  _dark: "#222222" },
-    "bg.surface":  { default: "white",    _dark: "#222222" },
+    "bg.canvas":   { default: "sand.50",  _dark: "black" },
+    "bg.surface":  { default: "white",    _dark: "black" },
     "text.primary":{ default: "gray.900", _dark: "white" },
     "text.muted":  { default: "gray.600", _dark: "gray.400" },
     "border.default": { default: "gray.200", _dark: "gray.700" },

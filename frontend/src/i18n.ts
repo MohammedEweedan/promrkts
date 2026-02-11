@@ -1118,6 +1118,45 @@ const resources = {
             tagline: "Trade Smarter. Together."
           }
         },
+        terminal: {
+          badge: "Your Trading Terminal",
+          title: "The Most Customizable Terminal in the Industry",
+          subtitle: "Live charts, news feeds, market data, and your learning progress — all in one place. Built exactly the way you want it.",
+          placeholder: "Terminal Preview",
+          placeholder_hint: "Add your .gif to /public/terminal-preview.gif"
+        },
+        logos: {
+          title: "Used by traders at"
+        },
+        institutional: {
+          badge: "Institutional Knowledge",
+          title: "The Same Strategies Taught at Top Funds",
+          description: "Our guides are built on the exact frameworks, risk models, and trade structures used by analysts and portfolio managers at the world's leading investment banks and hedge funds. No retail fluff — just the real playbook.",
+          point1: "Institutional-grade risk management frameworks",
+          point2: "Quantitative analysis methods used at top desks",
+          point3: "Real trade breakdowns from professional setups",
+          point4: "Position sizing models from fund managers",
+          cta: "Explore Our Guides",
+          card1_title: "Market Microstructure",
+          card1_sub: "Order flow, liquidity, and price discovery — the way prop desks see it",
+          card1_tag: "Advanced",
+          card2_title: "Risk & Portfolio Theory",
+          card2_sub: "Kelly criterion, VaR, and the frameworks that protect institutional capital",
+          card2_tag: "Core",
+          card3_title: "Technical Analysis Masterclass",
+          card3_sub: "Price action, volume profile, and multi-timeframe analysis from the desk",
+          card3_tag: "Foundation"
+        },
+        upgrade: {
+          badge: "Unlock Full Access",
+          title: "Upgrade to Your Full Trading Terminal",
+          subtitle: "Get live market charts, AI news feeds, advanced screeners, heatmaps, and the complete trading workspace. Everything you need to trade like a pro.",
+          charts: "Live Charts",
+          ai_news: "AI News",
+          screeners: "Screeners",
+          heatmaps: "Heatmaps",
+          cta: "Browse Plans"
+        },
       },
       token: {
         loadingPortfolio: "Loading portfolio…",
@@ -1583,6 +1622,46 @@ const resources = {
         password_min: 'Password must be at least 8 characters',
         password_mismatch: 'Passwords do not match',
         no_token: 'Missing reset token',
+      },
+      status: {
+        title: "System Status",
+        all_operational: "All Systems Operational",
+        some_degraded: "Some Systems Degraded",
+        major_outage: "Major Outage Detected",
+        checking: "Checking Systems...",
+        last_checked: "Last checked",
+        refresh: "Refresh",
+        services_label: "Services",
+        metrics_label: "Metrics",
+        uptime: "Uptime",
+        memory: "Memory",
+        response: "Response",
+        status_label: "Status",
+        healthy: "Healthy",
+        unhealthy: "Unhealthy",
+        unreachable: "Unreachable",
+        static_ok: "Static assets served via CDN",
+        edge_ok: "Edge protection active",
+        auto_refresh: "This page auto-refreshes every 30 seconds.",
+        label_operational: "Operational",
+        label_degraded: "Degraded",
+        label_down: "Down",
+        label_checking: "Checking",
+        services: {
+          api: "API Server",
+          database: "Database",
+          cdn: "CDN & Assets",
+          auth: "Authentication",
+          realtime: "Real-time Data",
+          cloudflare: "Cloudflare Protection"
+        },
+        cloudflare: {
+          title: "Cloudflare Protection",
+          ddos: "DDoS mitigation active on all endpoints",
+          waf: "Web Application Firewall (WAF) enabled",
+          ssl: "SSL/TLS encryption enforced (Full Strict)",
+          cache: "Edge caching for static assets worldwide"
+        }
       },
       tooltip: {
         lightMode: 'Switch to light mode',
@@ -2618,6 +2697,45 @@ const resources = {
             tagline: "Tradez plus intelligemment. Ensemble."
           }
         },
+        terminal: {
+          badge: "Votre Terminal de Trading",
+          title: "Le Terminal le Plus Personnalisable du Secteur",
+          subtitle: "Graphiques en direct, flux d'actualités, données de marché et votre progression — tout en un seul endroit. Conçu exactement comme vous le souhaitez.",
+          placeholder: "Aperçu du Terminal",
+          placeholder_hint: "Ajoutez votre .gif dans /public/terminal-preview.gif"
+        },
+        logos: {
+          title: "Utilisé par des traders chez"
+        },
+        institutional: {
+          badge: "Savoir Institutionnel",
+          title: "Les Mêmes Stratégies Enseignées dans les Meilleurs Fonds",
+          description: "Nos guides sont construits sur les cadres exacts, modèles de risque et structures de trade utilisés par les analystes et gestionnaires de portefeuille des plus grandes banques d'investissement et fonds spéculatifs. Pas de contenu retail — juste le vrai playbook.",
+          point1: "Cadres de gestion des risques de niveau institutionnel",
+          point2: "Méthodes d'analyse quantitative utilisées dans les meilleurs desks",
+          point3: "Analyses détaillées de trades professionnels réels",
+          point4: "Modèles de dimensionnement de position des gestionnaires de fonds",
+          cta: "Explorer Nos Guides",
+          card1_title: "Microstructure des Marchés",
+          card1_sub: "Flux d'ordres, liquidité et découverte des prix — comme les desks prop le voient",
+          card1_tag: "Avancé",
+          card2_title: "Risque & Théorie de Portefeuille",
+          card2_sub: "Critère de Kelly, VaR et les cadres qui protègent le capital institutionnel",
+          card2_tag: "Essentiel",
+          card3_title: "Masterclass Analyse Technique",
+          card3_sub: "Action des prix, profil de volume et analyse multi-temporelle depuis le desk",
+          card3_tag: "Fondation"
+        },
+        upgrade: {
+          badge: "Accès Complet",
+          title: "Passez à Votre Terminal de Trading Complet",
+          subtitle: "Obtenez des graphiques en direct, des flux d'actualités IA, des screeners avancés, des heatmaps et l'espace de travail complet. Tout ce dont vous avez besoin pour trader comme un pro.",
+          charts: "Graphiques",
+          ai_news: "Actualités IA",
+          screeners: "Screeners",
+          heatmaps: "Heatmaps",
+          cta: "Voir les Plans"
+        },
       },
       broker: {
         partner_label: "Courtier introducteur",
@@ -3019,6 +3137,46 @@ const resources = {
         password_min: 'Le mot de passe doit contenir au moins 8 caractères',
         password_mismatch: 'Les mots de passe ne correspondent pas',
         no_token: 'Jeton de réinitialisation manquant',
+      },
+      status: {
+        title: "État du Système",
+        all_operational: "Tous les Systèmes Opérationnels",
+        some_degraded: "Certains Systèmes Dégradés",
+        major_outage: "Panne Majeure Détectée",
+        checking: "Vérification des Systèmes...",
+        last_checked: "Dernière vérification",
+        refresh: "Actualiser",
+        services_label: "Services",
+        metrics_label: "Métriques",
+        uptime: "Disponibilité",
+        memory: "Mémoire",
+        response: "Réponse",
+        status_label: "État",
+        healthy: "Sain",
+        unhealthy: "Défaillant",
+        unreachable: "Inaccessible",
+        static_ok: "Ressources statiques servies via CDN",
+        edge_ok: "Protection edge active",
+        auto_refresh: "Cette page se rafraîchit automatiquement toutes les 30 secondes.",
+        label_operational: "Opérationnel",
+        label_degraded: "Dégradé",
+        label_down: "Hors ligne",
+        label_checking: "Vérification",
+        services: {
+          api: "Serveur API",
+          database: "Base de données",
+          cdn: "CDN & Ressources",
+          auth: "Authentification",
+          realtime: "Données en temps réel",
+          cloudflare: "Protection Cloudflare"
+        },
+        cloudflare: {
+          title: "Protection Cloudflare",
+          ddos: "Atténuation DDoS active sur tous les endpoints",
+          waf: "Pare-feu d'application web (WAF) activé",
+          ssl: "Chiffrement SSL/TLS appliqué (Full Strict)",
+          cache: "Mise en cache edge pour les ressources statiques dans le monde entier"
+        }
       },
       tooltip: {
         lightMode: 'Passer en mode clair',
@@ -4149,6 +4307,45 @@ const resources = {
             tagline: "تداول بذكاء. معاً."
           }
         },
+        terminal: {
+          badge: "منصة التداول الخاصة بك",
+          title: "المنصة الأكثر تخصيصاً في القطاع",
+          subtitle: "رسوم بيانية مباشرة، تدفق أخبار، بيانات السوق، وتقدمك التعليمي — كل شيء في مكان واحد. مصممة بالطريقة التي تريدها بالضبط.",
+          placeholder: "معاينة المنصة",
+          placeholder_hint: "أضف ملف .gif إلى /public/terminal-preview.gif"
+        },
+        logos: {
+          title: "يستخدمه متداولون في"
+        },
+        institutional: {
+          badge: "معرفة مؤسسية",
+          title: "نفس الاستراتيجيات المُدرَّسة في أكبر الصناديق",
+          description: "أدلتنا مبنية على نفس الأطر ونماذج المخاطر وهياكل الصفقات المستخدمة من قبل المحللين ومديري المحافظ في أكبر البنوك الاستثمارية وصناديق التحوط في العالم. بدون محتوى سطحي — فقط الدليل الحقيقي.",
+          point1: "أطر إدارة مخاطر بمستوى مؤسسي",
+          point2: "أساليب التحليل الكمي المستخدمة في أفضل مكاتب التداول",
+          point3: "تحليلات تفصيلية لصفقات احترافية حقيقية",
+          point4: "نماذج تحديد حجم المراكز من مديري الصناديق",
+          cta: "استكشف أدلتنا",
+          card1_title: "البنية الدقيقة للأسواق",
+          card1_sub: "تدفق الأوامر والسيولة واكتشاف الأسعار — كما تراها مكاتب التداول",
+          card1_tag: "متقدم",
+          card2_title: "المخاطر ونظرية المحافظ",
+          card2_sub: "معيار كيلي، القيمة المعرضة للخطر، والأطر التي تحمي رأس المال المؤسسي",
+          card2_tag: "أساسي",
+          card3_title: "ماستركلاس التحليل الفني",
+          card3_sub: "حركة السعر، ملف الحجم، والتحليل متعدد الأطر الزمنية من المكتب",
+          card3_tag: "تأسيسي"
+        },
+        upgrade: {
+          badge: "فتح الوصول الكامل",
+          title: "ترقية إلى منصة التداول الكاملة",
+          subtitle: "احصل على رسوم بيانية مباشرة، أخبار بالذكاء الاصطناعي، فلاتر متقدمة، خرائط حرارية، ومساحة العمل الكاملة. كل ما تحتاجه للتداول كمحترف.",
+          charts: "رسوم بيانية",
+          ai_news: "أخبار ذكية",
+          screeners: "فلاتر",
+          heatmaps: "خرائط حرارية",
+          cta: "تصفح الخطط"
+        },
       },
       broker: {
         partner_label: "وسيط معرِّف",
@@ -4478,6 +4675,46 @@ const resources = {
         accept_disclaimer: 'أوافق على إخلاء المسؤولية',
         view_disclaimer: 'عرض إخلاء المسؤولية',
         otp_via_whatsapp: 'سيتم إرسال رمز التحقق عبر واتساب وليس رسالة نصية قصيرة (SMS).',
+      },
+      status: {
+        title: "حالة النظام",
+        all_operational: "جميع الأنظمة تعمل بشكل طبيعي",
+        some_degraded: "بعض الأنظمة متأثرة",
+        major_outage: "انقطاع كبير مكتشف",
+        checking: "جارٍ فحص الأنظمة...",
+        last_checked: "آخر فحص",
+        refresh: "تحديث",
+        services_label: "الخدمات",
+        metrics_label: "المقاييس",
+        uptime: "وقت التشغيل",
+        memory: "الذاكرة",
+        response: "الاستجابة",
+        status_label: "الحالة",
+        healthy: "سليم",
+        unhealthy: "غير سليم",
+        unreachable: "غير قابل للوصول",
+        static_ok: "الموارد الثابتة تُقدَّم عبر CDN",
+        edge_ok: "حماية الحافة نشطة",
+        auto_refresh: "هذه الصفحة تتحدث تلقائياً كل 30 ثانية.",
+        label_operational: "يعمل",
+        label_degraded: "متأثر",
+        label_down: "متوقف",
+        label_checking: "جارٍ الفحص",
+        services: {
+          api: "خادم API",
+          database: "قاعدة البيانات",
+          cdn: "CDN والموارد",
+          auth: "المصادقة",
+          realtime: "البيانات الفورية",
+          cloudflare: "حماية Cloudflare"
+        },
+        cloudflare: {
+          title: "حماية Cloudflare",
+          ddos: "حماية DDoS نشطة على جميع النقاط",
+          waf: "جدار حماية تطبيقات الويب (WAF) مفعّل",
+          ssl: "تشفير SSL/TLS مطبّق (Full Strict)",
+          cache: "تخزين مؤقت على الحافة للموارد الثابتة عالمياً"
+        }
       },
       tooltip: {
         lightMode: 'الوضع الفاتح',

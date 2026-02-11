@@ -11,14 +11,43 @@ import {
   Link,
   VStack,
   Image,
+  Tooltip,
   useDisclosure,
   useBreakpointValue,
 } from "@chakra-ui/react";
 import { useTranslation } from "react-i18next";
 import { Twitter, Send, MessageCircle, ChevronUp, ChevronDown, Disc } from "lucide-react";
 import { Link as ChakraLink, LinkProps as ChakraLinkProps } from "@chakra-ui/react";
-import { Link as RouterLink, LinkProps as RouterLinkProps, useLocation } from "react-router-dom";
+import { Link as RouterLink, LinkProps as RouterLinkProps, useLocation, useNavigate } from "react-router-dom";
 import { useThemeMode } from "../themeProvider";
+import api from "../api/client";
+
+/* ---------- Lightweight health poller ---------- */
+type OverallStatus = "operational" | "degraded" | "down" | "checking";
+
+function useStatusCheck(intervalMs = 60000) {
+  const [status, setStatus] = React.useState<OverallStatus>("checking");
+
+  React.useEffect(() => {
+    let mounted = true;
+    const check = async () => {
+      try {
+        const res = await api.get("/health", { timeout: 8000 });
+        if (!mounted) return;
+        const d = res.data;
+        if (d?.status === "ok") setStatus("operational");
+        else setStatus("degraded");
+      } catch {
+        if (mounted) setStatus("down");
+      }
+    };
+    check();
+    const id = setInterval(check, intervalMs);
+    return () => { mounted = false; clearInterval(id); };
+  }, [intervalMs]);
+
+  return status;
+}
 
 /* ---------- Inner footer with all hooks ---------- */
 const FooterInner: React.FC = () => {
@@ -26,6 +55,8 @@ const FooterInner: React.FC = () => {
   const { mode } = useThemeMode();
   const footerBtn = mode === "dark" ? "#f9f6f2" : "#222222";
   const isDark = mode === "dark";
+  const navigate = useNavigate();
+  const systemStatus = useStatusCheck(60000);
 
   const basePath = process.env.PUBLIC_URL || "";
 
@@ -185,10 +216,100 @@ const FooterInner: React.FC = () => {
           </SimpleGrid>
 
           {/* Bottom row */}
-          <HStack justify="center" pb={6}>
-            <Text fontSize={{ base: "sm", md: "sm" }} textAlign="center" opacity={0.8}>
+          <HStack justify="space-between" align="center" pb={6} flexWrap="wrap" gap={3}>
+            <Text fontSize={{ base: "xs", md: "sm" }} opacity={0.6}>
               © {new Date().getFullYear()} {t("brand")}. {t("footer.rights")}
             </Text>
+
+            {/* Vercel-style status indicator */}
+            <Tooltip
+              label={
+                systemStatus === "operational"
+                  ? t("status.all_operational", { defaultValue: "All Systems Operational" })
+                  : systemStatus === "degraded"
+                  ? t("status.some_degraded", { defaultValue: "Some Systems Degraded" })
+                  : systemStatus === "down"
+                  ? t("status.major_outage", { defaultValue: "Major Outage Detected" })
+                  : t("status.checking", { defaultValue: "Checking..." })
+              }
+              hasArrow
+              placement="top"
+            >
+              <HStack
+                spacing={2}
+                cursor="pointer"
+                onClick={() => navigate("/status")}
+                px={3}
+                py={1.5}
+                borderRadius="full"
+                border="1px solid"
+                borderColor={isDark ? "whiteAlpha.100" : "gray.200"}
+                bg={isDark ? "whiteAlpha.50" : "gray.50"}
+                _hover={{
+                  borderColor: isDark ? "whiteAlpha.200" : "gray.300",
+                  bg: isDark ? "whiteAlpha.100" : "gray.100",
+                }}
+                transition="all 0.2s"
+                role="link"
+                aria-label="System status"
+              >
+                {/* Pulsing dot */}
+                <Box position="relative" display="inline-flex" alignItems="center" justifyContent="center">
+                  {systemStatus === "operational" && (
+                    <Box
+                      position="absolute"
+                      w="8px"
+                      h="8px"
+                      borderRadius="full"
+                      bg="#10b981"
+                      opacity={0.4}
+                      sx={{
+                        animation: "footerPulse 2s ease-in-out infinite",
+                        "@keyframes footerPulse": {
+                          "0%, 100%": { transform: "scale(1)", opacity: 0.4 },
+                          "50%": { transform: "scale(2.2)", opacity: 0 },
+                        },
+                      }}
+                    />
+                  )}
+                  <Box
+                    w="8px"
+                    h="8px"
+                    borderRadius="full"
+                    bg={
+                      systemStatus === "operational"
+                        ? "#10b981"
+                        : systemStatus === "degraded"
+                        ? "#f59e0b"
+                        : systemStatus === "down"
+                        ? "#ef4444"
+                        : "#6b7280"
+                    }
+                  />
+                </Box>
+                <Text
+                  fontSize="xs"
+                  fontWeight="500"
+                  color={
+                    systemStatus === "operational"
+                      ? "#10b981"
+                      : systemStatus === "degraded"
+                      ? "#f59e0b"
+                      : systemStatus === "down"
+                      ? "#ef4444"
+                      : isDark ? "whiteAlpha.500" : "gray.400"
+                  }
+                >
+                  {systemStatus === "operational"
+                    ? t("status.label_operational", { defaultValue: "Operational" })
+                    : systemStatus === "degraded"
+                    ? t("status.label_degraded", { defaultValue: "Degraded" })
+                    : systemStatus === "down"
+                    ? t("status.label_down", { defaultValue: "Down" })
+                    : t("status.label_checking", { defaultValue: "Checking" })}
+                </Text>
+              </HStack>
+            </Tooltip>
           </HStack>
         </Container>
       </Box>

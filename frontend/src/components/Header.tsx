@@ -5,6 +5,7 @@ import {
   VStack,
   Button,
   Image,
+  Tooltip,
   useBreakpointValue,
 } from "@chakra-ui/react";
 import { Link as RouterLink, useLocation, useNavigate } from "react-router-dom";
@@ -180,15 +181,17 @@ const Header: React.FC = () => {
             right={isAR ? "12px" : undefined}
             zIndex={9105}
           >
-            <Box
-              as={RouterLink}
-              to="/"
-              opacity={0.95}
-              _hover={{ opacity: 1, transform: "translateY(-1px)" }}
-              transition="all 0.18s ease-out"
-            >
-              <Logo h={8} />
-            </Box>
+            <Tooltip label="Go Home" placement="right" hasArrow openDelay={400}>
+              <Box
+                as={RouterLink}
+                to="/"
+                opacity={0.95}
+                _hover={{ opacity: 1, transform: "translateY(-1px)" }}
+                transition="all 0.18s ease-out"
+              >
+                <Logo h={8} />
+              </Box>
+            </Tooltip>
           </Box>
 
           <Button
@@ -286,21 +289,23 @@ const Header: React.FC = () => {
                     }}
                   >
                     <VStack spacing={dockSpacing}>
-                      <Box
-                        as={RouterLink}
-                        to="/"
-                        w={dockButtonSize}
-                        h={dockButtonSize}
-                        borderRadius={dockRadius}
-                        display="flex"
-                        alignItems="center"
-                        justifyContent="center"
-                        cursor="pointer"
-                        transition="all 0.2s ease"
-                        _hover={{ transform: "scale(1.05)" }}
-                      >
-                        <Logo h={dockLogoSize} />
-                      </Box>
+                      <Tooltip label="Go Home" placement="right" hasArrow openDelay={400}>
+                        <Box
+                          as={RouterLink}
+                          to="/"
+                          w={dockButtonSize}
+                          h={dockButtonSize}
+                          borderRadius={dockRadius}
+                          display="flex"
+                          alignItems="center"
+                          justifyContent="center"
+                          cursor="pointer"
+                          transition="all 0.2s ease"
+                          _hover={{ transform: "scale(1.05)" }}
+                        >
+                          <Logo h={dockLogoSize} />
+                        </Box>
+                      </Tooltip>
 
                       <Box
                         w="40px"

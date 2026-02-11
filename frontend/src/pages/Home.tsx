@@ -30,14 +30,14 @@ import {
   Input,
   FormControl,
   FormErrorMessage,
-  IconButton, // ✅ add this
+  IconButton,
 } from "@chakra-ui/react";
 import { useNavigate } from "react-router-dom";
 import { AdvancedRealTimeChart } from "react-ts-tradingview-widgets";
 import api, { getMyPurchases } from "../api/client";
 import BannerCarousel from "../components/BannerCarousel";
 import { useThemeMode } from "../themeProvider";
-import { Star, Trophy, Maximize2, Minimize2, Users, TrendingUp, DollarSign, Award, Target, Bot, MessageCircle, BarChart3, Smartphone, Lock, CheckCircle, GraduationCap, Globe, Flame, BookOpen, Rocket, Handshake } from "lucide-react";
+import { Star, Trophy, Maximize2, Minimize2, Users, TrendingUp, DollarSign, Award, Target, Bot, MessageCircle, BarChart3, Smartphone, Lock, CheckCircle, GraduationCap, Globe, Flame, BookOpen, Rocket, Handshake, Search, Map as MapIcon, Landmark, Ruler, Crosshair, LineChart, Monitor } from "lucide-react";
 import Hero from "../components/Hero";
 import { useSessionMemory } from "../hooks/useSessionMemory";
 import { useAuth } from "../auth/AuthContext";
@@ -2859,8 +2859,8 @@ const Home: React.FC = () => {
                                   borderRadius="lg"
                                   textAlign="center"
                                 >
-                                  <Box fontSize="28px" mb={2}>
-                                    {b.icon || "🏅"}
+                                  <Box mb={2}>
+                                    {b.icon ? <Text fontSize="28px">{b.icon}</Text> : <Icon as={Award} boxSize={7} color="#65a8bf" />}
                                   </Box>
                                   <Heading size="sm" color="#65a8bf" noOfLines={2}>
                                     {b.name || "Badge"}
@@ -3094,10 +3094,10 @@ const Home: React.FC = () => {
                         </Text>
                         <SimpleGrid columns={{ base: 2, md: 4 }} gap={4} maxW="700px" w="100%" mt={2}>
                           {[
-                            { label: "Live Charts", icon: "📊" },
-                            { label: "AI News", icon: "🤖" },
-                            { label: "Screeners", icon: "🔍" },
-                            { label: "Heatmaps", icon: "🗺️" },
+                            { label: t("home.upgrade.charts", { defaultValue: "Live Charts" }), icon: BarChart3 },
+                            { label: t("home.upgrade.ai_news", { defaultValue: "AI News" }), icon: Bot },
+                            { label: t("home.upgrade.screeners", { defaultValue: "Screeners" }), icon: Search },
+                            { label: t("home.upgrade.heatmaps", { defaultValue: "Heatmaps" }), icon: MapIcon },
                           ].map((f) => (
                             <Box
                               key={f.label}
@@ -3107,7 +3107,7 @@ const Home: React.FC = () => {
                               border="1px solid rgba(101, 168, 191, 0.15)"
                               textAlign="center"
                             >
-                              <Text fontSize="xl" mb={1}>{f.icon}</Text>
+                              <Icon as={f.icon} boxSize={5} color="#65a8bf" mb={1} />
                               <Text fontSize="xs" fontWeight="600" color="#65a8bf">{f.label}</Text>
                             </Box>
                           ))}
@@ -3133,75 +3133,278 @@ const Home: React.FC = () => {
                   </ParallaxSection>
                 )}
 
-                {/* GridMotion Showcase — courses + products/offers */}
-                {(() => {
-                  const OFFER_TILES: { label: string; sub: string; icon: string; href: string }[] = [
-                    { label: "Trading Guides", sub: "Structured courses for every level", icon: "📘", href: "/products" },
-                    { label: "Discord Community", sub: "Live discussions & setups", icon: "💬", href: "/products" },
-                    { label: "Telegram Group", sub: "Real-time trader chat", icon: "✈️", href: "/products" },
-                    { label: "AI Personal Mentor", sub: "Coming soon — your 24/7 coach", icon: "🤖", href: "/products" },
-                    { label: "Social Trading App", sub: "Coming soon — connect & learn", icon: "📱", href: "/products" },
-                    { label: "Custom Dashboard", sub: "Your personalized terminal", icon: "📊", href: "/products" },
-                    { label: "Risk Management", sub: "Protect your capital", icon: "🛡️", href: "/products" },
-                    { label: "Advanced Strategies", sub: "Real trade breakdowns", icon: "📈", href: "/products" },
-                  ];
-
-                  const courseItems: GridMotionItem[] = tiers.slice(0, 12).map((tier: any) => ({
-                    content: (
-                      <div style={{ display: "flex", flexDirection: "column", alignItems: "center", justifyContent: "center", gap: "8px", padding: "12px", width: "100%", height: "100%" }}>
-                        <span style={{ fontSize: "28px" }}>📘</span>
-                        <span style={{ fontWeight: 700, fontSize: "13px", lineHeight: 1.3, color: "#65a8bf", textAlign: "center", overflow: "hidden", display: "-webkit-box", WebkitLineClamp: 2, WebkitBoxOrient: "vertical" as any }}>{tier.name}</span>
-                        <span style={{ fontSize: "10px", opacity: 0.7, textAlign: "center", overflow: "hidden", display: "-webkit-box", WebkitLineClamp: 2, WebkitBoxOrient: "vertical" as any }}>{tier.description?.slice(0, 60)}</span>
-                      </div>
-                    ),
-                    onClick: () => navigate(`/products/${tier.id}`),
-                  }));
-
-                  const offerItems: GridMotionItem[] = OFFER_TILES.map((o) => ({
-                    content: (
-                      <div style={{ display: "flex", flexDirection: "column", alignItems: "center", justifyContent: "center", gap: "6px", padding: "12px", width: "100%", height: "100%" }}>
-                        <span style={{ fontSize: "28px" }}>{o.icon}</span>
-                        <span style={{ fontWeight: 700, fontSize: "13px", lineHeight: 1.3, color: "white", textAlign: "center" }}>{o.label}</span>
-                        <span style={{ fontSize: "10px", opacity: 0.6, textAlign: "center" }}>{o.sub}</span>
-                      </div>
-                    ),
-                    onClick: () => navigate(o.href),
-                  }));
-
-                  const allGridItems = [...courseItems, ...offerItems];
-                  if (allGridItems.length === 0) return null;
-
-                  return (
-                    <Box py={{ base: 10, md: 16 }}>
-                      <MotionBox
-                        initial={{ opacity: 0, y: 30 }}
-                        whileInView={{ opacity: 1, y: 0 }}
-                        transition={{ duration: 0.8 }}
-                        viewport={{ once: true, amount: 0.3 }}
+                {/* Terminal GIF Showcase */}
+                <Box py={{ base: 14, md: 20 }} position="relative" overflow="hidden">
+                  <MotionBox
+                    initial={{ opacity: 0, y: 40 }}
+                    whileInView={{ opacity: 1, y: 0 }}
+                    transition={{ duration: 0.9 }}
+                    viewport={{ once: true, amount: 0.2 }}
+                  >
+                    <VStack spacing={5} textAlign="center" mb={{ base: 8, md: 12 }}>
+                      <Badge
+                        colorScheme="cyan"
+                        variant="subtle"
+                        px={4}
+                        py={1}
+                        borderRadius="full"
+                        fontSize="xs"
+                        textTransform="uppercase"
+                        letterSpacing="0.1em"
                       >
-                        <VStack spacing={3} textAlign="center" mb={{ base: 6, md: 10 }}>
-                          <Heading
-                            fontSize={{ base: "2.5rem", md: "3.5rem" }}
-                            letterSpacing="-0.03em"
-                            fontWeight="700"
-                            bgGradient="linear(to-r, #65a8bf, #b7a27d)"
-                            bgClip="text"
+                        {t("home.terminal.badge", { defaultValue: "Your Trading Terminal" })}
+                      </Badge>
+                      <Heading
+                        fontSize={{ base: "2rem", md: "3.2rem" }}
+                        letterSpacing="-0.03em"
+                        fontWeight="700"
+                        bgGradient="linear(to-r, #65a8bf, #b7a27d)"
+                        bgClip="text"
+                        lineHeight="1.15"
+                      >
+                        {t("home.terminal.title", { defaultValue: "The Most Customizable Terminal in the Industry" })}
+                      </Heading>
+                      <Text maxW="2xl" fontSize={{ base: "md", md: "lg" }} opacity={0.75} lineHeight="1.7">
+                        {t("home.terminal.subtitle", { defaultValue: "Live charts, news feeds, market data, and your learning progress — all in one place. Built exactly the way you want it." })}
+                      </Text>
+                    </VStack>
+
+                    <Box
+                      maxW="1100px"
+                      mx="auto"
+                      borderRadius="2xl"
+                      overflow="hidden"
+                      borderWidth={1}
+                      borderColor={isDark ? "whiteAlpha.100" : "gray.200"}
+                      boxShadow={isDark ? "0 40px 120px rgba(101, 168, 191, 0.08)" : "0 40px 120px rgba(0,0,0,0.08)"}
+                      position="relative"
+                      bg={isDark ? "gray.900" : "gray.100"}
+                    >
+                      {/* Placeholder for terminal GIF — replace src with your .gif */}
+                      <Image
+                        src="/terminal-preview.gif"
+                        alt="promrkts Trading Terminal"
+                        w="100%"
+                        h="auto"
+                        fallback={
+                          <Box
+                            w="100%"
+                            h={{ base: "220px", md: "500px" }}
+                            bg={isDark ? "gray.800" : "gray.200"}
+                            display="flex"
+                            alignItems="center"
+                            justifyContent="center"
                           >
-                            {t("home.grid.title", { defaultValue: "Explore Our Ecosystem" })}
-                          </Heading>
-                          <Text maxW="xl" fontSize={{ base: "md", md: "lg" }} opacity={0.8}>
-                            {t("home.grid.subtitle", { defaultValue: "Trading guides, communities, and the tools to help you trade smarter" })}
-                          </Text>
-                        </VStack>
-                      </MotionBox>
-                      <GridMotion
-                        items={allGridItems}
-                        bgColor={isDark ? "#050811" : "#f7fafc"}
-                        gradientColor={isDark ? "rgba(101, 168, 191, 0.06)" : "rgba(101, 168, 191, 0.04)"}
+                            <VStack spacing={3} opacity={0.5}>
+                              <Icon as={Monitor} boxSize={10} color="#65a8bf" />
+                              <Text fontSize="sm" fontWeight="600">{t("home.terminal.placeholder", { defaultValue: "Terminal Preview" })}</Text>
+                              <Text fontSize="xs" opacity={0.6}>{t("home.terminal.placeholder_hint", { defaultValue: "Add your .gif to /public/terminal-preview.gif" })}</Text>
+                            </VStack>
+                          </Box>
+                        }
+                      />
+                      {/* Subtle gradient overlay at bottom */}
+                      <Box
+                        position="absolute"
+                        bottom={0}
+                        left={0}
+                        right={0}
+                        h="80px"
+                        bgGradient={isDark ? "linear(to-t, gray.900, transparent)" : "linear(to-t, gray.100, transparent)"}
+                        pointerEvents="none"
                       />
                     </Box>
-                  );
-                })()}
+                  </MotionBox>
+                </Box>
+
+                {/* Used by Traders At — Logo Carousel */}
+                <Box py={{ base: 10, md: 14 }} overflow="hidden">
+                  <MotionBox
+                    initial={{ opacity: 0 }}
+                    whileInView={{ opacity: 1 }}
+                    transition={{ duration: 0.8 }}
+                    viewport={{ once: true, amount: 0.3 }}
+                  >
+                    <Text
+                      textAlign="center"
+                      fontSize={{ base: "xs", md: "sm" }}
+                      textTransform="uppercase"
+                      letterSpacing="0.15em"
+                      fontWeight="600"
+                      opacity={0.4}
+                      mb={{ base: 6, md: 8 }}
+                    >
+                      {t("home.logos.title", { defaultValue: "Used by traders at" })}
+                    </Text>
+
+                    {/* Infinite scroll carousel */}
+                    <Box position="relative">
+                      {/* Fade edges */}
+                      <Box position="absolute" left={0} top={0} bottom={0} w="80px" bgGradient={isDark ? "linear(to-r, #050811, transparent)" : "linear(to-r, white, transparent)"} zIndex={1} pointerEvents="none" />
+                      <Box position="absolute" right={0} top={0} bottom={0} w="80px" bgGradient={isDark ? "linear(to-l, #050811, transparent)" : "linear(to-l, white, transparent)"} zIndex={1} pointerEvents="none" />
+
+                      <Box
+                        display="flex"
+                        w="max-content"
+                        sx={{
+                          animation: "logoScroll 30s linear infinite",
+                          "@keyframes logoScroll": {
+                            "0%": { transform: "translateX(0)" },
+                            "100%": { transform: "translateX(-50%)" },
+                          },
+                        }}
+                      >
+                        {/* Duplicate set for seamless loop */}
+                        {[...Array(2)].map((_, setIdx) => (
+                          <HStack key={setIdx} spacing={{ base: 10, md: 16 }} px={{ base: 5, md: 8 }} flexShrink={0}>
+                            {[
+                              { name: "MLP", logo: "/MLP.png" },
+                              { name: "J.P. Morgan", logo: "/JPM.svg" },
+                              { name: "Morgan Stanley", logo: "/MorganStanley.png" },
+                              { name: "Citadel", logo: "/Citadel.png" },
+                              { name: "Renaissance", logo: isDark ? "/rentec_white.jpg" : "/rentec.png" },
+                              { name: "Bridgewater", logo: "/Bridgewater.png" },
+                              { name: "Blackstone", logo: "/Blackstone.svg" },
+                              { name: "Ares", logo: "/Ares.avif" },
+                              { name: "Apollo", logo: "/Apollo.png" },
+                            ].map((firm) => (
+                              <Box
+                                key={`${setIdx}-${firm.name}`}
+                                display="flex"
+                                alignItems="center"
+                                justifyContent="center"
+                                minW={{ base: "100px", md: "140px" }}
+                                h={{ base: "40px", md: "50px" }}
+                                opacity={isDark ? 0.5 : 0.4}
+                                _hover={{ opacity: 0.8 }}
+                                transition="opacity 0.3s"
+                                flexShrink={0}
+                              >
+                                <Image
+                                  src={`${process.env.PUBLIC_URL || ""}${firm.logo}`}
+                                  alt={firm.name}
+                                  maxH={{ base: "28px", md: "38px" }}
+                                  maxW={{ base: "90px", md: "130px" }}
+                                  objectFit="contain"
+                                  filter={isDark ? "brightness(1.2)" : undefined}
+                                  loading="lazy"
+                                />
+                              </Box>
+                            ))}
+                          </HStack>
+                        ))}
+                      </Box>
+                    </Box>
+                  </MotionBox>
+                </Box>
+
+                {/* Institutional-Grade Education Section */}
+                <Box py={{ base: 14, md: 20 }}>
+                  <MotionBox
+                    initial={{ opacity: 0, y: 40 }}
+                    whileInView={{ opacity: 1, y: 0 }}
+                    transition={{ duration: 0.9 }}
+                    viewport={{ once: true, amount: 0.2 }}
+                  >
+                    <SimpleGrid columns={{ base: 1, md: 2 }} gap={{ base: 8, md: 16 }} alignItems="center" maxW="1200px" mx="auto" px={{ base: 4, md: 8 }}>
+                      {/* Left — Copy */}
+                      <VStack align="start" spacing={5}>
+                        <Badge
+                          colorScheme="yellow"
+                          variant="subtle"
+                          px={4}
+                          py={1}
+                          borderRadius="full"
+                          fontSize="xs"
+                          textTransform="uppercase"
+                          letterSpacing="0.1em"
+                        >
+                          {t("home.institutional.badge", { defaultValue: "Institutional Knowledge" })}
+                        </Badge>
+                        <Heading
+                          fontSize={{ base: "1.8rem", md: "2.6rem" }}
+                          letterSpacing="-0.02em"
+                          fontWeight="700"
+                          lineHeight="1.2"
+                        >
+                          {t("home.institutional.title", { defaultValue: "The Same Strategies Taught at Top Funds" })}
+                        </Heading>
+                        <Text fontSize={{ base: "md", md: "lg" }} opacity={0.7} lineHeight="1.8">
+                          {t("home.institutional.description", { defaultValue: "Our guides are built on the exact frameworks, risk models, and trade structures used by analysts and portfolio managers at the world's leading investment banks and hedge funds. No retail fluff — just the real playbook." })}
+                        </Text>
+                        <VStack align="start" spacing={3} pt={2}>
+                          {[
+                            { icon: Landmark, text: t("home.institutional.point1", { defaultValue: "Institutional-grade risk management frameworks" }) },
+                            { icon: Ruler, text: t("home.institutional.point2", { defaultValue: "Quantitative analysis methods used at top desks" }) },
+                            { icon: LineChart, text: t("home.institutional.point3", { defaultValue: "Real trade breakdowns from professional setups" }) },
+                            { icon: Crosshair, text: t("home.institutional.point4", { defaultValue: "Position sizing models from fund managers" }) },
+                          ].map((item, i) => (
+                            <HStack key={i} spacing={3} align="start">
+                              <Icon as={item.icon} boxSize={5} color="#65a8bf" mt="2px" flexShrink={0} />
+                              <Text fontSize="sm" opacity={0.8} lineHeight="1.6">{item.text}</Text>
+                            </HStack>
+                          ))}
+                        </VStack>
+                        <Button
+                          mt={3}
+                          size="lg"
+                          bg="#65a8bf"
+                          color="white"
+                          _hover={{ bg: "#5494a8", transform: "translateY(-2px)", boxShadow: "0 8px 30px rgba(101, 168, 191, 0.3)" }}
+                          transition="all 0.3s"
+                          borderRadius="xl"
+                          onClick={() => navigate("/products")}
+                        >
+                          {t("home.institutional.cta", { defaultValue: "Explore Our Guides" })}
+                        </Button>
+                      </VStack>
+
+                      {/* Right — Visual card stack */}
+                      <VStack spacing={4}>
+                        {[
+                          { title: t("home.institutional.card1_title", { defaultValue: "Market Microstructure" }), sub: t("home.institutional.card1_sub", { defaultValue: "Order flow, liquidity, and price discovery — the way prop desks see it" }), tag: t("home.institutional.card1_tag", { defaultValue: "Advanced" }), colorScheme: "red" },
+                          { title: t("home.institutional.card2_title", { defaultValue: "Risk & Portfolio Theory" }), sub: t("home.institutional.card2_sub", { defaultValue: "Kelly criterion, VaR, and the frameworks that protect institutional capital" }), tag: t("home.institutional.card2_tag", { defaultValue: "Core" }), colorScheme: "cyan" },
+                          { title: t("home.institutional.card3_title", { defaultValue: "Technical Analysis Masterclass" }), sub: t("home.institutional.card3_sub", { defaultValue: "Price action, volume profile, and multi-timeframe analysis from the desk" }), tag: t("home.institutional.card3_tag", { defaultValue: "Foundation" }), colorScheme: "green" },
+                        ].map((card, i) => (
+                          <MotionBox
+                            key={i}
+                            initial={{ opacity: 0, x: 30 }}
+                            whileInView={{ opacity: 1, x: 0 }}
+                            transition={{ duration: 0.6, delay: i * 0.15 }}
+                            viewport={{ once: true }}
+                            w="100%"
+                          >
+                            <Box
+                              p={5}
+                              borderRadius="xl"
+                              borderWidth={1}
+                              borderColor={isDark ? "whiteAlpha.100" : "gray.200"}
+                              bg={isDark ? "whiteAlpha.50" : "white"}
+                              _hover={{ borderColor: "#65a8bf", transform: "translateY(-2px)", boxShadow: isDark ? "0 8px 30px rgba(101, 168, 191, 0.1)" : "0 8px 30px rgba(0,0,0,0.06)" }}
+                              transition="all 0.3s"
+                              cursor="pointer"
+                              onClick={() => navigate("/products")}
+                            >
+                              <HStack justify="space-between" mb={2}>
+                                <Text fontWeight="700" fontSize="md">{card.title}</Text>
+                                <Badge
+                                  colorScheme={card.colorScheme}
+                                  variant="subtle"
+                                  borderRadius="full"
+                                  fontSize="2xs"
+                                  px={2}
+                                >
+                                  {card.tag}
+                                </Badge>
+                              </HStack>
+                              <Text fontSize="sm" opacity={0.6} lineHeight="1.6">{card.sub}</Text>
+                            </Box>
+                          </MotionBox>
+                        ))}
+                      </VStack>
+                    </SimpleGrid>
+                  </MotionBox>
+                </Box>
 
                 {/* Featured Courses & Subscriptions — always shown for non-enrolled */}
                 <ParallaxSection speed={0.3}>

@@ -92,9 +92,6 @@ const Learn: React.FC = () => {
   const [aiInput, setAiInput] = React.useState("");
   const [aiLoading, setAiLoading] = React.useState(false);
 
-  // Lazy loading for media
-  const [loadedPDFs, setLoadedPDFs] = React.useState<Set<number>>(new Set());
-
   // Live chat
   const [chatMessages, setChatMessages] = React.useState<ChatMessage[]>([]);
   const [chatInput, setChatInput] = React.useState("");
@@ -138,11 +135,6 @@ const Learn: React.FC = () => {
   const scrollTo = (ref: React.RefObject<HTMLDivElement | null>) => {
     if (!ref.current) return;
     ref.current.scrollIntoView({ behavior: "smooth", block: "center" });
-  };
-
-  const preventContext = (e: React.SyntheticEvent) => {
-    e.preventDefault();
-    return false;
   };
 
   const scrollTopCarousel = (dir: "left" | "right") => {
@@ -1917,100 +1909,35 @@ const Learn: React.FC = () => {
                   {t("learn.materials.empty")}
                 </Text>
               ) : (
-                <VStack align="stretch" gap={4}>
+                <VStack align="stretch" gap={3}>
                   {pdfsForRender.map(
                     (doc: any, idx: number) => {
-                      const blob =
-                        pdfBlobUrls[String(doc.url)];
-                      const src = blob
-                        ? `${blob}#toolbar=0&navpanes=0`
-                        : `${toAbsoluteUrl(
-                            String(doc.url)
-                          )}#toolbar=0&navpanes=0`;
-                      const resourceId =
-                        doc.id || `pdf-${idx}-${tier.id}`;
-                      const isLoaded =
-                        loadedPDFs.has(idx);
                       const displayName = prettyDocName(doc.url);
-
-                      <Text fontWeight="bold" fontSize="md" color={primaryTextColor}>
-                        {displayName}
-                      </Text>;
-
                       return (
-                        <Box
+                        <HStack
                           key={idx}
+                          p={3}
                           borderRadius="lg"
-                          overflow="hidden"
                           borderWidth={1}
-                          position="relative"
-                          onContextMenu={preventContext}
+                          borderColor={mode === "dark" ? "whiteAlpha.100" : "gray.200"}
+                          bg={surfaceBg}
+                          _hover={{ borderColor: "#65a8bf", bg: mode === "dark" ? "whiteAlpha.50" : "gray.50" }}
+                          cursor="pointer"
+                          onClick={() => {
+                            setActivePdfIdx(idx);
+                            setShowInlinePdf(true);
+                            scrollTo(playerRef as any);
+                          }}
+                          spacing={3}
                         >
-                          {!isLoaded ? (
-                            <Button
-                              w="full"
-                              h="120px"
-                              bg={surfaceBg}
-                              borderWidth={2}
-                              borderStyle="dashed"
-                              _hover={{
-                                bg: mode === "dark" ? "whiteAlpha.50" : "gray.100",
-                                borderStyle: "solid",
-                              }}
-                              onClick={() =>
-                                setLoadedPDFs((prev) => {
-                                  const s = new Set(prev);
-                                  s.add(idx);
-                                  return s;
-                                })
-                              }
-                            >
-                              <VStack spacing={3}>
-                                <Icon as={FileText} boxSize={8} color="#65a8bf" />
-                                <VStack spacing={1}>
-                                  <Text fontWeight="bold" fontSize="md" color={primaryTextColor}>
-                                    {displayName}
-                                  </Text>
-                                  <Text fontSize="sm" color={mutedTextColor}>
-                                    {t("common.click_to_load") || "Click to load PDF"}
-                                  </Text>
-                                </VStack>
-                              </VStack>
-                            </Button>
-                          ) : (
-                            <TrackedPDFPro
-                              resourceId={resourceId}
-                              src={src}
-                              tierId={tier.id}
-                              style={{ width: "100%", height: "100%" }}
-                              watermark={
-                                <>
-                                  <Box
-                                    position="absolute"
-                                    inset={0}
-                                    pointerEvents="none"
-                                    zIndex={1}
-                                  />
-                                  <Watermark
-                                    text={
-                                      user?.email || user?.id
-                                        ? t("learn.watermark.user", {
-                                            user: user?.email || user?.id,
-                                          })
-                                        : undefined
-                                    }
-                                  />
-                                </>
-                              }
-                            />
-                          )}
-
-                          {isLoaded && (
-                            <Text mt={2} px={3} pb={3} fontSize="sm" color={mutedTextColor}>
-                              {t("learn.guard.note")}
-                            </Text>
-                          )}
-                        </Box>
+                          <Icon as={FileText} boxSize={5} color="#65a8bf" />
+                          <Text fontWeight="600" fontSize="sm" color={primaryTextColor} flex="1">
+                            {displayName}
+                          </Text>
+                          <Text fontSize="xs" color={mutedTextColor}>
+                            {t("common.open") || "Open"}
+                          </Text>
+                        </HStack>
                       );
                     }
                   )}

@@ -1,34 +1,28 @@
-import React, { useEffect, useRef, useState } from "react";
+import React, { useCallback, useEffect, useRef, useState } from "react";
 import {
   Box,
   HStack,
   IconButton,
   Text,
   Tooltip,
-  Slider,
-  SliderTrack,
-  SliderFilledTrack,
-  SliderThumb,
   useColorModeValue,
   Portal,
 } from "@chakra-ui/react";
 import {
-  ChevronLeft,
-  ChevronRight,
+  ChevronUp,
+  ChevronDown,
   ZoomIn,
   ZoomOut,
-  RotateCw,
   Maximize2,
-  X,
   Minimize2,
 } from "lucide-react";
 import { Document, Page, pdfjs } from "react-pdf";
+import "react-pdf/dist/Page/AnnotationLayer.css";
+import "react-pdf/dist/Page/TextLayer.css";
 import { useResourceProgress } from "./ResourceProgressTracker";
 
 // Use CDN-hosted worker matching the installed pdfjs-dist version
 pdfjs.GlobalWorkerOptions.workerSrc = `https://cdn.jsdelivr.net/npm/pdfjs-dist@${pdfjs.version}/build/pdf.worker.min.mjs`;
-
-type FitMode = "width" | "page";
 
 interface TrackedPDFProProps {
   src: string;
@@ -36,8 +30,6 @@ interface TrackedPDFProProps {
   resourceId?: string;
   style?: React.CSSProperties;
   watermark?: React.ReactNode;
-
-  // optional: start in reading mode
   defaultReadingMode?: boolean;
 }
 
@@ -52,15 +44,14 @@ export const TrackedPDFPro: React.FC<TrackedPDFProProps> = ({
   const { markCompleted } = useResourceProgress(src, "pdf", tierId);
 
   const [numPages, setNumPages] = useState<number>(0);
-  const [page, setPage] = useState<number>(1);
-  const [scale, setScale] = useState<number>(1.1);
-  const [rotation, setRotation] = useState<number>(0);
-  const [fit, setFit] = useState<FitMode>("width");
-  const [readingMode, setReadingMode] = useState<boolean>(defaultReadingMode);
+  const [currentPage, setCurrentPage] = useState<number>(1);
+  const [scale, setScale] = useState<number>(1.0);
+  const [isFullscreen, setIsFullscreen] = useState<boolean>(defaultReadingMode);
 
   const viewedRef = useRef(false);
   const containerRef = useRef<HTMLDivElement | null>(null);
-  const pageWrapRef = useRef<HTMLDivElement | null>(null);
+  const scrollRef = useRef<HTMLDivElement | null>(null);
+  const pageRefs = useRef<Map<number, HTMLDivElement>>(new Map());
 
   const bg = useColorModeValue("white", "gray.950");
   const panelBg = useColorModeValue("gray.50", "gray.900");
@@ -78,67 +69,80 @@ export const TrackedPDFPro: React.FC<TrackedPDFProProps> = ({
     return () => window.clearTimeout(t);
   }, [markCompleted]);
 
-  // Prevent print/save shortcuts while focused
+  // Track current page from scroll position
+  const handleScroll = useCallback(() => {
+    const el = scrollRef.current;
+    if (!el || numPages === 0) return;
+    const scrollTop = el.scrollTop;
+    const scrollMid = scrollTop + el.clientHeight / 3;
+    let closest = 1;
+    let closestDist = Infinity;
+    pageRefs.current.forEach((div, pageNum) => {
+      const dist = Math.abs(div.offsetTop - scrollMid);
+      if (dist < closestDist) {
+        closestDist = dist;
+        closest = pageNum;
+      }
+    });
+    setCurrentPage(closest);
+  }, [numPages]);
+
+  useEffect(() => {
+    const el = scrollRef.current;
+    if (!el) return;
+    el.addEventListener("scroll", handleScroll, { passive: true });
+    return () => el.removeEventListener("scroll", handleScroll);
+  }, [handleScroll]);
+
+  // Jump to page
+  const jumpToPage = (p: number) => {
+    const div = pageRefs.current.get(p);
+    if (div && scrollRef.current) {
+      scrollRef.current.scrollTo({ top: div.offsetTop - 8, behavior: "smooth" });
+    }
+  };
+
+  // Fullscreen toggle — use native API with Portal fallback
+  const toggleFullscreen = useCallback(async () => {
+    const el = containerRef.current;
+    if (!el) { setIsFullscreen((v) => !v); return; }
+    try {
+      if (!document.fullscreenElement) {
+        await el.requestFullscreen();
+      } else {
+        await document.exitFullscreen();
+      }
+    } catch {
+      // Fallback for iOS / browsers that block fullscreen
+      setIsFullscreen((v) => !v);
+    }
+  }, []);
+
+  // Sync state with native fullscreen changes
+  useEffect(() => {
+    const onChange = () => setIsFullscreen(!!document.fullscreenElement);
+    document.addEventListener("fullscreenchange", onChange);
+    return () => document.removeEventListener("fullscreenchange", onChange);
+  }, []);
+
+  // Escape key exits fullscreen
   const onKeyDown = (e: React.KeyboardEvent) => {
     if (e.ctrlKey && (e.key === "p" || e.key === "s")) {
       e.preventDefault();
       e.stopPropagation();
     }
-    if (readingMode && e.key === "Escape") {
-      setReadingMode(false);
+    if (isFullscreen && e.key === "Escape" && !document.fullscreenElement) {
+      setIsFullscreen(false);
     }
   };
-
-  // Fit-width / fit-page: compute scale based on container size
-  const recomputeFitScale = () => {
-    const wrap = pageWrapRef.current;
-    const cont = containerRef.current;
-    if (!wrap || !cont) return;
-
-    // react-pdf renders a canvas inside; width/height available after render
-    const canvas = wrap.querySelector("canvas");
-    if (!canvas) return;
-
-    const contW = cont.clientWidth;
-    const contH = cont.clientHeight;
-
-    // canvas size already includes current scale; normalize it back
-    // We approximate baseline by dividing by current scale.
-    const baseW = canvas.width / scale;
-    const baseH = canvas.height / scale;
-
-    if (fit === "width") {
-      const newScale = Math.max(0.5, Math.min(2.5, contW / baseW));
-      setScale(newScale);
-    } else {
-      const newScale = Math.max(0.5, Math.min(2.5, Math.min(contW / baseW, contH / baseH)));
-      setScale(newScale);
-    }
-  };
-
-  // Recompute when fit mode changes or when reading mode changes (different container)
-  useEffect(() => {
-    // slight delay so canvas exists
-    const t = window.setTimeout(recomputeFitScale, 50);
-    return () => window.clearTimeout(t);
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [fit, readingMode, page, numPages]);
-
-  // Recompute on resize
-  useEffect(() => {
-    const onResize = () => recomputeFitScale();
-    window.addEventListener("resize", onResize);
-    return () => window.removeEventListener("resize", onResize);
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [fit, scale]);
 
   const clampPage = (p: number) => Math.max(1, Math.min(numPages || 1, p));
 
   const toolbar = (
     <HStack
       px={3}
-      py={2}
-      spacing={2}
+      py={1.5}
+      spacing={{ base: 1, md: 2 }}
       bg={panelBg}
       borderBottomWidth="1px"
       borderColor={border}
@@ -146,31 +150,32 @@ export const TrackedPDFPro: React.FC<TrackedPDFProProps> = ({
       top={0}
       zIndex={2}
       userSelect="none"
+      flexWrap="wrap"
     >
       <HStack spacing={1}>
         <Tooltip label="Previous page">
           <IconButton
             aria-label="Previous page"
             size="sm"
-            icon={<ChevronLeft size={18} />}
-            onClick={() => setPage((p) => clampPage(p - 1))}
-            isDisabled={page <= 1}
+            variant="ghost"
+            icon={<ChevronUp size={16} />}
+            onClick={() => jumpToPage(clampPage(currentPage - 1))}
+            isDisabled={currentPage <= 1}
           />
         </Tooltip>
-
+        <Text fontSize="xs" color={textMuted} minW="60px" textAlign="center">
+          <b>{currentPage}</b> / {numPages || "—"}
+        </Text>
         <Tooltip label="Next page">
           <IconButton
             aria-label="Next page"
             size="sm"
-            icon={<ChevronRight size={18} />}
-            onClick={() => setPage((p) => clampPage(p + 1))}
-            isDisabled={numPages > 0 ? page >= numPages : false}
+            variant="ghost"
+            icon={<ChevronDown size={16} />}
+            onClick={() => jumpToPage(clampPage(currentPage + 1))}
+            isDisabled={numPages > 0 ? currentPage >= numPages : false}
           />
         </Tooltip>
-
-        <Text fontSize="sm" color={textMuted} ml={2}>
-          Page <b>{page}</b> / {numPages || "—"}
-        </Text>
       </HStack>
 
       <Box flex="1" />
@@ -180,59 +185,31 @@ export const TrackedPDFPro: React.FC<TrackedPDFProProps> = ({
           <IconButton
             aria-label="Zoom out"
             size="sm"
-            icon={<ZoomOut size={18} />}
-            onClick={() => setScale((s) => Math.max(0.5, Number((s - 0.1).toFixed(2))))}
+            variant="ghost"
+            icon={<ZoomOut size={16} />}
+            onClick={() => setScale((s) => Math.max(0.5, Number((s - 0.15).toFixed(2))))}
           />
         </Tooltip>
-
-        <Box w="160px" px={2}>
-          <Slider
-            aria-label="zoom"
-            value={Math.round(scale * 100)}
-            min={50}
-            max={250}
-            onChange={(v) => setScale(Number((v / 100).toFixed(2)))}
-          >
-            <SliderTrack>
-              <SliderFilledTrack />
-            </SliderTrack>
-            <SliderThumb />
-          </Slider>
-        </Box>
-
+        <Text fontSize="xs" color={textMuted} minW="36px" textAlign="center">
+          {Math.round(scale * 100)}%
+        </Text>
         <Tooltip label="Zoom in">
           <IconButton
             aria-label="Zoom in"
             size="sm"
-            icon={<ZoomIn size={18} />}
-            onClick={() => setScale((s) => Math.min(2.5, Number((s + 0.1).toFixed(2))))}
+            variant="ghost"
+            icon={<ZoomIn size={16} />}
+            onClick={() => setScale((s) => Math.min(3, Number((s + 0.15).toFixed(2))))}
           />
         </Tooltip>
 
-        <Tooltip label="Rotate">
+        <Tooltip label={isFullscreen ? "Exit fullscreen (Esc)" : "Fullscreen"}>
           <IconButton
-            aria-label="Rotate"
+            aria-label="Toggle fullscreen"
             size="sm"
-            icon={<RotateCw size={18} />}
-            onClick={() => setRotation((r) => (r + 90) % 360)}
-          />
-        </Tooltip>
-
-        <Tooltip label={fit === "width" ? "Fit page" : "Fit width"}>
-          <IconButton
-            aria-label="Toggle fit"
-            size="sm"
-            icon={fit === "width" ? <Maximize2 size={18} /> : <Minimize2 size={18} />}
-            onClick={() => setFit((f) => (f === "width" ? "page" : "width"))}
-          />
-        </Tooltip>
-
-        <Tooltip label={readingMode ? "Exit reading mode (Esc)" : "Reading mode"}>
-          <IconButton
-            aria-label="Reading mode"
-            size="sm"
-            icon={readingMode ? <X size={18} /> : <Maximize2 size={18} />}
-            onClick={() => setReadingMode((v) => !v)}
+            variant="ghost"
+            icon={isFullscreen ? <Minimize2 size={16} /> : <Maximize2 size={16} />}
+            onClick={toggleFullscreen}
           />
         </Tooltip>
       </HStack>
@@ -244,10 +221,7 @@ export const TrackedPDFPro: React.FC<TrackedPDFProProps> = ({
       ref={containerRef}
       tabIndex={0}
       onKeyDown={onKeyDown}
-      onContextMenu={(e) => {
-        e.preventDefault();
-        e.stopPropagation();
-      }}
+      onContextMenu={(e) => { e.preventDefault(); e.stopPropagation(); }}
       onCopy={(e) => e.preventDefault()}
       onCut={(e) => e.preventDefault()}
       onPaste={(e) => e.preventDefault()}
@@ -258,88 +232,97 @@ export const TrackedPDFPro: React.FC<TrackedPDFProProps> = ({
         userSelect: "none",
       }}
       bg={bg}
-      borderRadius="lg"
+      borderRadius={isFullscreen ? "0" : "lg"}
       overflow="hidden"
-      borderWidth="1px"
+      borderWidth={isFullscreen ? "0" : "1px"}
       borderColor={border}
       position="relative"
+      display="flex"
+      flexDirection="column"
+      height={isFullscreen ? "100%" : undefined}
+      maxH={isFullscreen ? "100vh" : "80vh"}
     >
       {toolbar}
 
       <Box
+        ref={scrollRef}
         position="relative"
-        height="100%"
+        flex="1"
         overflow="auto"
-        p={{ base: 2, md: 4 }}
+        p={{ base: 1, md: 3 }}
+        sx={{
+          "&::-webkit-scrollbar": { width: "6px" },
+          "&::-webkit-scrollbar-thumb": { bg: "whiteAlpha.300", borderRadius: "3px" },
+        }}
       >
-        <Box ref={pageWrapRef} display="flex" justifyContent="center">
-          <Document
-            file={src.split("#")[0]}
-            onLoadSuccess={(pdf) => {
-              setNumPages(pdf.numPages);
-              setPage((p) => clampPage(p));
-            }}
-            loading={
-              <Text fontSize="sm" color={textMuted}>
-                Loading PDF…
-              </Text>
-            }
-            error={
-              <Text fontSize="sm" color="red.400">
-                Failed to load PDF.
-              </Text>
-            }
-            // small “Adobe-like” perf tweak: only render current page
-            renderMode="canvas"
-          >
-            <Page
-              pageNumber={page}
-              scale={scale}
-              rotate={rotation}
-              loading={
-                <Text fontSize="sm" color={textMuted}>
-                  Rendering page…
-                </Text>
-              }
-            />
-          </Document>
-        </Box>
+        <Document
+          file={src.split("#")[0]}
+          onLoadSuccess={(pdf) => {
+            setNumPages(pdf.numPages);
+          }}
+          loading={
+            <Box display="flex" justifyContent="center" py={10}>
+              <Text fontSize="sm" color={textMuted}>Loading PDF…</Text>
+            </Box>
+          }
+          error={
+            <Box display="flex" justifyContent="center" py={10}>
+              <Text fontSize="sm" color="red.400">Failed to load PDF.</Text>
+            </Box>
+          }
+        >
+          {numPages > 0 && Array.from({ length: numPages }, (_, i) => {
+            const pageNum = i + 1;
+            return (
+              <Box
+                key={pageNum}
+                ref={(el: HTMLDivElement | null) => {
+                  if (el) pageRefs.current.set(pageNum, el);
+                  else pageRefs.current.delete(pageNum);
+                }}
+                display="flex"
+                justifyContent="center"
+                mb={3}
+              >
+                <Page
+                  pageNumber={pageNum}
+                  scale={scale}
+                  width={undefined}
+                  loading={
+                    <Box h="400px" display="flex" alignItems="center" justifyContent="center">
+                      <Text fontSize="sm" color={textMuted}>Loading page {pageNum}…</Text>
+                    </Box>
+                  }
+                />
+              </Box>
+            );
+          })}
+        </Document>
 
         {watermark}
       </Box>
     </Box>
   );
 
-  // Reading Mode: blur/dim everything behind, keep viewer crisp
-  if (!readingMode) return viewer;
-
-  return (
-    <Portal>
-      <Box
-        position="fixed"
-        inset={0}
-        zIndex={2000}
-        // Blur everything behind this overlay
-        style={{
-          backdropFilter: "blur(10px)",
-          WebkitBackdropFilter: "blur(10px)",
-        }}
-        bg="rgba(0,0,0,0.55)"
-        display="flex"
-        alignItems="center"
-        justifyContent="center"
-        p={{ base: 2, md: 6 }}
-        onMouseDown={(e) => {
-          // click outside closes
-          if (e.target === e.currentTarget) setReadingMode(false);
-        }}
-      >
-        <Box width="min(1100px, 96vw)" height="min(92vh, 900px)">
+  // Fullscreen via Portal fallback (when native fullscreen not active)
+  if (isFullscreen && !document.fullscreenElement) {
+    return (
+      <Portal>
+        <Box
+          position="fixed"
+          inset={0}
+          zIndex={2000}
+          bg={bg}
+          display="flex"
+          flexDirection="column"
+        >
           {viewer}
         </Box>
-      </Box>
-    </Portal>
-  );
+      </Portal>
+    );
+  }
+
+  return viewer;
 };
 
 export default TrackedPDFPro;

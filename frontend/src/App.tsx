@@ -45,6 +45,7 @@ const Resources = lazy(() => import('./pages/Learn/Resources'));
 const FAQ = lazy(() => import('./pages/Learn/FAQ'));
 const Apply = lazy(() => import('./pages/Apply'));
 const NotFound = lazy(() => import('./pages/404'));
+const Status = lazy(() => import('./pages/Status'));
 const Crypto = lazy(() => import('./pages/Guide/Crypto'));
 const TokenPage = lazy(() => import('./pages/Token'));
 const Discord = lazy(() => import('./pages/Discord'));
@@ -188,6 +189,7 @@ function App() {
               <Route path="/discord" element={<Discord />} />
               <Route path="/apply/:id" element={<Apply />} />
               <Route path="/broker" element={<Broker />} />
+              <Route path="/status" element={<Status />} />
               <Route path="*" element={<NotFound />} />
             </Routes>
           </Suspense>
