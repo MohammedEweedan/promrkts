@@ -87,6 +87,9 @@ const Learn: React.FC = () => {
   const [showInlinePdf, setShowInlinePdf] = React.useState(false);
   const [activePdfIdx, setActivePdfIdx] = React.useState(0);
 
+  // Standalone PDF modal (works even when no videos / cinematic mode off)
+  const [showPdfModal, setShowPdfModal] = React.useState(false);
+
   // AI coach bubble over the video
   const [aiOpen, setAiOpen] = React.useState(false);
   const [aiMessages, setAiMessages] = React.useState<AiMessage[]>([]);
@@ -211,7 +214,12 @@ const Learn: React.FC = () => {
         pdfs.map(async (r: any) => {
           try {
             const abs = toAbsoluteUrl(String(r.url));
-            const resp = await axios.get(abs, { responseType: "blob" });
+            const token = localStorage.getItem("token");
+            const resp = await axios.get(abs, {
+              responseType: "blob",
+              withCredentials: true,
+              headers: token ? { Authorization: `Bearer ${token}` } : {},
+            });
             const blobUrl = URL.createObjectURL(resp.data);
             return [String(r.url), blobUrl] as const;
           } catch {
@@ -1926,8 +1934,13 @@ const Learn: React.FC = () => {
                           cursor="pointer"
                           onClick={() => {
                             setActivePdfIdx(idx);
-                            setShowInlinePdf(true);
-                            scrollTo(playerRef as any);
+                            // If cinematic player is visible, use inline overlay; otherwise open standalone modal
+                            if (videos.length > 0 && useCinematic) {
+                              setShowInlinePdf(true);
+                              scrollTo(playerRef as any);
+                            } else {
+                              setShowPdfModal(true);
+                            }
                           }}
                           spacing={3}
                         >
@@ -2421,6 +2434,89 @@ const Learn: React.FC = () => {
           </VStack>
         </Container>
       </Box>
+
+      {/* STANDALONE PDF MODAL --------------------------------------------------- */}
+      {showPdfModal && pdfsForRender.length > 0 && (() => {
+        const doc = pdfsForRender[activePdfIdx];
+        const blob = pdfBlobUrls[String(doc?.url)];
+        const pdfSrc = blob
+          ? `${blob}#toolbar=0&navpanes=0`
+          : `${toAbsoluteUrl(String(doc?.url))}#toolbar=0&navpanes=0`;
+        const pdfResourceId = doc?.id || `pdf-modal-${activePdfIdx}-${tier?.id}`;
+        return (
+          <Box
+            position="fixed"
+            inset={0}
+            bg="blackAlpha.800"
+            zIndex={1500}
+            display="flex"
+            flexDirection="column"
+          >
+            {/* Header bar */}
+            <HStack
+              px={4}
+              py={2}
+              bg={mode === "dark" ? "gray.900" : "white"}
+              borderBottomWidth={1}
+              borderColor={mode === "dark" ? "whiteAlpha.100" : "gray.200"}
+              justify="space-between"
+              flexShrink={0}
+            >
+              <HStack spacing={3}>
+                <Icon as={FileText} boxSize={5} color="#65a8bf" />
+                <Text fontWeight="600" fontSize="sm" color={primaryTextColor}>
+                  {prettyDocName(doc?.url)}
+                </Text>
+              </HStack>
+              <HStack spacing={2}>
+                {pdfsForRender.length > 1 && pdfsForRender.map((_: any, idx: number) => (
+                  <Button
+                    key={idx}
+                    size="xs"
+                    variant={idx === activePdfIdx ? "solid" : "ghost"}
+                    bg={idx === activePdfIdx ? "#65a8bf" : "transparent"}
+                    color={idx === activePdfIdx ? "black" : primaryTextColor}
+                    _hover={{ opacity: 0.9 }}
+                    onClick={() => setActivePdfIdx(idx)}
+                  >
+                    {idx + 1}
+                  </Button>
+                ))}
+                <Button
+                  size="sm"
+                  variant="ghost"
+                  onClick={() => setShowPdfModal(false)}
+                >
+                  {t("common.close") || "Close"}
+                </Button>
+              </HStack>
+            </HStack>
+
+            {/* PDF viewer */}
+            <Box flex="1" overflow="hidden" p={{ base: 0, md: 4 }}>
+              <TrackedPDFPro
+                resourceId={pdfResourceId}
+                src={pdfSrc}
+                tierId={tier?.id || ""}
+                style={{ width: "100%", height: "100%" }}
+                defaultReadingMode
+                watermark={
+                  <>
+                    <Box position="absolute" inset={0} pointerEvents="none" zIndex={1} />
+                    <Watermark
+                      text={
+                        user?.email || user?.id
+                          ? t("learn.watermark.user", { user: user?.email || user?.id })
+                          : undefined
+                      }
+                    />
+                  </>
+                }
+              />
+            </Box>
+          </Box>
+        );
+      })()}
 
       {/* CERTIFICATE MODAL ----------------------------------------------------- */}
       {certOpen && (
