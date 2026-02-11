@@ -1,5 +1,6 @@
 /* eslint-disable react/style-prop-object */
 import React from "react";
+import axios from "axios";
 import { useNavigate, useParams } from "react-router-dom";
 import {
   Box,
@@ -210,7 +211,7 @@ const Learn: React.FC = () => {
         pdfs.map(async (r: any) => {
           try {
             const abs = toAbsoluteUrl(String(r.url));
-            const resp = await api.get(abs, { responseType: "blob" });
+            const resp = await axios.get(abs, { responseType: "blob" });
             const blobUrl = URL.createObjectURL(resp.data);
             return [String(r.url), blobUrl] as const;
           } catch {
