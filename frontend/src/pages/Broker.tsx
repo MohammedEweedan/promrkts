@@ -40,7 +40,6 @@ const MotionBox = motion(Box);
 const BRAND = "#65a8bf";
 const GOLD = "#b7a27d";
 const LDN_REGISTER = "https://ldnglobalmarkets.com/register-now/";
-const LDN_SITE = "https://ldnglobalmarkets.com";
 
 const IMG = {
   skyline: "/images/rand/ldn-skyline.png",
