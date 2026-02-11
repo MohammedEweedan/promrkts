@@ -2,7 +2,7 @@
 import React from "react";
 import "../styles/fonts.css";
 import { useTranslation } from "react-i18next";
-import { motion, useScroll, useTransform, useSpring, useMotionValue } from "framer-motion";
+import { motion, useScroll, useTransform } from "framer-motion";
 import {
   Box,
   Container,
@@ -15,20 +15,14 @@ import {
   Grid,
   Tabs,
   TabList,
-  TabPanels,
   Tab,
-  TabPanel,
   Link as ChakraLink,
   Image,
   Icon,
   Badge,
   useBreakpointValue,
-  useToast,
   Stack,
   Select,
-  Input,
-  FormControl,
-  FormErrorMessage,
   IconButton,
 } from "@chakra-ui/react";
 import { useNavigate } from "react-router-dom";
@@ -36,9 +30,8 @@ import { AdvancedRealTimeChart } from "react-ts-tradingview-widgets";
 import api, { getMyPurchases } from "../api/client";
 import BannerCarousel from "../components/BannerCarousel";
 import { useThemeMode } from "../themeProvider";
-import { Star, Trophy, Maximize2, Minimize2, Users, TrendingUp, DollarSign, Award, Target, Bot, MessageCircle, BarChart3, Smartphone, Lock, CheckCircle, GraduationCap, Globe, Flame, BookOpen, Rocket, Handshake, Search, Map as MapIcon, Landmark, Ruler, Crosshair, LineChart, Monitor } from "lucide-react";
+import { Star, Trophy, Maximize2, Minimize2, Users, Award, Target, Bot, MessageCircle, BarChart3, Smartphone, Lock, CheckCircle, GraduationCap, Globe, BookOpen, Handshake, Search, Map as MapIcon, Landmark, Ruler, Crosshair, LineChart, Monitor } from "lucide-react";
 import Hero from "../components/Hero";
-import { useSessionMemory } from "../hooks/useSessionMemory";
 import { useAuth } from "../auth/AuthContext";
 import TimelineNewsTabs from "../components/TimelineNewsTabs";
 import LeaderboardOnboarding from "../components/LeaderboardOnboarding";
@@ -46,7 +39,6 @@ import SpotlightCard from "../components/SpotlightCard";
 import Leaderboard from "../components/Leaderboard";
 import GuestLanding from "../components/GuestLanding";
 import SpinningWheel from "../components/SpinningWheel";
-import GridMotion, { GridMotionItem } from "../components/GridMotion";
 import {
   fetchJourney,
   fetchEntitlements,
@@ -59,28 +51,6 @@ import {
 
 // ===== Animation helpers =====
 const MotionBox = motion(Box);
-
-type AppleRevealOffset = NonNullable<Parameters<typeof useScroll>[0]>["offset"];
-const APPLE_REVEAL_DEFAULT_OFFSET: AppleRevealOffset = ["start 100%", "end 70%"]; 
-
-const AppleReveal: React.FC<{ children: React.ReactNode; offset?: AppleRevealOffset }> = ({ children, offset }) => {
-  const ref = React.useRef<HTMLDivElement | null>(null);
-  const { scrollYProgress } = useScroll({ target: ref, offset: offset ?? APPLE_REVEAL_DEFAULT_OFFSET });
-
-  const y = useTransform(scrollYProgress, [0, 1], [28, 0]);
-  const blur = useTransform(scrollYProgress, [0, 1], [2.5, 0]);
-  const opacity = useTransform(scrollYProgress, [0, 0.25, 1], [0, 1, 1]);
-  const scale = useTransform(scrollYProgress, [0, 1], [0.98, 1]);
-  const filter = useTransform(blur, (b: number) => `blur(${b}px)`);
-
-  return (
-    <Box ref={ref}>
-      <MotionBox style={{ y, opacity, scale, filter }}>
-        {children}
-      </MotionBox>
-    </Box>
-  );
-};
 
 // ===== UI Brand Tokens (Premium / Nfinite-inspired) =====
 const UI = {
@@ -115,175 +85,6 @@ const BRAND = {
   tokenLabel: "Tokens"
 };
 
-const HomeSection: React.FC<{
-  title: string;
-  subtitle?: string;
-  children: React.ReactNode;
-  id?: string;
-  gradient?: boolean;
-}> = ({ title, subtitle, children, id, gradient = true }) => (
-  <Box py={{ base: 16, md: 24 }} id={id}>
-    <VStack spacing={4} textAlign="center" mb={{ base: 12, md: 16 }}>
-      <Heading 
-        fontSize={{ base: "2.5rem", md: "3.5rem", lg: "4rem" }} 
-        letterSpacing="-0.03em" 
-        fontWeight="700"
-        lineHeight="1.1"
-        bgGradient={gradient ? "linear(to-r, #65a8bf, #b7a27d)" : undefined}
-        bgClip={gradient ? "text" : undefined}
-        color={gradient ? undefined : UI.text}
-      >
-        {title}
-      </Heading>
-      {subtitle && (
-        <Text 
-          
-          maxW="2xl" 
-          fontSize={{ base: "md", md: "lg" }} 
-          lineHeight="1.8"
-          fontWeight="400"
-        >
-          {subtitle}
-        </Text>
-      )}
-    </VStack>
-    {children}
-  </Box>
-);
-
-const StickyStory: React.FC<{
-  title: string;
-  steps: { title: string; body: string }[];
-}> = ({ title, steps }) => {
-  const ref = React.useRef<HTMLDivElement | null>(null);
-  const { scrollYProgress } = useScroll({ target: ref, offset: ["start start", "end end"] });
-
-  const active = useTransform(scrollYProgress, [0, 1], [0, steps.length - 1]);
-  const rotateY = useTransform(scrollYProgress, (p: number) => `${(p - 0.5) * 12}deg`);
-  const rotateX = useTransform(scrollYProgress, (p: number) => `${(0.5 - p) * 8}deg`);
-  const [activeStep, setActiveStep] = React.useState(0);
-
-  React.useEffect(() => {
-    const unsub = scrollYProgress.on("change", (p: number) => {
-      const idx = Math.round(p * Math.max(0, steps.length - 1));
-      setActiveStep(Math.max(0, Math.min(steps.length - 1, idx)));
-    });
-    return () => {
-      unsub();
-    };
-  }, [scrollYProgress, steps.length]);
-
-  return (
-    <Box ref={ref} position="relative" py={{ base: 16, md: 24 }}>
-      <SimpleGrid columns={{ base: 1, md: 2 }} gap={{ base: 10, md: 14 }} alignItems="start">
-        {/* Sticky visual */}
-        <Box position={{ base: "relative", md: "sticky" }} top={{ md: "14vh" }}>
-          <TiltCard>
-            <Heading size="lg" letterSpacing="-0.04em">
-              {title}
-            </Heading>
-            <Text mt={2} opacity={0.8}>
-              A single visual that evolves as you scroll.
-            </Text>
-
-            {/* “3D” mock visual */}
-            <MotionBox
-              mt={6}
-              h={{ base: "260px", md: "380px" }}
-              borderRadius="20px"
-              bg="rgba(0,191,99,0.10)"
-              border="1px solid rgba(0,191,99,0.25)"
-              style={{
-                transformStyle: "preserve-3d",
-                rotateY,
-                rotateX,
-              }}
-            />
-          </TiltCard>
-        </Box>
-
-        {/* Steps */}
-        <VStack align="stretch" spacing={4}>
-          {steps.map((s, i) => (
-            <MotionBox
-              key={s.title}
-              animate={{ opacity: activeStep === i ? 1 : 0.45, scale: activeStep === i ? 1 : 0.98 }}
-              transition="all 0.35s cubic-bezier(0.16, 1, 0.3, 1)"
-            >
-              <Box
-                p={5}
-                borderRadius="20px"
-                border="1px solid rgba(255,255,255,0.10)"
-                bg="rgba(15,23,42,0.55)"
-              >
-                <Heading size="md" mb={1}>
-                  {s.title}
-                </Heading>
-                <Text opacity={0.85}>{s.body}</Text>
-              </Box>
-            </MotionBox>
-          ))}
-        </VStack>
-      </SimpleGrid>
-    </Box>
-  );
-};
-
-const TiltCard: React.FC<{
-  children: React.ReactNode;
-  strength?: number;
-  bg?: string;
-  border?: string;
-  noPadding?: boolean;
-}> = ({ children, strength = 8, bg = UI.surface, border = UI.border, noPadding = false }) => {
-  const ref = React.useRef<HTMLDivElement | null>(null);
-  const rx = useMotionValue(0);
-  const ry = useMotionValue(0);
-  const scale = useMotionValue(1);
-
-  const onMove = (e: React.MouseEvent) => {
-    const el = ref.current;
-    if (!el) return;
-    const r = el.getBoundingClientRect();
-    const px = (e.clientX - r.left) / r.width;
-    const py = (e.clientY - r.top) / r.height;
-    ry.set((px - 0.5) * strength);
-    rx.set(-(py - 0.5) * strength);
-  };
-
-  const onEnter = () => scale.set(1.01);
-  const onLeave = () => {
-    scale.set(1);
-    rx.set(0);
-    ry.set(0);
-  };
-
-  return (
-    <MotionBox
-      ref={ref}
-      onMouseMove={onMove}
-      onMouseEnter={onEnter}
-      onMouseLeave={onLeave}
-      style={{
-        rotateX: rx,
-        rotateY: ry,
-        scale,
-        transformStyle: "preserve-3d",
-      }}
-      transition="all 0.3s cubic-bezier(0.16, 1, 0.3, 1)"
-      borderRadius="28px"
-      bg={bg}
-      border="1px solid"
-      borderColor={border}
-      boxShadow={UI.cardShadow}
-      p={noPadding ? 0 : { base: 6, md: 8 }}
-      overflow="hidden"
-    >
-      <Box style={{ transform: "translateZ(16px)" }}>{children}</Box>
-    </MotionBox>
-  );
-};
-
 const ParallaxSection: React.FC<{ children: React.ReactNode; speed?: number }> = ({
   children,
   speed = 0.5,
@@ -302,23 +103,6 @@ const ParallaxSection: React.FC<{ children: React.ReactNode; speed?: number }> =
     <Box ref={ref} position="relative" py={{ base: 6, md: 10 }}>
       <MotionBox style={{ y, opacity, scale }}>{children}</MotionBox>
     </Box>
-  );
-};
-
-const GradualFooter: React.FC<{ children: React.ReactNode }> = ({ children }) => {
-  const ref = React.useRef<HTMLDivElement>(null);
-  const { scrollYProgress } = useScroll({
-    target: ref,
-    offset: ["start end", "end end"],
-  });
-
-  const opacity = useTransform(scrollYProgress, [0, 0.5, 1], [0, 0.5, 1]);
-  const y = useTransform(scrollYProgress, [0, 0.5, 1], [100, 50, 0]);
-
-  return (
-    <MotionBox ref={ref} style={{ opacity, y }}>
-      {children}
-    </MotionBox>
   );
 };
 
@@ -946,72 +730,6 @@ const MarketsBoard: React.FC<{
 
 // ===== CONVERSION PSYCHOLOGY COMPONENTS =====
 
-// Live activity indicator - shows real-time user activity
-const LiveActivityPulse: React.FC = () => {
-  const [count, setCount] = React.useState(Math.floor(Math.random() * 50) + 120);
-  
-  React.useEffect(() => {
-    const interval = setInterval(() => {
-      setCount(prev => prev + Math.floor(Math.random() * 3) - 1);
-    }, 3000);
-    return () => clearInterval(interval);
-  }, []);
-
-  return (
-    <HStack 
-      spacing={2} 
-      bg="rgba(34, 197, 94, 0.1)" 
-      border="1px solid rgba(34, 197, 94, 0.2)"
-      borderRadius="full" 
-      px={4} 
-      py={2}
-    >
-      <Box w="8px" h="8px" borderRadius="full" bg="#22c55e" animation="pulse 2s infinite" />
-      <Text fontSize="sm" color="#22c55e" fontWeight="600">
-        {count} traders online now
-      </Text>
-    </HStack>
-  );
-};
-
-// Social proof bar with animated stats
-const SocialProofBar: React.FC<{ t: any }> = ({ t }) => {
-  const stats = [
-    { value: "100,007", label: t("home.social.students", { defaultValue: "Active Students" }), icon: Users },
-    { value: "94%", label: t("home.social.success", { defaultValue: "Success Rate" }), icon: TrendingUp },
-    { value: "$2.4M+", label: t("home.social.profits", { defaultValue: "Student Profits" }), icon: DollarSign },
-    { value: "4.9/5", label: t("home.social.rating", { defaultValue: "Average Rating" }), icon: Star },
-  ];
-
-  return (
-    <Box py={6}>
-      <SimpleGrid columns={{ base: 2, md: 4 }} gap={{ base: 4, md: 8 }}>
-        {stats.map((stat, i) => (
-          <MotionBox
-            key={i}
-            initial={{ opacity: 0, y: 20 }}
-            whileInView={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.5, delay: i * 0.1 }}
-            viewport={{ once: true }}
-            textAlign="center"
-          >
-            <Icon as={stat.icon} boxSize={6} color={UI.accent} mb={2} />
-            <Text 
-              fontSize={{ base: "2xl", md: "3xl" }} 
-              fontWeight="800" 
-              bgGradient="linear(to-r, #65a8bf, #b7a27d)"
-              bgClip="text"
-            >
-              {stat.value}
-            </Text>
-            <Text fontSize="sm">{stat.label}</Text>
-          </MotionBox>
-        ))}
-      </SimpleGrid>
-    </Box>
-  );
-};
-
 // Trust signals section
 const TrustSignals: React.FC<{ t: any }> = ({ t }) => {
   const signals = [
@@ -1051,80 +769,6 @@ const TrustSignals: React.FC<{ t: any }> = ({ t }) => {
     </SimpleGrid>
   );
 };
-
-// Testimonial with video-style card
-const TestimonialCard: React.FC<{
-  name: string;
-  role: string;
-  quote: string;
-  profit: string;
-  avatarIcon?: any;
-  delay?: number;
-}> = ({ name, role, quote, profit, avatarIcon, delay = 0 }) => (
-  <MotionBox
-    initial={{ opacity: 0, y: 30 }}
-    whileInView={{ opacity: 1, y: 0 }}
-    transition={{ duration: 0.6, delay }}
-    viewport={{ once: true }}
-    whileHover={{ y: -8, transition: { duration: 0.3 } }}
-  >
-    <Box
-      p={6}
-      borderRadius="24px"
-      bg={UI.surfaceLight}
-      border="1px solid"
-      borderColor={UI.border}
-      position="relative"
-      overflow="hidden"
-      _hover={{ borderColor: UI.borderAccent }}
-      transition="all 0.3s"
-    >
-      {/* Profit badge */}
-      <Box
-        position="absolute"
-        top={4}
-        right={4}
-        bg="rgba(34, 197, 94, 0.15)"
-        border="1px solid rgba(34, 197, 94, 0.3)"
-        borderRadius="full"
-        px={3}
-        py={1}
-      >
-        <Text fontSize="sm" fontWeight="700" color="#22c55e">+{profit}</Text>
-      </Box>
-      
-      <VStack align="start" spacing={4}>
-        <HStack spacing={3}>
-          <Box
-            w="48px"
-            h="48px"
-            borderRadius="full"
-            bg={UI.gradient}
-            display="flex"
-            alignItems="center"
-            justifyContent="center"
-          >
-            {avatarIcon && <Icon as={avatarIcon} boxSize={6} color="#0a0f1a" />}
-          </Box>
-          <VStack align="start" spacing={0}>
-            <Text fontWeight="600">{name}</Text>
-            <Text fontSize="sm">{role}</Text>
-          </VStack>
-        </HStack>
-        
-        <Text fontSize="sm" lineHeight="1.7" fontStyle="italic">
-          "{quote}"
-        </Text>
-        
-        <HStack spacing={1}>
-          {[1,2,3,4,5].map(i => (
-            <Text key={i} color="#fbbf24" fontSize="sm">★</Text>
-          ))}
-        </HStack>
-      </VStack>
-    </Box>
-  </MotionBox>
-);
 
 // Sticky CTA that appears on scroll
 const StickyCTA: React.FC<{ t: any; onNavigate: () => void }> = ({ t, onNavigate }) => {
@@ -1315,185 +959,6 @@ const ValueProposition: React.FC<{ t: any }> = ({ t }) => {
           </MotionBox>
         ))}
       </SimpleGrid>
-    </Box>
-  );
-};
-
-// ===== How It Works (Premium / Nfinite-inspired) =====
-const HowItWorks: React.FC<{ t: any }> = ({ t }) => (
-  <Box py={{ base: 16, md: 24 }}>
-    <VStack spacing={4} textAlign="center" mb={{ base: 12, md: 16 }}>
-      <Heading 
-        fontSize={{ base: "2.5rem", md: "3.5rem" }} 
-        letterSpacing="-0.03em" 
-        fontWeight="700"
-        bgGradient="linear(to-r, #65a8bf, #b7a27d)" 
-        bgClip="text"
-      >
-        {t("ai.how.title") || "How It Works"}
-      </Heading>
-    </VStack>
-    <SimpleGrid columns={{ base: 1, md: 2, lg: 4 }} gap={{ base: 6, md: 8 }}>
-      {[
-        {
-          step: "01",
-          title: t("ai.how.step1") || "Profile & Goals",
-          desc: t("ai.how.step1_desc") || "Tell us your time, risk comfort, and objectives.",
-          icon: Target,
-        },
-        {
-          step: "02",
-          title: t("ai.how.step2") || "Adaptive Lessons",
-          desc: t("ai.how.step2_desc") || "Bite-size modules tuned to your pace in AR/FR/EN.",
-          icon: BookOpen,
-        },
-        {
-          step: "03",
-          title: t("ai.how.step3") || "Simulate & Practice",
-          desc: t("ai.how.step3_desc") || "Run strategy sims with guided debriefs.",
-          icon: BarChart3,
-        },
-        {
-          step: "04",
-          title: t("ai.how.step4") || "Go Live",
-          desc: t("ai.how.step4_desc") || "Bridge to compliant brokers. Keep journaling with AI.",
-          icon: Rocket,
-        },
-      ].map((s, i) => (
-        <MotionBox
-          key={i}
-          initial={{ opacity: 0, y: 30 }}
-          whileInView={{ opacity: 1, y: 0 }}
-          transition={{ duration: 0.5, delay: i * 0.1 }}
-          viewport={{ once: true, amount: 0.3 }}
-        >
-          <Box 
-            p={{ base: 6, md: 8 }} 
-            borderRadius="24px" 
-            bg={UI.surfaceLight}
-            border="1px solid" 
-            borderColor={UI.border}
-            h="100%"
-            position="relative"
-            _hover={{ borderColor: UI.borderAccent, transform: "translateY(-4px)" }}
-            transition="all 0.3s ease"
-          >
-            <VStack align="start" gap={4}>
-              <HStack justify="space-between" w="100%">
-                <Box
-                  w="48px"
-                  h="48px"
-                  borderRadius="14px"
-                  bg={UI.gradient}
-                  display="flex"
-                  alignItems="center"
-                  justifyContent="center"
-                >
-                  <Icon as={s.icon} boxSize={6} color="#0a0f1a" />
-                </Box>
-                <Text 
-                  fontSize="sm" 
-                  fontWeight="700" 
-                  color={UI.accent}
-                  opacity={0.6}
-                >
-                  {s.step}
-                </Text>
-              </HStack>
-              <Heading size="md" fontWeight="600">
-                {s.title}
-              </Heading>
-              <Text fontSize="sm" lineHeight="1.7">
-                {s.desc}
-              </Text>
-            </VStack>
-          </Box>
-        </MotionBox>
-      ))}
-    </SimpleGrid>
-  </Box>
-);
-
-const FeaturePuzzle: React.FC<{
-  title: string;
-  subtitle?: string;
-  mode: string;
-  items: {
-    title: string;
-    body: string;
-    emoji?: string;
-    imageSrc?: string;
-    colSpan?: { base?: number; md?: number };
-  }[];
-}> = ({ title, subtitle, mode, items }) => {
-  const isDark = mode === "dark";
-  return (
-    <Box py={{ base: 14, md: 18 }}>
-      <VStack spacing={3} textAlign="center" mb={{ base: 10, md: 12 }}>
-        <Heading fontSize={{ base: "3xl", md: "5xl" }} letterSpacing="-0.045em" fontWeight="650">
-          {title}
-        </Heading>
-        {subtitle && (
-          <Text opacity={0.72} maxW="3xl" fontSize={{ base: "md", md: "lg" }} lineHeight="1.7">
-            {subtitle}
-          </Text>
-        )}
-      </VStack>
-
-      <Grid
-        templateColumns={{ base: "1fr", md: "repeat(12, 1fr)" }}
-        gap={{ base: 4, md: 5 }}
-        alignItems="stretch"
-      >
-        {items.map((it, idx) => (
-          <Box
-            key={idx}
-            gridColumn={{ base: "auto", md: `span ${it.colSpan?.md ?? 4}` }}
-            borderRadius="24px"
-            bg={isDark ? "rgba(15, 23, 42, 0.62)" : "rgba(255,255,255,0.65)"}
-            border="1px solid"
-            borderColor={isDark ? "rgba(255,255,255,0.10)" : "rgba(0,0,0,0.08)"}
-            overflow="hidden"
-          >
-            <Box p={{ base: 5, md: 6 }}>
-              <HStack justify="space-between" align="start" mb={3}>
-                <Heading size="md" letterSpacing="-0.02em" color={isDark ? "white" : "gray.900"}>
-                  {it.title}
-                </Heading>
-                {it.emoji && (
-                  <Box fontSize={{ base: "22px", md: "26px" }} opacity={0.9} lineHeight={1}>
-                    {it.emoji}
-                  </Box>
-                )}
-              </HStack>
-              <Text opacity={0.85} color={isDark ? "gray.200" : "gray.700"}>
-                {it.body}
-              </Text>
-            </Box>
-
-            {it.imageSrc ? (
-              <Image src={it.imageSrc} alt={it.title} w="full" h={{ base: "180px", md: "220px" }} objectFit="cover" />
-            ) : (
-              <Box
-                mx={{ base: 5, md: 6 }}
-                mb={{ base: 5, md: 6 }}
-                h={{ base: "180px", md: "220px" }}
-                borderRadius="20px"
-                bg={isDark ? "rgba(255,255,255,0.06)" : "rgba(0,0,0,0.04)"}
-                border="1px dashed"
-                borderColor={isDark ? "rgba(255,255,255,0.16)" : "rgba(0,0,0,0.14)"}
-                display="flex"
-                alignItems="center"
-                justifyContent="center"
-              >
-                <Text fontSize="sm" opacity={0.75}>
-                  Drop screenshot here
-                </Text>
-              </Box>
-            )}
-          </Box>
-        ))}
-      </Grid>
     </Box>
   );
 };
@@ -1755,23 +1220,8 @@ const Home: React.FC = () => {
     return () => clearInterval(interval);
   }, [screenshots.length]);
 
-  // progress: 0 at top of Home, 1 near bottom of Home
-  const { scrollYProgress } = useScroll({
-    target: pageRef,
-    offset: ["start start", "end end"],
-  });
-
   const isDark = mode === "dark";
 
-  // solid start color
-  const startBg = isDark ? "rgba(5, 8, 17, 1)" : "rgba(255, 255, 255, 1)";
-
-  // fully transparent end color (same RGB, alpha 0)
-  const endBg = isDark ? "rgba(5, 8, 17, 0)" : "rgba(255, 255, 255, 0)";
-
-  const bgFade = useTransform(scrollYProgress, [0, 0.75, 1], [startBg, endBg, endBg]);
-
-  const toast = useToast();
   const lang = String(i18n?.language || "en").toLowerCase();
   const isAR = lang.startsWith("ar");
   const isFR = lang.startsWith("fr");
@@ -1785,11 +1235,9 @@ const Home: React.FC = () => {
   const [isEnrolled, setIsEnrolled] = React.useState(false);
   const [enrolledTiers, setEnrolledTiers] = React.useState<any[]>([]);
   const [isNewUser, setIsNewUser] = React.useState(false);
-  const { session } = useSessionMemory();
 
   const [showMarkets, setShowMarkets] = React.useState(true);
   const [showNews, setShowNews] = React.useState(true);
-  const [showContinue, setShowContinue] = React.useState(true);
   const [showBadgesCard, setShowBadgesCard] = React.useState(true);
 
   const reviewsCarouselDuration = useBreakpointValue({ base: 9, md: 15 }) ?? 15;
@@ -1797,7 +1245,8 @@ const Home: React.FC = () => {
 
   const [badges, setBadges] = React.useState<any[] | null>(null);
   const [offers, setOffers] = React.useState<any[] | null>(null);
-  const [loadingPersonalization, setLoadingPersonalization] = React.useState(false);
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
+  const [, setLoadingPersonalization] = React.useState(false);
   const [spinOpen, setSpinOpen] = React.useState(false);
   const [showSpinButton, setShowSpinButton] = React.useState(false);
 
@@ -1810,7 +1259,8 @@ const Home: React.FC = () => {
     totalLearners?: number;
     consistencyImprovedPercent?: number;
   } | null>(null);
-  const [loadingPlatformStats, setLoadingPlatformStats] = React.useState(false);
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
+  const [, setLoadingPlatformStats] = React.useState(false);
 
   // Platform-level stats (optional; only show if backend returns real numbers)
   React.useEffect(() => {
@@ -1899,13 +1349,15 @@ const Home: React.FC = () => {
     };
   }, [isLoggedIn]);
 
-  const [learningStats, setLearningStats] = React.useState<{
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
+  const [, setLearningStats] = React.useState<{
     activePrograms?: number;
     streakDays?: number;
     hoursLast30?: number;
     completionPercent?: number;
   } | null>(null);
-  const [loadingStats, setLoadingStats] = React.useState(false);
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
+  const [, setLoadingStats] = React.useState(false);
 
   const stage = journey?.stage ?? "SIGNED_UP";
   const stageIndex = journey ? JOURNEY_STAGE_ORDER.indexOf(stage as any) : 0;
@@ -1928,18 +1380,11 @@ const Home: React.FC = () => {
       : 0;
 
   const canUseDashboard = Boolean(entitlements?.canUseDashboard);
-  const canBuyEval = Boolean(entitlements?.canBuyEval);
-
   // Optional: you can tighten these rules to your product logic
   const allowMarketsBoard = isEnrolled && canUseDashboard;
   const allowNews = isEnrolled; // or gate by stage if you want
 
-  // Lead magnet state
-  const [lead, setLead] = React.useState({ name: "", email: "", phone: "", method: "email" });
-  const [submitting, setSubmitting] = React.useState(false);
-
-  const emailValid = /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(lead.email.trim());
-  const phoneValid = /^\+?[0-9\s\-]{7,15}$/.test(lead.phone.trim());
+  
 
   // Load courses + subscriptions
   React.useEffect(() => {
@@ -2223,7 +1668,7 @@ const Home: React.FC = () => {
   );
 
   // Reviews (fallback data if none available from tiers)
-  const sampleReviews: Review[] = [
+  const sampleReviews: Review[] = React.useMemo(() => [
     {
       source: "Trustpilot",
       rating: 5,
@@ -2260,7 +1705,7 @@ const Home: React.FC = () => {
       date: "2025-08-12",
       url: "#",
     },
-  ];
+  ], []);
 
   const courseReviews: Review[] = React.useMemo(() => {
     try {
@@ -2292,7 +1737,7 @@ const Home: React.FC = () => {
 
   const reviewsToShow: Review[] = React.useMemo(
     () => (courseReviews.length ? courseReviews : sampleReviews),
-    [courseReviews]
+    [courseReviews, sampleReviews]
   );
 
   // Helpers for ratings
@@ -2311,90 +1756,7 @@ const Home: React.FC = () => {
     return { avg, count };
   };
 
-  const getPositiveComments = (tier: any, limit = 3): any[] => {
-    const lr = Array.isArray(tier?.latestReviews) ? tier.latestReviews : [];
-    const scored = lr
-      .filter(
-        (r: any) => (Number(r?.rating) || 0) >= 4 && String(r?.comment || "").trim().length > 0
-      )
-      .map((r: any) => ({
-        ...r,
-        __score:
-          (Number(r?.rating) || 0) * 1000 +
-          (r?.created_at ? new Date(r.created_at).getTime() / 1e11 : 0) +
-          Math.min(String(r?.comment || "").length, 180) / 180,
-      }))
-      .sort((a: any, b: any) => b.__score - a.__score);
-    return scored.slice(0, limit);
-  };
-
-  const getTierProgressValue = (tier: any): number | null => {
-    const raw = Number(
-      tier?.progressPercent ??
-        tier?.progress_percentage ??
-        tier?.progress ??
-        tier?.completionPercent ??
-        0
-    );
-
-    if (!Number.isFinite(raw) || raw <= 0) return null;
-    return Math.max(0, Math.min(100, raw));
-  };
-
   const fmtAvg = (n: number) => (n ? (Math.round(n * 10) / 10).toFixed(1) : "0.0");
-
-  // Submit lead
-  async function submitLead(e: React.FormEvent) {
-    e.preventDefault();
-    if (!lead.name.trim()) {
-      toast({ status: "warning", title: t("lead.name_required") || "Please enter your name." });
-      return;
-    }
-    if (lead.method === "email" && !emailValid) {
-      toast({ status: "warning", title: t("lead.email_invalid") || "Please enter a valid email." });
-      return;
-    }
-    if (lead.method === "phone" && !phoneValid) {
-      toast({
-        status: "warning",
-        title: t("lead.phone_invalid") || "Please enter a valid phone number.",
-      });
-      return;
-    }
-
-    setSubmitting(true);
-    try {
-      const message = [
-        "Lead Magnet Submission",
-        `Name: ${lead.name}`,
-        `Contact: ${lead.method === "email" ? lead.email : lead.phone}`,
-        `Locale: ${i18n.language}`,
-        session?.utm ? `UTM: ${JSON.stringify(session.utm)}` : null,
-      ]
-        .filter(Boolean)
-        .join("\n");
-
-      await api.post("/communications", {
-        name: lead.name,
-        email: lead.method === "email" ? lead.email : undefined,
-        phone: lead.method === "phone" ? lead.phone : undefined,
-        message,
-        locale: i18n.language,
-        url: window.location.href,
-        utm: session?.utm || undefined,
-      });
-
-      toast({ status: "success", title: t("lead.success") || "Thank you for your interest!" });
-      setLead({ name: "", email: "", phone: "", method: "email" });
-    } catch (err) {
-      toast({
-        status: "error",
-        title: t("lead.error") || "Something went wrong. Please try again.",
-      });
-    } finally {
-      setSubmitting(false);
-    }
-  }
 
   // FAQ items
   const faqItems = (t("home.faq.items", { returnObjects: true }) as any[]) || [
@@ -2451,93 +1813,6 @@ const Home: React.FC = () => {
       window.removeEventListener("resize", update);
     };
   }, []);
-
-  const isLight = mode === "light";
-
-  const ProductTile: React.FC<{
-    title: string;
-    desc: string;
-    tag?: string;
-    cta: string;
-    href: string;
-  }> = ({ title, desc, tag, cta, href }) => (
-    <Box
-      p={{ base: 6, md: 8 }}
-      borderRadius="24px"
-      bg={UI.surfaceLight}
-      border="1px solid"
-      borderColor={UI.border}
-      boxShadow={UI.cardShadow}
-      _hover={{ transform: "translateY(-4px)", borderColor: UI.borderAccent }}
-      transition="all 0.3s ease"
-    >
-      <VStack align="start" spacing={4}>
-        <HStack justify="space-between" w="full">
-          <Heading size="md" fontWeight="600">
-            {title}
-          </Heading>
-          {tag ? (
-            <Badge borderRadius="full" px={3} py={1} bg="rgba(101, 168, 191, 0.12)" color={UI.accent} fontSize="xs" fontWeight="600">
-              {tag}
-            </Badge>
-          ) : null}
-        </HStack>
-
-        <Text opacity={0.85}>{desc}</Text>
-
-        <Button
-          mt={2}
-          size="sm"
-          bg={UI.accent}
-          color="black"
-          boxShadow={UI.glow}
-          _hover={{ filter: "brightness(1.05)" }}
-          onClick={() => window.open(href, "_self")}
-        >
-          {cta}
-        </Button>
-      </VStack>
-    </Box>
-  );
-
-  const ChallengeCard: React.FC<{
-    name: string;
-    account: string;
-    target: string;
-    maxDD: string;
-    fee: string;
-  }> = ({ name, account, target, maxDD, fee }) => (
-    <Box p={6} bg={UI.surface} border="1px solid" borderColor={UI.border} borderRadius="2xl">
-      <VStack align="start" spacing={3}>
-        <Heading size="md">{name}</Heading>
-
-        <SimpleGrid columns={2} spacing={3} w="full">
-          {[
-            ["Account", account],
-            ["Profit Target", target],
-            ["Max Drawdown", maxDD],
-            ["Fee", fee],
-          ].map(([k, v]) => (
-            <Box key={k} p={3} border="1px solid" borderColor={UI.border} borderRadius="xl">
-              <Text fontSize="xs" opacity={0.7}>
-                {k}
-              </Text>
-              <Text fontWeight="800">{v}</Text>
-            </Box>
-          ))}
-        </SimpleGrid>
-
-        <Button
-          bg={UI.accent}
-          color="black"
-          boxShadow={UI.glow}
-          onClick={() => window.open("/challenges", "_self")}
-        >
-          Start now
-        </Button>
-      </VStack>
-    </Box>
-  );
 
   return (
     <MotionBox ref={pageRef}>
@@ -4123,16 +3398,6 @@ const Home: React.FC = () => {
                       </Grid>
                     </Container>
                   </Box>
-                </ParallaxSection>
-
-                {/* How It Works */}
-                <HowItWorks t={t} />
-
-                {/* Social Proof Stats */}
-                <ParallaxSection speed={0.2}>
-                  <Container maxW="container.xl">
-                    <SocialProofBar t={t} />
-                  </Container>
                 </ParallaxSection>
 
                 {/* Value Proposition - Why Choose Us */}

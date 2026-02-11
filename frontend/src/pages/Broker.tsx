@@ -11,12 +11,11 @@ import {
   Button,
   SimpleGrid,
   Icon,
-  Badge,
   Divider,
   Image,
   useColorMode,
 } from "@chakra-ui/react";
-import { useTranslation } from "react-i18next";
+
 import { motion } from "framer-motion";
 import {
   ShieldCheck,
@@ -41,7 +40,6 @@ const MotionBox = motion(Box);
 const BRAND = "#65a8bf";
 const GOLD = "#b7a27d";
 const LDN_REGISTER = "https://ldnglobalmarkets.com/register-now/";
-const LDN_IB = "https://ldnglobalmarkets.com/intreduce-broker/";
 const LDN_SITE = "https://ldnglobalmarkets.com";
 
 const IMG = {
@@ -71,14 +69,13 @@ const MARKETS = [
 ];
 
 const Broker: React.FC = () => {
-  const { t } = useTranslation() as any;
   const { colorMode } = useColorMode();
   const isDark = colorMode === "dark";
   const hasTrackedPageView = useRef(false);
 
   const IB_LINK = process.env.REACT_APP_BROKER_IB_LINK || LDN_REGISTER;
 
-  const textPrimary = isDark ? "gray.100" : "gray.800";
+  const textPrimary = isDark ? "white" : "black";
   const textMuted = isDark ? "gray.400" : "gray.600";
   const cardBg = isDark ? "whiteAlpha.50" : "blackAlpha.30";
   const borderCol = isDark ? "whiteAlpha.100" : "gray.200";
@@ -125,7 +122,7 @@ const Broker: React.FC = () => {
                 bgImage={`url(${IMG.skyline})`}
                 bgSize="cover"
                 bgPosition="center"
-                opacity={isDark ? 0.08 : 0.05}
+                opacity={isDark ? 0.18 : 0.25}
                 pointerEvents="none"
               />
 
@@ -137,34 +134,6 @@ const Broker: React.FC = () => {
                   p={{ base: 6, md: 10 }}
                   textAlign={{ base: "center", lg: "left" }}
                 >
-                  <HStack spacing={2} flexWrap="wrap" justify={{ base: "center", lg: "flex-start" }}>
-                    <Badge
-                      borderRadius="full"
-                      px={3}
-                      py={1}
-                      fontSize="0.65rem"
-                      bg="rgba(101,168,191,0.15)"
-                      color={BRAND}
-                      border="1px solid rgba(101,168,191,0.35)"
-                      textTransform="uppercase"
-                      letterSpacing="widest"
-                    >
-                      IB Partner
-                    </Badge>
-                    <Badge
-                      borderRadius="full"
-                      px={3}
-                      py={1}
-                      fontSize="0.65rem"
-                      bg="rgba(183,162,125,0.15)"
-                      color={GOLD}
-                      border="1px solid rgba(183,162,125,0.35)"
-                      textTransform="uppercase"
-                      letterSpacing="widest"
-                    >
-                      Official
-                    </Badge>
-                  </HStack>
 
                   <Heading
                     fontSize={{ base: "2xl", md: "3xl", lg: "4xl" }}
@@ -284,7 +253,6 @@ const Broker: React.FC = () => {
             <SpotlightCard>
               <Box p={{ base: 5, md: 8 }}>
                 <VStack spacing={3} textAlign="center" mb={6}>
-                  <Image src={IMG.ib} alt="IB Partner" h="50px" objectFit="contain" mx="auto" />
                   <Heading size={{ base: "md", md: "lg" }} bgGradient={`linear(to-r, ${BRAND}, ${GOLD})`} bgClip="text">
                     Why Register Through Our IB Link?
                   </Heading>
@@ -419,7 +387,7 @@ const Broker: React.FC = () => {
                 </Button>
               </VStack>
 
-              <Box borderRadius="xl" overflow="hidden" border="1px solid" borderColor={borderCol}>
+              <Box borderRadius="xl" overflow="hidden">
                 <Image
                   src={IMG.platforms}
                   alt="LDN Global Markets Platforms"
@@ -489,8 +457,8 @@ const Broker: React.FC = () => {
                 Manage your accounts, deposits, and withdrawals from a clean, intuitive dashboard.
               </Text>
             </VStack>
-            <Box borderRadius="2xl" overflow="hidden" border="1px solid" borderColor={borderCol} boxShadow={isDark ? "0 8px 32px rgba(0,0,0,0.4)" : "0 8px 32px rgba(0,0,0,0.1)"}>
-              <Image src={IMG.dashboard} alt="LDN Dashboard" w="100%" objectFit="cover" />
+            <Box overflow="hidden" alignItems="center">
+              <Image src={IMG.dashboard} alt="LDN Dashboard" objectFit="cover" />
             </Box>
           </MotionBox>
 
@@ -586,7 +554,7 @@ const Broker: React.FC = () => {
                 </VStack>
               </VStack>
 
-              <Box borderRadius="xl" overflow="hidden" border="1px solid" borderColor={borderCol}>
+              <Box borderRadius="xl" overflow="hidden">
                 <Image src={IMG.advisors} alt="LDN Advisors" w="100%" objectFit="cover" />
               </Box>
             </SimpleGrid>
