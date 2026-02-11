@@ -3256,7 +3256,7 @@ const Home: React.FC = () => {
                       >
                         {/* Duplicate set for seamless loop */}
                         {[...Array(2)].map((_, setIdx) => (
-                          <HStack key={setIdx} spacing={{ base: 10, md: 16 }} px={{ base: 5, md: 8 }} flexShrink={0}>
+                          <HStack key={setIdx} spacing={{ base: 10, md: 16 }} px={{ base: 5, md: 8 }} flexShrink={0} bg="white">
                             {[
                               { name: "MLP", logo: "/MLP.png" },
                               { name: "J.P. Morgan", logo: "/JPM.svg" },
