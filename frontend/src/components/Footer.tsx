@@ -20,7 +20,30 @@ import { Twitter, Send, MessageCircle, ChevronUp, ChevronDown, Disc } from "luci
 import { Link as ChakraLink, LinkProps as ChakraLinkProps } from "@chakra-ui/react";
 import { Link as RouterLink, LinkProps as RouterLinkProps, useLocation, useNavigate } from "react-router-dom";
 import { useThemeMode } from "../themeProvider";
-import api from "../api/client";
+import axios from "axios";
+
+/** Resolve backend origin (without /api suffix) for root-level endpoints like /health */
+const getBackendOrigin = () => {
+  const raw =
+    process.env.REACT_APP_BACKEND_URL ||
+    process.env.NEXT_PUBLIC_BACKEND_URL ||
+    "https://api.promrkts.com";
+  let origin = raw.replace(/\/+$/, "").replace(/\/api$/i, "");
+  try {
+    if (
+      typeof window !== "undefined" &&
+      /^https:/i.test(window.location.protocol) &&
+      /^http:/i.test(origin)
+    ) {
+      const u = new URL(origin);
+      if (!/(^|\.)localhost$/i.test(u.hostname)) {
+        u.protocol = "https:";
+        origin = u.toString().replace(/\/+$/, "");
+      }
+    }
+  } catch {}
+  return origin;
+};
 
 /* ---------- Lightweight health poller ---------- */
 type OverallStatus = "operational" | "degraded" | "down" | "checking";
@@ -32,7 +55,7 @@ function useStatusCheck(intervalMs = 60000) {
     let mounted = true;
     const check = async () => {
       try {
-        const res = await api.get("/health", { timeout: 8000 });
+        const res = await axios.get(`${getBackendOrigin()}/health`, { timeout: 8000 });
         if (!mounted) return;
         const d = res.data;
         if (d?.status === "ok") setStatus("operational");

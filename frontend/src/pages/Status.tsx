@@ -30,7 +30,32 @@ import {
   Activity,
   Zap,
 } from "lucide-react";
-import api from "../api/client";
+import axios from "axios";
+
+/** Resolve backend origin (without /api suffix) for root-level endpoints like /health */
+const getBackendOrigin = () => {
+  const raw =
+    process.env.REACT_APP_BACKEND_URL ||
+    process.env.NEXT_PUBLIC_BACKEND_URL ||
+    "https://api.promrkts.com";
+  // Strip trailing /api if present
+  let origin = raw.replace(/\/+$/, "").replace(/\/api$/i, "");
+  // Upgrade to https if page is https and origin is http (non-localhost)
+  try {
+    if (
+      typeof window !== "undefined" &&
+      /^https:/i.test(window.location.protocol) &&
+      /^http:/i.test(origin)
+    ) {
+      const u = new URL(origin);
+      if (!/(^|\.)localhost$/i.test(u.hostname)) {
+        u.protocol = "https:";
+        origin = u.toString().replace(/\/+$/, "");
+      }
+    }
+  } catch {}
+  return origin;
+};
 
 /* ------------------------------------------------------------------ */
 /*  Types                                                              */
@@ -131,7 +156,7 @@ const Status: React.FC = () => {
   const fetchHealth = useCallback(async () => {
     try {
       setRefreshing(true);
-      const res = await api.get("/health", { timeout: 10000 });
+      const res = await axios.get(`${getBackendOrigin()}/health`, { timeout: 10000 });
       setHealth(res.data);
       setError(false);
     } catch {
