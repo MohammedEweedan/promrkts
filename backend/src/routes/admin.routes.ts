@@ -80,30 +80,30 @@ router.get('/kpis', async (req, res) => {
       popularItems,
       recentActivity,
     ] = await Promise.all([
-      // Total revenue from purchases
-      (prisma as any).Purchase.aggregate({ _sum: { amount: true } }),
+      // Total revenue from purchases - Purchase doesn't have amount field, using finalPriceUsd
+      (prisma as any).Purchase.aggregate({ _sum: { finalPriceUsd: true } }).catch(() => ({ _sum: { finalPriceUsd: 0 } })),
       // Total users
       (prisma as any).users.count(),
-      // Active users (logged in last 30 days)
-      (prisma as any).users.count({ where: { last_login_at: { gte: new Date(Date.now() - 30 * 24 * 60 * 60 * 1000) } } }),
+      // Active users (logged in last 30 days) - field is last_login not last_login_at
+      (prisma as any).users.count({ where: { last_login: { gte: new Date(Date.now() - 30 * 24 * 60 * 60 * 1000) } } }).catch(() => 0),
       // Total purchases
       (prisma as any).Purchase.count(),
       // Pending verifications (using users with pending status)
       (prisma as any).users.count({ where: { status: 'pending' } }).catch(() => 0),
-      // Promo code usage
+      // Promo code usage - Purchase uses promoId not promoCodeId
       (prisma as any).Purchase.groupBy({
-        by: ['promoCodeId'],
+        by: ['promoId'],
         _count: true,
-        where: { promoCodeId: { not: null } },
-        orderBy: { _count: { promoCodeId: 'desc' } },
+        where: { promoId: { not: null } },
+        orderBy: { _count: { promoId: 'desc' } },
         take: 5,
       }).catch(() => []),
-      // Popular items (most purchased)
+      // Popular items (most purchased) - Purchase uses tierId not itemType/itemId
       (prisma as any).Purchase.groupBy({
-        by: ['itemType', 'itemId'],
+        by: ['tierId'],
         _count: true,
-        _sum: { amount: true },
-        orderBy: { _count: { itemId: 'desc' } },
+        _sum: { finalPriceUsd: true },
+        orderBy: { _count: { tierId: 'desc' } },
         take: 10,
       }).catch(() => []),
       // Recent activity count (last 7 days)
@@ -112,7 +112,7 @@ router.get('/kpis', async (req, res) => {
 
     const kpis = {
       revenue: {
-        total: totalRevenue._sum.amount || 0,
+        total: totalRevenue._sum.finalPriceUsd || 0,
         currency: 'USD',
       },
       users: {
@@ -129,16 +129,22 @@ router.get('/kpis', async (req, res) => {
       },
       promoUsage: await Promise.all(
         promoUsage.map(async (p: any) => {
-          const promo = await (prisma as any).promoCode.findUnique({ where: { id: p.promoCodeId } });
+          const promo = await (prisma as any).PromoCode.findUnique({ where: { id: p.promoId } });
           return { code: promo?.code || 'Unknown', uses: p._count };
         })
       ),
-      popularItems: popularItems.map((item: any) => ({
-        type: item.itemType,
-        id: item.itemId,
-        purchases: item._count,
-        revenue: item._sum.amount || 0,
-      })),
+      popularItems: await Promise.all(
+        popularItems.map(async (item: any) => {
+          const tier = await (prisma as any).CourseTier.findUnique({ where: { id: item.tierId }, select: { name: true } }).catch(() => null);
+          return {
+            type: 'CourseTier',
+            id: item.tierId,
+            name: tier?.name || 'Unknown',
+            purchases: item._count,
+            revenue: item._sum.finalPriceUsd || 0,
+          };
+        })
+      ),
     };
 
     return res.json({ data: kpis });
