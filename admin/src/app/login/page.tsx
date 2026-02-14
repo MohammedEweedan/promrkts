@@ -31,7 +31,15 @@ export default function LoginPage() {
 
     try {
       const res = await api.post('/auth/login', { email, password });
-      const { token, user } = res.data;
+      const { data } = res.data;
+      
+      if (!data || !data.accessToken || !data.user) {
+        setError('Invalid response from server');
+        setLoading(false);
+        return;
+      }
+
+      const { accessToken, user } = data;
 
       if (user.role?.toLowerCase() !== 'admin') {
         setError('Access denied. Admin privileges required.');
@@ -39,11 +47,13 @@ export default function LoginPage() {
         return;
       }
 
-      localStorage.setItem('token', token);
+      localStorage.setItem('token', accessToken);
       localStorage.setItem('user', JSON.stringify(user));
-      router.push('/');
+      
+      // Force reload to ensure middleware picks up the token
+      window.location.href = '/';
     } catch (err: any) {
-      setError(err?.response?.data?.error || 'Login failed');
+      setError(err?.response?.data?.message || err?.response?.data?.error || 'Login failed');
     } finally {
       setLoading(false);
     }
