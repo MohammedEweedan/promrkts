@@ -1,18 +1,17 @@
-import type { Metadata } from 'next';
+'use client';
 import ThemeProvider from '@/theme/ThemeProvider';
 import AdminLayout from '@/components/AdminLayout';
-
-export const metadata: Metadata = {
-  title: 'ProMRKTS Admin',
-  description: 'Admin dashboard for ProMRKTS platform',
-};
+import { usePathname } from 'next/navigation';
 
 export default function RootLayout({ children }: { children: React.ReactNode }) {
+  const pathname = usePathname();
+  const isLoginPage = pathname === '/login';
+
   return (
     <html lang="en">
       <body>
         <ThemeProvider>
-          <AdminLayout>{children}</AdminLayout>
+          {isLoginPage ? children : <AdminLayout>{children}</AdminLayout>}
         </ThemeProvider>
       </body>
     </html>

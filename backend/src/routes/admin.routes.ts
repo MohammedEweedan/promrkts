@@ -2,6 +2,9 @@
 import { listAdminsForAssign } from './../controllers/communications.controller';
 import { Router } from 'express';
 import { authenticate, authorize } from '../middleware/auth';
+import { PrismaClient } from '@prisma/client';
+
+const prisma = new PrismaClient();
 import {
   verifyUser,
   verifyBusiness,
@@ -64,8 +67,139 @@ const router = Router();
 // All admin routes require admin role
 router.use(authenticate, authorize('admin'));
 
+// KPI metrics for dashboard
+router.get('/kpis', async (req, res) => {
+  try {
+    const [
+      totalRevenue,
+      totalUsers,
+      activeUsers,
+      totalPurchases,
+      pendingVerifications,
+      promoUsage,
+      popularItems,
+      recentActivity,
+    ] = await Promise.all([
+      // Total revenue from purchases
+      (prisma as any).purchase.aggregate({ _sum: { amount: true } }),
+      // Total users
+      (prisma as any).user.count(),
+      // Active users (logged in last 30 days)
+      (prisma as any).user.count({ where: { lastLoginAt: { gte: new Date(Date.now() - 30 * 24 * 60 * 60 * 1000) } } }),
+      // Total purchases
+      (prisma as any).purchase.count(),
+      // Pending verifications
+      (prisma as any).tierVerification.count({ where: { status: 'pending' } }),
+      // Promo code usage
+      (prisma as any).purchase.groupBy({
+        by: ['promoCodeId'],
+        _count: true,
+        where: { promoCodeId: { not: null } },
+        orderBy: { _count: { promoCodeId: 'desc' } },
+        take: 5,
+      }),
+      // Popular items (most purchased)
+      (prisma as any).purchase.groupBy({
+        by: ['itemType', 'itemId'],
+        _count: true,
+        _sum: { amount: true },
+        orderBy: { _count: { itemId: 'desc' } },
+        take: 10,
+      }),
+      // Recent activity count (last 7 days)
+      (prisma as any).purchase.count({ where: { createdAt: { gte: new Date(Date.now() - 7 * 24 * 60 * 60 * 1000) } } }),
+    ]);
+
+    const kpis = {
+      revenue: {
+        total: totalRevenue._sum.amount || 0,
+        currency: 'USD',
+      },
+      users: {
+        total: totalUsers,
+        active: activeUsers,
+        activePercentage: totalUsers > 0 ? ((activeUsers / totalUsers) * 100).toFixed(1) : 0,
+      },
+      purchases: {
+        total: totalPurchases,
+        recent: recentActivity,
+      },
+      verifications: {
+        pending: pendingVerifications,
+      },
+      promoUsage: await Promise.all(
+        promoUsage.map(async (p: any) => {
+          const promo = await (prisma as any).promoCode.findUnique({ where: { id: p.promoCodeId } });
+          return { code: promo?.code || 'Unknown', uses: p._count };
+        })
+      ),
+      popularItems: popularItems.map((item: any) => ({
+        type: item.itemType,
+        id: item.itemId,
+        purchases: item._count,
+        revenue: item._sum.amount || 0,
+      })),
+    };
+
+    return res.json({ data: kpis });
+  } catch (e: any) {
+    console.error('KPI error:', e);
+    return res.status(500).json({ error: 'Failed to fetch KPIs' });
+  }
+});
+
 // Users list for admin dashboard
 router.get('/users', listUsers);
+
+// Verifications endpoint (for admin verifications page)
+router.get('/verifications', async (req, res) => {
+  try {
+    const { page = 1, limit = 25, status } = req.query;
+    const skip = (Number(page) - 1) * Number(limit);
+    const where = status ? { status: String(status) } : {};
+    
+    const [verifications, total] = await Promise.all([
+      (prisma as any).tierVerification.findMany({
+        where,
+        include: { user: { select: { name: true, email: true } }, tier: { select: { name: true } } },
+        orderBy: { createdAt: 'desc' },
+        skip,
+        take: Number(limit),
+      }),
+      (prisma as any).tierVerification.count({ where }),
+    ]);
+    
+    return res.json({ verifications, pagination: { total, page: Number(page), limit: Number(limit) } });
+  } catch (e: any) {
+    return res.status(500).json({ error: 'Failed to fetch verifications' });
+  }
+});
+
+// Approve verification
+router.post('/verifications/:id/approve', async (req, res) => {
+  try {
+    const updated = await (prisma as any).tierVerification.update({
+      where: { id: req.params.id },
+      data: { status: 'approved' },
+    });
+    return res.json({ data: updated });
+  } catch (e: any) {
+    return res.status(400).json({ error: 'Failed to approve' });
+  }
+});
+
+// Reject verification
+router.post('/verifications/:id/reject', async (req, res) => {
+  try {
+    const updated = await (prisma as any).tierVerification.update({
+      where: { id: req.params.id },
+      data: { status: 'rejected' },
+    });
+    return res.json({ data: updated });
+  } catch (e: any) {
+    return res.status(400).json({ error: 'Failed to reject' });
+  }
+});
 
 // Verify accounts
 router.post('/users/:id/verify', verifyUser);

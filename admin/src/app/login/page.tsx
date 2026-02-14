@@ -50,8 +50,9 @@ export default function LoginPage() {
       localStorage.setItem('token', accessToken);
       localStorage.setItem('user', JSON.stringify(user));
       
-      // Force reload to ensure middleware picks up the token
-      window.location.href = '/';
+      // Redirect to dashboard on same domain
+      router.push('/');
+      router.refresh();
     } catch (err: any) {
       setError(err?.response?.data?.message || err?.response?.data?.error || 'Login failed');
     } finally {
@@ -66,7 +67,6 @@ export default function LoginPage() {
         display: 'flex',
         alignItems: 'center',
         justifyContent: 'center',
-        background: 'linear-gradient(135deg, #667eea 0%, #764ba2 100%)',
         p: 2,
       }}
     >
@@ -75,7 +75,7 @@ export default function LoginPage() {
           <Stack spacing={3}>
             <Box textAlign="center">
               <Typography variant="h4" fontWeight={700} gutterBottom>
-                ProMRKTS Admin
+                promrkts Admin
               </Typography>
               <Typography variant="body2" color="text.secondary">
                 Sign in to access the admin dashboard

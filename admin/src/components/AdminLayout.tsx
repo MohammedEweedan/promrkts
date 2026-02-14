@@ -74,13 +74,28 @@ export default function AdminLayout({ children }: { children: React.ReactNode })
   const router = useRouter();
 
   React.useEffect(() => {
+    // Check if user is authenticated
+    const token = localStorage.getItem('token');
     const userData = localStorage.getItem('user');
-    if (userData) {
-      try {
-        setUser(JSON.parse(userData));
-      } catch {}
+    
+    if (!token || !userData) {
+      // Not authenticated, redirect to login
+      router.push('/login');
+      return;
     }
-  }, []);
+    
+    try {
+      const parsedUser = JSON.parse(userData);
+      if (parsedUser.role?.toLowerCase() !== 'admin') {
+        // Not an admin, redirect to login
+        router.push('/login');
+        return;
+      }
+      setUser(parsedUser);
+    } catch {
+      router.push('/login');
+    }
+  }, [router]);
 
   const drawerWidth = collapsed && !isMobile ? DRAWER_COLLAPSED : DRAWER_WIDTH;
 
@@ -107,7 +122,7 @@ export default function AdminLayout({ children }: { children: React.ReactNode })
               variant="rounded"
             />
             <Typography variant="h6" noWrap sx={{ fontSize: '1rem', fontWeight: 700, color: 'primary.main' }}>
-              ProMRKTS
+              promrkts
             </Typography>
           </Box>
         )}
