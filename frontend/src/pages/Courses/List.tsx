@@ -31,7 +31,7 @@ import { productFunnel } from "../../utils/tracking";
 import { Link as RouterLink } from "react-router-dom";
 import api from "../../api/client";
 import { useTranslation } from "react-i18next";
-import { Star, TrendingUp, Users, Award, Zap, CheckCircle, ArrowRight, Sparkles, LineChart, Crosshair, Monitor } from "lucide-react";
+import { Star, Users, Award, Zap, CheckCircle, ArrowRight, Sparkles, LineChart, Crosshair, Monitor } from "lucide-react";
 // CheckCircle and ArrowRight used in enhanced course cards below
 import { motion } from "framer-motion";
 
@@ -216,37 +216,6 @@ const CoursesList: React.FC = () => {
             </Text>{' '}
             {t("hero.title_part2", { defaultValue: "Build Your Wealth." })}
           </Heading>
-
-          {/* Subtitle */}
-          <Text
-            fontSize={{ base: 'md', md: 'lg' }}
-            color={isDark ? 'whiteAlpha.800' : 'gray.600'}
-            maxW="2xl"
-          >
-            {t("hero.subtitle", { defaultValue: "Join thousands of successful traders who transformed their financial future with our proven strategies." })}
-          </Text>
-
-          {/* Stats — real data from API */}
-          <SimpleGrid columns={{ base: 2, md: 2 }} gap={4} pt={4} maxW="md" mx="auto">
-            <VStack p={4} bg={isDark ? 'whiteAlpha.50' : 'blackAlpha.30'} borderRadius="xl" border="1px solid" borderColor={isDark ? 'whiteAlpha.100' : 'blackAlpha.50'}>
-              <Icon as={Users} boxSize={5} color={GOLD} />
-              <Text fontWeight="800" fontSize="2xl" bgGradient="linear(to-r, #65a8bf, #b7a27d)" bgClip="text">
-                {platformStats.users > 0 ? platformStats.users.toLocaleString() : '—'}
-              </Text>
-              <Text fontSize="xs" color={isDark ? 'whiteAlpha.700' : 'gray.500'}>
-                {t("stats.registered_users", { defaultValue: "Registered Users" })}
-              </Text>
-            </VStack>
-            <VStack p={4} bg={isDark ? 'whiteAlpha.50' : 'blackAlpha.30'} borderRadius="xl" border="1px solid" borderColor={isDark ? 'whiteAlpha.100' : 'blackAlpha.50'}>
-              <Icon as={TrendingUp} boxSize={5} color={GOLD} />
-              <Text fontWeight="800" fontSize="2xl" bgGradient="linear(to-r, #65a8bf, #b7a27d)" bgClip="text">
-                {platformStats.purchases > 0 ? platformStats.purchases.toLocaleString() : '—'}
-              </Text>
-              <Text fontSize="xs" color={isDark ? 'whiteAlpha.700' : 'gray.500'}>
-                {t("stats.total_purchases", { defaultValue: "Courses Purchased" })}
-              </Text>
-            </VStack>
-          </SimpleGrid>
         </VStack>
       </MotionBox>
 
