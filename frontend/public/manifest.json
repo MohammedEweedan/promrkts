@@ -1,6 +1,7 @@
 {
   "short_name": "promrkts",
-  "name": "promrkts",
+  "name": "promrkts — Trading Education",
+  "description": "Premium trading courses, forex & crypto education platform",
   "icons": [
     {
       "src": "favicon.ico",
@@ -10,16 +11,24 @@
     {
       "src": "logo.png",
       "type": "image/png",
-      "sizes": "192x192"
+      "sizes": "192x192",
+      "purpose": "any"
     },
     {
       "src": "logo.png",
       "type": "image/png",
-      "sizes": "512x512"
+      "sizes": "512x512",
+      "purpose": "any maskable"
     }
   ],
-  "start_url": ".",
+  "start_url": "/",
+  "scope": "/",
   "display": "standalone",
-  "theme_color": "#000000",
-  "background_color": "#ffffff"
+  "orientation": "portrait-primary",
+  "theme_color": "#0a0f1a",
+  "background_color": "#0a0f1a",
+  "categories": ["education", "finance"],
+  "lang": "en",
+  "dir": "ltr",
+  "prefer_related_applications": false
 }

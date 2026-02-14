@@ -11,6 +11,7 @@ import DocumentTitle from "./components/DocumentTitle";
 import ScrollToTop from "./components/ScrollToTop";
 // import GlobalProtection from './components/GlobalProtection';
 import EnrollmentCelebration from './components/EnrollmentCelebration';
+import PWABottomTabBar from './components/PWABottomTabBar';
 import PixelSnow from './components/PixelSnow';
 import RequireAdmin from './components/RequireAdmin';
 import PageSkeleton from './components/PageSkeleton';
@@ -196,6 +197,7 @@ function App() {
         </Box>
         <EnrollmentCelebration />
         {!isChatPage && <Footer />}
+        <PWABottomTabBar />
     </Box>
   );
 }

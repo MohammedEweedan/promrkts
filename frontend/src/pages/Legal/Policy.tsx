@@ -117,18 +117,18 @@ export default function PrivacyRefundPolicy() {
 
     content: [
       // TITLE
-      header(t("legal.privacy_refund.title") || "Privacy, Terms & Refund Policy"),
+      header(t("legal.privacy_refund.title") || "Privacy, Terms & Policy"),
       {
         text:
           (t("legal.common.last_updated") || "Last updated") +
           ": " +
-          (t("legal.privacy_refund.last_updated") || "December , 2025"),
+          (t("legal.privacy_refund.last_updated") || "February 14, 2026"),
         style: "meta",
         margin: [0, 0, 0, 12],
       },
       p(
         t("legal.privacy_refund.intro") ||
-          "This policy explains how we handle your data and how refunds work for our educational products and subscriptions focused on forex and crypto trading."
+          "This policy explains how we handle your data, our payment and no-refund terms, cryptocurrency liability, and broker referral disclaimers for our educational products and subscriptions."
       ),
 
       // SCOPE
@@ -149,48 +149,57 @@ export default function PrivacyRefundPolicy() {
       ]),
       p("* " + (t("legal.privacy_refund.payments.note_text") || "Payment confirmations occur after sufficient on-chain confirmations.")),
 
-      // REFUND POLICY
-      section(t("legal.refund.title") || "Refund Policy"),
+      // NO REFUND POLICY
+      section("No Refund Policy"),
       p(
-        t("legal.refund.p1") ||
-          "If you’re not satisfied within 7 days of purchase, contact support for a full refund (terms apply)."
+        "All sales of digital products, courses, subscriptions, and educational materials on this platform are final. Due to the nature of digital content, we do not issue refunds under any circumstances."
       ),
       bulletBlock([
-        t("legal.refund.eligibility") ||
-          "Eligibility: first-time purchase of a given product/tier, and meaningful usage under fair-use limits.",
-        t("legal.refund.exclusions") ||
-          "Exclusions: content scraping/sharing, downloading a substantial portion of materials, account sharing, or policy abuse.",
-        t("legal.refund.digital") ||
-          "Because access is digital, refunds may be prorated or denied if significant content has been consumed.",
-        t("legal.refund.method") ||
-          "Refunds are issued in USDT to the original network used for payment. Network fees are non-refundable.",
-        t("legal.refund.timeline") ||
-          "Processing time: up to 10 business days after approval, excluding on-chain network delays.",
+        "All purchases are non-refundable. By completing a purchase, you acknowledge and accept this policy.",
+        "In unique and exceptional cases, a partial reimbursement may be considered at our sole discretion. This is not guaranteed and is evaluated on a case-by-case basis.",
+        "Requests for partial reimbursement must be submitted within 7 days of purchase with a valid reason and supporting details.",
+        "Any approved partial reimbursement will be issued in USDT to the original wallet address. Network fees are non-refundable.",
+        "Chargebacks, disputes, or attempts to reverse payments without prior authorization will result in immediate account suspension and potential legal action.",
       ]),
+
+      // CRYPTOCURRENCY PAYMENT LIABILITY
+      section("Cryptocurrency Payment Liability"),
       p(
-        (t("legal.refund.process") ||
-          "To initiate a refund, email support with your order ID, wallet address, and reason.") +
-          " " +
-          (t("legal.common.support_email") || "support@promrkts.com")
+        "All payments on this platform are processed exclusively in cryptocurrency (USDT). By making a payment, you acknowledge and accept the following:"
       ),
+      bulletBlock([
+        "You are solely responsible for ensuring the correct wallet address, network (e.g., TRC20, ERC20), and payment amount before initiating any transaction.",
+        "We are not liable for any loss of funds resulting from incorrect wallet addresses, wrong network selection, insufficient gas fees, or any other user error during the payment process.",
+        "Cryptocurrency transactions are irreversible by nature. Once a transaction is confirmed on the blockchain, it cannot be reversed, cancelled, or recovered by us.",
+        "Network fees, gas fees, and on-chain confirmation times are entirely outside our control and are the sole responsibility of the sender.",
+        "We are not responsible for delays, failures, or losses caused by blockchain network congestion, outages, or third-party wallet/exchange issues.",
+        "Mis-sent, underpaid, or overpaid transactions may result in loss of funds. We are under no obligation to recover or compensate for such errors.",
+      ]),
 
       // ACCESS & CANCELLATIONS
-      section(t("legal.privacy_refund.access.title") || "Access, Renewals & Cancellations"),
+      section("Access, Renewals & Cancellations"),
       bulletBlock([
-        t("legal.privacy_refund.access.li1") ||
-          "Access to digital content is personal and non-transferable.",
-        t("legal.privacy_refund.access.li2") ||
-          "Subscriptions renew automatically unless cancelled before the next billing date.",
-        t("legal.privacy_refund.access.li3") ||
-          "Cancellation stops future charges; it does not retroactively refund prior periods.",
+        "Access to digital content is personal and non-transferable.",
+        "Subscriptions renew automatically unless cancelled before the next billing date.",
+        "Cancellation stops future charges; it does not entitle you to any refund or reimbursement for prior periods.",
+        "We reserve the right to revoke access to any user who violates these terms without compensation.",
       ]),
 
-      // CHARGEBACKS
-      section(t("legal.privacy_refund.chargebacks.title") || "Chargebacks & Disputes"),
+      // IB BROKER DISCLAIMER
+      section("Introducing Broker (IB) Partner Disclaimer"),
       p(
-        t("legal.privacy_refund.chargebacks.p1") ||
-          "Please contact us first to resolve billing or access issues. Unauthorized disputes may result in account suspension."
+        "This platform may refer users to third-party brokerage services through our Introducing Broker (IB) partnerships. By using any broker referral links or registering through our IB program, you acknowledge and agree to the following:"
       ),
+      bulletBlock([
+        "We act solely as an introducing broker and do not provide brokerage, trading, or financial advisory services. We do not hold, manage, or have access to your trading funds.",
+        "Any broker we refer you to is an independent third-party entity. We are not responsible for their actions, policies, trading conditions, platform performance, or regulatory compliance.",
+        "Trading forex, CFDs, cryptocurrencies, and other financial instruments through any broker involves substantial risk of loss. You may lose some or all of your invested capital. Past performance is not indicative of future results.",
+        "We do not guarantee the solvency, reliability, or regulatory standing of any partner broker. You are responsible for conducting your own due diligence before opening an account or depositing funds.",
+        "We are not liable for any financial losses, damages, or disputes arising from your use of any partner broker's services, including but not limited to trading losses, withdrawal issues, platform outages, or account disputes.",
+        "Broker referral links may generate commissions for us. This does not influence the educational content we provide, and our IB relationship does not constitute an endorsement or guarantee of any broker's services.",
+        "You are solely responsible for understanding and complying with the laws and regulations applicable to trading in your jurisdiction. Some broker services may not be available in all regions.",
+        "By registering through our referral links, you agree to the partner broker's own terms of service, privacy policy, and risk disclosures, which are separate from ours.",
+      ]),
 
       // PRIVACY DATA
       section(t("legal.privacy.data.title") || "Privacy: Data We Collect"),
@@ -268,7 +277,7 @@ export default function PrivacyRefundPolicy() {
       section(t("legal.common.contact") || "Contact"),
       p(
         (t("legal.common.contact_text") ||
-          "For privacy questions or refund requests, reach us at ") +
+          "For privacy questions or policy inquiries, reach us at ") +
           (t("legal.common.support_email") || "support@promrkts.com")
       ),
 
@@ -388,182 +397,197 @@ export default function PrivacyRefundPolicy() {
           <VStack align="stretch" gap={2}>
             <HStack justify="center" flexWrap="wrap" gap={2}>
               <Heading size="lg">
-                {t("legal.privacy_refund.title") || "Privacy & Refund Policy"}
+                {t("legal.privacy_refund.title") || "Privacy & Policy"}
               </Heading>
             </HStack>
             <HStack justify="center" flexWrap="wrap" gap={2}>
-            <Badge color="#65a8bf"  fontSize="10px">
+              <Badge color="#65a8bf" fontSize="10px">
                 {t("legal.common.last_updated") || "Last updated"}:{" "}
-                {t("legal.privacy_refund.last_updated") || "December 18th, 2025"}
+                February 14, 2026
               </Badge>
             </HStack>
             <Text>
-              {t("legal.privacy_refund.intro") ||
-                "This policy explains how we handle your data and how refunds work for our educational products and subscriptions focused on forex and crypto trading."}
+              {t("legal.privacy_refund.intro", "This policy explains how we handle your data, our payment and no-refund terms, cryptocurrency liability, and broker referral disclaimers for our educational products and subscriptions.")}
             </Text>
           </VStack>
 
           {/* Scope */}
           <SpotlightCard>
-            <Section title={t("legal.privacy_refund.scope.title") || "Scope"} k="scope">
+            <Section title={t("legal.privacy_refund.scope.title", "Scope")} k="scope">
               <Text color="#65a8bf">
-                {t("legal.privacy_refund.scope.p1") ||
-                  "These terms apply to all courses, live sessions, templates, and membership tiers available on our platform."}
+                {t("legal.privacy_refund.scope.p1", "These terms apply to all courses, live sessions, templates, and membership tiers available on our platform.")}
               </Text>
               <Text color="#65a8bf">
-                {t("legal.privacy_refund.scope.p2") ||
-                  "Financial markets are risky. We provide education only—no investment advice, signals, or portfolio management."}
+                {t("legal.privacy_refund.scope.p2", "Financial markets are risky. We provide education only — no investment advice, signals, or portfolio management.")}
               </Text>
             </Section>
           </SpotlightCard>
 
           {/* Payments (USDT only) */}
           <SpotlightCard>
-            <Section
-              title={t("legal.privacy_refund.payments.title") || "Payments & Pricing (USDT Only)"}
-              k="payments"
-            >
+            <Section title={t("legal.privacy_refund.payments.title", "Payments & Pricing (USDT Only)")} k="payments">
               <Text color="#65a8bf">
-                {t("legal.privacy_refund.payments.p1") ||
-                  "All sales are processed exclusively in USDT. Where supported, we accept USDT on TRC20 and ERC20 networks."}
+                {t("legal.privacy_refund.payments.p1", "All sales are processed exclusively in USDT. Where supported, we accept USDT on TRC20 and ERC20 networks.")}
               </Text>
               <Bullets>
                 <Bullet>
-                  {t("legal.privacy_refund.payments.li1") ||
-                    "Prices may be displayed in your local currency for convenience, but settlement is in USDT."}
+                  {t("legal.privacy_refund.payments.li1", "Prices may be displayed in your local currency for convenience, but settlement is in USDT.")}
                 </Bullet>
                 <Bullet>
-                  {t("legal.privacy_refund.payments.li2") ||
-                    "Network fees and on-chain confirmation times are outside our control."}
+                  {t("legal.privacy_refund.payments.li2", "Network fees and on-chain confirmation times are outside our control.")}
                 </Bullet>
                 <Bullet>
-                  {t("legal.privacy_refund.payments.li3") ||
-                    "You are responsible for sending the exact amount to the correct chain address. Mis-sent funds may be irrecoverable."}
+                  {t("legal.privacy_refund.payments.li3", "You are responsible for sending the exact amount to the correct chain address. Mis-sent funds may be irrecoverable.")}
                 </Bullet>
               </Bullets>
               <HStack pt={1} wrap="wrap" gap={2}>
-                <Badge variant="subtle" colorScheme="yellow">
-                  {t("legal.privacy_refund.payments.note") || "Note"}
-                </Badge>
+                <Badge variant="subtle" colorScheme="yellow">{t("legal.privacy_refund.payments.note", "Note")}</Badge>
                 <Text color="#65a8bf" flex="1">
-                  {t("legal.privacy_refund.payments.note_text") ||
-                    "Payment confirmations occur after sufficient on-chain confirmations."}
+                  {t("legal.privacy_refund.payments.note_text", "Payment confirmations occur after sufficient on-chain confirmations.")}
                 </Text>
               </HStack>
             </Section>
           </SpotlightCard>
 
-          {/* Refund Policy */}
+          {/* No Refund Policy */}
           <SpotlightCard>
-            <Section title={t("legal.refund.title") || "Refund Policy"} k="refund">
+            <Section title={t("legal.no_refund.title", "No Refund Policy")} k="no-refund">
               <Text color="#65a8bf">
-                {t("legal.refund.p1") ||
-                  "If you’re not satisfied within 7 days of purchase, contact support for a full refund (terms apply)."}
+                {t("legal.no_refund.intro", "All sales of digital products, courses, subscriptions, and educational materials on this platform are final. Due to the nature of digital content, we do not issue refunds under any circumstances.")}
               </Text>
               <Bullets>
                 <Bullet>
-                  {t("legal.refund.eligibility") ||
-                    "Eligibility: first-time purchase of a given product/tier, and meaningful usage under fair-use limits."}
+                  {t("legal.no_refund.li1", "All purchases are non-refundable. By completing a purchase, you acknowledge and accept this policy.")}
                 </Bullet>
                 <Bullet>
-                  {t("legal.refund.exclusions") ||
-                    "Exclusions: content scraping/sharing, downloading a substantial portion of materials, account sharing, or policy abuse."}
+                  {t("legal.no_refund.li2", "In unique and exceptional cases, a partial reimbursement may be considered at our sole discretion. This is not guaranteed and is evaluated on a case-by-case basis.")}
                 </Bullet>
                 <Bullet>
-                  {t("legal.refund.digital") ||
-                    "Because access is digital, refunds may be prorated or denied if significant content has been consumed."}
+                  {t("legal.no_refund.li3", "Requests for partial reimbursement must be submitted within 7 days of purchase with a valid reason and supporting details.")}
                 </Bullet>
                 <Bullet>
-                  {t("legal.refund.method") ||
-                    "Refunds are issued in USDT to the original network used for payment. Network fees are non-refundable."}
+                  {t("legal.no_refund.li4", "Any approved partial reimbursement will be issued in USDT to the original wallet address. Network fees are non-refundable.")}
                 </Bullet>
                 <Bullet>
-                  {t("legal.refund.timeline") ||
-                    "Processing time: up to 10 business days after approval, excluding on-chain network delays."}
+                  {t("legal.no_refund.li5", "Chargebacks, disputes, or attempts to reverse payments without prior authorization will result in immediate account suspension and potential legal action.")}
                 </Bullet>
               </Bullets>
+            </Section>
+          </SpotlightCard>
+
+          {/* Cryptocurrency Payment Liability */}
+          <SpotlightCard>
+            <Section title={t("legal.crypto_liability.title", "Cryptocurrency Payment Liability")} k="crypto-liability">
               <Text color="#65a8bf">
-                {t("legal.refund.process") ||
-                  "To initiate a refund, email support with your order ID, wallet address, and reason."}{" "}
-                <Code>{t("legal.common.support_email") || "support@promrkts.com"}</Code>
+                {t("legal.crypto_liability.intro", "All payments on this platform are processed exclusively in cryptocurrency (USDT). By making a payment, you acknowledge and accept the following:")}
               </Text>
+              <Bullets>
+                <Bullet>
+                  {t("legal.crypto_liability.li1", "You are solely responsible for ensuring the correct wallet address, network (e.g., TRC20, ERC20), and payment amount before initiating any transaction.")}
+                </Bullet>
+                <Bullet>
+                  {t("legal.crypto_liability.li2", "We are not liable for any loss of funds resulting from incorrect wallet addresses, wrong network selection, insufficient gas fees, or any other user error during the payment process.")}
+                </Bullet>
+                <Bullet>
+                  {t("legal.crypto_liability.li3", "Cryptocurrency transactions are irreversible by nature. Once a transaction is confirmed on the blockchain, it cannot be reversed, cancelled, or recovered by us.")}
+                </Bullet>
+                <Bullet>
+                  {t("legal.crypto_liability.li4", "Network fees, gas fees, and on-chain confirmation times are entirely outside our control and are the sole responsibility of the sender.")}
+                </Bullet>
+                <Bullet>
+                  {t("legal.crypto_liability.li5", "We are not responsible for delays, failures, or losses caused by blockchain network congestion, outages, or third-party wallet/exchange issues.")}
+                </Bullet>
+                <Bullet>
+                  {t("legal.crypto_liability.li6", "Mis-sent, underpaid, or overpaid transactions may result in loss of funds. We are under no obligation to recover or compensate for such errors.")}
+                </Bullet>
+              </Bullets>
             </Section>
           </SpotlightCard>
 
           {/* Access & Cancellations */}
           <SpotlightCard>
-            <Section
-              title={t("legal.privacy_refund.access.title") || "Access, Renewals & Cancellations"}
-              k="access"
-            >
+            <Section title={t("legal.privacy_refund.access.title", "Access, Renewals & Cancellations")} k="access">
               <Bullets>
                 <Bullet>
-                  {t("legal.privacy_refund.access.li1") ||
-                    "Access to digital content is personal and non-transferable."}
+                  {t("legal.privacy_refund.access.li1", "Access to digital content is personal and non-transferable.")}
                 </Bullet>
                 <Bullet>
-                  {t("legal.privacy_refund.access.li2") ||
-                    "Subscriptions renew automatically unless cancelled before the next billing date."}
+                  {t("legal.privacy_refund.access.li2", "Subscriptions renew automatically unless cancelled before the next billing date.")}
                 </Bullet>
                 <Bullet>
-                  {t("legal.privacy_refund.access.li3") ||
-                    "Cancellation stops future charges; it does not retroactively refund prior periods."}
+                  {t("legal.privacy_refund.access.li3", "Cancellation stops future charges; it does not entitle you to any refund or reimbursement for prior periods.")}
+                </Bullet>
+                <Bullet>
+                  {t("legal.privacy_refund.access.li4", "We reserve the right to revoke access to any user who violates these terms without compensation.")}
                 </Bullet>
               </Bullets>
             </Section>
           </SpotlightCard>
 
-          {/* Chargebacks & Disputes */}
+          {/* IB Broker Disclaimer */}
           <SpotlightCard>
-            <Section
-              title={t("legal.privacy_refund.chargebacks.title") || "Chargebacks & Disputes"}
-              k="chargebacks"
-            >
+            <Section title={t("legal.ib_disclaimer.title", "Introducing Broker (IB) Partner Disclaimer")} k="ib-disclaimer">
               <Text color="#65a8bf">
-                {t("legal.privacy_refund.chargebacks.p1") ||
-                  "Please contact us first to resolve billing or access issues. Unauthorized disputes may result in account suspension."}
+                {t("legal.ib_disclaimer.intro", "This platform may refer users to third-party brokerage services through our Introducing Broker (IB) partnerships. By using any broker referral links or registering through our IB program, you acknowledge and agree to the following:")}
               </Text>
+              <Bullets>
+                <Bullet>
+                  {t("legal.ib_disclaimer.li1", "We act solely as an introducing broker and do not provide brokerage, trading, or financial advisory services. We do not hold, manage, or have access to your trading funds.")}
+                </Bullet>
+                <Bullet>
+                  {t("legal.ib_disclaimer.li2", "Any broker we refer you to is an independent third-party entity. We are not responsible for their actions, policies, trading conditions, platform performance, or regulatory compliance.")}
+                </Bullet>
+                <Bullet>
+                  {t("legal.ib_disclaimer.li3", "Trading forex, CFDs, cryptocurrencies, and other financial instruments through any broker involves substantial risk of loss. You may lose some or all of your invested capital. Past performance is not indicative of future results.")}
+                </Bullet>
+                <Bullet>
+                  {t("legal.ib_disclaimer.li4", "We do not guarantee the solvency, reliability, or regulatory standing of any partner broker. You are responsible for conducting your own due diligence before opening an account or depositing funds.")}
+                </Bullet>
+                <Bullet>
+                  {t("legal.ib_disclaimer.li5", "We are not liable for any financial losses, damages, or disputes arising from your use of any partner broker's services, including but not limited to trading losses, withdrawal issues, platform outages, or account disputes.")}
+                </Bullet>
+                <Bullet>
+                  {t("legal.ib_disclaimer.li6", "Broker referral links may generate commissions for us. This does not influence the educational content we provide, and our IB relationship does not constitute an endorsement or guarantee of any broker's services.")}
+                </Bullet>
+                <Bullet>
+                  {t("legal.ib_disclaimer.li7", "You are solely responsible for understanding and complying with the laws and regulations applicable to trading in your jurisdiction. Some broker services may not be available in all regions.")}
+                </Bullet>
+                <Bullet>
+                  {t("legal.ib_disclaimer.li8", "By registering through our referral links, you agree to the partner broker's own terms of service, privacy policy, and risk disclosures, which are separate from ours.")}
+                </Bullet>
+              </Bullets>
             </Section>
           </SpotlightCard>
 
           {/* Privacy: Data We Collect */}
           <SpotlightCard>
-            <Section
-              title={t("legal.privacy.data.title") || "Privacy: Data We Collect"}
-              k="privacy-data"
-            >
+            <Section title={t("legal.privacy.data.title", "Privacy: Data We Collect")} k="privacy-data">
               <Bullets>
                 <Bullet>
-                  {t("legal.privacy.data.account") ||
-                    "Account data: name, email, and login identifiers."}
+                  {t("legal.privacy.data.account", "Account data: name, email, and login identifiers.")}
                 </Bullet>
                 <Bullet>
-                  {t("legal.privacy.data.billing") ||
-                    "Billing metadata: transaction IDs, wallet address, and plan details (no private keys are ever collected)."}
+                  {t("legal.privacy.data.billing", "Billing metadata: transaction IDs, wallet address, and plan details (no private keys are ever collected).")}
                 </Bullet>
                 <Bullet>
-                  {t("legal.privacy.data.usage") ||
-                    "Usage analytics: page views, progress, device information, and approximate location (for fraud prevention and product improvement)."}
+                  {t("legal.privacy.data.usage", "Usage analytics: page views, progress, device information, and approximate location (for fraud prevention and product improvement).")}
                 </Bullet>
               </Bullets>
             </Section>
-          </SpotlightCard>  
+          </SpotlightCard>
 
           {/* How We Use Data */}
           <SpotlightCard>
-            <Section title={t("legal.privacy.use.title") || "How We Use Your Data"} k="privacy-use">
+            <Section title={t("legal.privacy.use.title", "How We Use Your Data")} k="privacy-use">
               <Bullets>
                 <Bullet>
-                  {t("legal.privacy.use.provide") ||
-                    "To provide and improve course content, track progress, and deliver support."}
+                  {t("legal.privacy.use.provide", "To provide and improve course content, track progress, and deliver support.")}
                 </Bullet>
                 <Bullet>
-                  {t("legal.privacy.use.security") ||
-                    "To protect against fraud, abuse, and unauthorized sharing."}
+                  {t("legal.privacy.use.security", "To protect against fraud, abuse, and unauthorized sharing.")}
                 </Bullet>
                 <Bullet>
-                  {t("legal.privacy.use.comms") ||
-                    "To send essential service emails. You can opt out of non-essential marketing messages."}
+                  {t("legal.privacy.use.comms", "To send essential service emails. You can opt out of non-essential marketing messages.")}
                 </Bullet>
               </Bullets>
             </Section>
@@ -571,31 +595,22 @@ export default function PrivacyRefundPolicy() {
 
           {/* Cookies & Third Parties */}
           <SpotlightCard>
-            <Section
-              title={t("legal.privacy.cookies.title") || "Cookies, Analytics & Third-Party Services"}
-              k="cookies"
-            >
+            <Section title={t("legal.privacy.cookies.title", "Cookies, Analytics & Third-Party Services")} k="cookies">
               <Text color="#65a8bf">
-                {t("legal.privacy.cookies.p1") ||
-                  "We use cookies and similar technologies for authentication, preferences, and analytics. Some third-party providers may process limited personal data according to their own policies."}
+                {t("legal.privacy.cookies.p1", "We use cookies and similar technologies for authentication, preferences, and analytics. Some third-party providers may process limited personal data according to their own policies.")}
               </Text>
             </Section>
           </SpotlightCard>
 
           {/* Retention & Security */}
           <SpotlightCard>
-            <Section
-              title={t("legal.privacy.security.title") || "Data Retention & Security"}
-              k="security"
-            >
+            <Section title={t("legal.privacy.security.title", "Data Retention & Security")} k="security">
               <Bullets>
                 <Bullet>
-                  {t("legal.privacy.security.retention") ||
-                    "We retain data only as long as necessary for the purposes described or as required by law."}
+                  {t("legal.privacy.security.retention", "We retain data only as long as necessary for the purposes described or as required by law.")}
                 </Bullet>
                 <Bullet>
-                  {t("legal.privacy.security.measures") ||
-                    "We apply technical and organizational safeguards, but no method is 100% secure."}
+                  {t("legal.privacy.security.measures", "We apply technical and organizational safeguards, but no method is 100% secure.")}
                 </Bullet>
               </Bullets>
             </Section>
@@ -603,22 +618,20 @@ export default function PrivacyRefundPolicy() {
 
           {/* Your Rights */}
           <SpotlightCard>
-            <Section title={t("legal.privacy.rights.title") || "Your Rights"} k="rights">
+            <Section title={t("legal.privacy.rights.title", "Your Rights")} k="rights">
               <Text color="#65a8bf">
-                {t("legal.privacy.rights.p1") ||
-                  "Subject to local laws, you may request access, correction, deletion, or portability of your data. We may ask for verification before fulfilling requests."}
+                {t("legal.privacy.rights.p1", "Subject to local laws, you may request access, correction, deletion, or portability of your data. We may ask for verification before fulfilling requests.")}
               </Text>
             </Section>
           </SpotlightCard>
 
           {/* Contact */}
           <SpotlightCard>
-            <Section title={t("legal.common.contact") || "Contact"} k="contact">
+            <Section title={t("legal.common.contact", "Contact")} k="contact">
               <Text color="#65a8bf">
-                {t("legal.common.contact_text") ||
-                  "For privacy questions or refund requests, reach us at "}
-                <Link href="mailto:support@promrkts.com" color={GOLD}>
-                  {t("legal.common.support_email") || "support@promrkts.com"}
+                {t("legal.common.contact_text", "For privacy questions or policy inquiries, reach us at ")}{" "}
+                <Link href={`mailto:${t("legal.common.support_email", "support@promrkts.com")}`} color={GOLD}>
+                  {t("legal.common.support_email", "support@promrkts.com")}
                 </Link>
                 .
               </Text>
@@ -626,8 +639,7 @@ export default function PrivacyRefundPolicy() {
           </SpotlightCard>
 
           <Text color={GOLD} textAlign="center" fontSize="sm" opacity={0.8}>
-            {t("legal.common.disclaimer") ||
-              "Nothing here is financial advice. Trading involves substantial risk of loss. Educational content is provided as-is without guarantees."}
+            {t("legal.common.disclaimer", "Nothing here is financial advice. Trading involves substantial risk of loss. Educational content is provided as-is without guarantees. All sales are final — no refunds.")}
           </Text>
           <HStack justify="center" mb={4}>
             <Button

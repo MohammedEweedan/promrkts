@@ -145,7 +145,7 @@ export default function Terms() {
 
     content: [
       // TITLE
-      header(t("legal.privacy_refund.title") || "Privacy, Terms & Refund Policy"),
+      header(t("legal.privacy_refund.title") || "Privacy, Terms & Policy"),
       {
         text:
           (t("legal.common.last_updated") || "Last updated") +
@@ -156,7 +156,7 @@ export default function Terms() {
       },
       p(
         t("legal.privacy_refund.intro") ||
-          "This policy explains how we handle your data and how refunds work for our educational products and subscriptions focused on forex and crypto trading."
+          "This policy explains how we handle your data, our payment and no-refund terms, cryptocurrency liability, and broker referral disclaimers for our educational products and subscriptions."
       ),
 
       // SCOPE
@@ -177,48 +177,57 @@ export default function Terms() {
       ]),
       p("* " + (t("legal.privacy_refund.payments.note_text") || "Payment confirmations occur after sufficient on-chain confirmations.")),
 
-      // REFUND POLICY
-      section(t("legal.refund.title") || "Refund Policy"),
+      // NO REFUND POLICY
+      section("No Refund Policy"),
       p(
-        t("legal.refund.p1") ||
-          "If you’re not satisfied within 7 days of purchase, contact support for a full refund (terms apply)."
+        "All sales of digital products, courses, subscriptions, and educational materials on this platform are final. Due to the nature of digital content, we do not issue refunds under any circumstances."
       ),
       bulletBlock([
-        t("legal.refund.eligibility") ||
-          "Eligibility: first-time purchase of a given product/tier, and meaningful usage under fair-use limits.",
-        t("legal.refund.exclusions") ||
-          "Exclusions: content scraping/sharing, downloading a substantial portion of materials, account sharing, or policy abuse.",
-        t("legal.refund.digital") ||
-          "Because access is digital, refunds may be prorated or denied if significant content has been consumed.",
-        t("legal.refund.method") ||
-          "Refunds are issued in USDT to the original network used for payment. Network fees are non-refundable.",
-        t("legal.refund.timeline") ||
-          "Processing time: up to 10 business days after approval, excluding on-chain network delays.",
+        "All purchases are non-refundable. By completing a purchase, you acknowledge and accept this policy.",
+        "In unique and exceptional cases, a partial reimbursement may be considered at our sole discretion. This is not guaranteed and is evaluated on a case-by-case basis.",
+        "Requests for partial reimbursement must be submitted within 7 days of purchase with a valid reason and supporting details.",
+        "Any approved partial reimbursement will be issued in USDT to the original wallet address. Network fees are non-refundable.",
+        "Chargebacks, disputes, or attempts to reverse payments without prior authorization will result in immediate account suspension and potential legal action.",
       ]),
+
+      // CRYPTOCURRENCY PAYMENT LIABILITY
+      section("Cryptocurrency Payment Liability"),
       p(
-        (t("legal.refund.process") ||
-          "To initiate a refund, email support with your order ID, wallet address, and reason.") +
-          " " +
-          (t("legal.common.support_email") || "support@promrkts.com")
+        "All payments on this platform are processed exclusively in cryptocurrency (USDT). By making a payment, you acknowledge and accept the following:"
       ),
+      bulletBlock([
+        "You are solely responsible for ensuring the correct wallet address, network (e.g., TRC20, ERC20), and payment amount before initiating any transaction.",
+        "We are not liable for any loss of funds resulting from incorrect wallet addresses, wrong network selection, insufficient gas fees, or any other user error during the payment process.",
+        "Cryptocurrency transactions are irreversible by nature. Once a transaction is confirmed on the blockchain, it cannot be reversed, cancelled, or recovered by us.",
+        "Network fees, gas fees, and on-chain confirmation times are entirely outside our control and are the sole responsibility of the sender.",
+        "We are not responsible for delays, failures, or losses caused by blockchain network congestion, outages, or third-party wallet/exchange issues.",
+        "Mis-sent, underpaid, or overpaid transactions may result in loss of funds. We are under no obligation to recover or compensate for such errors.",
+      ]),
 
       // ACCESS & CANCELLATIONS
-      section(t("legal.privacy_refund.access.title") || "Access, Renewals & Cancellations"),
+      section("Access, Renewals & Cancellations"),
       bulletBlock([
-        t("legal.privacy_refund.access.li1") ||
-          "Access to digital content is personal and non-transferable.",
-        t("legal.privacy_refund.access.li2") ||
-          "Subscriptions renew automatically unless cancelled before the next billing date.",
-        t("legal.privacy_refund.access.li3") ||
-          "Cancellation stops future charges; it does not retroactively refund prior periods.",
+        "Access to digital content is personal and non-transferable.",
+        "Subscriptions renew automatically unless cancelled before the next billing date.",
+        "Cancellation stops future charges; it does not entitle you to any refund or reimbursement for prior periods.",
+        "We reserve the right to revoke access to any user who violates these terms without compensation.",
       ]),
 
-      // CHARGEBACKS
-      section(t("legal.privacy_refund.chargebacks.title") || "Chargebacks & Disputes"),
+      // IB BROKER DISCLAIMER
+      section("Introducing Broker (IB) Partner Disclaimer"),
       p(
-        t("legal.privacy_refund.chargebacks.p1") ||
-          "Please contact us first to resolve billing or access issues. Unauthorized disputes may result in account suspension."
+        "This platform may refer users to third-party brokerage services through our Introducing Broker (IB) partnerships. By using any broker referral links or registering through our IB program, you acknowledge and agree to the following:"
       ),
+      bulletBlock([
+        "We act solely as an introducing broker and do not provide brokerage, trading, or financial advisory services. We do not hold, manage, or have access to your trading funds.",
+        "Any broker we refer you to is an independent third-party entity. We are not responsible for their actions, policies, trading conditions, platform performance, or regulatory compliance.",
+        "Trading forex, CFDs, cryptocurrencies, and other financial instruments through any broker involves substantial risk of loss. You may lose some or all of your invested capital. Past performance is not indicative of future results.",
+        "We do not guarantee the solvency, reliability, or regulatory standing of any partner broker. You are responsible for conducting your own due diligence before opening an account or depositing funds.",
+        "We are not liable for any financial losses, damages, or disputes arising from your use of any partner broker's services, including but not limited to trading losses, withdrawal issues, platform outages, or account disputes.",
+        "Broker referral links may generate commissions for us. This does not influence the educational content we provide, and our IB relationship does not constitute an endorsement or guarantee of any broker's services.",
+        "You are solely responsible for understanding and complying with the laws and regulations applicable to trading in your jurisdiction. Some broker services may not be available in all regions.",
+        "By registering through our referral links, you agree to the partner broker's own terms of service, privacy policy, and risk disclosures, which are separate from ours.",
+      ]),
 
       // PRIVACY DATA
       section(t("legal.privacy.data.title") || "Privacy: Data We Collect"),
@@ -296,7 +305,7 @@ export default function Terms() {
       section(t("legal.common.contact") || "Contact"),
       p(
         (t("legal.common.contact_text") ||
-          "For privacy questions or refund requests, reach us at ") +
+          "For privacy questions or policy inquiries, reach us at ") +
           (t("legal.common.support_email") || "support@promrkts.com")
       ),
 
@@ -438,83 +447,107 @@ export default function Terms() {
             </Section>
           </SpotlightCard>
 
-          {/* Payments & Refunds */}
+          {/* Payments (USDT Only) */}
           <SpotlightCard>
-            <Section title={t("legal.terms.payments.title", "Payments & Refunds")} k="payments">
+            <Section title={t("legal.terms.payments.title", "Payments & Pricing (USDT Only)")} k="payments">
               <Text color="text.muted">
-                {t(
-                  "legal.terms.payments.p1",
-                  "All payments are processed exclusively in USDT. Please review our Refund Policy for detailed terms on eligibility and processing times."
-                )}
+                {t("legal.terms.payments.p1", "All payments are processed exclusively in USDT. You are responsible for verifying payment addresses and network selection before sending crypto transactions.")}
               </Text>
               <Text color="text.muted">
-                {t(
-                  "legal.terms.payments.p2",
-                  "You are responsible for verifying payment addresses and network selection before sending crypto transactions."
-                )}
+                {t("legal.terms.payments.p2", "Prices may be displayed in your local currency for convenience, but settlement is always in USDT.")}
+              </Text>
+            </Section>
+          </SpotlightCard>
+
+          {/* No Refund Policy */}
+          <SpotlightCard>
+            <Section title={t("legal.no_refund.title", "No Refund Policy")} k="no-refund">
+              <Text color="text.muted">
+                {t("legal.no_refund.intro", "All sales of digital products, courses, subscriptions, and educational materials on this platform are final. Due to the nature of digital content, we do not issue refunds under any circumstances.")}
+              </Text>
+              <Text color="text.muted">
+                {t("legal.no_refund.li1", "All purchases are non-refundable. By completing a purchase, you acknowledge and accept this policy.")} {t("legal.no_refund.li2", "In unique and exceptional cases, a partial reimbursement may be considered at our sole discretion. This is not guaranteed and is evaluated on a case-by-case basis.")}
+              </Text>
+              <Text color="text.muted">
+                {t("legal.no_refund.li3", "Requests for partial reimbursement must be submitted within 7 days of purchase with a valid reason and supporting details.")} {t("legal.no_refund.li4", "Any approved partial reimbursement will be issued in USDT to the original wallet address. Network fees are non-refundable.")}
+              </Text>
+              <Text color="text.muted">
+                {t("legal.no_refund.li5", "Chargebacks, disputes, or attempts to reverse payments without prior authorization will result in immediate account suspension and potential legal action.")}
+              </Text>
+            </Section>
+          </SpotlightCard>
+
+          {/* Cryptocurrency Payment Liability */}
+          <SpotlightCard>
+            <Section title={t("legal.crypto_liability.title", "Cryptocurrency Payment Liability")} k="crypto-liability">
+              <Text color="text.muted">
+                {t("legal.crypto_liability.intro", "All payments on this platform are processed exclusively in cryptocurrency (USDT). By making a payment, you acknowledge and accept the following:")}
+              </Text>
+              <Text color="text.muted">
+                {t("legal.crypto_liability.li1", "You are solely responsible for ensuring the correct wallet address, network (e.g., TRC20, ERC20), and payment amount before initiating any transaction.")} {t("legal.crypto_liability.li2", "We are not liable for any loss of funds resulting from incorrect wallet addresses, wrong network selection, insufficient gas fees, or any other user error during the payment process.")}
+              </Text>
+              <Text color="text.muted">
+                {t("legal.crypto_liability.li3", "Cryptocurrency transactions are irreversible by nature. Once a transaction is confirmed on the blockchain, it cannot be reversed, cancelled, or recovered by us.")} {t("legal.crypto_liability.li4", "Network fees, gas fees, and on-chain confirmation times are entirely outside our control and are the sole responsibility of the sender.")}
+              </Text>
+              <Text color="text.muted">
+                {t("legal.crypto_liability.li5", "We are not responsible for delays, failures, or losses caused by blockchain network congestion, outages, or third-party wallet/exchange issues.")} {t("legal.crypto_liability.li6", "Mis-sent, underpaid, or overpaid transactions may result in loss of funds. We are under no obligation to recover or compensate for such errors.")}
+              </Text>
+            </Section>
+          </SpotlightCard>
+
+          {/* IB Broker Disclaimer */}
+          <SpotlightCard>
+            <Section title={t("legal.ib_disclaimer.title", "Introducing Broker (IB) Partner Disclaimer")} k="ib-disclaimer">
+              <Text color="text.muted">
+                {t("legal.ib_disclaimer.intro", "This platform may refer users to third-party brokerage services through our Introducing Broker (IB) partnerships. By using any broker referral links or registering through our IB program, you acknowledge and agree to the following:")}
+              </Text>
+              <Text color="text.muted">
+                {t("legal.ib_disclaimer.li1", "We act solely as an introducing broker and do not provide brokerage, trading, or financial advisory services. We do not hold, manage, or have access to your trading funds.")} {t("legal.ib_disclaimer.li2", "Any broker we refer you to is an independent third-party entity. We are not responsible for their actions, policies, trading conditions, platform performance, or regulatory compliance.")}
+              </Text>
+              <Text color="text.muted">
+                {t("legal.ib_disclaimer.li3", "Trading forex, CFDs, cryptocurrencies, and other financial instruments through any broker involves substantial risk of loss. You may lose some or all of your invested capital. Past performance is not indicative of future results.")} {t("legal.ib_disclaimer.li4", "We do not guarantee the solvency, reliability, or regulatory standing of any partner broker. You are responsible for conducting your own due diligence before opening an account or depositing funds.")}
+              </Text>
+              <Text color="text.muted">
+                {t("legal.ib_disclaimer.li5", "We are not liable for any financial losses, damages, or disputes arising from your use of any partner broker's services, including but not limited to trading losses, withdrawal issues, platform outages, or account disputes.")}
+              </Text>
+              <Text color="text.muted">
+                {t("legal.ib_disclaimer.li6", "Broker referral links may generate commissions for us. This does not influence the educational content we provide, and our IB relationship does not constitute an endorsement or guarantee of any broker's services.")} {t("legal.ib_disclaimer.li7", "You are solely responsible for understanding and complying with the laws and regulations applicable to trading in your jurisdiction. Some broker services may not be available in all regions.")}
+              </Text>
+              <Text color="text.muted">
+                {t("legal.ib_disclaimer.li8", "By registering through our referral links, you agree to the partner broker's own terms of service, privacy policy, and risk disclosures, which are separate from ours.")}
               </Text>
             </Section>
           </SpotlightCard>
 
           {/* Risk Disclosure */}
           <SpotlightCard>
-            <Section
-              title={t("legal.terms.disclaimer.title", "Risk Disclosure & Educational Purpose")}
-              k="disclaimer"
-            >
+            <Section title={t("legal.terms.disclaimer.title", "Risk Disclosure & Educational Purpose")} k="disclaimer">
               <Text color="text.muted">
-                {t(
-                  "legal.terms.disclaimer.p1",
-                  "Trading forex, cryptocurrencies, and financial markets involves significant risk. Past performance does not guarantee future results."
-                )}
+                {t("legal.terms.disclaimer.p1", "Trading forex, cryptocurrencies, and financial markets involves significant risk. Past performance does not guarantee future results.")}
               </Text>
               <Text color="text.muted">
-                {t(
-                  "legal.terms.disclaimer.p2",
-                  "Our courses, templates, and examples are purely educational and do not constitute financial advice, trading recommendations, or investment guidance."
-                )}
-              </Text>
-              <Text color="text.muted">
-                {t(
-                  "legal.terms.disclaimer.p3",
-                  "You acknowledge that you are solely responsible for any trading decisions made based on information from our materials."
-                )}
+                {t("legal.terms.disclaimer.p2", "Our courses, templates, and examples are purely educational and do not constitute financial advice, trading recommendations, or investment guidance.")} {t("legal.terms.disclaimer.p3", "You acknowledge that you are solely responsible for any trading decisions made based on information from our materials.")}
               </Text>
             </Section>
           </SpotlightCard>
 
           {/* Liability */}
           <SpotlightCard>
-            <Section
-              title={t("legal.terms.liability.title", "Limitation of Liability")}
-              k="liability"
-            >
+            <Section title={t("legal.terms.liability.title", "Limitation of Liability")} k="liability">
               <Text color="text.muted">
-                {t(
-                  "legal.terms.liability.p1",
-                  "We are not liable for any losses, damages, or claims arising from your use of our platform or the application of our educational content."
-                )}
+                {t("legal.terms.liability.p1", "We are not liable for any losses, damages, or claims arising from your use of our platform, the application of our educational content, trading activities, or the use of any partner broker's services.")}
               </Text>
               <Text color="text.muted">
-                {t(
-                  "legal.terms.liability.p2",
-                  "All information is provided 'as is' without warranties of accuracy, completeness, or fitness for purpose."
-                )}
+                {t("legal.terms.liability.p2", "All information is provided 'as is' without warranties of accuracy, completeness, or fitness for purpose. We do not guarantee profits, income, performance, or trading results.")}
               </Text>
             </Section>
           </SpotlightCard>
 
           {/* Modifications */}
           <SpotlightCard>
-            <Section
-              title={t("legal.terms.modifications.title", "Changes to Terms")}
-              k="modifications"
-            >
+            <Section title={t("legal.terms.modifications.title", "Changes to Terms")} k="modifications">
               <Text color="text.muted">
-                {t(
-                  "legal.terms.modifications.p1",
-                  "We may update these terms periodically to reflect new features, laws, or business practices. Continued use after updates implies acceptance."
-                )}
+                {t("legal.terms.modifications.p1", "We may update these terms periodically to reflect new features, laws, or business practices. Continued use after updates implies acceptance.")}
               </Text>
             </Section>
           </SpotlightCard>
@@ -523,12 +556,12 @@ export default function Terms() {
           <SpotlightCard>
             <Section title={t("legal.common.contact", "Contact")} k="contact">
               <Text color="text.muted">
-                {t("legal.common.contact_text", "For legal inquiries, please contact us at ")}
+                {t("legal.common.contact_text", "For privacy questions or policy inquiries, reach us at ")}
                 <Link
-                  href={`mailto:${t("legal.common.support_email", "support@example.com")}`}
+                  href={`mailto:${t("legal.common.support_email", "support@promrkts.com")}`}
                   color={GOLD}
                 >
-                  {t("legal.common.support_email", "support@example.com")}
+                  {t("legal.common.support_email", "support@promrkts.com")}
                 </Link>
                 .
               </Text>
@@ -537,10 +570,7 @@ export default function Terms() {
 
           {/* Final Disclaimer */}
           <Text color={GOLD} fontSize="sm" textAlign="center" opacity={0.8}>
-            {t(
-              "legal.common.disclaimer",
-              "Trading involves substantial risk and may result in loss of capital. Our content is educational and not a guarantee of results."
-            )}
+            {t("legal.common.disclaimer", "Trading involves substantial risk and may result in loss of capital. Our content is educational and not a guarantee of results. All sales are final — no refunds.")}
           </Text>
           <HStack justify="center" mb={4}>
             <Button

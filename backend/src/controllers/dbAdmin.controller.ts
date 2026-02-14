@@ -2,6 +2,54 @@
 import { Request, Response } from 'express';
 import prisma from '../config/prisma';
 
+// BigInt-safe JSON serializer
+const safeJson = (data: any): any => {
+  return JSON.parse(
+    JSON.stringify(data, (_key, value) =>
+      typeof value === 'bigint' ? value.toString() : value
+    )
+  );
+};
+
+// Ordered list of candidate timestamp fields to use for default sorting
+const TIMESTAMP_CANDIDATES = [
+  'createdAt',
+  'created_at',
+  'updatedAt',
+  'updated_at',
+  'unlockedAt',
+  'executedAt',
+  'activityDate',
+  'date',
+  'id',
+] as const;
+
+// Cache resolved default sort fields per model
+const modelSortFieldCache: Record<string, string> = {};
+
+/**
+ * Resolve the best default sort field for a model by checking a sample record.
+ * Falls back to 'id' if no timestamp field is found.
+ */
+async function resolveDefaultSortField(model: string): Promise<string> {
+  if (modelSortFieldCache[model]) return modelSortFieldCache[model];
+  try {
+    const sample = await (prisma as any)[model].findFirst();
+    if (sample) {
+      for (const candidate of TIMESTAMP_CANDIDATES) {
+        if (candidate in sample) {
+          modelSortFieldCache[model] = candidate;
+          return candidate;
+        }
+      }
+    }
+  } catch {
+    // ignore introspection errors
+  }
+  modelSortFieldCache[model] = 'id';
+  return 'id';
+}
+
 // List of models that can be managed via the admin interface
 const MANAGEABLE_MODELS = [
   'users',
@@ -133,25 +181,27 @@ export const getRecords = async (req: Request, res: Response) => {
       ].filter(Boolean);
     }
 
-    // Build orderBy
+    // Build orderBy — resolve the correct timestamp field for this model
+    const defaultSortField = await resolveDefaultSortField(model);
     const orderBy: any = sortBy
       ? { [sortBy as string]: sortOrder === 'asc' ? 'asc' : 'desc' }
-      : { createdAt: 'desc' };
+      : { [defaultSortField]: 'desc' };
 
     // Fetch records
+    const whereClause = Object.keys(where).length > 0 ? where : undefined;
     const [records, total] = await Promise.all([
       (prisma as any)[model].findMany({
-        where: Object.keys(where).length > 0 ? where : undefined,
+        where: whereClause,
         skip,
         take: limitNum,
         orderBy,
       }),
       (prisma as any)[model].count({
-        where: Object.keys(where).length > 0 ? where : undefined,
+        where: whereClause,
       }),
     ]);
 
-    res.json({
+    res.json(safeJson({
       records,
       pagination: {
         page: pageNum,
@@ -159,7 +209,7 @@ export const getRecords = async (req: Request, res: Response) => {
         total,
         totalPages: Math.ceil(total / limitNum),
       },
-    });
+    }));
   } catch (error: any) {
     res.status(500).json({ error: error.message });
   }
@@ -182,7 +232,7 @@ export const getRecord = async (req: Request, res: Response) => {
       return res.status(404).json({ error: 'Record not found' });
     }
 
-    res.json({ record });
+    res.json(safeJson({ record }));
   } catch (error: any) {
     res.status(500).json({ error: error.message });
   }
@@ -203,7 +253,7 @@ export const createRecord = async (req: Request, res: Response) => {
 
     const record = await (prisma as any)[model].create({ data });
 
-    res.status(201).json({ record });
+    res.status(201).json(safeJson({ record }));
   } catch (error: any) {
     res.status(500).json({ error: error.message });
   }
@@ -227,7 +277,7 @@ export const updateRecord = async (req: Request, res: Response) => {
       data,
     });
 
-    res.json({ record });
+    res.json(safeJson({ record }));
   } catch (error: any) {
     if (error.code === 'P2025') {
       return res.status(404).json({ error: 'Record not found' });
@@ -301,7 +351,7 @@ export const executeQuery = async (req: Request, res: Response) => {
 
     const result = await prisma.$queryRawUnsafe(query);
 
-    res.json({ result });
+    res.json(safeJson({ result }));
   } catch (error: any) {
     res.status(500).json({ error: error.message });
   }
@@ -327,7 +377,7 @@ export const getModelSchema = async (req: Request, res: Response) => {
         }))
       : [];
 
-    res.json({ model, fields });
+    res.json(safeJson({ model, fields }));
   } catch (error: any) {
     res.status(500).json({ error: error.message });
   }
@@ -348,7 +398,7 @@ export const getDatabaseStats = async (_req: Request, res: Response) => {
       }
     }
 
-    res.json({ stats });
+    res.json(safeJson({ stats }));
   } catch (error: any) {
     res.status(500).json({ error: error.message });
   }

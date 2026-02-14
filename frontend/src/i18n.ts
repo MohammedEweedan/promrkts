@@ -1078,6 +1078,27 @@ const resources = {
           progress_complete: 'complete',
           progress_not_started: 'Not started yet',
         },
+        indicator: {
+          badge: "Coming Soon",
+          title: "promrkts TradingView Indicator",
+          subtitle: "Our proprietary indicator applies the exact strategy we teach — built for TradingView, designed for precision. Choose the setting that matches your trading style.",
+          swing: {
+            title: "Swing",
+            desc: "Designed for traders who hold positions for days to weeks. Captures larger market moves with fewer signals, ideal for those who prefer a patient, high-conviction approach.",
+            timeframe: "4H — Weekly"
+          },
+          scalp: {
+            title: "Scalp",
+            desc: "Built for fast-paced traders targeting quick entries and exits. Generates frequent signals on lower timeframes for those who thrive in volatile, short-term conditions.",
+            timeframe: "1M — 15M"
+          },
+          daily: {
+            title: "Daily",
+            desc: "The balanced middle ground — one clean signal per day based on daily candle structure. Perfect for traders who want clarity without constant screen time.",
+            timeframe: "1H — Daily"
+          },
+          note: "The indicator will be available as a paid add-on for enrolled students. It does not guarantee profits — it is a tool to support your analysis using our methodology."
+        },
         services: {
           title: "How We Help Traders Succeed",
           subtitle: "Our proven strategies have helped thousands of traders trade smarter and earn more.",
@@ -4187,6 +4208,27 @@ const resources = {
           progress_complete: 'مكتمل',
           progress_not_started: 'لم يبدأ بعد',
         },
+        indicator: {
+          badge: "قريبًا",
+          title: "مؤشر promrkts على TradingView",
+          subtitle: "مؤشرنا الخاص يطبّق نفس الاستراتيجية التي نعلّمها — مصمّم لـ TradingView بدقة عالية. اختر الإعداد الذي يناسب أسلوب تداولك.",
+          swing: {
+            title: "سوينغ",
+            desc: "مصمّم للمتداولين الذين يحتفظون بالصفقات لأيام أو أسابيع. يلتقط تحركات السوق الكبيرة بإشارات أقل، مثالي لمن يفضّلون نهجًا صبورًا وعالي الثقة.",
+            timeframe: "4 ساعات — أسبوعي"
+          },
+          scalp: {
+            title: "سكالب",
+            desc: "مصمّم للمتداولين السريعين الذين يستهدفون دخولًا وخروجًا سريعًا. يولّد إشارات متكررة على الأطر الزمنية القصيرة لمن يزدهرون في ظروف السوق المتقلبة.",
+            timeframe: "1 دقيقة — 15 دقيقة"
+          },
+          daily: {
+            title: "يومي",
+            desc: "الحل الوسط المتوازن — إشارة واحدة نظيفة يوميًا بناءً على هيكل الشمعة اليومية. مثالي للمتداولين الذين يريدون وضوحًا دون مراقبة مستمرة للشاشة.",
+            timeframe: "1 ساعة — يومي"
+          },
+          note: "سيتوفر المؤشر كإضافة مدفوعة للطلاب المسجّلين. لا يضمن أرباحًا — إنه أداة لدعم تحليلك باستخدام منهجيتنا."
+        },
         stats: {
           students: "عدد الطلاب",
           profitability: "نسبة النجاح",
@@ -5184,21 +5226,40 @@ const NEW_PAGE_STRINGS = {
         },
       },
       legal: {
-        refund: {
-          title: "Refund Policy",
-          p1: "If you’re not satisfied within 7 days of purchase, contact support for a full refund (terms apply).",
-          p2: "Refunds exclude cases of content misuse, sharing, or policy abuse.",
-          p3: "To initiate a refund, email support with your order ID and reason.",
-          eligibility: "Eligibility: first-time purchase of a given product/tier, and meaningful usage under fair-use limits.",
-          exclusions: "Exclusions: content scraping/sharing, downloading a substantial portion of materials, account sharing, or policy abuse.",
-          digital: "Because access is digital, refunds may be prorated or denied if significant content has been consumed.",
-          method: "Refunds are issued in USDT to the original network used for payment. Network fees are non-refundable.",
-          timeline: "Processing time: up to 10 business days after approval, excluding on-chain network delays.",
-          process: "To initiate a refund, email support with your order ID, wallet address, and reason."
+        no_refund: {
+          title: "No Refund Policy",
+          intro: "All sales of digital products, courses, subscriptions, and educational materials on this platform are final. Due to the nature of digital content, we do not issue refunds under any circumstances.",
+          li1: "All purchases are non-refundable. By completing a purchase, you acknowledge and accept this policy.",
+          li2: "In unique and exceptional cases, a partial reimbursement may be considered at our sole discretion. This is not guaranteed and is evaluated on a case-by-case basis.",
+          li3: "Requests for partial reimbursement must be submitted within 7 days of purchase with a valid reason and supporting details.",
+          li4: "Any approved partial reimbursement will be issued in USDT to the original wallet address. Network fees are non-refundable.",
+          li5: "Chargebacks, disputes, or attempts to reverse payments without prior authorization will result in immediate account suspension and potential legal action."
+        },
+        crypto_liability: {
+          title: "Cryptocurrency Payment Liability",
+          intro: "All payments on this platform are processed exclusively in cryptocurrency (USDT). By making a payment, you acknowledge and accept the following:",
+          li1: "You are solely responsible for ensuring the correct wallet address, network (e.g., TRC20, ERC20), and payment amount before initiating any transaction.",
+          li2: "We are not liable for any loss of funds resulting from incorrect wallet addresses, wrong network selection, insufficient gas fees, or any other user error during the payment process.",
+          li3: "Cryptocurrency transactions are irreversible by nature. Once a transaction is confirmed on the blockchain, it cannot be reversed, cancelled, or recovered by us.",
+          li4: "Network fees, gas fees, and on-chain confirmation times are entirely outside our control and are the sole responsibility of the sender.",
+          li5: "We are not responsible for delays, failures, or losses caused by blockchain network congestion, outages, or third-party wallet/exchange issues.",
+          li6: "Mis-sent, underpaid, or overpaid transactions may result in loss of funds. We are under no obligation to recover or compensate for such errors."
+        },
+        ib_disclaimer: {
+          title: "Introducing Broker (IB) Partner Disclaimer",
+          intro: "This platform may refer users to third-party brokerage services through our Introducing Broker (IB) partnerships. By using any broker referral links or registering through our IB program, you acknowledge and agree to the following:",
+          li1: "We act solely as an introducing broker and do not provide brokerage, trading, or financial advisory services. We do not hold, manage, or have access to your trading funds.",
+          li2: "Any broker we refer you to is an independent third-party entity. We are not responsible for their actions, policies, trading conditions, platform performance, or regulatory compliance.",
+          li3: "Trading forex, CFDs, cryptocurrencies, and other financial instruments through any broker involves substantial risk of loss. You may lose some or all of your invested capital. Past performance is not indicative of future results.",
+          li4: "We do not guarantee the solvency, reliability, or regulatory standing of any partner broker. You are responsible for conducting your own due diligence before opening an account or depositing funds.",
+          li5: "We are not liable for any financial losses, damages, or disputes arising from your use of any partner broker's services, including but not limited to trading losses, withdrawal issues, platform outages, or account disputes.",
+          li6: "Broker referral links may generate commissions for us. This does not influence the educational content we provide, and our IB relationship does not constitute an endorsement or guarantee of any broker's services.",
+          li7: "You are solely responsible for understanding and complying with the laws and regulations applicable to trading in your jurisdiction. Some broker services may not be available in all regions.",
+          li8: "By registering through our referral links, you agree to the partner broker's own terms of service, privacy policy, and risk disclosures, which are separate from ours."
         },
         terms: {
           title: "Terms & Conditions",
-          last_updated: "December 18th, 2025",
+          last_updated: "February 14, 2026",
           intro:
             "By using this platform, enrolling in our courses, or purchasing digital content, you agree to these terms and conditions. Please read them carefully before proceeding.",
           scope: {
@@ -5217,9 +5278,9 @@ const NEW_PAGE_STRINGS = {
             p2: "We reserve the right to suspend or terminate accounts involved in content piracy, abusive behavior, or any activity that compromises platform integrity."
           },
           payments: {
-            title: "Payments & Refunds",
-            p1: "All payments are processed exclusively in USDT. Please review our Refund Policy for detailed terms on eligibility and processing times.",
-            p2: "You are responsible for verifying payment addresses and network selection before sending crypto transactions."
+            title: "Payments & Pricing (USDT Only)",
+            p1: "All payments are processed exclusively in USDT. You are responsible for verifying payment addresses and network selection before sending crypto transactions.",
+            p2: "Prices may be displayed in your local currency for convenience, but settlement is always in USDT."
           },
           disclaimer: {
             title: "Risk Disclosure & Educational Purpose",
@@ -5229,8 +5290,8 @@ const NEW_PAGE_STRINGS = {
           },
           liability: {
             title: "Limitation of Liability",
-            p1: "We are not liable for any losses, damages, or claims arising from your use of our platform or the application of our educational content.",
-            p2: "All information is provided 'as is' without warranties of accuracy, completeness, or fitness for purpose."
+            p1: "We are not liable for any losses, damages, or claims arising from your use of our platform, the application of our educational content, trading activities, or the use of any partner broker's services.",
+            p2: "All information is provided 'as is' without warranties of accuracy, completeness, or fitness for purpose. We do not guarantee profits, income, performance, or trading results."
           },
           modifications: {
             title: "Changes to Terms",
@@ -5242,17 +5303,17 @@ const NEW_PAGE_STRINGS = {
           nb: "NB: We only accept TRC20 to minimise fees on our students and we do require a tx hash upon payment completion to verify each payment. Thank you for your cooperation."
         },
         privacy_refund: {
-          title: "Privacy & Refund Policy",
-          last_updated: "December 18th, 2025",
-          intro: "This policy explains how we handle your data and how refunds work for our educational products and subscriptions focused on forex and crypto trading.",
+          title: "Privacy & Policy",
+          last_updated: "February 14, 2026",
+          intro: "This policy explains how we handle your data, our payment and no-refund terms, cryptocurrency liability, and broker referral disclaimers for our educational products and subscriptions.",
           scope: {
             title: "Scope",
             p1: "These terms apply to all courses, live sessions, templates, and membership tiers available on our platform.",
-            p2: "Financial markets are risky. We provide education only—no investment advice, signals, or portfolio management."
+            p2: "Financial markets are risky. We provide education only — no investment advice, signals, or portfolio management."
           },
           payments: {
             title: "Payments & Pricing (USDT Only)",
-            p1: "All sales are processed exclusively in USDT. Where supported, we accept USDT on TRC20 network only.",
+            p1: "All sales are processed exclusively in USDT. Where supported, we accept USDT on TRC20 and ERC20 networks.",
             li1: "Prices may be displayed in your local currency for convenience, but settlement is in USDT.",
             li2: "Network fees and on-chain confirmation times are outside our control.",
             li3: "You are responsible for sending the exact amount to the correct chain address. Mis-sent funds may be irrecoverable.",
@@ -5263,11 +5324,8 @@ const NEW_PAGE_STRINGS = {
             title: "Access, Renewals & Cancellations",
             li1: "Access to digital content is personal and non-transferable.",
             li2: "Subscriptions renew automatically unless cancelled before the next billing date.",
-            li3: "Cancellation stops future charges; it does not retroactively refund prior periods."
-          },
-          chargebacks: {
-            title: "Chargebacks & Disputes",
-            p1: "Please contact us first to resolve billing or access issues. Unauthorized disputes may result in account suspension."
+            li3: "Cancellation stops future charges; it does not entitle you to any refund or reimbursement for prior periods.",
+            li4: "We reserve the right to revoke access to any user who violates these terms without compensation."
           }
         },
         privacy: {
@@ -5301,7 +5359,7 @@ const NEW_PAGE_STRINGS = {
           last_updated: "Last updated",
           download_pdf: "Download as PDF",
           contact: "Contact",
-          contact_text: "For privacy questions or refund requests, reach us at ",
+          contact_text: "For privacy questions or policy inquiries, reach us at ",
           support_email: "support@promrkts.com",
           disclaimer: "Nothing here is financial advice. Trading involves substantial risk of loss. Educational content is provided as-is without guarantees."
         }
@@ -5500,27 +5558,46 @@ const NEW_PAGE_STRINGS = {
         }
       },
       legal: {
-        refund: {
-          title: "سياسة الاسترداد",
-          p1: "إذا لم تكن راضيًا خلال 7 أيام من الشراء، تواصل مع الدعم لاسترداد كامل (تسري الشروط).",
-          p2: "لا يشمل الاسترداد إساءة استخدام المحتوى أو مشاركته أو مخالفة السياسات.",
-          p3: "لبدء الاسترداد، أرسل رسالة إلى الدعم مع رقم الطلب والسبب.",
-          eligibility: "الأهلية: الشراء الأول لمنتج/مستوى معيّن مع استخدام معقول ضمن حدود الاستخدام العادل.",
-          exclusions: "الاستثناءات: نسخ/مشاركة المحتوى، تنزيل نسبة كبيرة من المواد، مشاركة الحساب، أو إساءة السياسات.",
-          digital: "نظرًا لأن الوصول رقمي، قد يكون الاسترداد جزئيًا أو مرفوضًا إذا تم استهلاك جزء كبير من المحتوى.",
-          method: "يتم الاسترداد بـ USDT إلى نفس الشبكة المستخدمة للدفع. رسوم الشبكة غير قابلة للاسترداد.",
-          timeline: "مدة المعالجة: حتى 10 أيام عمل بعد الموافقة، باستثناء تأخيرات الشبكة.",
-          process: "لبدء الاسترداد، أرسل بريدًا إلى الدعم يتضمن رقم الطلب، عنوان المحفظة، والسبب."
+        no_refund: {
+          title: "سياسة عدم الاسترداد",
+          intro: "جميع مبيعات المنتجات الرقمية والدورات والاشتراكات والمواد التعليمية على هذه المنصّة نهائية. نظرًا لطبيعة المحتوى الرقمي، لا نصدر أي استردادات تحت أي ظرف.",
+          li1: "جميع المشتريات غير قابلة للاسترداد. بإتمام عملية الشراء، فإنك تقرّ بهذه السياسة وتقبلها.",
+          li2: "في حالات فريدة واستثنائية، قد يُنظر في تعويض جزئي وفقًا لتقديرنا المطلق. هذا غير مضمون ويُقيَّم حالة بحالة.",
+          li3: "يجب تقديم طلبات التعويض الجزئي خلال 7 أيام من الشراء مع سبب وجيه وتفاصيل داعمة.",
+          li4: "أي تعويض جزئي معتمد يُصدر بـ USDT إلى عنوان المحفظة الأصلي. رسوم الشبكة غير قابلة للاسترداد.",
+          li5: "ستؤدي عمليات رد المبالغ أو النزاعات أو محاولات عكس المدفوعات دون إذن مسبق إلى تعليق الحساب فورًا واتخاذ إجراءات قانونية محتملة."
+        },
+        crypto_liability: {
+          title: "مسؤولية الدفع بالعملات المشفّرة",
+          intro: "تُعالَج جميع المدفوعات على هذه المنصّة حصريًا بالعملات المشفّرة (USDT). بإجراء أي دفعة، فإنك تقرّ وتقبل ما يلي:",
+          li1: "أنت المسؤول الوحيد عن التأكد من صحة عنوان المحفظة والشبكة (مثل TRC20 أو ERC20) ومبلغ الدفع قبل بدء أي معاملة.",
+          li2: "لسنا مسؤولين عن أي خسارة أموال ناتجة عن عناوين محفظة خاطئة أو اختيار شبكة خاطئة أو رسوم غاز غير كافية أو أي خطأ آخر من المستخدم.",
+          li3: "معاملات العملات المشفّرة لا رجعة فيها بطبيعتها. بمجرد تأكيد المعاملة على البلوكتشين، لا يمكن عكسها أو إلغاؤها أو استردادها من قبلنا.",
+          li4: "رسوم الشبكة ورسوم الغاز وأوقات التأكيد خارجة تمامًا عن سيطرتنا وتقع على عاتق المرسل وحده.",
+          li5: "لسنا مسؤولين عن التأخيرات أو الإخفاقات أو الخسائر الناجمة عن ازدحام شبكة البلوكتشين أو انقطاعها أو مشاكل محافظ/منصات الطرف الثالث.",
+          li6: "قد تؤدي المعاملات المرسلة بشكل خاطئ أو الناقصة أو الزائدة إلى خسارة دائمة للأموال. لسنا ملزمين باسترداد أو تعويض مثل هذه الأخطاء."
+        },
+        ib_disclaimer: {
+          title: "إخلاء مسؤولية شريك الوساطة التعريفية (IB)",
+          intro: "قد تحيل هذه المنصّة المستخدمين إلى خدمات وساطة تابعة لأطراف ثالثة من خلال شراكات الوساطة التعريفية (IB). باستخدام أي روابط إحالة أو التسجيل عبر برنامج IB الخاص بنا، فإنك تقرّ وتوافق على ما يلي:",
+          li1: "نعمل فقط كوسيط تعريفي ولا نقدّم خدمات وساطة أو تداول أو استشارات مالية. لا نحتفظ بأموال التداول الخاصة بك أو نديرها أو نصل إليها.",
+          li2: "أي وسيط نحيلك إليه هو كيان مستقل تابع لطرف ثالث. لسنا مسؤولين عن أفعاله أو سياساته أو شروط تداوله أو أداء منصّته أو امتثاله التنظيمي.",
+          li3: "ينطوي تداول الفوركس والعقود مقابل الفروقات والعملات المشفّرة وغيرها من الأدوات المالية عبر أي وسيط على مخاطر كبيرة بالخسارة. قد تفقد بعض أو كل رأس مالك المستثمر. الأداء السابق لا يدل على النتائج المستقبلية.",
+          li4: "لا نضمن ملاءة أو موثوقية أو وضع أي وسيط شريك تنظيميًا. أنت مسؤول عن إجراء العناية الواجبة الخاصة بك قبل فتح حساب أو إيداع أموال.",
+          li5: "لسنا مسؤولين عن أي خسائر مالية أو أضرار أو نزاعات ناشئة عن استخدامك لخدمات أي وسيط شريك، بما في ذلك على سبيل المثال لا الحصر خسائر التداول أو مشاكل السحب أو انقطاع المنصّة أو نزاعات الحساب.",
+          li6: "قد تولّد روابط إحالة الوسيط عمولات لنا. هذا لا يؤثر على المحتوى التعليمي الذي نقدّمه، وعلاقة IB الخاصة بنا لا تشكّل تأييدًا أو ضمانًا لخدمات أي وسيط.",
+          li7: "أنت المسؤول الوحيد عن فهم القوانين واللوائح المعمول بها للتداول في نطاق ولايتك القضائية والامتثال لها. قد لا تتوفر بعض خدمات الوساطة في جميع المناطق.",
+          li8: "بالتسجيل عبر روابط الإحالة الخاصة بنا، فإنك توافق على شروط خدمة الوسيط الشريك وسياسة الخصوصية وإفصاحات المخاطر الخاصة به، والتي تكون منفصلة عن شروطنا."
         },
         terms: {
           title: "الشروط والأحكام",
-          last_updated: "18 ديسمبر 2025",
+          last_updated: "14 فبراير 2026",
           intro:
             "باستخدامك لهذه المنصّة أو التحاقك بدوراتنا أو شرائك لمحتوى رقمي، فإنك توافق على هذه الشروط والأحكام. يُرجى قراءتها بعناية قبل المتابعة.",
           scope: {
             title: "النطاق",
             p1: "تحكم هذه الشروط استخدامك لخدماتنا التعليمية والدورات والاشتراكات والوصول إلى المجتمع، والمركّزة على تعليم تداول الفوركس والعملات المشفّرة.",
-            p2: "جميع المحتويات المقدَّمة لأغراض تعليمية فقط ولا تُعد نصيحة مالية أو استثمارية."
+            p2: "جميع المحتويات المقدَّمة لأغراض تعليمية فقط ولا تُعد نصيحة مالية أو استثمارية."
           },
           use: {
             title: "استخدام المحتوى وحقوق الملكية الفكرية",
@@ -5533,9 +5610,9 @@ const NEW_PAGE_STRINGS = {
             p2: "نحتفظ بحق تعليق أو إنهاء الحسابات المتورّطة في قرصنة المحتوى أو السلوك المسيء أو أي نشاط يهدد سلامة المنصّة."
           },
           payments: {
-            title: "المدفوعات وسياسة الاسترداد",
-            p1: "تُعالَج جميع المدفوعات حصريًا بـ USDT. يُرجى مراجعة سياسة الاسترداد لدينا لمعرفة شروط الأهلية وأوقات المعالجة.",
-            p2: "أنت مسؤول عن التحقق من عناوين الدفع واختيار الشبكة قبل إرسال معاملات العملات المشفّرة."
+            title: "المدفوعات والتسعير (USDT فقط)",
+            p1: "تُعالَج جميع المدفوعات حصريًا بـ USDT. أنت مسؤول عن التحقق من عناوين الدفع واختيار الشبكة قبل إرسال معاملات العملات المشفّرة.",
+            p2: "قد تُعرض الأسعار بعملتك المحلية للراحة، لكن التسوية النهائية تتم دائمًا بـ USDT."
           },
           disclaimer: {
             title: "إفصاح المخاطر والغرض التعليمي",
@@ -5545,8 +5622,8 @@ const NEW_PAGE_STRINGS = {
           },
           liability: {
             title: "حدود المسؤولية",
-            p1: "لسنا مسؤولين عن أي خسائر أو أضرار أو مطالبات تنشأ عن استخدامك لمنصّتنا أو تطبيق محتوياتنا التعليمية.",
-            p2: "يُقدَّم جميع المعلومات 'كما هي' دون أي ضمانات بالدقة أو الاكتمال أو الملاءمة لغرض معيّن."
+            p1: "لسنا مسؤولين عن أي خسائر أو أضرار أو مطالبات تنشأ عن استخدامك لمنصّتنا أو تطبيق محتوياتنا التعليمية أو أنشطة التداول أو استخدام خدمات أي وسيط شريك.",
+            p2: "يُقدَّم جميع المعلومات 'كما هي' دون أي ضمانات بالدقة أو الاكتمال أو الملاءمة لغرض معيّن. لا نضمن الأرباح أو الدخل أو الأداء أو نتائج التداول."
           },
           modifications: {
             title: "تغييرات على الشروط",
@@ -5558,9 +5635,9 @@ const NEW_PAGE_STRINGS = {
           nb: "ملاحظة: نقبل شبكة TRC20 فقط لتقليل الرسوم على طلابنا، ونطلب تزويدنا بتجزئة المعاملة (tx hash) بعد إتمام الدفع للتحقق من كل عملية. شكرًا لتعاونكم."
         },
         privacy_refund: {
-          title: "سياسة الخصوصية والاسترداد",
-          last_updated: "18 ديسمبر 2025",
-          intro: "توضح هذه السياسة كيفية تعاملنا مع بياناتك وكيف تعمل عمليات الاسترداد لمنتجاتنا التعليمية والاشتراكات الخاصة بتعليم الفوركس والعملات المشفّرة.",
+          title: "سياسة الخصوصية",
+          last_updated: "14 فبراير 2026",
+          intro: "توضح هذه السياسة كيفية تعاملنا مع بياناتك وشروط الدفع وعدم الاسترداد ومسؤولية العملات المشفّرة وإخلاءات مسؤولية إحالة الوسطاء لمنتجاتنا التعليمية واشتراكاتنا.",
           scope: {
             title: "النطاق",
             p1: "تنطبق هذه الشروط على جميع الدورات والجلسات المباشرة والقوالب والمستويات المتاحة على منصّتنا.",
@@ -5568,7 +5645,7 @@ const NEW_PAGE_STRINGS = {
           },
           payments: {
             title: "المدفوعات والتسعير (USDT فقط)",
-            p1: "تُجرى جميع المبيعات حصريًا بـ USDT. حيثما أمكن، نقبل USDT على شبكة TRC20 فقط.",
+            p1: "تُجرى جميع المبيعات حصريًا بـ USDT. حيثما أمكن، نقبل USDT على شبكتي TRC20 و ERC20.",
             li1: "قد تُعرض الأسعار بعملتك المحلية للراحة، لكن التسوية النهائية تتم بـ USDT.",
             li2: "رسوم الشبكة وأوقات تأكيد المعاملات خارجة عن سيطرتنا.",
             li3: "أنت مسؤول عن إرسال المبلغ الصحيح إلى العنوان الصحيح على السلسلة الصحيحة. الأموال المرسلة بشكل خاطئ قد لا يمكن استرجاعها.",
@@ -5579,11 +5656,8 @@ const NEW_PAGE_STRINGS = {
             title: "الوصول، التجديد والإلغاء",
             li1: "الوصول إلى المحتوى الرقمي شخصي وغير قابل للتحويل.",
             li2: "تتجدّد الاشتراكات تلقائيًا ما لم تُلغ قبل تاريخ الفوترة التالي.",
-            li3: "الإلغاء يوقف الرسوم المستقبلية ولا يوفّر استردادًا للفترات السابقة."
-          },
-          chargebacks: {
-            title: "الاعتراضات والنزاعات",
-            p1: "يرجى التواصل معنا أولًا لحل مشكلات الفوترة أو الوصول. قد يؤدي النزاع غير المصرّح به إلى تعليق الحساب."
+            li3: "الإلغاء يوقف الرسوم المستقبلية ولا يمنحك حق استرداد أو تعويض عن الفترات السابقة.",
+            li4: "نحتفظ بحق إلغاء وصول أي مستخدم ينتهك هذه الشروط دون تعويض."
           }
         },
         privacy: {
@@ -5617,9 +5691,9 @@ const NEW_PAGE_STRINGS = {
           last_updated: "آخر تحديث",
           download_pdf: "تحميل كملف PDF",
           contact: "تواصل معنا",
-          contact_text: "للاستفسارات حول الخصوصية أو طلبات الاسترداد، تواصل معنا عبر ",
+          contact_text: "للاستفسارات حول الخصوصية أو السياسات، تواصل معنا عبر ",
           support_email: "support@promrkts.com",
-          disclaimer: "لا يُعد أي مما ورد هنا نصيحة مالية. التداول ينطوي على مخاطر كبيرة بالخسارة. يُقدَّم المحتوى التعليمي كما هو ودون أي ضمانات."
+          disclaimer: "لا يُعد أي مما ورد هنا نصيحة مالية. التداول ينطوي على مخاطر كبيرة بالخسارة. يُقدَّم المحتوى التعليمي كما هو ودون أي ضمانات. جميع المبيعات نهائية — لا استردادات."
         }
       },
       company: {
@@ -5888,90 +5962,106 @@ const NEW_PAGE_STRINGS = {
         },
       },
       legal: {
-        refund: {
-          title: "Politique de remboursement",
-          p1: "Si vous n’êtes pas satisfait dans les 7 jours suivant l’achat, contactez le support pour un remboursement total (conditions applicables).",
-          p2: "Les remboursements excluent l’usage abusif du contenu, le partage ou la violation des politiques.",
-          p3: "Pour initier un remboursement, envoyez un e-mail au support avec votre numéro de commande et la raison.",
-          eligibility: "Éligibilité : premier achat d’un produit/niveau donné, avec une utilisation raisonnable dans les limites du fair use.",
-          exclusions: "Exclusions : copie/partage du contenu, téléchargement d’une grande partie des supports, partage de compte ou abus de politique.",
-          digital: "Étant donné que l’accès est numérique, les remboursements peuvent être partiels ou refusés si une grande partie du contenu a été consommée.",
-          method: "Les remboursements sont effectués en USDT sur le même réseau utilisé pour le paiement. Les frais de réseau ne sont pas remboursables.",
-          timeline: "Délai de traitement : jusqu’à 10 jours ouvrables après approbation, hors délais de réseau.",
-          process: "Pour demander un remboursement, envoyez un e-mail au support avec votre identifiant de commande, votre adresse de portefeuille et le motif."
+        no_refund: {
+          title: "Politique de non-remboursement",
+          intro: "Toutes les ventes de produits numériques, cours, abonnements et supports éducatifs sur cette plateforme sont définitives. En raison de la nature du contenu numérique, nous n'émettons aucun remboursement en aucune circonstance.",
+          li1: "Tous les achats sont non remboursables. En finalisant un achat, vous reconnaissez et acceptez cette politique.",
+          li2: "Dans des cas uniques et exceptionnels, un remboursement partiel peut être envisagé à notre seule discrétion. Cela n'est pas garanti et est évalué au cas par cas.",
+          li3: "Les demandes de remboursement partiel doivent être soumises dans les 7 jours suivant l'achat avec un motif valable et des détails justificatifs.",
+          li4: "Tout remboursement partiel approuvé sera émis en USDT à l'adresse de portefeuille d'origine. Les frais de réseau ne sont pas remboursables.",
+          li5: "Les rétrofacturations, litiges ou tentatives d'annulation de paiements sans autorisation préalable entraîneront la suspension immédiate du compte et d'éventuelles poursuites judiciaires."
+        },
+        crypto_liability: {
+          title: "Responsabilité des paiements en cryptomonnaie",
+          intro: "Tous les paiements sur cette plateforme sont traités exclusivement en cryptomonnaie (USDT). En effectuant un paiement, vous reconnaissez et acceptez ce qui suit :",
+          li1: "Vous êtes seul responsable de vérifier l'adresse du portefeuille, le réseau (ex. TRC20, ERC20) et le montant du paiement avant d'initier toute transaction.",
+          li2: "Nous ne sommes pas responsables de toute perte de fonds résultant d'adresses de portefeuille incorrectes, d'un mauvais choix de réseau, de frais de gas insuffisants ou de toute autre erreur de l'utilisateur.",
+          li3: "Les transactions en cryptomonnaie sont irréversibles par nature. Une fois confirmée sur la blockchain, une transaction ne peut être annulée, inversée ou récupérée par nous.",
+          li4: "Les frais de réseau, frais de gas et délais de confirmation sont entièrement hors de notre contrôle et relèvent de la seule responsabilité de l'expéditeur.",
+          li5: "Nous ne sommes pas responsables des retards, échecs ou pertes causés par la congestion du réseau blockchain, des pannes ou des problèmes de portefeuilles/plateformes tiers.",
+          li6: "Les transactions mal envoyées, sous-payées ou surpayées peuvent entraîner une perte de fonds. Nous n'avons aucune obligation de récupérer ou de compenser de telles erreurs."
+        },
+        ib_disclaimer: {
+          title: "Avertissement relatif au partenaire courtier introducteur (IB)",
+          intro: "Cette plateforme peut orienter les utilisateurs vers des services de courtage tiers via nos partenariats de courtier introducteur (IB). En utilisant tout lien de parrainage ou en vous inscrivant via notre programme IB, vous reconnaissez et acceptez ce qui suit :",
+          li1: "Nous agissons uniquement en tant que courtier introducteur et ne fournissons pas de services de courtage, de trading ou de conseil financier. Nous ne détenons, ne gérons ni n'accédons à vos fonds de trading.",
+          li2: "Tout courtier vers lequel nous vous orientons est une entité tierce indépendante. Nous ne sommes pas responsables de ses actions, politiques, conditions de trading, performances de plateforme ou conformité réglementaire.",
+          li3: "Le trading du forex, des CFD, des cryptomonnaies et d'autres instruments financiers via tout courtier comporte un risque substantiel de perte. Vous pouvez perdre une partie ou la totalité de votre capital investi. Les performances passées ne préjugent pas des résultats futurs.",
+          li4: "Nous ne garantissons pas la solvabilité, la fiabilité ou le statut réglementaire d'un courtier partenaire. Vous êtes responsable de mener votre propre diligence raisonnable avant d'ouvrir un compte ou de déposer des fonds.",
+          li5: "Nous ne sommes pas responsables des pertes financières, dommages ou litiges découlant de votre utilisation des services d'un courtier partenaire, y compris les pertes de trading, les problèmes de retrait, les pannes de plateforme ou les litiges de compte.",
+          li6: "Les liens de parrainage de courtier peuvent générer des commissions pour nous. Cela n'influence pas le contenu éducatif que nous fournissons, et notre relation IB ne constitue pas une approbation ou une garantie des services d'un courtier.",
+          li7: "Vous êtes seul responsable de comprendre et de respecter les lois et réglementations applicables au trading dans votre juridiction. Certains services de courtage peuvent ne pas être disponibles dans toutes les régions.",
+          li8: "En vous inscrivant via nos liens de parrainage, vous acceptez les conditions de service, la politique de confidentialité et les avertissements sur les risques du courtier partenaire, qui sont distincts des nôtres."
         },
         terms: {
           title: "Conditions générales",
-          last_updated: "18 decembre 2025",
+          last_updated: "14 février 2026",
           intro:
             "En utilisant cette plateforme, en vous inscrivant à nos cours ou en achetant du contenu numérique, vous acceptez ces conditions générales. Veuillez les lire attentivement avant de continuer.",
           scope: {
             title: "Portée",
-            p1: "Ces conditions régissent votre utilisation de nos services éducatifs, cours, abonnements et accès à la communauté, axés sur l’éducation au trading forex et crypto.",
-            p2: "Tout le contenu fourni est à des fins éducatives et ne constitue pas un conseil financier ou d’investissement."
+            p1: "Ces conditions régissent votre utilisation de nos services éducatifs, cours, abonnements et accès à la communauté, axés sur l'éducation au trading forex et crypto.",
+            p2: "Tout le contenu fourni est à des fins éducatives et ne constitue pas un conseil financier ou d'investissement."
           },
           use: {
             title: "Utilisation du contenu & propriété intellectuelle",
-            p1: "Vous bénéficiez d’une licence personnelle, non transférable et limitée pour accéder à nos supports éducatifs et les utiliser. Il est interdit de partager, revendre, distribuer ou diffuser publiquement notre contenu sans autorisation écrite.",
-            p2: "Toutes les vidéos, PDF et modèles des cours sont protégés par le droit d’auteur. Une utilisation non autorisée peut entraîner la résiliation du compte et des poursuites."
+            p1: "Vous bénéficiez d'une licence personnelle, non transférable et limitée pour accéder à nos supports éducatifs et les utiliser. Il est interdit de partager, revendre, distribuer ou diffuser publiquement notre contenu sans autorisation écrite.",
+            p2: "Toutes les vidéos, PDF et modèles des cours sont protégés par le droit d'auteur. Une utilisation non autorisée peut entraîner la résiliation du compte et des poursuites."
           },
           conduct: {
-            title: "Comportement de l’utilisateur",
-            p1: "Vous vous engagez à ne pas abuser de la plateforme, à ne pas frauder, à ne pas partager votre compte et à ne pas tenter d’accéder sans autorisation à nos systèmes.",
-            p2: "Nous nous réservons le droit de suspendre ou de résilier les comptes impliqués dans le piratage de contenu, un comportement abusif ou toute activité compromettant l’intégrité de la plateforme."
+            title: "Comportement de l'utilisateur",
+            p1: "Vous vous engagez à ne pas abuser de la plateforme, à ne pas frauder, à ne pas partager votre compte et à ne pas tenter d'accéder sans autorisation à nos systèmes.",
+            p2: "Nous nous réservons le droit de suspendre ou de résilier les comptes impliqués dans le piratage de contenu, un comportement abusif ou toute activité compromettant l'intégrité de la plateforme."
           },
           payments: {
-            title: "Paiements & remboursements",
-            p1: "Tous les paiements sont traités exclusivement en USDT. Veuillez consulter notre Politique de remboursement pour les conditions d’éligibilité et les délais de traitement.",
-            p2: "Vous êtes responsable de vérifier les adresses de paiement et le réseau sélectionné avant d’envoyer des transactions crypto."
+            title: "Paiements et tarifs (USDT uniquement)",
+            p1: "Tous les paiements sont traités exclusivement en USDT. Vous êtes responsable de vérifier les adresses de paiement et le réseau sélectionné avant d'envoyer des transactions crypto.",
+            p2: "Les prix peuvent être affichés dans votre devise locale à titre indicatif, mais le règlement se fait toujours en USDT."
           },
           disclaimer: {
             title: "Avertissement sur les risques & finalité éducative",
             p1: "Le trading du forex, des cryptomonnaies et des marchés financiers comporte des risques importants. Les performances passées ne préjugent pas des résultats futurs.",
-            p2: "Nos cours, modèles et exemples sont purement éducatifs et ne constituent pas un conseil financier, une recommandation de trading ou une orientation d’investissement.",
+            p2: "Nos cours, modèles et exemples sont purement éducatifs et ne constituent pas un conseil financier, une recommandation de trading ou une orientation d'investissement.",
             p3: "Vous reconnaissez être seul responsable de toute décision de trading prise sur la base de nos supports."
           },
           liability: {
             title: "Limitation de responsabilité",
-            p1: "Nous déclinons toute responsabilité pour les pertes, dommages ou réclamations résultant de votre utilisation de la plateforme ou de l’application de nos contenus éducatifs.",
-            p2: "Toutes les informations sont fournies « en l’état » sans garantie d’exactitude, d’exhaustivité ou d’adéquation à un usage particulier."
+            p1: "Nous déclinons toute responsabilité pour les pertes, dommages ou réclamations résultant de votre utilisation de la plateforme, de l'application de nos contenus éducatifs, des activités de trading ou de l'utilisation des services d'un courtier partenaire.",
+            p2: "Toutes les informations sont fournies « en l'état » sans garantie d'exactitude, d'exhaustivité ou d'adéquation à un usage particulier. Nous ne garantissons pas les profits, revenus, performances ou résultats de trading."
           },
           modifications: {
             title: "Modifications des conditions",
-            p1: "Nous pouvons mettre à jour ces conditions périodiquement pour refléter de nouvelles fonctionnalités, la législation ou nos pratiques. La poursuite de l’utilisation après mise à jour vaut acceptation."
+            p1: "Nous pouvons mettre à jour ces conditions périodiquement pour refléter de nouvelles fonctionnalités, la législation ou nos pratiques. La poursuite de l'utilisation après mise à jour vaut acceptation."
           }
         },
         payments: {
-          usdt_only: "Nous n’acceptons que l’USDT pour l’instant afin de proposer la crypto la plus rapide et la plus fiable pour les paiements et d’impliquer nos étudiants tôt dans l’écosystème crypto. Merci de votre patience pendant que nous élargissons nos moyens de paiement.",
-          nb: "NB : Nous n’acceptons que TRC20 afin de minimiser les frais pour nos étudiants et nous exigeons un hash de transaction (tx hash) à la fin du paiement pour vérifier chaque transaction. Merci de votre coopération."
+          usdt_only: "Nous n'acceptons que l'USDT pour l'instant afin de proposer la crypto la plus rapide et la plus fiable pour les paiements et d'impliquer nos étudiants tôt dans l'écosystème crypto. Merci de votre patience pendant que nous élargissons nos moyens de paiement.",
+          nb: "NB : Nous n'acceptons que TRC20 afin de minimiser les frais pour nos étudiants et nous exigeons un hash de transaction (tx hash) à la fin du paiement pour vérifier chaque transaction. Merci de votre coopération."
         },
         privacy_refund: {
-          title: "Politique de confidentialité et de remboursement",
-          last_updated: "18 decembre 2025",
-          intro: "Cette politique explique comment nous gérons vos données et comment fonctionnent les remboursements pour nos produits éducatifs et abonnements liés au trading forex et crypto.",
+          title: "Politique de confidentialité",
+          last_updated: "14 février 2026",
+          intro: "Cette politique explique comment nous gérons vos données, nos conditions de paiement et de non-remboursement, la responsabilité liée aux cryptomonnaies et les avertissements relatifs aux courtiers partenaires pour nos produits éducatifs et abonnements.",
           scope: {
             title: "Portée",
-            p1: "Ces conditions s’appliquent à tous les cours, sessions en direct, modèles et niveaux d’adhésion disponibles sur notre plateforme.",
+            p1: "Ces conditions s'appliquent à tous les cours, sessions en direct, modèles et niveaux d'adhésion disponibles sur notre plateforme.",
             p2: "Les marchés financiers sont risqués. Nous fournissons uniquement de la formation — pas de conseil en investissement, ni de signaux, ni de gestion de portefeuille."
           },
           payments: {
             title: "Paiements et tarifs (USDT uniquement)",
-            p1: "Toutes les ventes sont traitées exclusivement en USDT. Lorsque c’est possible, nous acceptons l’USDT uniquement sur le réseau TRC20.",
+            p1: "Toutes les ventes sont traitées exclusivement en USDT. Lorsque c'est possible, nous acceptons l'USDT sur les réseaux TRC20 et ERC20.",
             li1: "Les prix peuvent être affichés dans votre devise locale à titre indicatif, mais le règlement se fait en USDT.",
             li2: "Les frais de réseau et les délais de confirmation ne dépendent pas de nous.",
-            li3: "Vous êtes responsable de l’envoi du montant exact à la bonne adresse sur la bonne chaîne. Des fonds mal envoyés peuvent être irrécupérables.",
+            li3: "Vous êtes responsable de l'envoi du montant exact à la bonne adresse sur la bonne chaîne. Des fonds mal envoyés peuvent être irrécupérables.",
             note: "Remarque",
             note_text: "Les paiements sont confirmés après un nombre suffisant de validations on-chain."
           },
           access: {
             title: "Accès, renouvellements et annulations",
-            li1: "L’accès au contenu numérique est personnel et non transférable.",
+            li1: "L'accès au contenu numérique est personnel et non transférable.",
             li2: "Les abonnements se renouvellent automatiquement sauf annulation avant la prochaine date de facturation.",
-            li3: "L’annulation arrête les paiements futurs ; elle ne rembourse pas rétroactivement les périodes antérieures."
-          },
-          chargebacks: {
-            title: "Rétrofacturations et litiges",
-            p1: "Veuillez nous contacter d’abord pour résoudre les problèmes de facturation ou d’accès. Les litiges non autorisés peuvent entraîner la suspension du compte."
+            li3: "L'annulation arrête les paiements futurs ; elle ne vous donne droit à aucun remboursement ou compensation pour les périodes antérieures.",
+            li4: "Nous nous réservons le droit de révoquer l'accès de tout utilisateur qui enfreint ces conditions sans compensation."
           }
         },
         privacy: {
@@ -5979,7 +6069,7 @@ const NEW_PAGE_STRINGS = {
             title: "Confidentialité : données collectées",
             account: "Données de compte : nom, e-mail et identifiants de connexion.",
             billing: "Métadonnées de facturation : ID de transaction, adresse de portefeuille et détails du plan (aucune clé privée collectée).",
-            usage: "Analyses d’utilisation : pages vues, progression, informations sur l’appareil et localisation approximative (prévention de la fraude et amélioration du produit)."
+            usage: "Analyses d'utilisation : pages vues, progression, informations sur l'appareil et localisation approximative (prévention de la fraude et amélioration du produit)."
           },
           use: {
             title: "Comment nous utilisons vos données",
@@ -5989,25 +6079,25 @@ const NEW_PAGE_STRINGS = {
           },
           cookies: {
             title: "Cookies, analyses et services tiers",
-            p1: "Nous utilisons des cookies et technologies similaires pour l’authentification, les préférences et l’analyse. Certains prestataires tiers peuvent traiter des données personnelles limitées selon leurs propres politiques."
+            p1: "Nous utilisons des cookies et technologies similaires pour l'authentification, les préférences et l'analyse. Certains prestataires tiers peuvent traiter des données personnelles limitées selon leurs propres politiques."
           },
           security: {
             title: "Conservation et sécurité des données",
-            retention: "Nous conservons les données uniquement aussi longtemps que nécessaire pour les finalités décrites ou tel qu’exigé par la loi.",
-            measures: "Nous appliquons des mesures techniques et organisationnelles, mais aucune méthode n’est 100 % sûre."
+            retention: "Nous conservons les données uniquement aussi longtemps que nécessaire pour les finalités décrites ou tel qu'exigé par la loi.",
+            measures: "Nous appliquons des mesures techniques et organisationnelles, mais aucune méthode n'est 100 % sûre."
           },
           rights: {
             title: "Vos droits",
-            p1: "Sous réserve des lois applicables, vous pouvez demander l’accès, la rectification, la suppression ou la portabilité de vos données. Une vérification peut être requise."
+            p1: "Sous réserve des lois applicables, vous pouvez demander l'accès, la rectification, la suppression ou la portabilité de vos données. Une vérification peut être requise."
           }
         },
         common: {
           last_updated: "Dernière mise à jour",
           contact: "Contact",
           download_pdf: "Télécharger en PDF",
-          contact_text: "Pour toute question relative à la confidentialité ou aux remboursements, contactez-nous à ",
+          contact_text: "Pour toute question relative à la confidentialité ou à nos politiques, contactez-nous à ",
           support_email: "support@promrkts.com",
-          disclaimer: "Rien ici ne constitue un conseil financier. Le trading comporte un risque significatif de perte. Le contenu éducatif est fourni tel quel, sans garantie."
+          disclaimer: "Rien ici ne constitue un conseil financier. Le trading comporte un risque significatif de perte. Le contenu éducatif est fourni tel quel, sans garantie. Toutes les ventes sont définitives — aucun remboursement."
         }
       },
     },

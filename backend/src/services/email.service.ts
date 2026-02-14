@@ -224,7 +224,7 @@ export async function sendWelcomeEmailAfterVerification(user: { email: string; n
       Welcome aboard,
     </p>
     <p style="font-family: 'Segoe Script', 'Bradley Hand', 'Dancing Script', cursive; font-size: 26px; color: #1a1a1a; margin: 4px 0 6px; line-height: 1.2;">
-    محمد
+    Mohammed
     </p>
     <p style="color: #1a1a1a; font-size: 14px; font-weight: 600; margin: 0 0 2px;">
       Moe Ali

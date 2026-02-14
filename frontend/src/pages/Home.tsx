@@ -3573,6 +3573,143 @@ const Home: React.FC = () => {
                 </>)}
               </>
             )}
+          {/* TradingView Pro Indicator */}
+          <Box my={{ base: 8, md: 14 }} px={{ base: 4, md: 0 }}>
+            <Box
+              p={{ base: 6, md: 10 }}
+              borderRadius="28px"
+              bg={UI.surfaceLight}
+              border="1px solid"
+              borderColor={UI.border}
+              position="relative"
+              overflow="hidden"
+            >
+              <Box
+                position="absolute"
+                top="-40%"
+                right="-10%"
+                w="60%"
+                h="120%"
+                bgGradient="radial(ellipse at center, rgba(101, 168, 191, 0.06), transparent 70%)"
+                pointerEvents="none"
+              />
+              <VStack spacing={6} position="relative" align="stretch">
+                <VStack spacing={2} textAlign="center">
+                  <Badge
+                    bg="rgba(101, 168, 191, 0.12)"
+                    color="#65a8bf"
+                    px={3}
+                    py={1}
+                    borderRadius="full"
+                    fontSize="xs"
+                    fontWeight="600"
+                    textTransform="uppercase"
+                    letterSpacing="wider"
+                  >
+                    {t("home.indicator.badge", "Coming Soon")}
+                  </Badge>
+                  <Heading
+                    size={{ base: "md", md: "lg" }}
+                    bgGradient="linear(to-r, #65a8bf, #b7a27d)"
+                    bgClip="text"
+                    fontWeight="700"
+                  >
+                    {t("home.indicator.title", "promrkts TradingView Indicator")}
+                  </Heading>
+                  <Text maxW="2xl" fontSize={{ base: "sm", md: "md" }} opacity={0.85}>
+                    {t("home.indicator.subtitle", "Our proprietary indicator applies the exact strategy we teach — built for TradingView, designed for precision. Choose the setting that matches your trading style.")}
+                  </Text>
+                </VStack>
+
+                <SimpleGrid columns={{ base: 1, md: 3 }} spacing={5}>
+                  {/* Swing */}
+                  <Box
+                    p={5}
+                    borderRadius="18px"
+                    bg={isDark ? "rgba(255,255,255,0.03)" : "rgba(0,0,0,0.02)"}
+                    border="1px solid"
+                    borderColor={UI.border}
+                    _hover={{ borderColor: "#65a8bf", transform: "translateY(-2px)" }}
+                    transition="all 0.3s"
+                  >
+                    <VStack spacing={3} align="start">
+                      <HStack>
+                        <Box w="10px" h="10px" borderRadius="full" bg="#65a8bf" />
+                        <Text fontWeight="700" fontSize="md">
+                          {t("home.indicator.swing.title", "Swing")}
+                        </Text>
+                      </HStack>
+                      <Text fontSize="sm" opacity={0.8}>
+                        {t("home.indicator.swing.desc", "Designed for traders who hold positions for days to weeks. Captures larger market moves with fewer signals, ideal for those who prefer a patient, high-conviction approach.")}
+                      </Text>
+                      <Badge colorScheme="blue" fontSize="xs" borderRadius="full">
+                        {t("home.indicator.swing.timeframe", "4H — Weekly")}
+                      </Badge>
+                    </VStack>
+                  </Box>
+
+                  {/* Scalp */}
+                  <Box
+                    p={5}
+                    borderRadius="18px"
+                    bg={isDark ? "rgba(255,255,255,0.03)" : "rgba(0,0,0,0.02)"}
+                    border="1px solid"
+                    borderColor={UI.border}
+                    _hover={{ borderColor: "#b7a27d", transform: "translateY(-2px)" }}
+                    transition="all 0.3s"
+                  >
+                    <VStack spacing={3} align="start">
+                      <HStack>
+                        <Box w="10px" h="10px" borderRadius="full" bg="#b7a27d" />
+                        <Text fontWeight="700" fontSize="md">
+                          {t("home.indicator.scalp.title", "Scalp")}
+                        </Text>
+                      </HStack>
+                      <Text fontSize="sm" opacity={0.8}>
+                        {t("home.indicator.scalp.desc", "Built for fast-paced traders targeting quick entries and exits. Generates frequent signals on lower timeframes for those who thrive in volatile, short-term conditions.")}
+                      </Text>
+                      <Badge colorScheme="orange" fontSize="xs" borderRadius="full">
+                        {t("home.indicator.scalp.timeframe", "1M — 15M")}
+                      </Badge>
+                    </VStack>
+                  </Box>
+
+                  {/* Daily */}
+                  <Box
+                    p={5}
+                    borderRadius="18px"
+                    bg={isDark ? "rgba(255,255,255,0.03)" : "rgba(0,0,0,0.02)"}
+                    border="1px solid"
+                    borderColor={UI.border}
+                    _hover={{ borderColor: "#65a8bf", transform: "translateY(-2px)" }}
+                    transition="all 0.3s"
+                  >
+                    <VStack spacing={3} align="start">
+                      <HStack>
+                        <Box w="10px" h="10px" borderRadius="full" bg="linear-gradient(135deg, #65a8bf, #b7a27d)" />
+                        <Text fontWeight="700" fontSize="md">
+                          {t("home.indicator.daily.title", "Daily")}
+                        </Text>
+                      </HStack>
+                      <Text fontSize="sm" opacity={0.8}>
+                        {t("home.indicator.daily.desc", "The balanced middle ground — one clean signal per day based on daily candle structure. Perfect for traders who want clarity without constant screen time.")}
+                      </Text>
+                      <Badge colorScheme="teal" fontSize="xs" borderRadius="full">
+                        {t("home.indicator.daily.timeframe", "1H — Daily")}
+                      </Badge>
+                    </VStack>
+                  </Box>
+                </SimpleGrid>
+
+                <VStack spacing={2} textAlign="center" pt={2}>
+                  <Text fontSize="sm" opacity={0.7} maxW="lg">
+                    {t("home.indicator.note", "The indicator will be available as a paid add-on for enrolled students. It does not guarantee profits — it is a tool to support your analysis using our methodology.")}
+                  </Text>
+                </VStack>
+              </VStack>
+            </Box>
+          </Box>
+
           {/* Broker CTA — always at the very bottom */}
           <Box my={{ base: 8, md: 14 }} px={{ base: 4, md: 0 }}>
             <Box

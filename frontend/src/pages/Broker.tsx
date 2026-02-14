@@ -15,7 +15,6 @@ import {
   Image,
   useColorMode,
 } from "@chakra-ui/react";
-
 import { motion } from "framer-motion";
 import {
   ShieldCheck,
@@ -32,7 +31,6 @@ import {
   BarChart3,
   Wallet,
 } from "lucide-react";
-
 import SpotlightCard from "../components/SpotlightCard";
 
 const MotionBox = motion(Box);
