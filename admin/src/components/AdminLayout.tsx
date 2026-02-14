@@ -34,6 +34,7 @@ import {
   DarkMode as DarkModeIcon,
   LightMode as LightModeIcon,
   ChevronLeft as ChevronLeftIcon,
+  Logout as LogoutIcon,
 } from '@mui/icons-material';
 import { useThemeMode } from '@/theme/ThemeProvider';
 import { usePathname, useRouter } from 'next/navigation';
@@ -67,15 +68,31 @@ export default function AdminLayout({ children }: { children: React.ReactNode })
   const isMobile = useMediaQuery(theme.breakpoints.down('md'));
   const [mobileOpen, setMobileOpen] = useState(false);
   const [collapsed, setCollapsed] = useState(false);
+  const [user, setUser] = useState<any>(null);
   const { mode, toggleMode } = useThemeMode();
   const pathname = usePathname();
   const router = useRouter();
+
+  React.useEffect(() => {
+    const userData = localStorage.getItem('user');
+    if (userData) {
+      try {
+        setUser(JSON.parse(userData));
+      } catch {}
+    }
+  }, []);
 
   const drawerWidth = collapsed && !isMobile ? DRAWER_COLLAPSED : DRAWER_WIDTH;
 
   const handleNav = (path: string) => {
     router.push(path);
     if (isMobile) setMobileOpen(false);
+  };
+
+  const handleLogout = () => {
+    localStorage.removeItem('token');
+    localStorage.removeItem('user');
+    router.push('/login');
   };
 
   const drawerContent = (
@@ -188,9 +205,26 @@ export default function AdminLayout({ children }: { children: React.ReactNode })
             <Typography variant="h6" noWrap sx={{ flex: 1, fontSize: { xs: '1rem', md: '1.15rem' } }}>
               Admin Dashboard
             </Typography>
+            {user && (
+              <Box sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
+                <Avatar sx={{ width: 32, height: 32, bgcolor: 'primary.main', fontSize: 14 }}>
+                  {(user.name || user.email || 'A')[0].toUpperCase()}
+                </Avatar>
+                {!isMobile && (
+                  <Typography variant="body2" sx={{ maxWidth: 150, overflow: 'hidden', textOverflow: 'ellipsis' }}>
+                    {user.name || user.email}
+                  </Typography>
+                )}
+              </Box>
+            )}
             <Tooltip title={mode === 'dark' ? 'Light mode' : 'Dark mode'}>
               <IconButton onClick={toggleMode} size="small">
                 {mode === 'dark' ? <LightModeIcon /> : <DarkModeIcon />}
+              </IconButton>
+            </Tooltip>
+            <Tooltip title="Logout">
+              <IconButton onClick={handleLogout} size="small" color="error">
+                <LogoutIcon />
               </IconButton>
             </Tooltip>
           </Toolbar>
