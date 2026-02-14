@@ -21,8 +21,6 @@ import {
   ListItem,
   ListIcon,
   Avatar,
-  Wrap,
-  WrapItem,
 } from "@chakra-ui/react";
 import { useTranslation } from "react-i18next";
 import { Link as RouterLink, useSearchParams } from "react-router-dom";
@@ -41,7 +39,6 @@ import {
   BarChart3,
   Target,
   Users,
-  Award,
 } from "lucide-react";
 
 const MotionBox = motion(Box);
