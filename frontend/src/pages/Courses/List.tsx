@@ -31,7 +31,7 @@ import { productFunnel } from "../../utils/tracking";
 import { Link as RouterLink } from "react-router-dom";
 import api from "../../api/client";
 import { useTranslation } from "react-i18next";
-import { Star, TrendingUp, Users, Award, Zap, CheckCircle, ArrowRight, Sparkles } from "lucide-react";
+import { Star, TrendingUp, Users, Award, Zap, CheckCircle, ArrowRight, Sparkles, LineChart, Crosshair, Monitor } from "lucide-react";
 // CheckCircle and ArrowRight used in enhanced course cards below
 import { motion } from "framer-motion";
 
@@ -300,6 +300,14 @@ const CoursesList: React.FC = () => {
                   _selected={{ bg: "#65a8bf" }}
                 >
                   {t("community.tab", { defaultValue: "Community" })}
+                </Tab>
+                <Tab
+                  borderRadius="md"
+                  fontWeight="semibold"
+                  _hover={{ bg: "rgba(255,255,255,0.08)" }}
+                  _selected={{ bg: "linear-gradient(135deg, #65a8bf, #b7a27d)" }}
+                >
+                  {t("indicators.tab", { defaultValue: "Indicators" })}
                 </Tab>
               </TabList>
               <TabPanels>
@@ -657,6 +665,198 @@ const CoursesList: React.FC = () => {
                       </Text>
                     )}
                   </SimpleGrid>
+                </TabPanel>
+                {/* Indicators tab */}
+                <TabPanel px={0}>
+                  <VStack spacing={6} align="stretch">
+                    <Box
+                      textAlign="center"
+                      p={{ base: 8, md: 12 }}
+                      borderRadius="2xl"
+                      bg={isDark
+                        ? 'linear-gradient(135deg, rgba(101, 168, 191, 0.06) 0%, rgba(183, 162, 125, 0.06) 100%)'
+                        : 'linear-gradient(135deg, rgba(101, 168, 191, 0.04) 0%, rgba(183, 162, 125, 0.04) 100%)'
+                      }
+                      border="1px solid"
+                      borderColor={isDark ? 'rgba(101, 168, 191, 0.2)' : 'rgba(101, 168, 191, 0.15)'}
+                    >
+                      <VStack spacing={4}>
+                        <Badge
+                          bg="rgba(101, 168, 191, 0.12)"
+                          color={GOLD}
+                          px={4}
+                          py={1.5}
+                          borderRadius="full"
+                          fontSize="xs"
+                          fontWeight="700"
+                          textTransform="uppercase"
+                        >
+                          {t("indicators.badge", { defaultValue: "TradingView" })}
+                        </Badge>
+                        <Heading
+                          size={{ base: 'md', md: 'lg' }}
+                          bgGradient="linear(to-r, #65a8bf, #b7a27d)"
+                          bgClip="text"
+                          fontWeight="800"
+                        >
+                          {t("indicators.hero_title", { defaultValue: "Proprietary Trading Indicators" })}
+                        </Heading>
+                        <Text color={isDark ? 'whiteAlpha.700' : 'gray.600'} maxW="xl" mx="auto">
+                          {t("indicators.hero_sub", { defaultValue: "Auto Fibonacci, smart signals, and precision entries — built for TradingView, designed for serious traders." })}
+                        </Text>
+                      </VStack>
+                    </Box>
+
+                    <SimpleGrid columns={{ base: 1, md: 3 }} gap={6}>
+                      {[
+                        { key: 'swing', icon: LineChart, color: '#65a8bf', price: 39, timeframe: '4H — Weekly', desc: 'Swing trading with auto Fibonacci on prominent swings. Buy at 0.314, sell at 0.88 with auto SL & redraw.' },
+                        { key: 'scalp', icon: Crosshair, color: '#b7a27d', price: 29, timeframe: '1M — 15M', desc: 'Fast scalping entries with volume & trend confirmation. Optimized for quick in-and-out trades.' },
+                        { key: 'daily', icon: Monitor, color: '#65a8bf', price: 34, timeframe: '1H — Daily', desc: 'Day trading with EMA confluence, VWAP, session filters, and dual take-profit levels.' },
+                      ].map((ind, idx) => (
+                        <MotionBox
+                          key={ind.key}
+                          initial={{ opacity: 0, y: 20 }}
+                          animate={{ opacity: 1, y: 0 }}
+                          transition={{ duration: 0.4, delay: idx * 0.1 }}
+                          whileHover={{ y: -8 }}
+                        >
+                          <Box
+                            position="relative"
+                            bg={isDark
+                              ? 'linear-gradient(135deg, rgba(20, 20, 30, 0.9) 0%, rgba(30, 30, 45, 0.9) 100%)'
+                              : 'linear-gradient(135deg, rgba(255, 255, 255, 0.95) 0%, rgba(250, 250, 255, 0.95) 100%)'
+                            }
+                            border="1px solid"
+                            borderColor={`${ind.color}40`}
+                            borderRadius="2xl"
+                            overflow="hidden"
+                            boxShadow={isDark ? '0 8px 32px rgba(0,0,0,0.4)' : '0 8px 32px rgba(0,0,0,0.1)'}
+                            _hover={{ borderColor: ind.color, boxShadow: `0 12px 40px ${ind.color}33` }}
+                            transition="all 0.3s ease"
+                          >
+                            <VStack align="stretch" spacing={4} p={6}>
+                              <HStack justify="space-between">
+                                <HStack spacing={3}>
+                                  <Box
+                                    w={10} h={10} borderRadius="xl"
+                                    bg={`${ind.color}20`}
+                                    display="flex" alignItems="center" justifyContent="center"
+                                  >
+                                    <Icon as={ind.icon} boxSize={5} color={ind.color} />
+                                  </Box>
+                                  <VStack align="start" spacing={0}>
+                                    <Heading size="sm">
+                                      {t(`indicators.${ind.key}.name`, { defaultValue: `${ind.key.charAt(0).toUpperCase() + ind.key.slice(1)} Trader Pro` })}
+                                    </Heading>
+                                    <Badge bg={`${ind.color}20`} color={ind.color} borderRadius="full" fontSize="xs">
+                                      {ind.timeframe}
+                                    </Badge>
+                                  </VStack>
+                                </HStack>
+                              </HStack>
+
+                              <Text fontSize="sm" color={isDark ? 'whiteAlpha.700' : 'gray.600'} noOfLines={3}>
+                                {t(`indicators.${ind.key}.desc`, { defaultValue: ind.desc })}
+                              </Text>
+
+                              <VStack align="start" spacing={1}>
+                                <HStack spacing={2}>
+                                  <Icon as={CheckCircle} boxSize={4} color="green.500" />
+                                  <Text fontSize="sm" color={isDark ? 'whiteAlpha.800' : 'gray.700'}>
+                                    {t("indicators.feat_fib", { defaultValue: "Auto Fibonacci retracement" })}
+                                  </Text>
+                                </HStack>
+                                <HStack spacing={2}>
+                                  <Icon as={CheckCircle} boxSize={4} color="green.500" />
+                                  <Text fontSize="sm" color={isDark ? 'whiteAlpha.800' : 'gray.700'}>
+                                    {t("indicators.feat_signals", { defaultValue: "Smart buy/sell signals" })}
+                                  </Text>
+                                </HStack>
+                                <HStack spacing={2}>
+                                  <Icon as={CheckCircle} boxSize={4} color="green.500" />
+                                  <Text fontSize="sm" color={isDark ? 'whiteAlpha.800' : 'gray.700'}>
+                                    {t("indicators.feat_redraw", { defaultValue: "Auto-redraw on SL hit" })}
+                                  </Text>
+                                </HStack>
+                              </VStack>
+
+                              <HStack justify="space-between" align="center" pt={2}>
+                                <HStack align="baseline" spacing={1}>
+                                  <Text fontSize="sm" color={isDark ? 'whiteAlpha.600' : 'gray.500'}>$</Text>
+                                  <Text fontSize="2xl" fontWeight="800" bgGradient={`linear(to-r, ${ind.color}, #b7a27d)`} bgClip="text">
+                                    {ind.price}
+                                  </Text>
+                                  <Text fontSize="sm" color={isDark ? 'whiteAlpha.600' : 'gray.500'}>/mo</Text>
+                                </HStack>
+                                <Button
+                                  as={RouterLink}
+                                  to={`/products/indicators?tab=${ind.key}`}
+                                  size="md"
+                                  bg={`linear-gradient(135deg, ${ind.color}, #b7a27d)`}
+                                  color="white"
+                                  fontWeight="700"
+                                  px={6}
+                                  rightIcon={<ArrowRight size={16} />}
+                                  _hover={{ transform: 'translateY(-2px)', boxShadow: `0 8px 25px ${ind.color}66` }}
+                                  _active={{ transform: 'translateY(0)' }}
+                                  transition="all 0.2s"
+                                >
+                                  {t("indicators.subscribe", { defaultValue: "Subscribe" })}
+                                </Button>
+                              </HStack>
+                            </VStack>
+                          </Box>
+                        </MotionBox>
+                      ))}
+                    </SimpleGrid>
+
+                    {/* Bundle CTA */}
+                    <Box
+                      p={6}
+                      bg={isDark
+                        ? 'linear-gradient(135deg, rgba(183, 162, 125, 0.08) 0%, rgba(20, 20, 30, 0.9) 100%)'
+                        : 'linear-gradient(135deg, rgba(183, 162, 125, 0.06) 0%, rgba(255, 255, 255, 0.95) 100%)'
+                      }
+                      border="2px solid #b7a27d"
+                      borderRadius="2xl"
+                    >
+                      <HStack justify="space-between" align="center" flexWrap="wrap" gap={4}>
+                        <VStack align="start" spacing={1}>
+                          <Badge bg="linear-gradient(135deg, #b7a27d, #d4af37)" color="white" px={3} py={1} borderRadius="full" fontSize="xs" fontWeight="700">
+                            {t("indicators.best_value", { defaultValue: "BEST VALUE" })}
+                          </Badge>
+                          <Heading size="md" bgGradient="linear(to-r, #b7a27d, #65a8bf)" bgClip="text">
+                            {t("indicators.bundle_name", { defaultValue: "Complete Trading Suite" })}
+                          </Heading>
+                          <Text fontSize="sm" color={isDark ? 'whiteAlpha.700' : 'gray.600'}>
+                            {t("indicators.bundle_desc", { defaultValue: "All 3 indicators — Swing, Scalp & Day Trader. Save 30%." })}
+                          </Text>
+                        </VStack>
+                        <HStack spacing={4} align="center">
+                          <VStack spacing={0}>
+                            <Text fontSize="2xl" fontWeight="800" bgGradient="linear(to-r, #b7a27d, #65a8bf)" bgClip="text">
+                              $79/mo
+                            </Text>
+                          </VStack>
+                          <Button
+                            as={RouterLink}
+                            to="/products/indicators"
+                            size="lg"
+                            bg="linear-gradient(135deg, #b7a27d, #65a8bf)"
+                            color="white"
+                            fontWeight="700"
+                            px={8}
+                            rightIcon={<ArrowRight size={16} />}
+                            _hover={{ transform: 'translateY(-2px)', boxShadow: '0 8px 25px rgba(183, 162, 125, 0.4)' }}
+                            _active={{ transform: 'translateY(0)' }}
+                            transition="all 0.2s"
+                          >
+                            {t("indicators.view_all", { defaultValue: "View All & Subscribe" })}
+                          </Button>
+                        </HStack>
+                      </HStack>
+                    </Box>
+                  </VStack>
                 </TabPanel>
               </TabPanels>
             </Tabs>

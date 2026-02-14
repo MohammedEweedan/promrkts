@@ -3606,7 +3606,7 @@ const Home: React.FC = () => {
                     textTransform="uppercase"
                     letterSpacing="wider"
                   >
-                    {t("home.indicator.badge", "Coming Soon")}
+                    {t("home.indicator.badge", "Available Now")}
                   </Badge>
                   <Heading
                     size={{ base: "md", md: "lg" }}
@@ -3624,20 +3624,28 @@ const Home: React.FC = () => {
                 <SimpleGrid columns={{ base: 1, md: 3 }} spacing={5}>
                   {/* Swing */}
                   <Box
+                    as="a"
+                    href="/products/indicators?tab=swing"
                     p={5}
                     borderRadius="18px"
                     bg={isDark ? "rgba(255,255,255,0.03)" : "rgba(0,0,0,0.02)"}
                     border="1px solid"
                     borderColor={UI.border}
-                    _hover={{ borderColor: "#65a8bf", transform: "translateY(-2px)" }}
+                    _hover={{ borderColor: "#65a8bf", transform: "translateY(-2px)", cursor: "pointer" }}
                     transition="all 0.3s"
+                    textDecoration="none"
                   >
                     <VStack spacing={3} align="start">
-                      <HStack>
-                        <Box w="10px" h="10px" borderRadius="full" bg="#65a8bf" />
-                        <Text fontWeight="700" fontSize="md">
-                          {t("home.indicator.swing.title", "Swing")}
-                        </Text>
+                      <HStack justify="space-between" w="full">
+                        <HStack>
+                          <Box w="10px" h="10px" borderRadius="full" bg="#65a8bf" />
+                          <Text fontWeight="700" fontSize="md">
+                            {t("home.indicator.swing.title", "Swing")}
+                          </Text>
+                        </HStack>
+                        <Badge bg="rgba(101, 168, 191, 0.15)" color="#65a8bf" fontSize="xs" borderRadius="full">
+                          $39/mo
+                        </Badge>
                       </HStack>
                       <Text fontSize="sm" opacity={0.8}>
                         {t("home.indicator.swing.desc", "Designed for traders who hold positions for days to weeks. Captures larger market moves with fewer signals, ideal for those who prefer a patient, high-conviction approach.")}
@@ -3650,20 +3658,28 @@ const Home: React.FC = () => {
 
                   {/* Scalp */}
                   <Box
+                    as="a"
+                    href="/products/indicators?tab=scalp"
                     p={5}
                     borderRadius="18px"
                     bg={isDark ? "rgba(255,255,255,0.03)" : "rgba(0,0,0,0.02)"}
                     border="1px solid"
                     borderColor={UI.border}
-                    _hover={{ borderColor: "#b7a27d", transform: "translateY(-2px)" }}
+                    _hover={{ borderColor: "#b7a27d", transform: "translateY(-2px)", cursor: "pointer" }}
                     transition="all 0.3s"
+                    textDecoration="none"
                   >
                     <VStack spacing={3} align="start">
-                      <HStack>
-                        <Box w="10px" h="10px" borderRadius="full" bg="#b7a27d" />
-                        <Text fontWeight="700" fontSize="md">
-                          {t("home.indicator.scalp.title", "Scalp")}
-                        </Text>
+                      <HStack justify="space-between" w="full">
+                        <HStack>
+                          <Box w="10px" h="10px" borderRadius="full" bg="#b7a27d" />
+                          <Text fontWeight="700" fontSize="md">
+                            {t("home.indicator.scalp.title", "Scalp")}
+                          </Text>
+                        </HStack>
+                        <Badge bg="rgba(183, 162, 125, 0.15)" color="#b7a27d" fontSize="xs" borderRadius="full">
+                          $29/mo
+                        </Badge>
                       </HStack>
                       <Text fontSize="sm" opacity={0.8}>
                         {t("home.indicator.scalp.desc", "Built for fast-paced traders targeting quick entries and exits. Generates frequent signals on lower timeframes for those who thrive in volatile, short-term conditions.")}
@@ -3676,20 +3692,28 @@ const Home: React.FC = () => {
 
                   {/* Daily */}
                   <Box
+                    as="a"
+                    href="/products/indicators?tab=daily"
                     p={5}
                     borderRadius="18px"
                     bg={isDark ? "rgba(255,255,255,0.03)" : "rgba(0,0,0,0.02)"}
                     border="1px solid"
                     borderColor={UI.border}
-                    _hover={{ borderColor: "#65a8bf", transform: "translateY(-2px)" }}
+                    _hover={{ borderColor: "#65a8bf", transform: "translateY(-2px)", cursor: "pointer" }}
                     transition="all 0.3s"
+                    textDecoration="none"
                   >
                     <VStack spacing={3} align="start">
-                      <HStack>
-                        <Box w="10px" h="10px" borderRadius="full" bg="linear-gradient(135deg, #65a8bf, #b7a27d)" />
-                        <Text fontWeight="700" fontSize="md">
-                          {t("home.indicator.daily.title", "Daily")}
-                        </Text>
+                      <HStack justify="space-between" w="full">
+                        <HStack>
+                          <Box w="10px" h="10px" borderRadius="full" bg="linear-gradient(135deg, #65a8bf, #b7a27d)" />
+                          <Text fontWeight="700" fontSize="md">
+                            {t("home.indicator.daily.title", "Daily")}
+                          </Text>
+                        </HStack>
+                        <Badge bg="rgba(101, 168, 191, 0.15)" color="#65a8bf" fontSize="xs" borderRadius="full">
+                          $34/mo
+                        </Badge>
                       </HStack>
                       <Text fontSize="sm" opacity={0.8}>
                         {t("home.indicator.daily.desc", "The balanced middle ground — one clean signal per day based on daily candle structure. Perfect for traders who want clarity without constant screen time.")}
@@ -3701,9 +3725,24 @@ const Home: React.FC = () => {
                   </Box>
                 </SimpleGrid>
 
-                <VStack spacing={2} textAlign="center" pt={2}>
-                  <Text fontSize="sm" opacity={0.7} maxW="lg">
-                    {t("home.indicator.note", "The indicator will be available as a paid add-on for enrolled students. It does not guarantee profits — it is a tool to support your analysis using our methodology.")}
+                <VStack spacing={3} textAlign="center" pt={2}>
+                  <Button
+                    as="a"
+                    href="/products/indicators"
+                    size="lg"
+                    bg={UI.gradient}
+                    color="#0a0f1a"
+                    fontWeight="700"
+                    px={10}
+                    borderRadius="14px"
+                    boxShadow={UI.glow}
+                    _hover={{ transform: "translateY(-2px)", boxShadow: UI.glowStrong }}
+                    transition="all 0.3s"
+                  >
+                    {t("home.indicator.cta", "View All Indicators & Pricing")}
+                  </Button>
+                  <Text fontSize="xs" opacity={0.5} maxW="lg">
+                    {t("home.indicator.note", "These indicators do not guarantee profits — they are tools to support your analysis using our methodology.")}
                   </Text>
                 </VStack>
               </VStack>

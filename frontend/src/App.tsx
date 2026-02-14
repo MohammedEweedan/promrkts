@@ -52,6 +52,7 @@ const TokenPage = lazy(() => import('./pages/Token'));
 const Discord = lazy(() => import('./pages/Discord'));
 const TokenCheckout = lazy(() => import('./pages/TokenCheckout'));
 const Hub = lazy(() => import('./pages/Hub'));
+const Indicators = lazy(() => import('./pages/Indicators'));
 const GitHubCallback = lazy(() => import('./pages/GitHubCallback'));
 const GoogleCallback = lazy(() => import('./pages/GoogleCallback'));
 
@@ -130,6 +131,7 @@ function App() {
             <Routes>
               <Route path="/" element={<Home />} />
               <Route path="/products" element={<Suspense fallback={<PageSkeleton variant="course" />}><CoursesList /></Suspense>} />
+              <Route path="/products/indicators" element={<Suspense fallback={<PageSkeleton variant="course" />}><Indicators /></Suspense>} />
               <Route path="/products/:id" element={<Suspense fallback={<PageSkeleton variant="course" />}><CourseDetail /></Suspense>} />
               <Route path="/checkout" element={<Suspense fallback={<PageSkeleton variant="checkout" />}><Checkout /></Suspense>} />
               <Route path="/learn/:id" element={<Learn />} />
