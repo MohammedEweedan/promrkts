@@ -1,0 +1,202 @@
+//@version=5
+indicator("promrkts Scalper Pro", overlay=true, max_lines_count=500, max_labels_count=500, max_boxes_count=500)
+
+// ─── SETTINGS ───────────────────────────────────────────────
+grp1 = "Core"
+pivotLen    = input.int(5,   "Pivot Lookback",     minval=2,  maxval=15,  group=grp1)
+atrLen      = input.int(10,  "ATR Period",         minval=5,  maxval=30,  group=grp1)
+atrSlMult   = input.float(1.0,"SL × ATR",         minval=0.5,maxval=3.0, step=0.1, group=grp1)
+rrRatio     = input.float(1.5,"Min Reward:Risk",   minval=1.0,maxval=4.0, step=0.5, group=grp1)
+
+grp2 = "Filters"
+rsiLen      = input.int(7,   "RSI Period",         minval=3,  maxval=21,  group=grp2)
+rsiOB       = input.int(75,  "RSI Overbought",     minval=65, maxval=90,  group=grp2)
+rsiOS       = input.int(25,  "RSI Oversold",       minval=10, maxval=35,  group=grp2)
+volMult     = input.float(1.2,"Volume ≥ Avg ×",    minval=0.5,maxval=3.0, step=0.1, group=grp2)
+
+grp3 = "Sessions"
+showSessions = input.bool(true, "Show Session Boxes",     group=grp3)
+showSessHL   = input.bool(true, "Session High/Low",       group=grp3)
+showNews     = input.bool(true, "Highlight News Candles",  group=grp3)
+
+grp4 = "Display"
+showFib     = input.bool(true, "Fibonacci Levels",  group=grp4)
+showVwap    = input.bool(true, "VWAP",              group=grp4)
+showEma     = input.bool(true, "EMA Ribbon",        group=grp4)
+
+// ─── CALCULATIONS ───────────────────────────────────────────
+atr         = ta.atr(atrLen)
+rsi         = ta.rsi(close, rsiLen)
+avgVol      = ta.sma(volume, 20)
+volOk       = volume >= avgVol * volMult
+
+ema9        = ta.ema(close, 9)
+ema21       = ta.ema(close, 21)
+trendUp     = ema9 > ema21
+trendDn     = ema9 < ema21
+
+vwapVal     = ta.vwap(close)
+
+// Candle body strength (avoid dojis)
+bodyPct     = math.abs(close - open) / (high - low + syminfo.mintick)
+strongCandle = bodyPct > 0.4
+
+// ─── SESSION DETECTION (UTC) ────────────────────────────────
+tokyoOpen   = hour == 0  and minute == 0
+tokyoClose  = hour == 9  and minute == 0
+londonOpen  = hour == 7  and minute == 0
+londonClose = hour == 16 and minute == 0
+nyOpen      = hour == 12 and minute == 0
+nyClose     = hour == 21 and minute == 0
+
+inTokyo     = hour >= 0  and hour < 9
+inLondon    = hour >= 7  and hour < 16
+inNY        = hour >= 12 and hour < 21
+
+var float tokyoH = na, var float tokyoL = na, var float tokyoO = na
+var float londonH = na, var float londonL = na, var float londonO = na
+var float nyH = na, var float nyL = na, var float nyO = na
+
+if tokyoOpen
+    tokyoO := open, tokyoH := high, tokyoL := low
+if inTokyo
+    tokyoH := math.max(nz(tokyoH, high), high)
+    tokyoL := math.min(nz(tokyoL, low), low)
+
+if londonOpen
+    londonO := open, londonH := high, londonL := low
+if inLondon
+    londonH := math.max(nz(londonH, high), high)
+    londonL := math.min(nz(londonL, low), low)
+
+if nyOpen
+    nyO := open, nyH := high, nyL := low
+if inNY
+    nyH := math.max(nz(nyH, high), high)
+    nyL := math.min(nz(nyL, low), low)
+
+if showSessions and tokyoOpen
+    label.new(bar_index, high, "TKY", style=label.style_label_down, color=color.new(color.red, 70), textcolor=color.white, size=size.tiny)
+if showSessions and londonOpen
+    label.new(bar_index, high, "LDN", style=label.style_label_down, color=color.new(color.blue, 70), textcolor=color.white, size=size.tiny)
+if showSessions and nyOpen
+    label.new(bar_index, high, "NY", style=label.style_label_down, color=color.new(color.green, 70), textcolor=color.white, size=size.tiny)
+
+if showSessHL and tokyoClose and not na(tokyoH)
+    line.new(bar_index - 1, tokyoH, bar_index + 3, tokyoH, color=color.new(color.red, 60), width=1, style=line.style_dotted)
+    line.new(bar_index - 1, tokyoL, bar_index + 3, tokyoL, color=color.new(color.red, 60), width=1, style=line.style_dotted)
+if showSessHL and londonClose and not na(londonH)
+    line.new(bar_index - 1, londonH, bar_index + 3, londonH, color=color.new(color.blue, 60), width=1, style=line.style_dotted)
+    line.new(bar_index - 1, londonL, bar_index + 3, londonL, color=color.new(color.blue, 60), width=1, style=line.style_dotted)
+if showSessHL and nyClose and not na(nyH)
+    line.new(bar_index - 1, nyH, bar_index + 3, nyH, color=color.new(color.green, 60), width=1, style=line.style_dotted)
+    line.new(bar_index - 1, nyL, bar_index + 3, nyL, color=color.new(color.green, 60), width=1, style=line.style_dotted)
+
+bgcolor(showSessions and inTokyo  and not inLondon and not inNY ? color.new(color.red, 96)   : na, title="Tokyo BG")
+bgcolor(showSessions and inLondon and not inNY                  ? color.new(color.blue, 96)  : na, title="London BG")
+bgcolor(showSessions and inNY                                   ? color.new(color.green, 96) : na, title="NY BG")
+
+// ─── NEWS CANDLE DETECTION ──────────────────────────────────
+volSpike    = volume > avgVol * 2.5
+bigBody     = math.abs(close - open) > atr * 1.2
+newsCandle  = volSpike and bigBody
+isCommonNewsTime = (hour == 13 and minute >= 25 and minute <= 35) or (hour == 19 and minute == 0) or (hour == 12 and minute >= 40 and minute <= 50) or (hour == 15 and minute == 0)
+newsHighlight = showNews and (newsCandle or (isCommonNewsTime and volSpike))
+
+barcolor(newsHighlight ? color.new(color.yellow, 0) : na, title="News Candle")
+plotshape(newsHighlight, title="News", location=location.abovebar, style=shape.flag, color=color.yellow, size=size.tiny)
+
+// ─── PIVOT DETECTION ────────────────────────────────────────
+pivHi       = ta.pivothigh(high, pivotLen, pivotLen)
+pivLo       = ta.pivotlow(low,  pivotLen, pivotLen)
+
+var float lastPH = na
+var float lastPL = na
+var int   lastPHBar = na
+var int   lastPLBar = na
+
+if not na(pivHi)
+    lastPH    := pivHi
+    lastPHBar := bar_index - pivotLen
+if not na(pivLo)
+    lastPL    := pivLo
+    lastPLBar := bar_index - pivotLen
+
+// ─── FIBONACCI ──────────────────────────────────────────────
+validFib = not na(lastPH) and not na(lastPL) and lastPH > lastPL
+fibRange = validFib ? lastPH - lastPL : 0.0
+
+fib0   = lastPL
+fib314 = validFib ? lastPL + fibRange * 0.314 : na
+fib5   = validFib ? lastPL + fibRange * 0.5   : na
+fib618 = validFib ? lastPL + fibRange * 0.618 : na
+fib88  = validFib ? lastPL + fibRange * 0.88  : na
+fib1   = lastPH
+
+var line l0=na, var line l314=na, var line l5=na
+var line l618=na, var line l88=na, var line l1=na
+
+if showFib and validFib
+    startBar = math.max(nz(lastPHBar), nz(lastPLBar))
+    endBar   = bar_index + 10
+    line.delete(l0),   l0   := line.new(startBar, fib0,   endBar, fib0,   color=color.new(color.gray, 50),    width=1)
+    line.delete(l314), l314 := line.new(startBar, fib314, endBar, fib314, color=color.new(color.lime, 30),    width=2, style=line.style_dashed)
+    line.delete(l5),   l5   := line.new(startBar, fib5,   endBar, fib5,   color=color.new(color.gray, 60),    width=1, style=line.style_dotted)
+    line.delete(l618), l618 := line.new(startBar, fib618, endBar, fib618, color=color.new(color.gray, 60),    width=1, style=line.style_dotted)
+    line.delete(l88),  l88  := line.new(startBar, fib88,  endBar, fib88,  color=color.new(color.fuchsia, 30), width=2, style=line.style_dashed)
+    line.delete(l1),   l1   := line.new(startBar, fib1,   endBar, fib1,   color=color.new(color.gray, 50),    width=1)
+
+// ─── OVERBOUGHT / OVERSOLD ─────────────────────────────────
+oversold   = rsi < rsiOS
+overbought = rsi > rsiOB
+rsiTurnUp  = oversold[1]  and rsi > rsi[1]
+rsiTurnDn  = overbought[1] and rsi < rsi[1]
+
+// ─── SIGNAL LOGIC ───────────────────────────────────────────
+nearBuyZone  = validFib and math.abs(close - fib314) < atr * 0.8
+nearSellZone = validFib and math.abs(close - fib88)  < atr * 0.8
+
+buyCond  = nearBuyZone  and rsiTurnUp and volOk and trendUp and strongCandle
+sellCond = nearSellZone and rsiTurnDn and volOk and trendDn and strongCandle
+
+var int lastBuyBar  = 0
+var int lastSellBar = 0
+cooldown = pivotLen * 3
+
+buySignal  = buyCond  and (bar_index - lastBuyBar)  > cooldown
+sellSignal = sellCond and (bar_index - lastSellBar) > cooldown
+
+buySL  = buySignal  ? close - atr * atrSlMult : na
+buyTP  = buySignal  ? close + atr * atrSlMult * rrRatio : na
+sellSL = sellSignal ? close + atr * atrSlMult : na
+sellTP = sellSignal ? close - atr * atrSlMult * rrRatio : na
+
+if buySignal
+    lastBuyBar := bar_index
+    label.new(bar_index, low, "BUY " + str.tostring(close, format.mintick) +
+         "\nSL " + str.tostring(buySL, format.mintick) +
+         "\nTP " + str.tostring(buyTP, format.mintick),
+         style=label.style_label_up, color=color.new(color.lime, 0), textcolor=color.black, size=size.tiny)
+
+if sellSignal
+    lastSellBar := bar_index
+    label.new(bar_index, high, "SELL " + str.tostring(close, format.mintick) +
+         "\nSL " + str.tostring(sellSL, format.mintick) +
+         "\nTP " + str.tostring(sellTP, format.mintick),
+         style=label.style_label_down, color=color.new(color.fuchsia, 0), textcolor=color.white, size=size.tiny)
+
+// ─── VWAP ───────────────────────────────────────────────────
+plot(showVwap ? vwapVal : na, "VWAP", color=color.new(color.yellow, 30), linewidth=2, style=plot.style_circles)
+
+// ─── EMA RIBBON ─────────────────────────────────────────────
+p9  = plot(showEma ? ema9  : na, "EMA 9",  color=color.new(color.aqua, 50),   linewidth=1)
+p21 = plot(showEma ? ema21 : na, "EMA 21", color=color.new(color.orange, 50), linewidth=1)
+fill(p9, p21, color=trendUp ? color.new(color.green, 93) : color.new(color.red, 93))
+
+// ─── SIGNAL PLOTS ───────────────────────────────────────────
+plotshape(buySignal,  title="Buy",  location=location.belowbar, color=color.lime,    style=shape.triangleup,   size=size.tiny)
+plotshape(sellSignal, title="Sell", location=location.abovebar, color=color.fuchsia, style=shape.triangledown, size=size.tiny)
+
+// ─── ALERTS ─────────────────────────────────────────────────
+alertcondition(buySignal,  "Scalp Buy",  "Scalper Pro: BUY at {{close}}")
+alertcondition(sellSignal, "Scalp Sell", "Scalper Pro: SELL at {{close}}")

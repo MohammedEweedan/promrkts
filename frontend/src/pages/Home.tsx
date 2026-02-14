@@ -3595,19 +3595,6 @@ const Home: React.FC = () => {
               />
               <VStack spacing={6} position="relative" align="stretch">
                 <VStack spacing={2} textAlign="center">
-                  <Badge
-                    bg="rgba(101, 168, 191, 0.12)"
-                    color="#65a8bf"
-                    px={3}
-                    py={1}
-                    borderRadius="full"
-                    fontSize="xs"
-                    fontWeight="600"
-                    textTransform="uppercase"
-                    letterSpacing="wider"
-                  >
-                    {t("home.indicator.badge", "Available Now")}
-                  </Badge>
                   <Heading
                     size={{ base: "md", md: "lg" }}
                     bgGradient="linear(to-r, #65a8bf, #b7a27d)"
